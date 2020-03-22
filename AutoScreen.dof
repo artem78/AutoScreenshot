@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=
+OutputDir=build\
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -142,3 +142,6 @@ Count=3
 Item0=D:\Programms\Borland\Delphi7\Projects\autoscreen\PNGImage
 Item1=D:\Programms\Borland\Delphi7\Projects\TEST\autoscreen\PNGImage
 Item2=D:\Programms\Borland\Delphi7\Projects\TEST\screenshot1\PNGImage
+[HistoryLists\hlOutputDirectorry]
+Count=1
+Item0=build\
