@@ -2,7 +2,8 @@ program AutoScreen;
 
 uses
   Forms,
-  uAutoScreen in 'uAutoScreen.pas' {MainForm};
+  uAutoScreen in 'uAutoScreen.pas' {MainForm},
+  uAbout in 'uAbout.pas' {AboutForm};
 
 {$R *.res}
 

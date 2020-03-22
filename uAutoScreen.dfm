@@ -198,6 +198,15 @@ object MainForm: TMainForm
       OnClick = StopAutoCaptureButtonClick
     end
   end
+  object AboutButton: TButton
+    Left = 520
+    Top = 96
+    Width = 97
+    Height = 25
+    Caption = #1054' '#1087#1088#1086#1075#1088#1072#1084#1084#1077
+    TabOrder = 9
+    OnClick = AboutButtonClick
+  end
   object Timer: TTimer
     Enabled = False
     OnTimer = TimerTimer

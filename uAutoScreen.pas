@@ -36,6 +36,7 @@ type
     RestoreWindowTrayMenuItem: TMenuItem;
     ToggleAutoCaptureTrayMenuItem: TMenuItem;
     SeparatorTrayMenuItem: TMenuItem;
+    AboutButton: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -54,6 +55,7 @@ type
     procedure RestoreWindowTrayMenuItemClick(Sender: TObject);
     procedure TakeScreenshotTrayMenuItemClick(Sender: TObject);
     procedure ExitTrayMenuItemClick(Sender: TObject);
+    procedure AboutButtonClick(Sender: TObject);
   private
     { Private declarations }
     procedure SetTimerEnabled(IsEnabled: Boolean);
@@ -81,6 +83,8 @@ var
   ini: TIniFile;
 
 implementation
+
+uses uAbout{, DateUtils};
 
 {$R *.dfm}
 
@@ -343,6 +347,14 @@ begin
   TrayIcon.FormVisible := True;
   Application.Restore;
   Application.BringToFront();
+end;
+
+procedure TMainForm.AboutButtonClick(Sender: TObject);
+begin
+  with TAboutForm.Create(Application) do
+  begin
+    ShowModal;
+  end;
 end;
 
 end.
