@@ -77,7 +77,7 @@ object Form1: TForm1
     Height = 13
     Caption = #1060#1086#1088#1084#1072#1090':'
   end
-  object Label4: TLabel
+  object lbJpegCompression: TLabel
     Left = 192
     Top = 108
     Width = 41

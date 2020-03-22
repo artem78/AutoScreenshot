@@ -23,7 +23,7 @@ type
     rbFormatPng: TRadioButton;
     rbFormatJpg: TRadioButton;
     btnCaptureNow: TButton;
-    Label4: TLabel;
+    lbJpegCompression: TLabel;
     spedJpgCompression: TSpinEdit;
     btnOpenFolder: TButton;
     cbStopWhenInactive: TCheckBox;
@@ -248,12 +248,18 @@ procedure TForm1.rbFormatPngClick(Sender: TObject);
 begin
   ini.WriteBool('main', 'png', True);
   ini.WriteBool('main', 'jpg', False);
+
+  spedJpgCompression.Enabled := False;
+  lbJpegCompression.Enabled := False;
 end;
 
 procedure TForm1.rbFormatJpgClick(Sender: TObject);
 begin
   ini.WriteBool('main', 'png', False);
   ini.WriteBool('main', 'jpg', True);
+
+  spedJpgCompression.Enabled := True;
+  lbJpegCompression.Enabled := True;
 end;
 
 procedure TForm1.spedJpgCompressionChange(Sender: TObject);
