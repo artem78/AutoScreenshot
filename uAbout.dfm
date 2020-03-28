@@ -2,7 +2,7 @@ object AboutForm: TAboutForm
   Left = 192
   Top = 124
   BorderStyle = bsDialog
-  Caption = #1054' '#1087#1088#1086#1075#1088#1072#1084#1084#1077
+  Caption = 'About'
   ClientHeight = 191
   ClientWidth = 334
   Color = clBtnFace
@@ -32,16 +32,16 @@ object AboutForm: TAboutForm
   object VersionLabel: TLabel
     Left = 16
     Top = 64
-    Width = 70
+    Width = 68
     Height = 13
-    Caption = #1042#1077#1088#1089#1080#1103': X.X.X'
+    Caption = 'Version: X.X.X'
   end
-  object AutorLabel: TLabel
+  object AuthorLabel: TLabel
     Left = 16
     Top = 88
-    Width = 229
+    Width = 46
     Height = 13
-    Caption = #1040#1074#1090#1086#1088': artem78      e-mail: megabyte1024@ya.ru'
+    Caption = 'Author: ...'
   end
   object LinkLabel: TLabel
     Left = 16
@@ -63,7 +63,7 @@ object AboutForm: TAboutForm
     Top = 152
     Width = 97
     Height = 25
-    Caption = #1047#1072#1082#1088#1099#1090#1100
+    Caption = 'Close'
     TabOrder = 0
     OnClick = CloseButtonClick
   end

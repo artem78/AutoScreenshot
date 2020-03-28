@@ -56,36 +56,36 @@ object MainForm: TMainForm
   PixelsPerInch = 96
   TextHeight = 13
   object OutputDirLabel: TLabel
-    Left = 83
+    Left = 122
     Top = 24
-    Width = 118
+    Width = 79
     Height = 13
     Alignment = taRightJustify
-    Caption = #1055#1072#1087#1082#1072' '#1076#1083#1103' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1103':'
+    Caption = 'Saving directory:'
   end
   object CaptureIntervalLabel: TLabel
-    Left = 34
+    Left = 78
     Top = 53
-    Width = 167
+    Width = 123
     Height = 13
     Alignment = taRightJustify
-    Caption = #1048#1085#1090#1077#1088#1074#1072#1083' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1103' '#1074' '#1084#1080#1085#1091#1090#1072#1093':'
+    Caption = 'Saving interval in minutes:'
   end
   object ImageFormatLabel: TLabel
-    Left = 156
+    Left = 166
     Top = 84
-    Width = 45
+    Width = 35
     Height = 13
     Alignment = taRightJustify
-    Caption = #1060#1086#1088#1084#1072#1090':'
+    Caption = 'Format:'
   end
   object JPEGQualityLabel: TLabel
-    Left = 319
+    Left = 306
     Top = 85
-    Width = 50
+    Width = 63
     Height = 13
     Alignment = taRightJustify
-    Caption = #1050#1072#1095#1077#1089#1090#1074#1086':'
+    Caption = 'Compression:'
   end
   object JPEGQualityPercentLabel: TLabel
     Left = 440
@@ -127,7 +127,7 @@ object MainForm: TMainForm
     Top = 164
     Width = 99
     Height = 25
-    Caption = #1057#1076#1077#1083#1072#1090#1100' '#1089#1085#1080#1084#1086#1082
+    Caption = 'Take screenshot'
     TabOrder = 3
     OnClick = TakeScreenshotButtonClick
   end
@@ -147,18 +147,30 @@ object MainForm: TMainForm
     Top = 16
     Width = 97
     Height = 25
-    Caption = #1054#1090#1082#1088#1099#1090#1100' '#1087#1072#1087#1082#1091
+    Caption = 'Open directory'
     TabOrder = 5
     OnClick = OpenOutputDirButtonClick
   end
   object StopWhenInactiveCheckBox: TCheckBox
     Left = 208
     Top = 112
-    Width = 289
+    Width = 257
     Height = 17
-    Caption = #1053#1077' '#1076#1077#1083#1072#1090#1100' '#1089#1082#1088#1080#1085#1096#1086#1090#1099' '#1087#1088#1080' '#1073#1077#1079#1076#1077#1081#1089#1090#1074#1080#1080
+    Caption = 'Pause taking screenshots while idle'
     TabOrder = 6
     OnClick = StopWhenInactiveCheckBoxClick
+  end
+  object LanguageRadioGroup: TRadioGroup
+    Left = 480
+    Top = 56
+    Width = 137
+    Height = 57
+    Caption = 'Language'
+    Items.Strings = (
+      'English'
+      #1056#1091#1089#1089#1082#1080#1081)
+    TabOrder = 10
+    OnClick = LanguageRadioGroupClick
   end
   object ImageFormatComboBox: TComboBox
     Left = 208
@@ -177,14 +189,14 @@ object MainForm: TMainForm
     Top = 144
     Width = 233
     Height = 65
-    Caption = #1040#1074#1090#1086#1079#1072#1093#1074#1072#1090
+    Caption = 'Automatic capture'
     TabOrder = 8
     object StartAutoCaptureButton: TButton
       Left = 24
       Top = 24
       Width = 75
       Height = 25
-      Caption = #1042#1082#1083#1102#1095#1080#1090#1100
+      Caption = 'Enable'
       TabOrder = 0
       OnClick = StartAutoCaptureButtonClick
     end
@@ -193,17 +205,17 @@ object MainForm: TMainForm
       Top = 24
       Width = 75
       Height = 25
-      Caption = #1042#1099#1082#1083#1102#1095#1080#1090#1100
+      Caption = 'Disable'
       TabOrder = 1
       OnClick = StopAutoCaptureButtonClick
     end
   end
   object AboutButton: TButton
     Left = 520
-    Top = 96
+    Top = 128
     Width = 97
     Height = 25
-    Caption = #1054' '#1087#1088#1086#1075#1088#1072#1084#1084#1077
+    Caption = 'About'
     TabOrder = 9
     OnClick = AboutButtonClick
   end

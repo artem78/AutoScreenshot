@@ -9,6 +9,7 @@ uses
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG);
+  TLanguage = (lngEnglish=0, lngRussian);
 
   TMainForm = class(TForm)
     OutputDirEdit: TEdit;
@@ -25,6 +26,7 @@ type
     JPEGQualitySpinEdit: TSpinEdit;
     OpenOutputDirButton: TButton;
     StopWhenInactiveCheckBox: TCheckBox;
+    LanguageRadioGroup: TRadioGroup;
     ImageFormatComboBox: TComboBox;
     JPEGQualityPercentLabel: TLabel;
     AutoCaptureControlGroup: TGroupBox;
@@ -56,14 +58,19 @@ type
     procedure TakeScreenshotTrayMenuItemClick(Sender: TObject);
     procedure ExitTrayMenuItemClick(Sender: TObject);
     procedure AboutButtonClick(Sender: TObject);
+    procedure LanguageRadioGroupClick(Sender: TObject);
   private
     { Private declarations }
+    FLanguage: TLanguage;
+    
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
     function GetFinalOutputDir: String;
     procedure MakeScreenshot;
     procedure MinimizeToTray;
     procedure RestoreFromTray;
+    procedure SetLanguage(Lang: TLanguage);
+    procedure TranslateForm();
 
     // ToDo: Why this do not work?
     //    property IsTimerEnabled: Boolean read Timer.Enabled write SetTimerEnabled;
@@ -71,12 +78,14 @@ type
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
+    property Language: TLanguage read FLanguage write SetLanguage;
   public
     { Public declarations }
   end;
 
 const
   ImageFormatNames: array [TImageFormat] of String = ('PNG', 'JPG');
+  LanguageCodes: array [TLanguage] of String = ('en', 'ru');
 
 var
   MainForm: TMainForm;
@@ -92,6 +101,8 @@ procedure TMainForm.FormCreate(Sender: TObject);
 var
   Fmt: TImageFormat;
   FmtStr: String;
+  LangCode: String;
+  LangId, I: TLanguage;
 begin
   Application.OnMinimize := ApplicationMinimize;
 
@@ -116,6 +127,19 @@ begin
   JPEGQualitySpinEdit.MaxValue := High(TJPEGQualityRange);
   JPEGQualitySpinEdit.Value := ini.ReadInteger('main', 'JPEGQuality', 80);
   ImageFormatComboBox.OnChange(ImageFormatComboBox);
+
+  // Language
+  LangCode := ini.ReadString('main', 'language', 'en');
+  LangId := lngEnglish;
+  for I := Low(TLanguage) to High(TLanguage) do
+  begin
+    if (LangCode = LanguageCodes[I]) then
+    begin
+      LangId := I;
+      Break;
+    end;
+  end;
+  SetLanguage(LangId);
 
   Timer.Interval := CaptureInterval.Value * 60 * 1000;
   IsTimerEnabled := False;
@@ -354,6 +378,63 @@ begin
   with TAboutForm.Create(Application) do
   begin
     ShowModal;
+  end;
+end;
+
+procedure TMainForm.LanguageRadioGroupClick(Sender: TObject);
+begin
+  Language := TLanguage(LanguageRadioGroup.ItemIndex)
+end;
+
+procedure TMainForm.SetLanguage(Lang: TLanguage);
+begin
+  {if (FLanguage = Lang) then
+    Exit;}
+
+  FLanguage := Lang;
+  ini.WriteString('main', 'language', LanguageCodes[Lang]);
+  LanguageRadioGroup.ItemIndex := Ord(Lang);
+  TranslateForm;
+end;
+
+procedure TMainForm.TranslateForm;
+begin
+  case Language of
+    lngRussian:
+      begin
+        // Main form
+        LanguageRadioGroup.Caption := 'Язык';
+        OutputDirLabel.Caption := 'Папка для сохранения:';
+        //ChooseOutputDirButton.Caption := 'Выбрать...';
+        OpenOutputDirButton.Caption := 'Открыть папку';
+        CaptureIntervalLabel.Caption := 'Интервал сохранения в минутах:';
+        StopWhenInactiveCheckBox.Caption := 'Не делать скриншоты при бездействии';
+        ImageFormatLabel.Caption := 'Формат:';
+        JPEGQualityLabel.Caption := 'Качество:';
+        AutoCaptureControlGroup.Caption := 'Автозахват экрана';
+        StartAutoCaptureButton.Caption := 'Включить';
+        StopAutoCaptureButton.Caption := 'Выключить';
+        TakeScreenshotButton.Caption := 'Сделать снимок';
+        AboutButton.Caption := 'О программе';
+      end
+
+  else // Default language is English
+  begin
+      // Main form
+      LanguageRadioGroup.Caption := 'Language';
+      OutputDirLabel.Caption := 'Output directory:';
+      //ChooseOutputDirButton.Caption := 'Choose...';
+      OpenOutputDirButton.Caption := 'Open directory';
+      CaptureIntervalLabel.Caption := 'Saving interval in minutes:';
+      StopWhenInactiveCheckBox.Caption := 'Do not make screenshots while idle';
+      ImageFormatLabel.Caption := 'Format:';
+      JPEGQualityLabel.Caption := 'Quality:';
+      AutoCaptureControlGroup.Caption := 'Automatic capture';
+      StartAutoCaptureButton.Caption := 'Start';
+      StopAutoCaptureButton.Caption := 'Stop';
+      TakeScreenshotButton.Caption := 'Take screenshot';
+      AboutButton.Caption := 'About';
+    end;
   end;
 end;
 

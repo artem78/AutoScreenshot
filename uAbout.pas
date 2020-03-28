@@ -10,7 +10,7 @@ type
   TAboutForm = class(TForm)
     ProgramNameLabel: TLabel;
     VersionLabel: TLabel;
-    AutorLabel: TLabel;
+    AuthorLabel: TLabel;
     CloseButton: TButton;
     LinkLabel: TLabel;
     procedure CloseButtonClick(Sender: TObject);
@@ -40,9 +40,14 @@ end;
 
 procedure TAboutForm.FormCreate(Sender: TObject);
 begin
+  AboutForm.Caption := 'About';
+
   ProgramNameLabel.Caption := Application.Title;
-  VersionLabel.Caption := 'Версия: ' + ProgramVersion;
+  VersionLabel.Caption := 'Version: ' + ProgramVersion;
+  AuthorLabel.Caption := 'Author: ' + 'artem78      e-mail: megabyte1024@ya.ru';
   LinkLabel.Caption := ProjectGitHubURL;
+
+  CloseButton.Caption := 'Close';
 end;
 
 procedure TAboutForm.LinkLabelClick(Sender: TObject);
