@@ -77,6 +77,7 @@ implementation
 procedure TForm1.FormCreate(Sender: TObject);
 var
   Fmt: TImageFormat;
+  FmtStr: String;
 begin
   Application.OnMinimize := ApplicationMinimize;
 
@@ -85,16 +86,21 @@ begin
 
   ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
 
-  savepath.Text := ini.ReadString('main', 'path', ExtractFilePath(Application.ExeName));
-  interval.Value := ini.ReadInteger('main', 'interval', 5);
-  cbStopWhenInactive.Checked := ini.ReadBool('main', 'stopWhenInactive', False);
-  if ini.ReadBool('main', 'png', True) then
-    cbFormat.ItemIndex := Ord(fmtPNG);
-  if ini.ReadBool('main', 'jpg', False) then
-    cbFormat.ItemIndex := Ord(fmtJPG);
+  savepath.Text := ini.ReadString('main', 'OutputDir', ExtractFilePath(Application.ExeName));
+  interval.Value := ini.ReadInteger('main', 'CaptureInterval', 5);
+  cbStopWhenInactive.Checked := ini.ReadBool('main', 'StopWhenInactive', False);
+  FmtStr := ini.ReadString('main', 'ImageFormat', ImageFormatNames[fmtPNG]);
+  for Fmt := Low(TImageFormat) to High(TImageFormat) do
+  begin
+    if ImageFormatNames[Fmt] = FmtStr then
+    begin
+      cbFormat.ItemIndex := Ord(Fmt);
+      Break;
+    end;
+  end;
   spedJpgCompression.MinValue := Low(TJPEGQualityRange);
   spedJpgCompression.MaxValue := High(TJPEGQualityRange);
-  spedJpgCompression.Value := ini.ReadInteger('main', 'jpegCOmpression', 80);
+  spedJpgCompression.Value := ini.ReadInteger('main', 'JPEGQuality', 80);
   cbFormat.OnChange(cbFormat);
 
   Timer1.Interval := interval.Value * 60 * 1000;
@@ -116,18 +122,18 @@ begin
   //if SelectDirectory(dir, [sdAllowCreate, sdPerformCreate], 0) then
   begin
     savepath.Text := dir;
-    ini.WriteString('main', 'path', dir);
+    ini.WriteString('main', 'OutputDir', dir);
   end;
 end;
 
 procedure TForm1.savepathChange(Sender: TObject);
 begin
-    ini.WriteString('main', 'path', savepath.Text);
+    ini.WriteString('main', 'OutputDir', savepath.Text);
 end;
 
 procedure TForm1.intervalChange(Sender: TObject);
 begin
-  ini.WriteInteger('main', 'interval', interval.Value);
+  ini.WriteInteger('main', 'CaptureInterval', interval.Value);
   Timer1.Interval := interval.Value * 60 * 1000;
 end;
 
@@ -262,7 +268,7 @@ end;
 procedure TForm1.spedJpgCompressionChange(Sender: TObject);
 begin
   try
-    ini.WriteInteger('main', 'jpegCompression', spedJpgCompression.Value);
+    ini.WriteInteger('main', 'JPEGQuality', spedJpgCompression.Value);
   finally
   end;
 end;
@@ -273,7 +279,7 @@ var
 begin
   DateTimeToString(dirname, 'yyyy-mm-dd', Now());
 
-  dirname := IncludeTrailingPathDelimiter(ini.ReadString('main', 'path', '')) + dirname + '\';
+  dirname := IncludeTrailingPathDelimiter(ini.ReadString('main', 'OutputDir', '')) + dirname + '\';
   if not DirectoryExists(dirname) then
     CreateDir(dirname);
 
@@ -287,7 +293,7 @@ end;
 
 procedure TForm1.cbStopWhenInactiveClick(Sender: TObject);
 begin
-  ini.WriteBool('main', 'stopWhenInactive', cbStopWhenInactive.Checked);
+  ini.WriteBool('main', 'StopWhenInactive', cbStopWhenInactive.Checked);
 end;
 
 // Функции/процедуры
@@ -303,15 +309,14 @@ end;
 
 procedure TForm1.cbFormatChange(Sender: TObject);
 var
-  IsJPG: Boolean;
+  Format: TImageFormat;
 begin
-  IsJPG := cbFormat.ItemIndex = Ord(fmtJPG);
-  spedJpgCompression.{Enabled}Visible := IsJPG;
-  lbJpegCompression.{Enabled}Visible := IsJPG;
-  Label4.{Enabled}Visible := IsJPG;
+  Format := TImageFormat(cbFormat.ItemIndex);
+  spedJpgCompression.{Enabled}Visible := Format = fmtJPG;
+  lbJpegCompression.{Enabled}Visible := Format = fmtJPG;
+  Label4.{Enabled}Visible := Format = fmtJPG;
 
-  ini.WriteBool('main', 'png', cbFormat.ItemIndex = Ord(fmtPNG));
-  ini.WriteBool('main', 'jpg', IsJPG);
+  ini.WriteString('main', 'ImageFormat', ImageFormatNames[Format]);
 end;
 
 end.

@@ -57,36 +57,36 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
-    Left = 16
+    Left = 83
     Top = 24
-    Width = 185
+    Width = 118
     Height = 13
     Alignment = taRightJustify
     Caption = #1055#1072#1087#1082#1072' '#1076#1083#1103' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1103':'
   end
   object Label2: TLabel
-    Left = 16
+    Left = 34
     Top = 53
-    Width = 185
+    Width = 167
     Height = 13
     Alignment = taRightJustify
     Caption = #1048#1085#1090#1077#1088#1074#1072#1083' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1103' '#1074' '#1084#1080#1085#1091#1090#1072#1093':'
   end
   object Label3: TLabel
-    Left = 16
+    Left = 156
     Top = 84
-    Width = 185
+    Width = 45
     Height = 13
     Alignment = taRightJustify
     Caption = #1060#1086#1088#1084#1072#1090':'
   end
   object lbJpegCompression: TLabel
-    Left = 280
+    Left = 319
     Top = 85
-    Width = 81
+    Width = 50
     Height = 13
     Alignment = taRightJustify
-    Caption = #1057#1078#1072#1090#1080#1077':'
+    Caption = #1050#1072#1095#1077#1089#1090#1074#1086':'
   end
   object Label4: TLabel
     Left = 440
