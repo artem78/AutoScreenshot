@@ -4,8 +4,8 @@ object Form1: TForm1
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'AutoScreen'
-  ClientHeight = 194
-  ClientWidth = 478
+  ClientHeight = 221
+  ClientWidth = 633
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -59,140 +59,151 @@ object Form1: TForm1
   object Label1: TLabel
     Left = 16
     Top = 24
-    Width = 118
+    Width = 185
     Height = 13
+    Alignment = taRightJustify
     Caption = #1055#1072#1087#1082#1072' '#1076#1083#1103' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1103':'
   end
   object Label2: TLabel
     Left = 16
-    Top = 56
-    Width = 167
+    Top = 53
+    Width = 185
     Height = 13
+    Alignment = taRightJustify
     Caption = #1048#1085#1090#1077#1088#1074#1072#1083' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1103' '#1074' '#1084#1080#1085#1091#1090#1072#1093':'
   end
   object Label3: TLabel
     Left = 16
-    Top = 108
-    Width = 45
+    Top = 84
+    Width = 185
     Height = 13
+    Alignment = taRightJustify
     Caption = #1060#1086#1088#1084#1072#1090':'
   end
   object lbJpegCompression: TLabel
-    Left = 192
-    Top = 108
-    Width = 41
+    Left = 280
+    Top = 85
+    Width = 81
     Height = 13
+    Alignment = taRightJustify
     Caption = #1057#1078#1072#1090#1080#1077':'
   end
+  object Label4: TLabel
+    Left = 440
+    Top = 85
+    Width = 8
+    Height = 13
+    Caption = '%'
+  end
   object savepath: TEdit
-    Left = 144
-    Top = 16
-    Width = 217
+    Left = 208
+    Top = 20
+    Width = 265
     Height = 21
     TabOrder = 0
-    Text = 'savepath'
     OnChange = savepathChange
   end
   object savepath_btn: TButton
-    Left = 368
+    Left = 480
     Top = 16
-    Width = 97
+    Width = 33
     Height = 25
-    Caption = #1042#1099#1073#1088#1072#1090#1100'...'
+    Caption = '...'
     TabOrder = 1
     OnClick = savepath_btnClick
   end
   object interval: TSpinEdit
-    Left = 200
+    Left = 208
     Top = 48
-    Width = 89
+    Width = 57
     Height = 22
-    MaxValue = 240
+    MaxValue = 99999
     MinValue = 1
     TabOrder = 2
     Value = 1
     OnChange = intervalChange
   end
-  object start_timer_btn: TButton
-    Left = 136
-    Top = 156
-    Width = 75
-    Height = 25
-    Caption = #1042#1082#1083#1102#1095#1080#1090#1100
-    TabOrder = 3
-    OnClick = start_timer_btnClick
-  end
-  object stop_timer_btn: TButton
-    Left = 224
-    Top = 156
-    Width = 75
-    Height = 25
-    Caption = #1042#1099#1082#1083#1102#1095#1080#1090#1100
-    TabOrder = 4
-    OnClick = stop_timer_btnClick
-  end
-  object rbFormatPng: TRadioButton
-    Left = 80
-    Top = 108
-    Width = 65
-    Height = 17
-    Caption = 'PNG'
-    TabOrder = 5
-    OnClick = rbFormatPngClick
-  end
-  object rbFormatJpg: TRadioButton
-    Left = 136
-    Top = 108
-    Width = 57
-    Height = 17
-    Caption = 'JPG'
-    TabOrder = 6
-    OnClick = rbFormatJpgClick
-  end
   object btnCaptureNow: TButton
-    Left = 368
-    Top = 156
+    Left = 496
+    Top = 164
     Width = 99
     Height = 25
     Caption = #1057#1076#1077#1083#1072#1090#1100' '#1089#1085#1080#1084#1086#1082
-    TabOrder = 7
+    TabOrder = 3
     OnClick = btnCaptureNowClick
   end
   object spedJpgCompression: TSpinEdit
-    Left = 240
-    Top = 104
-    Width = 49
+    Left = 376
+    Top = 80
+    Width = 57
     Height = 22
-    MaxLength = 100
-    MaxValue = 0
+    MaxValue = 100
     MinValue = 0
-    TabOrder = 8
+    TabOrder = 4
     Value = 0
     OnChange = spedJpgCompressionChange
   end
   object btnOpenFolder: TButton
-    Left = 368
-    Top = 56
+    Left = 520
+    Top = 16
     Width = 97
     Height = 25
     Caption = #1054#1090#1082#1088#1099#1090#1100' '#1087#1072#1087#1082#1091
-    TabOrder = 9
+    TabOrder = 5
     OnClick = btnOpenFolderClick
   end
   object cbStopWhenInactive: TCheckBox
-    Left = 16
-    Top = 80
+    Left = 208
+    Top = 112
     Width = 289
     Height = 17
     Caption = #1053#1077' '#1076#1077#1083#1072#1090#1100' '#1089#1082#1088#1080#1085#1096#1086#1090#1099' '#1087#1088#1080' '#1073#1077#1079#1076#1077#1081#1089#1090#1074#1080#1080
-    TabOrder = 10
+    TabOrder = 6
     OnClick = cbStopWhenInactiveClick
+  end
+  object cbFormat: TComboBox
+    Left = 208
+    Top = 80
+    Width = 57
+    Height = 21
+    AutoComplete = False
+    Style = csDropDownList
+    DropDownCount = 10
+    ItemHeight = 13
+    TabOrder = 7
+    OnChange = cbFormatChange
+  end
+  object gbAutoCaptureControl: TGroupBox
+    Left = 208
+    Top = 144
+    Width = 233
+    Height = 65
+    Caption = #1040#1074#1090#1086#1079#1072#1093#1074#1072#1090
+    TabOrder = 8
+    object start_timer_btn: TButton
+      Left = 24
+      Top = 24
+      Width = 75
+      Height = 25
+      Caption = #1042#1082#1083#1102#1095#1080#1090#1100
+      TabOrder = 0
+      OnClick = start_timer_btnClick
+    end
+    object stop_timer_btn: TButton
+      Left = 136
+      Top = 24
+      Width = 75
+      Height = 25
+      Caption = #1042#1099#1082#1083#1102#1095#1080#1090#1100
+      TabOrder = 1
+      OnClick = stop_timer_btnClick
+    end
   end
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
     Left = 16
-    Top = 148
+    Top = 164
   end
   object TrayIcon1: TTrayIcon
     Icon.Data = {
@@ -237,10 +248,10 @@ object Form1: TForm1
     FormVisible = True
     AppVisible = True
     Left = 96
-    Top = 148
+    Top = 164
   end
   object XPManifest1: TXPManifest
     Left = 56
-    Top = 148
+    Top = 164
   end
 end

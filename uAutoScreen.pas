@@ -8,6 +8,8 @@ uses
   TrayIcon, XPMan, jpeg, ShellAPI;
 
 type
+  TImageFormat = (fmtPNG=0, fmtJPG);
+
   TForm1 = class(TForm)
     savepath: TEdit;
     savepath_btn: TButton;
@@ -15,18 +17,19 @@ type
     interval: TSpinEdit;
     Label1: TLabel;
     Label2: TLabel;
-    start_timer_btn: TButton;
-    stop_timer_btn: TButton;
     TrayIcon1: TTrayIcon;
     XPManifest1: TXPManifest;
     Label3: TLabel;
-    rbFormatPng: TRadioButton;
-    rbFormatJpg: TRadioButton;
     btnCaptureNow: TButton;
     lbJpegCompression: TLabel;
     spedJpgCompression: TSpinEdit;
     btnOpenFolder: TButton;
     cbStopWhenInactive: TCheckBox;
+    cbFormat: TComboBox;
+    Label4: TLabel;
+    gbAutoCaptureControl: TGroupBox;
+    start_timer_btn: TButton;
+    stop_timer_btn: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure savepath_btnClick(Sender: TObject);
@@ -46,12 +49,11 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure TrayIcon1DblClick(Sender: TObject);
     procedure btnCaptureNowClick(Sender: TObject);
-    procedure rbFormatPngClick(Sender: TObject);
-    procedure rbFormatJpgClick(Sender: TObject);
     procedure spedJpgCompressionChange(Sender: TObject);
     function getSaveDir: String;
     procedure btnOpenFolderClick(Sender: TObject);
     procedure cbStopWhenInactiveClick(Sender: TObject);
+    procedure cbFormatChange(Sender: TObject);
   private
     //procedure DoMinimize(Sender: TObject);
     //procedure WMSize(var Msg: TMessage);
@@ -60,6 +62,9 @@ type
   public
     { Public declarations }
   end;
+
+const
+  ImageFormatNames: array [TImageFormat] of String = ('PNG', 'JPG');
 
 var
   Form1: TForm1;
@@ -70,17 +75,27 @@ implementation
 {$R *.dfm}
 
 procedure TForm1.FormCreate(Sender: TObject);
+var
+  Fmt: TImageFormat;
 begin
   Application.OnMinimize := ApplicationMinimize;
+
+  for Fmt := Low(TImageFormat) to High(TImageFormat) do
+    cbFormat.Items.Append(ImageFormatNames[Fmt]);
 
   ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
 
   savepath.Text := ini.ReadString('main', 'path', ExtractFilePath(Application.ExeName));
   interval.Value := ini.ReadInteger('main', 'interval', 5);
   cbStopWhenInactive.Checked := ini.ReadBool('main', 'stopWhenInactive', False);
-  rbFormatPng.Checked := ini.ReadBool('main', 'png', True);
-  rbFormatJpg.Checked := ini.ReadBool('main', 'jpg', False);
+  if ini.ReadBool('main', 'png', True) then
+    cbFormat.ItemIndex := Ord(fmtPNG);
+  if ini.ReadBool('main', 'jpg', False) then
+    cbFormat.ItemIndex := Ord(fmtJPG);
+  spedJpgCompression.MinValue := Low(TJPEGQualityRange);
+  spedJpgCompression.MaxValue := High(TJPEGQualityRange);
   spedJpgCompression.Value := ini.ReadInteger('main', 'jpegCOmpression', 80);
+  cbFormat.OnChange(cbFormat);
 
   Timer1.Interval := interval.Value * 60 * 1000;
   timer_enabled := False;
@@ -212,7 +227,7 @@ begin
   BitBlt(bmp.Canvas.Handle, 0,0, Screen.Width, Screen.Height,
            GetDC(0), 0,0,SRCCOPY);
 
-  if rbFormatPng.Checked then
+  if cbFormat.ItemIndex = Ord(fmtPNG) then
   begin                   // PNG
     PNG := TPNGObject.Create;
     try
@@ -224,7 +239,7 @@ begin
     end;
   end;
 
-  if rbFormatJpg.Checked then
+  if cbFormat.ItemIndex = Ord(fmtJPG) then
   begin                 // JPG
     jpg := TJPEGImage.Create;
     try
@@ -242,24 +257,6 @@ end;
 procedure TForm1.btnCaptureNowClick(Sender: TObject);
 begin
   MakeScreenshot;
-end;
-
-procedure TForm1.rbFormatPngClick(Sender: TObject);
-begin
-  ini.WriteBool('main', 'png', True);
-  ini.WriteBool('main', 'jpg', False);
-
-  spedJpgCompression.Enabled := False;
-  lbJpegCompression.Enabled := False;
-end;
-
-procedure TForm1.rbFormatJpgClick(Sender: TObject);
-begin
-  ini.WriteBool('main', 'png', False);
-  ini.WriteBool('main', 'jpg', True);
-
-  spedJpgCompression.Enabled := True;
-  lbJpegCompression.Enabled := True;
 end;
 
 procedure TForm1.spedJpgCompressionChange(Sender: TObject);
@@ -302,6 +299,19 @@ begin
   LInput.cbSize := SizeOf(TLastInputInfo);
   GetLastInputInfo(LInput);
   Result := GetTickCount - LInput.dwTime;
+end;
+
+procedure TForm1.cbFormatChange(Sender: TObject);
+var
+  IsJPG: Boolean;
+begin
+  IsJPG := cbFormat.ItemIndex = Ord(fmtJPG);
+  spedJpgCompression.{Enabled}Visible := IsJPG;
+  lbJpegCompression.{Enabled}Visible := IsJPG;
+  Label4.{Enabled}Visible := IsJPG;
+
+  ini.WriteBool('main', 'png', cbFormat.ItemIndex = Ord(fmtPNG));
+  ini.WriteBool('main', 'jpg', IsJPG);
 end;
 
 end.
