@@ -93,7 +93,7 @@ var
 
 implementation
 
-uses uAbout{, DateUtils};
+uses uAbout{, DateUtils}, uLocalization;
 
 {$R *.dfm}
 
@@ -156,7 +156,7 @@ var
 begin
   dir := OutputDirEdit.Text;
 
-  if SelectDirectory('Выберите каталог', '' {savepath.Text}, dir) then
+  if SelectDirectory(I18N('SelectOutputDirectory'), '' {savepath.Text}, dir) then
   //if SelectDirectory(dir, [sdAllowCreate, sdPerformCreate], 0) then
   begin
     OutputDirEdit.Text := dir;
@@ -394,48 +394,26 @@ begin
   FLanguage := Lang;
   ini.WriteString('main', 'language', LanguageCodes[Lang]);
   LanguageRadioGroup.ItemIndex := Ord(Lang);
+  I18NSetLang(LanguageCodes[Lang]);
   TranslateForm;
 end;
 
 procedure TMainForm.TranslateForm;
 begin
-  case Language of
-    lngRussian:
-      begin
-        // Main form
-        LanguageRadioGroup.Caption := 'Язык';
-        OutputDirLabel.Caption := 'Папка для сохранения:';
-        //ChooseOutputDirButton.Caption := 'Выбрать...';
-        OpenOutputDirButton.Caption := 'Открыть папку';
-        CaptureIntervalLabel.Caption := 'Интервал сохранения в минутах:';
-        StopWhenInactiveCheckBox.Caption := 'Не делать скриншоты при бездействии';
-        ImageFormatLabel.Caption := 'Формат:';
-        JPEGQualityLabel.Caption := 'Качество:';
-        AutoCaptureControlGroup.Caption := 'Автозахват экрана';
-        StartAutoCaptureButton.Caption := 'Включить';
-        StopAutoCaptureButton.Caption := 'Выключить';
-        TakeScreenshotButton.Caption := 'Сделать снимок';
-        AboutButton.Caption := 'О программе';
-      end
-
-  else // Default language is English
-  begin
-      // Main form
-      LanguageRadioGroup.Caption := 'Language';
-      OutputDirLabel.Caption := 'Output directory:';
-      //ChooseOutputDirButton.Caption := 'Choose...';
-      OpenOutputDirButton.Caption := 'Open directory';
-      CaptureIntervalLabel.Caption := 'Saving interval in minutes:';
-      StopWhenInactiveCheckBox.Caption := 'Do not make screenshots while idle';
-      ImageFormatLabel.Caption := 'Format:';
-      JPEGQualityLabel.Caption := 'Quality:';
-      AutoCaptureControlGroup.Caption := 'Automatic capture';
-      StartAutoCaptureButton.Caption := 'Start';
-      StopAutoCaptureButton.Caption := 'Stop';
-      TakeScreenshotButton.Caption := 'Take screenshot';
-      AboutButton.Caption := 'About';
-    end;
-  end;
+  // Main form
+  LanguageRadioGroup.Caption := I18N('Language');
+  OutputDirLabel.Caption := I18N('OutputDirectory') + ':';
+  //ChooseOutputDirButton.Caption := I18N('Choose') + '...';
+  OpenOutputDirButton.Caption := I18N('OpenDirectory');
+  CaptureIntervalLabel.Caption := I18N('CaptureInterval') + ':';
+  StopWhenInactiveCheckBox.Caption := I18N('PauseCaptureWhenIdle');
+  ImageFormatLabel.Caption := I18N('Format') + ':';
+  JPEGQualityLabel.Caption := I18N('Quality') + ':';
+  AutoCaptureControlGroup.Caption := I18N('AutoCapture');
+  StartAutoCaptureButton.Caption := I18N('StartCapture');
+  StopAutoCaptureButton.Caption := I18N('StopCapture');
+  TakeScreenshotButton.Caption := I18N('TakeScreenshot');
+  AboutButton.Caption := I18N('About');
 end;
 
 end.

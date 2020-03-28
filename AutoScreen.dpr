@@ -3,7 +3,8 @@ program AutoScreen;
 uses
   Forms,
   uAutoScreen in 'uAutoScreen.pas' {MainForm},
-  uAbout in 'uAbout.pas' {AboutForm};
+  uAbout in 'uAbout.pas' {AboutForm},
+  uLocalization in 'uLocalization.pas';
 
 {$R *.res}
 

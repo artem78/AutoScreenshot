@@ -27,6 +27,8 @@ var
 
 implementation
 
+uses uLocalization;
+
 {$R *.dfm}
 {$I version.inc}
 
@@ -40,14 +42,14 @@ end;
 
 procedure TAboutForm.FormCreate(Sender: TObject);
 begin
-  AboutForm.Caption := 'About';
+  Caption := I18N('About');
 
   ProgramNameLabel.Caption := Application.Title;
-  VersionLabel.Caption := 'Version: ' + ProgramVersion;
-  AuthorLabel.Caption := 'Author: ' + 'artem78      e-mail: megabyte1024@ya.ru';
+  VersionLabel.Caption := I18N('Version') + ': ' + ProgramVersion;
+  AuthorLabel.Caption := I18N('Author') + ': ' + 'artem78      e-mail: megabyte1024@ya.ru';
   LinkLabel.Caption := ProjectGitHubURL;
 
-  CloseButton.Caption := 'Close';
+  CloseButton.Caption := I18N('Close');
 end;
 
 procedure TAboutForm.LinkLabelClick(Sender: TObject);
