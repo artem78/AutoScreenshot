@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 124
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'AutoScreen'
+  Caption = 'Auto Screenshot'
   ClientHeight = 221
   ClientWidth = 633
   Color = clBtnFace

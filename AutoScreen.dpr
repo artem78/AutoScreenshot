@@ -8,7 +8,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := 'AutoScreen';
+  Application.Title := 'Auto Screenshot'; // ToDo: Also rename executable to AutoScreenshot.exe
   Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.
