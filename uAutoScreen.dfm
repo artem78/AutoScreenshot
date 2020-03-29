@@ -51,7 +51,6 @@ object MainForm: TMainForm
     00000000000000000000000000000000000000000000C3FF0000FFFF0000}
   OldCreateOrder = False
   Position = poScreenCenter
-  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96

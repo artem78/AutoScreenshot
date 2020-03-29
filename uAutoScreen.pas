@@ -36,29 +36,28 @@ type
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
-    //procedure DoMinimize(Sender: TObject);
-    //procedure WMSize(var Msg : TMessage); message WM_SIZE;
     procedure ApplicationMinimize(Sender: TObject);
-
-    procedure set_timer_enabled(is_enabled: boolean);
-    function get_timer_enabled: boolean;
-
-    property timer_enabled: boolean read get_timer_enabled write set_timer_enabled;
     procedure StartAutoCaptureButtonClick(Sender: TObject);
     procedure StopAutoCaptureButtonClick(Sender: TObject);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure TrayIconDblClick(Sender: TObject);
     procedure TakeScreenshotButtonClick(Sender: TObject);
     procedure JPEGQualitySpinEditChange(Sender: TObject);
-    function getSaveDir: String;
     procedure OpenOutputDirButtonClick(Sender: TObject);
     procedure StopWhenInactiveCheckBoxClick(Sender: TObject);
     procedure ImageFormatComboBoxChange(Sender: TObject);
   private
-    //procedure DoMinimize(Sender: TObject);
-    //procedure WMSize(var Msg: TMessage);
-    procedure MakeScreenshot;
     { Private declarations }
+    procedure SetTimerEnabled(IsEnabled: Boolean);
+    function GetTimerEnabled: Boolean;
+    function GetFinalOutputDir: String;
+    procedure MakeScreenshot;
+
+    // ToDo: Why this do not work?
+    //    property IsTimerEnabled: Boolean read Timer.Enabled write SetTimerEnabled;
+    //    Error: Record, object or class type required
+
+    property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
+    property FinalOutputDir: String read GetFinalOutputDir;
   public
     { Public declarations }
   end;
@@ -104,7 +103,7 @@ begin
   ImageFormatComboBox.OnChange(ImageFormatComboBox);
 
   Timer.Interval := CaptureInterval.Value * 60 * 1000;
-  timer_enabled := False;
+  IsTimerEnabled := False;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -155,33 +154,26 @@ begin
     MakeScreenshot;
 end;
 
-function TMainForm.get_timer_enabled: boolean;
+function TMainForm.GetTimerEnabled: Boolean;
 begin
   Result := Timer.Enabled;
 end;
 
-procedure TMainForm.set_timer_enabled(is_enabled: boolean);
+procedure TMainForm.SetTimerEnabled(IsEnabled: Boolean);
 begin
-  Timer.Enabled := is_enabled;
-  StartAutoCaptureButton.Enabled := not is_enabled;
-  StopAutoCaptureButton.Enabled := is_enabled;
+  Timer.Enabled := IsEnabled;
+  StartAutoCaptureButton.Enabled := not IsEnabled;
+  StopAutoCaptureButton.Enabled := IsEnabled;
 end;
 
 procedure TMainForm.StartAutoCaptureButtonClick(Sender: TObject);
 begin
-  timer_enabled := True;
+  IsTimerEnabled := True;
 end;
 
 procedure TMainForm.StopAutoCaptureButtonClick(Sender: TObject);
 begin
-  timer_enabled := False;
-end;
-
-procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-begin
-  {CanClose := false;
-  TrayIcon1.IconVisible := true;
-  ShowWindow(Form1.Handle, SW_HIDE);    }
+  IsTimerEnabled := False;
 end;
 
 procedure TMainForm.TrayIconDblClick(Sender: TObject);
@@ -192,21 +184,6 @@ begin
   Application.Restore;
   Application.BringToFront();
 end;
-
-//procedure TForm1.DoMinimize(Sender: TObject);
-//begin
-  {TrayIcon1.IconVisible := true;
-  ShowWindow(Form1.Handle, SW_HIDE);  }
-//end;
-
-{procedure TForm1.WMSize(var Msg: TMessage);
-begin
-  if msg.WParam=SIZE_MINIMIZED then
-  begin
-    TrayIcon1.IconVisible := true;
-    ShowWindow(Form1.Handle, SW_HIDE);
-  end;
-end;       }
 
 procedure TMainForm.ApplicationMinimize(Sender: TObject);
 begin
@@ -224,7 +201,7 @@ var
 begin
   DateTimeToString(filename, 'yyyy-mm-dd hh.mm.ss', Now());
 
-  dirname := getSaveDir;
+  dirname := FinalOutputDir;
 
 
   bmp := TBitmap.Create;
@@ -273,7 +250,7 @@ begin
   end;
 end;
 
-function TMainForm.getSaveDir: String;
+function TMainForm.GetFinalOutputDir: String;
 var
   dirname: string;
 begin
@@ -288,7 +265,7 @@ end;
 
 procedure TMainForm.OpenOutputDirButtonClick(Sender: TObject);
 begin
-  ShellExecute(Handle, 'open', PChar(getSaveDir), nil, nil, SW_SHOWNORMAL);
+  ShellExecute(Handle, 'open', PChar(FinalOutputDir), nil, nil, SW_SHOWNORMAL);
 end;
 
 procedure TMainForm.StopWhenInactiveCheckBoxClick(Sender: TObject);
