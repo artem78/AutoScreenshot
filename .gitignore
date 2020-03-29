@@ -80,3 +80,5 @@ modules/
 /mydir
 /bak
 /build
+*.tmp
+*.bak
