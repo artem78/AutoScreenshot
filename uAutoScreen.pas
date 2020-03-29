@@ -10,32 +10,32 @@ uses
 type
   TImageFormat = (fmtPNG=0, fmtJPG);
 
-  TForm1 = class(TForm)
-    savepath: TEdit;
-    savepath_btn: TButton;
-    Timer1: TTimer;
-    interval: TSpinEdit;
-    Label1: TLabel;
-    Label2: TLabel;
-    TrayIcon1: TTrayIcon;
-    XPManifest1: TXPManifest;
-    Label3: TLabel;
-    btnCaptureNow: TButton;
-    lbJpegCompression: TLabel;
-    spedJpgCompression: TSpinEdit;
-    btnOpenFolder: TButton;
-    cbStopWhenInactive: TCheckBox;
-    cbFormat: TComboBox;
-    Label4: TLabel;
-    gbAutoCaptureControl: TGroupBox;
-    start_timer_btn: TButton;
-    stop_timer_btn: TButton;
+  TMainForm = class(TForm)
+    OutputDirEdit: TEdit;
+    ChooseOutputDirButton: TButton;
+    Timer: TTimer;
+    CaptureInterval: TSpinEdit;
+    OutputDirLabel: TLabel;
+    CaptureIntervalLabel: TLabel;
+    TrayIcon: TTrayIcon;
+    XPManifest: TXPManifest;
+    ImageFormatLabel: TLabel;
+    TakeScreenshotButton: TButton;
+    JPEGQualityLabel: TLabel;
+    JPEGQualitySpinEdit: TSpinEdit;
+    OpenOutputDirButton: TButton;
+    StopWhenInactiveCheckBox: TCheckBox;
+    ImageFormatComboBox: TComboBox;
+    JPEGQualityPercentLabel: TLabel;
+    AutoCaptureControlGroup: TGroupBox;
+    StartAutoCaptureButton: TButton;
+    StopAutoCaptureButton: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure savepath_btnClick(Sender: TObject);
-    procedure savepathChange(Sender: TObject);
-    procedure intervalChange(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
+    procedure ChooseOutputDirButtonClick(Sender: TObject);
+    procedure OutputDirEditChange(Sender: TObject);
+    procedure CaptureIntervalChange(Sender: TObject);
+    procedure TimerTimer(Sender: TObject);
     //procedure DoMinimize(Sender: TObject);
     //procedure WMSize(var Msg : TMessage); message WM_SIZE;
     procedure ApplicationMinimize(Sender: TObject);
@@ -44,16 +44,16 @@ type
     function get_timer_enabled: boolean;
 
     property timer_enabled: boolean read get_timer_enabled write set_timer_enabled;
-    procedure start_timer_btnClick(Sender: TObject);
-    procedure stop_timer_btnClick(Sender: TObject);
+    procedure StartAutoCaptureButtonClick(Sender: TObject);
+    procedure StopAutoCaptureButtonClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure TrayIcon1DblClick(Sender: TObject);
-    procedure btnCaptureNowClick(Sender: TObject);
-    procedure spedJpgCompressionChange(Sender: TObject);
+    procedure TrayIconDblClick(Sender: TObject);
+    procedure TakeScreenshotButtonClick(Sender: TObject);
+    procedure JPEGQualitySpinEditChange(Sender: TObject);
     function getSaveDir: String;
-    procedure btnOpenFolderClick(Sender: TObject);
-    procedure cbStopWhenInactiveClick(Sender: TObject);
-    procedure cbFormatChange(Sender: TObject);
+    procedure OpenOutputDirButtonClick(Sender: TObject);
+    procedure StopWhenInactiveCheckBoxClick(Sender: TObject);
+    procedure ImageFormatComboBoxChange(Sender: TObject);
   private
     //procedure DoMinimize(Sender: TObject);
     //procedure WMSize(var Msg: TMessage);
@@ -67,14 +67,14 @@ const
   ImageFormatNames: array [TImageFormat] of String = ('PNG', 'JPG');
 
 var
-  Form1: TForm1;
+  MainForm: TMainForm;
   ini: TIniFile;
 
 implementation
 
 {$R *.dfm}
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TMainForm.FormCreate(Sender: TObject);
 var
   Fmt: TImageFormat;
   FmtStr: String;
@@ -82,113 +82,113 @@ begin
   Application.OnMinimize := ApplicationMinimize;
 
   for Fmt := Low(TImageFormat) to High(TImageFormat) do
-    cbFormat.Items.Append(ImageFormatNames[Fmt]);
+    ImageFormatComboBox.Items.Append(ImageFormatNames[Fmt]);
 
   ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
 
-  savepath.Text := ini.ReadString('main', 'OutputDir', ExtractFilePath(Application.ExeName));
-  interval.Value := ini.ReadInteger('main', 'CaptureInterval', 5);
-  cbStopWhenInactive.Checked := ini.ReadBool('main', 'StopWhenInactive', False);
+  OutputDirEdit.Text := ini.ReadString('main', 'OutputDir', ExtractFilePath(Application.ExeName));
+  CaptureInterval.Value := ini.ReadInteger('main', 'CaptureInterval', 5);
+  StopWhenInactiveCheckBox.Checked := ini.ReadBool('main', 'StopWhenInactive', False);
   FmtStr := ini.ReadString('main', 'ImageFormat', ImageFormatNames[fmtPNG]);
   for Fmt := Low(TImageFormat) to High(TImageFormat) do
   begin
     if ImageFormatNames[Fmt] = FmtStr then
     begin
-      cbFormat.ItemIndex := Ord(Fmt);
+      ImageFormatComboBox.ItemIndex := Ord(Fmt);
       Break;
     end;
   end;
-  spedJpgCompression.MinValue := Low(TJPEGQualityRange);
-  spedJpgCompression.MaxValue := High(TJPEGQualityRange);
-  spedJpgCompression.Value := ini.ReadInteger('main', 'JPEGQuality', 80);
-  cbFormat.OnChange(cbFormat);
+  JPEGQualitySpinEdit.MinValue := Low(TJPEGQualityRange);
+  JPEGQualitySpinEdit.MaxValue := High(TJPEGQualityRange);
+  JPEGQualitySpinEdit.Value := ini.ReadInteger('main', 'JPEGQuality', 80);
+  ImageFormatComboBox.OnChange(ImageFormatComboBox);
 
-  Timer1.Interval := interval.Value * 60 * 1000;
+  Timer.Interval := CaptureInterval.Value * 60 * 1000;
   timer_enabled := False;
 end;
 
-procedure TForm1.FormDestroy(Sender: TObject);
+procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   ini.Free;
 end;
 
-procedure TForm1.savepath_btnClick(Sender: TObject);
+procedure TMainForm.ChooseOutputDirButtonClick(Sender: TObject);
 var
   dir: string;
 begin
-  dir := savepath.Text;
+  dir := OutputDirEdit.Text;
 
   if SelectDirectory('Выберите каталог', '' {savepath.Text}, dir) then
   //if SelectDirectory(dir, [sdAllowCreate, sdPerformCreate], 0) then
   begin
-    savepath.Text := dir;
+    OutputDirEdit.Text := dir;
     ini.WriteString('main', 'OutputDir', dir);
   end;
 end;
 
-procedure TForm1.savepathChange(Sender: TObject);
+procedure TMainForm.OutputDirEditChange(Sender: TObject);
 begin
-    ini.WriteString('main', 'OutputDir', savepath.Text);
+    ini.WriteString('main', 'OutputDir', OutputDirEdit.Text);
 end;
 
-procedure TForm1.intervalChange(Sender: TObject);
+procedure TMainForm.CaptureIntervalChange(Sender: TObject);
 begin
-  ini.WriteInteger('main', 'CaptureInterval', interval.Value);
-  Timer1.Interval := interval.Value * 60 * 1000;
+  ini.WriteInteger('main', 'CaptureInterval', CaptureInterval.Value);
+  Timer.Interval := CaptureInterval.Value * 60 * 1000;
 end;
 
 function LastInput: DWord; forward;
 
-procedure TForm1.Timer1Timer(Sender: TObject);
+procedure TMainForm.TimerTimer(Sender: TObject);
 begin
-  if cbStopWhenInactive.Checked then
+  if StopWhenInactiveCheckBox.Checked then
   begin
     // Не сохранять скриншот при бездействии пользователя
     // ToDo: Можно добавить проверку наличия заставки
     // или что пользователь вышел из сеанса
     // ToDo: Можно добавить сравнение текущего снимка с последним
     // сохранённым и если они одинаковы, не сохранять текущий
-    if Timer1.Interval > LastInput then
+    if Timer.Interval > LastInput then
       MakeScreenshot;
   end
   else
     MakeScreenshot;
 end;
 
-function TForm1.get_timer_enabled: boolean;
+function TMainForm.get_timer_enabled: boolean;
 begin
-  Result := Timer1.Enabled;
+  Result := Timer.Enabled;
 end;
 
-procedure TForm1.set_timer_enabled(is_enabled: boolean);
+procedure TMainForm.set_timer_enabled(is_enabled: boolean);
 begin
-  Timer1.Enabled := is_enabled;
-  start_timer_btn.Enabled := not is_enabled;
-  stop_timer_btn.Enabled := is_enabled;
+  Timer.Enabled := is_enabled;
+  StartAutoCaptureButton.Enabled := not is_enabled;
+  StopAutoCaptureButton.Enabled := is_enabled;
 end;
 
-procedure TForm1.start_timer_btnClick(Sender: TObject);
+procedure TMainForm.StartAutoCaptureButtonClick(Sender: TObject);
 begin
   timer_enabled := True;
 end;
 
-procedure TForm1.stop_timer_btnClick(Sender: TObject);
+procedure TMainForm.StopAutoCaptureButtonClick(Sender: TObject);
 begin
   timer_enabled := False;
 end;
 
-procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   {CanClose := false;
   TrayIcon1.IconVisible := true;
   ShowWindow(Form1.Handle, SW_HIDE);    }
 end;
 
-procedure TForm1.TrayIcon1DblClick(Sender: TObject);
+procedure TMainForm.TrayIconDblClick(Sender: TObject);
 begin
-  TrayIcon1.IconVisible := False;
-  TrayIcon1.AppVisible := True;
-  TrayIcon1.FormVisible := True;
+  TrayIcon.IconVisible := False;
+  TrayIcon.AppVisible := True;
+  TrayIcon.FormVisible := True;
   Application.Restore;
   Application.BringToFront();
 end;
@@ -208,14 +208,14 @@ begin
   end;
 end;       }
 
-procedure TForm1.ApplicationMinimize(Sender: TObject);
+procedure TMainForm.ApplicationMinimize(Sender: TObject);
 begin
-  TrayIcon1.AppVisible := False;
-  TrayIcon1.FormVisible := False;
-  TrayIcon1.IconVisible := True;
+  TrayIcon.AppVisible := False;
+  TrayIcon.FormVisible := False;
+  TrayIcon.IconVisible := True;
 end;
 
-procedure TForm1.MakeScreenshot;
+procedure TMainForm.MakeScreenshot;
 var
   dirname, filename{, fullpath}: string;
   png: TPNGObject;
@@ -233,7 +233,7 @@ begin
   BitBlt(bmp.Canvas.Handle, 0,0, Screen.Width, Screen.Height,
            GetDC(0), 0,0,SRCCOPY);
 
-  if cbFormat.ItemIndex = Ord(fmtPNG) then
+  if ImageFormatComboBox.ItemIndex = Ord(fmtPNG) then
   begin                   // PNG
     PNG := TPNGObject.Create;
     try
@@ -245,12 +245,12 @@ begin
     end;
   end;
 
-  if cbFormat.ItemIndex = Ord(fmtJPG) then
+  if ImageFormatComboBox.ItemIndex = Ord(fmtJPG) then
   begin                 // JPG
     jpg := TJPEGImage.Create;
     try
       jpg.Assign(bmp);
-      jpg.CompressionQuality := spedJpgCompression.Value;
+      jpg.CompressionQuality := JPEGQualitySpinEdit.Value;
       jpg.Compress;
       jpg.SaveToFile(dirname + filename + '.jpg');
     finally
@@ -260,20 +260,20 @@ begin
   end;
 end;
 
-procedure TForm1.btnCaptureNowClick(Sender: TObject);
+procedure TMainForm.TakeScreenshotButtonClick(Sender: TObject);
 begin
   MakeScreenshot;
 end;
 
-procedure TForm1.spedJpgCompressionChange(Sender: TObject);
+procedure TMainForm.JPEGQualitySpinEditChange(Sender: TObject);
 begin
   try
-    ini.WriteInteger('main', 'JPEGQuality', spedJpgCompression.Value);
+    ini.WriteInteger('main', 'JPEGQuality', JPEGQualitySpinEdit.Value);
   finally
   end;
 end;
 
-function TForm1.getSaveDir: String;
+function TMainForm.getSaveDir: String;
 var
   dirname: string;
 begin
@@ -286,14 +286,14 @@ begin
   Result := dirname;
 end;
 
-procedure TForm1.btnOpenFolderClick(Sender: TObject);
+procedure TMainForm.OpenOutputDirButtonClick(Sender: TObject);
 begin
   ShellExecute(Handle, 'open', PChar(getSaveDir), nil, nil, SW_SHOWNORMAL);
 end;
 
-procedure TForm1.cbStopWhenInactiveClick(Sender: TObject);
+procedure TMainForm.StopWhenInactiveCheckBoxClick(Sender: TObject);
 begin
-  ini.WriteBool('main', 'StopWhenInactive', cbStopWhenInactive.Checked);
+  ini.WriteBool('main', 'StopWhenInactive', StopWhenInactiveCheckBox.Checked);
 end;
 
 // Функции/процедуры
@@ -307,14 +307,14 @@ begin
   Result := GetTickCount - LInput.dwTime;
 end;
 
-procedure TForm1.cbFormatChange(Sender: TObject);
+procedure TMainForm.ImageFormatComboBoxChange(Sender: TObject);
 var
   Format: TImageFormat;
 begin
-  Format := TImageFormat(cbFormat.ItemIndex);
-  spedJpgCompression.{Enabled}Visible := Format = fmtJPG;
-  lbJpegCompression.{Enabled}Visible := Format = fmtJPG;
-  Label4.{Enabled}Visible := Format = fmtJPG;
+  Format := TImageFormat(ImageFormatComboBox.ItemIndex);
+  JPEGQualitySpinEdit.{Enabled}Visible := Format = fmtJPG;
+  JPEGQualityLabel.{Enabled}Visible := Format = fmtJPG;
+  JPEGQualityPercentLabel.{Enabled}Visible := Format = fmtJPG;
 
   ini.WriteString('main', 'ImageFormat', ImageFormatNames[Format]);
 end;

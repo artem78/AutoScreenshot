@@ -1,4 +1,4 @@
-object Form1: TForm1
+object MainForm: TMainForm
   Left = 192
   Top = 124
   BorderIcons = [biSystemMenu, biMinimize]
@@ -56,7 +56,7 @@ object Form1: TForm1
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
+  object OutputDirLabel: TLabel
     Left = 83
     Top = 24
     Width = 118
@@ -64,7 +64,7 @@ object Form1: TForm1
     Alignment = taRightJustify
     Caption = #1055#1072#1087#1082#1072' '#1076#1083#1103' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1103':'
   end
-  object Label2: TLabel
+  object CaptureIntervalLabel: TLabel
     Left = 34
     Top = 53
     Width = 167
@@ -72,7 +72,7 @@ object Form1: TForm1
     Alignment = taRightJustify
     Caption = #1048#1085#1090#1077#1088#1074#1072#1083' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1103' '#1074' '#1084#1080#1085#1091#1090#1072#1093':'
   end
-  object Label3: TLabel
+  object ImageFormatLabel: TLabel
     Left = 156
     Top = 84
     Width = 45
@@ -80,7 +80,7 @@ object Form1: TForm1
     Alignment = taRightJustify
     Caption = #1060#1086#1088#1084#1072#1090':'
   end
-  object lbJpegCompression: TLabel
+  object JPEGQualityLabel: TLabel
     Left = 319
     Top = 85
     Width = 50
@@ -88,31 +88,31 @@ object Form1: TForm1
     Alignment = taRightJustify
     Caption = #1050#1072#1095#1077#1089#1090#1074#1086':'
   end
-  object Label4: TLabel
+  object JPEGQualityPercentLabel: TLabel
     Left = 440
     Top = 85
     Width = 8
     Height = 13
     Caption = '%'
   end
-  object savepath: TEdit
+  object OutputDirEdit: TEdit
     Left = 208
     Top = 20
     Width = 265
     Height = 21
     TabOrder = 0
-    OnChange = savepathChange
+    OnChange = OutputDirEditChange
   end
-  object savepath_btn: TButton
+  object ChooseOutputDirButton: TButton
     Left = 480
     Top = 16
     Width = 33
     Height = 25
     Caption = '...'
     TabOrder = 1
-    OnClick = savepath_btnClick
+    OnClick = ChooseOutputDirButtonClick
   end
-  object interval: TSpinEdit
+  object CaptureInterval: TSpinEdit
     Left = 208
     Top = 48
     Width = 57
@@ -121,18 +121,18 @@ object Form1: TForm1
     MinValue = 1
     TabOrder = 2
     Value = 1
-    OnChange = intervalChange
+    OnChange = CaptureIntervalChange
   end
-  object btnCaptureNow: TButton
+  object TakeScreenshotButton: TButton
     Left = 496
     Top = 164
     Width = 99
     Height = 25
     Caption = #1057#1076#1077#1083#1072#1090#1100' '#1089#1085#1080#1084#1086#1082
     TabOrder = 3
-    OnClick = btnCaptureNowClick
+    OnClick = TakeScreenshotButtonClick
   end
-  object spedJpgCompression: TSpinEdit
+  object JPEGQualitySpinEdit: TSpinEdit
     Left = 376
     Top = 80
     Width = 57
@@ -141,27 +141,27 @@ object Form1: TForm1
     MinValue = 0
     TabOrder = 4
     Value = 0
-    OnChange = spedJpgCompressionChange
+    OnChange = JPEGQualitySpinEditChange
   end
-  object btnOpenFolder: TButton
+  object OpenOutputDirButton: TButton
     Left = 520
     Top = 16
     Width = 97
     Height = 25
     Caption = #1054#1090#1082#1088#1099#1090#1100' '#1087#1072#1087#1082#1091
     TabOrder = 5
-    OnClick = btnOpenFolderClick
+    OnClick = OpenOutputDirButtonClick
   end
-  object cbStopWhenInactive: TCheckBox
+  object StopWhenInactiveCheckBox: TCheckBox
     Left = 208
     Top = 112
     Width = 289
     Height = 17
     Caption = #1053#1077' '#1076#1077#1083#1072#1090#1100' '#1089#1082#1088#1080#1085#1096#1086#1090#1099' '#1087#1088#1080' '#1073#1077#1079#1076#1077#1081#1089#1090#1074#1080#1080
     TabOrder = 6
-    OnClick = cbStopWhenInactiveClick
+    OnClick = StopWhenInactiveCheckBoxClick
   end
-  object cbFormat: TComboBox
+  object ImageFormatComboBox: TComboBox
     Left = 208
     Top = 80
     Width = 57
@@ -171,41 +171,41 @@ object Form1: TForm1
     DropDownCount = 10
     ItemHeight = 13
     TabOrder = 7
-    OnChange = cbFormatChange
+    OnChange = ImageFormatComboBoxChange
   end
-  object gbAutoCaptureControl: TGroupBox
+  object AutoCaptureControlGroup: TGroupBox
     Left = 208
     Top = 144
     Width = 233
     Height = 65
     Caption = #1040#1074#1090#1086#1079#1072#1093#1074#1072#1090
     TabOrder = 8
-    object start_timer_btn: TButton
+    object StartAutoCaptureButton: TButton
       Left = 24
       Top = 24
       Width = 75
       Height = 25
       Caption = #1042#1082#1083#1102#1095#1080#1090#1100
       TabOrder = 0
-      OnClick = start_timer_btnClick
+      OnClick = StartAutoCaptureButtonClick
     end
-    object stop_timer_btn: TButton
+    object StopAutoCaptureButton: TButton
       Left = 136
       Top = 24
       Width = 75
       Height = 25
       Caption = #1042#1099#1082#1083#1102#1095#1080#1090#1100
       TabOrder = 1
-      OnClick = stop_timer_btnClick
+      OnClick = StopAutoCaptureButtonClick
     end
   end
-  object Timer1: TTimer
+  object Timer: TTimer
     Enabled = False
-    OnTimer = Timer1Timer
+    OnTimer = TimerTimer
     Left = 16
     Top = 164
   end
-  object TrayIcon1: TTrayIcon
+  object TrayIcon: TTrayIcon
     Icon.Data = {
       0000010001001010000001002000680400001600000028000000100000002000
       0000010020000000000000040000120B0000120B000000000000000000000000
@@ -243,14 +243,14 @@ object Form1: TForm1
       000000000000000000000000000000000000000000000000000000000000FFFF
       0000FFFF00000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000000000000C3FF0000FFFF0000}
-    OnDblClick = TrayIcon1DblClick
+    OnDblClick = TrayIconDblClick
     IconVisible = False
     FormVisible = True
     AppVisible = True
     Left = 96
     Top = 164
   end
-  object XPManifest1: TXPManifest
+  object XPManifest: TXPManifest
     Left = 56
     Top = 164
   end
