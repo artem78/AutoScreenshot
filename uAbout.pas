@@ -4,15 +4,18 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls;
+  Dialogs, StdCtrls, ShellApi;
 
 type
   TAboutForm = class(TForm)
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
-    btnClose: TButton;
-    procedure btnCloseClick(Sender: TObject);
+    ProgramNameLabel: TLabel;
+    VersionLabel: TLabel;
+    AutorLabel: TLabel;
+    CloseButton: TButton;
+    LinkLabel: TLabel;
+    procedure CloseButtonClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure LinkLabelClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -25,10 +28,26 @@ var
 implementation
 
 {$R *.dfm}
+{$I version.inc}
 
-procedure TAboutForm.btnCloseClick(Sender: TObject);
+const
+  ProjectGitHubURL = 'https://github.com/artem78/AutoScreenshot';
+
+procedure TAboutForm.CloseButtonClick(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TAboutForm.FormCreate(Sender: TObject);
+begin
+  ProgramNameLabel.Caption := Application.Title;
+  VersionLabel.Caption := 'Версия: ' + ProgramVersion;
+  LinkLabel.Caption := ProjectGitHubURL;
+end;
+
+procedure TAboutForm.LinkLabelClick(Sender: TObject);
+begin
+  ShellExecute(handle, 'open', ProjectGitHubURL, nil, nil, SW_SHOW);
 end;
 
 end.
