@@ -239,7 +239,17 @@ end;
 
 procedure TMainForm.TakeScreenshotButtonClick(Sender: TObject);
 begin
-  MakeScreenshot;
+  Hide;
+  Sleep(2000); // Add some delay in order to window has time to hide
+  try
+    try
+      MakeScreenshot;
+      Sleep(1000);
+    finally
+      Show;
+    end;
+  except
+  end;
 end;
 
 procedure TMainForm.JPEGQualitySpinEditChange(Sender: TObject);
