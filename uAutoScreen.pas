@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, inifiles, Spin, FileCtrl, pngImage,
-  TrayIcon, XPMan, jpeg, ShellAPI;
+  TrayIcon, XPMan, jpeg, ShellAPI, Menus;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG);
@@ -30,6 +30,12 @@ type
     AutoCaptureControlGroup: TGroupBox;
     StartAutoCaptureButton: TButton;
     StopAutoCaptureButton: TButton;
+    TrayIconPopupMenu: TPopupMenu;
+    ExitTrayMenuItem: TMenuItem;
+    TakeScreenshotTrayMenuItem: TMenuItem;
+    RestoreWindowTrayMenuItem: TMenuItem;
+    ToggleAutoCaptureTrayMenuItem: TMenuItem;
+    SeparatorTrayMenuItem: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -39,18 +45,23 @@ type
     procedure ApplicationMinimize(Sender: TObject);
     procedure StartAutoCaptureButtonClick(Sender: TObject);
     procedure StopAutoCaptureButtonClick(Sender: TObject);
-    procedure TrayIconDblClick(Sender: TObject);
     procedure TakeScreenshotButtonClick(Sender: TObject);
     procedure JPEGQualitySpinEditChange(Sender: TObject);
     procedure OpenOutputDirButtonClick(Sender: TObject);
     procedure StopWhenInactiveCheckBoxClick(Sender: TObject);
     procedure ImageFormatComboBoxChange(Sender: TObject);
+    procedure ToggleAutoCaptureTrayMenuItemClick(Sender: TObject);
+    procedure RestoreWindowTrayMenuItemClick(Sender: TObject);
+    procedure TakeScreenshotTrayMenuItemClick(Sender: TObject);
+    procedure ExitTrayMenuItemClick(Sender: TObject);
   private
     { Private declarations }
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
     function GetFinalOutputDir: String;
     procedure MakeScreenshot;
+    procedure MinimizeToTray;
+    procedure RestoreFromTray;
 
     // ToDo: Why this do not work?
     //    property IsTimerEnabled: Boolean read Timer.Enabled write SetTimerEnabled;
@@ -164,6 +175,8 @@ begin
   Timer.Enabled := IsEnabled;
   StartAutoCaptureButton.Enabled := not IsEnabled;
   StopAutoCaptureButton.Enabled := IsEnabled;
+  // Tray menu
+  ToggleAutoCaptureTrayMenuItem.Checked := IsEnabled;
 end;
 
 procedure TMainForm.StartAutoCaptureButtonClick(Sender: TObject);
@@ -176,20 +189,9 @@ begin
   IsTimerEnabled := False;
 end;
 
-procedure TMainForm.TrayIconDblClick(Sender: TObject);
-begin
-  TrayIcon.IconVisible := False;
-  TrayIcon.AppVisible := True;
-  TrayIcon.FormVisible := True;
-  Application.Restore;
-  Application.BringToFront();
-end;
-
 procedure TMainForm.ApplicationMinimize(Sender: TObject);
 begin
-  TrayIcon.AppVisible := False;
-  TrayIcon.FormVisible := False;
-  TrayIcon.IconVisible := True;
+  MinimizeToTray;
 end;
 
 procedure TMainForm.MakeScreenshot;
@@ -304,6 +306,43 @@ begin
   JPEGQualityPercentLabel.{Enabled}Visible := Format = fmtJPG;
 
   ini.WriteString('main', 'ImageFormat', ImageFormatNames[Format]);
+end;
+
+procedure TMainForm.ToggleAutoCaptureTrayMenuItemClick(Sender: TObject);
+begin
+  IsTimerEnabled := not IsTimerEnabled;
+end;
+
+procedure TMainForm.RestoreWindowTrayMenuItemClick(Sender: TObject);
+begin
+  RestoreFromTray;
+end;
+
+procedure TMainForm.TakeScreenshotTrayMenuItemClick(Sender: TObject);
+begin
+  Sleep(2000); // Add some delay before capture
+  MakeScreenshot;
+end;
+
+procedure TMainForm.ExitTrayMenuItemClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TMainForm.MinimizeToTray;
+begin
+  TrayIcon.AppVisible := False;
+  TrayIcon.FormVisible := False;
+  TrayIcon.IconVisible := True;
+end;
+
+procedure TMainForm.RestoreFromTray;
+begin
+  TrayIcon.IconVisible := False;
+  TrayIcon.AppVisible := True;
+  TrayIcon.FormVisible := True;
+  Application.Restore;
+  Application.BringToFront();
 end;
 
 end.

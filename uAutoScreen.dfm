@@ -242,7 +242,7 @@ object MainForm: TMainForm
       000000000000000000000000000000000000000000000000000000000000FFFF
       0000FFFF00000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000000000000C3FF0000FFFF0000}
-    OnDblClick = TrayIconDblClick
+    PopupMenu = TrayIconPopupMenu
     IconVisible = False
     FormVisible = True
     AppVisible = True
@@ -252,5 +252,29 @@ object MainForm: TMainForm
   object XPManifest: TXPManifest
     Left = 56
     Top = 164
+  end
+  object TrayIconPopupMenu: TPopupMenu
+    Left = 136
+    Top = 160
+    object RestoreWindowTrayMenuItem: TMenuItem
+      Caption = #1042#1086#1089#1089#1090#1072#1085#1086#1074#1080#1090#1100
+      Default = True
+      OnClick = RestoreWindowTrayMenuItemClick
+    end
+    object ToggleAutoCaptureTrayMenuItem: TMenuItem
+      Caption = #1042#1082#1083#1102#1095#1080#1090#1100' '#1072#1074#1090#1086#1079#1072#1093#1074#1072#1090
+      OnClick = ToggleAutoCaptureTrayMenuItemClick
+    end
+    object TakeScreenshotTrayMenuItem: TMenuItem
+      Caption = #1057#1076#1077#1083#1072#1090#1100' '#1089#1085#1080#1084#1086#1082
+      OnClick = TakeScreenshotTrayMenuItemClick
+    end
+    object SeparatorTrayMenuItem: TMenuItem
+      Caption = '-'
+    end
+    object ExitTrayMenuItem: TMenuItem
+      Caption = #1042#1099#1093#1086#1076
+      OnClick = ExitTrayMenuItemClick
+    end
   end
 end
