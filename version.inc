@@ -1,2 +1,2 @@
 const
-  ProgramVersion = '0.0.0.0';
+  ProgramVersion = '1.0';
