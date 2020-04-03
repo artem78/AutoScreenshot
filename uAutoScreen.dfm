@@ -123,8 +123,8 @@ object MainForm: TMainForm
     OnChange = CaptureIntervalChange
   end
   object TakeScreenshotButton: TButton
-    Left = 496
-    Top = 164
+    Left = 48
+    Top = 172
     Width = 99
     Height = 25
     Caption = 'Take screenshot'
@@ -212,7 +212,7 @@ object MainForm: TMainForm
   end
   object AboutButton: TButton
     Left = 520
-    Top = 128
+    Top = 168
     Width = 97
     Height = 25
     Caption = 'About'
@@ -223,7 +223,7 @@ object MainForm: TMainForm
     Enabled = False
     OnTimer = TimerTimer
     Left = 16
-    Top = 164
+    Top = 124
   end
   object TrayIcon: TTrayIcon
     Icon.Data = {
@@ -268,15 +268,15 @@ object MainForm: TMainForm
     FormVisible = True
     AppVisible = True
     Left = 96
-    Top = 164
+    Top = 124
   end
   object XPManifest: TXPManifest
     Left = 56
-    Top = 164
+    Top = 124
   end
   object TrayIconPopupMenu: TPopupMenu
     Left = 136
-    Top = 160
+    Top = 120
     object RestoreWindowTrayMenuItem: TMenuItem
       Caption = #1042#1086#1089#1089#1090#1072#1085#1086#1074#1080#1090#1100
       Default = True
