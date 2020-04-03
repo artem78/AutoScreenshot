@@ -1,4 +1,4 @@
-[![Русский](images/russian_icon.png)](docs/README-ru.md")
+[![Русский](images/russian_icon.png)](README-ru.md)
 
 Auto Screenshot
 ===============
