@@ -1,8 +1,22 @@
+[![Русский](images/russian_icon.png)](docs/README-ru.md")
+
 Auto Screenshot
 ===============
 
-Автоматически создаёт скриншоты экрана через заданный период времени.
+This tool takes capture of the screen every X minutes.
 
+## Screenshots
 ![](images/main_window.png)
 
-Скачать для Windows можно [отсюда](https://yadi.sk/d/TAF6chD9j15Xsg).
+## Localization
+* English
+* Russian
+
+## Download
+You can download build for Windows from release page: [https://github.com/artem78/AutoScreenshot/releases](https://github.com/artem78/AutoScreenshot/releases)
+
+## License
+GNU General Public License v3.0
+
+## Author
+Artem78
