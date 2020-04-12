@@ -37,10 +37,11 @@ type
     TakeScreenshotTrayMenuItem: TMenuItem;
     RestoreWindowTrayMenuItem: TMenuItem;
     ToggleAutoCaptureTrayMenuItem: TMenuItem;
-    SeparatorTrayMenuItem: TMenuItem;
+    Separator2TrayMenuItem: TMenuItem;
     AboutButton: TButton;
     StartCaptureOnStartUpCheckBox: TCheckBox;
     StartMinimizedCheckBox: TCheckBox;
+    Separator1TrayMenuItem: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);

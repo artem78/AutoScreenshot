@@ -300,6 +300,9 @@ object MainForm: TMainForm
       Default = True
       OnClick = RestoreWindowTrayMenuItemClick
     end
+    object Separator1TrayMenuItem: TMenuItem
+      Caption = '-'
+    end
     object ToggleAutoCaptureTrayMenuItem: TMenuItem
       Caption = 'Enable automatic capture'
       OnClick = ToggleAutoCaptureTrayMenuItemClick
@@ -308,7 +311,7 @@ object MainForm: TMainForm
       Caption = 'Take screenshot'
       OnClick = TakeScreenshotTrayMenuItemClick
     end
-    object SeparatorTrayMenuItem: TMenuItem
+    object Separator2TrayMenuItem: TMenuItem
       Caption = '-'
     end
     object ExitTrayMenuItem: TMenuItem
