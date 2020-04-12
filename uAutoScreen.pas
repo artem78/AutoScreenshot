@@ -39,6 +39,7 @@ type
     ToggleAutoCaptureTrayMenuItem: TMenuItem;
     SeparatorTrayMenuItem: TMenuItem;
     AboutButton: TButton;
+    StartCaptureOnStartUpCheckBox: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -59,6 +60,7 @@ type
     procedure ExitTrayMenuItemClick(Sender: TObject);
     procedure AboutButtonClick(Sender: TObject);
     procedure LanguageRadioGroupClick(Sender: TObject);
+    procedure StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
@@ -142,7 +144,9 @@ begin
   SetLanguage(LangId);
 
   Timer.Interval := CaptureInterval.Value * 60 * 1000;
-  IsTimerEnabled := False;
+  StartCaptureOnStartUpCheckBox.Checked :=
+      ini.ReadBool('main', 'StartCaptureOnStartUp', {True} False);
+  IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -414,6 +418,12 @@ begin
   StopAutoCaptureButton.Caption := I18N('StopCapture');
   TakeScreenshotButton.Caption := I18N('TakeScreenshot');
   AboutButton.Caption := I18N('About');
+  StartCaptureOnStartUpCheckBox.Caption := I18N('StartCaptureOnStartUp');
+end;
+
+procedure TMainForm.StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
+begin
+  ini.WriteBool('main', 'StartCaptureOnStartUp', StartCaptureOnStartUpCheckBox.Checked);
 end;
 
 end.

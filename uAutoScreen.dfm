@@ -4,7 +4,7 @@ object MainForm: TMainForm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Auto Screenshot'
-  ClientHeight = 221
+  ClientHeight = 270
   ClientWidth = 633
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -124,7 +124,7 @@ object MainForm: TMainForm
   end
   object TakeScreenshotButton: TButton
     Left = 48
-    Top = 172
+    Top = 220
     Width = 99
     Height = 25
     Caption = 'Take screenshot'
@@ -186,7 +186,7 @@ object MainForm: TMainForm
   end
   object AutoCaptureControlGroup: TGroupBox
     Left = 208
-    Top = 144
+    Top = 192
     Width = 233
     Height = 65
     Caption = 'Automatic capture'
@@ -212,12 +212,21 @@ object MainForm: TMainForm
   end
   object AboutButton: TButton
     Left = 520
-    Top = 168
+    Top = 216
     Width = 97
     Height = 25
     Caption = 'About'
     TabOrder = 9
     OnClick = AboutButtonClick
+  end
+  object StartCaptureOnStartUpCheckBox: TCheckBox
+    Left = 208
+    Top = 136
+    Width = 265
+    Height = 17
+    Caption = 'Start auto capture when program starts'
+    TabOrder = 11
+    OnClick = StartCaptureOnStartUpCheckBoxClick
   end
   object Timer: TTimer
     Enabled = False
