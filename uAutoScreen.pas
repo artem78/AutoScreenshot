@@ -40,6 +40,7 @@ type
     SeparatorTrayMenuItem: TMenuItem;
     AboutButton: TButton;
     StartCaptureOnStartUpCheckBox: TCheckBox;
+    StartMinimizedCheckBox: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -61,6 +62,7 @@ type
     procedure AboutButtonClick(Sender: TObject);
     procedure LanguageRadioGroupClick(Sender: TObject);
     procedure StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
+    procedure StartMinimizedCheckBoxClick(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
@@ -147,6 +149,14 @@ begin
   StartCaptureOnStartUpCheckBox.Checked :=
       ini.ReadBool('main', 'StartCaptureOnStartUp', {True} False);
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
+
+  if ini.ReadBool('main', 'StartMinimized', False) then
+  begin
+    StartMinimizedCheckBox.Checked := True;
+    MinimizeToTray;
+  end
+  else
+    RestoreFromTray;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -419,11 +429,17 @@ begin
   TakeScreenshotButton.Caption := I18N('TakeScreenshot');
   AboutButton.Caption := I18N('About');
   StartCaptureOnStartUpCheckBox.Caption := I18N('StartCaptureOnStartUp');
+  StartMinimizedCheckBox.Caption := I18N('StartMinimized');
 end;
 
 procedure TMainForm.StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
 begin
   ini.WriteBool('main', 'StartCaptureOnStartUp', StartCaptureOnStartUpCheckBox.Checked);
+end;
+
+procedure TMainForm.StartMinimizedCheckBoxClick(Sender: TObject);
+begin
+  ini.WriteBool('main', 'StartMinimized', StartMinimizedCheckBox.Checked);
 end;
 
 end.
