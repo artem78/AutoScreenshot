@@ -430,6 +430,12 @@ begin
   AboutButton.Caption := I18N('About');
   StartCaptureOnStartUpCheckBox.Caption := I18N('StartCaptureOnStartUp');
   StartMinimizedCheckBox.Caption := I18N('StartMinimized');
+
+  // Tray icon
+  RestoreWindowTrayMenuItem.Caption := I18N('Restore');
+  ToggleAutoCaptureTrayMenuItem.Caption := I18N('EnableAutoCapture');
+  TakeScreenshotTrayMenuItem.Caption := I18N('TakeScreenshot');
+  ExitTrayMenuItem.Caption := I18N('Exit');
 end;
 
 procedure TMainForm.StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
