@@ -1,5 +1,23 @@
 @echo off
 
+REM ******************************************************
+REM *                                                    *
+REM *           Batch file for creating ZIP              *
+REM *                                                    *
+REM * Note:                                              *
+REM *    Before run this bat file you need to manually   *
+REM *    compile executable using delphi 7 ide           *
+REM *    (not tested with older versions).               *
+REM *                                                    *
+REM * Note 2:                                            *
+REM *    This tool used 7Zip, so first you need to       *
+REM *    install it (visit https://www.7-zip.org/) and   *
+REM *    provide path to your "7z.exe" in "SevenZipPath" *
+REM *    variable.                                       *
+REM *                                                    *
+REM ******************************************************
+
+
 REM ***  Set variables ***
 REM Path to 7Zip archiver
 set SevenZipPath="C:\Program Files (x86)\7-Zip\7z.exe"
