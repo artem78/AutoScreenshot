@@ -243,6 +243,7 @@ var
   png: TPNGObject;
   bmp:TBitmap;
   jpg: TJPEGImage;
+  ScreenDC: HDC;
 begin
   DateTimeToString(filename, 'yyyy-mm-dd hh.mm.ss', Now());
 
@@ -252,8 +253,10 @@ begin
   bmp := TBitmap.Create;
   bmp.Width := Screen.Width;
   bmp.Height := Screen.Height;
+  ScreenDC := GetDC(0);
   BitBlt(bmp.Canvas.Handle, 0,0, Screen.Width, Screen.Height,
-           GetDC(0), 0,0,SRCCOPY);
+           ScreenDC, 0,0,SRCCOPY);
+  ReleaseDC(0, ScreenDC);
 
   if ImageFormatComboBox.ItemIndex = Ord(fmtPNG) then
   begin                   // PNG
