@@ -61,7 +61,7 @@ echo.
 
 REM Pack to ZIP archive
 echo Pack all files to ZIP archive...
-%SevenZipPath% a -tzip build\autoscreen_%ProgramVersion%.zip .\build\*
+%SevenZipPath% a -tzip build\autoscreenshot_%ProgramVersion%.zip .\build\*
 echo Done!
 
 echo.
