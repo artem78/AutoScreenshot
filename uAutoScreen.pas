@@ -91,10 +91,11 @@ type
 const
   ImageFormatNames: array [TImageFormat] of String = ('PNG', 'JPG');
   LanguageCodes: array [TLanguage] of String = ('en', 'ru');
+  DefaultConfigIniSection = 'main';
 
 var
   MainForm: TMainForm;
-  ini: TIniFile;
+  Ini: TIniFile;
 
 implementation
 
@@ -114,12 +115,12 @@ begin
   for Fmt := Low(TImageFormat) to High(TImageFormat) do
     ImageFormatComboBox.Items.Append(ImageFormatNames[Fmt]);
 
-  ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
+  Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
 
-  OutputDirEdit.Text := ini.ReadString('main', 'OutputDir', ExtractFilePath(Application.ExeName));
-  CaptureInterval.Value := ini.ReadInteger('main', 'CaptureInterval', 5);
-  StopWhenInactiveCheckBox.Checked := ini.ReadBool('main', 'StopWhenInactive', False);
-  FmtStr := ini.ReadString('main', 'ImageFormat', ImageFormatNames[fmtPNG]);
+  OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', ExtractFilePath(Application.ExeName));
+  CaptureInterval.Value := Ini.ReadInteger(DefaultConfigIniSection, 'CaptureInterval', 5);
+  StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
+  FmtStr := Ini.ReadString(DefaultConfigIniSection, 'ImageFormat', ImageFormatNames[fmtPNG]);
   for Fmt := Low(TImageFormat) to High(TImageFormat) do
   begin
     if ImageFormatNames[Fmt] = FmtStr then
@@ -130,11 +131,11 @@ begin
   end;
   JPEGQualitySpinEdit.MinValue := Low(TJPEGQualityRange);
   JPEGQualitySpinEdit.MaxValue := High(TJPEGQualityRange);
-  JPEGQualitySpinEdit.Value := ini.ReadInteger('main', 'JPEGQuality', 80);
+  JPEGQualitySpinEdit.Value := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', 80);
   ImageFormatComboBox.OnChange(ImageFormatComboBox);
 
   // Language
-  LangCode := ini.ReadString('main', 'language', 'en');
+  LangCode := Ini.ReadString(DefaultConfigIniSection, 'language', 'en');
   LangId := lngEnglish;
   for I := Low(TLanguage) to High(TLanguage) do
   begin
@@ -148,10 +149,10 @@ begin
 
   Timer.Interval := CaptureInterval.Value * 60 * 1000;
   StartCaptureOnStartUpCheckBox.Checked :=
-      ini.ReadBool('main', 'StartCaptureOnStartUp', {True} False);
+      Ini.ReadBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', {True} False);
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
 
-  if ini.ReadBool('main', 'StartMinimized', False) then
+  if Ini.ReadBool(DefaultConfigIniSection, 'StartMinimized', False) then
   begin
     StartMinimizedCheckBox.Checked := True;
     MinimizeToTray;
@@ -162,31 +163,31 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-  ini.Free;
+  Ini.Free;
 end;
 
 procedure TMainForm.ChooseOutputDirButtonClick(Sender: TObject);
 var
-  dir: string;
+  Dir: String;
 begin
-  dir := OutputDirEdit.Text;
+  Dir := OutputDirEdit.Text;
 
-  if SelectDirectory(I18N('SelectOutputDirectory'), '' {savepath.Text}, dir) then
+  if SelectDirectory(I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
   //if SelectDirectory(dir, [sdAllowCreate, sdPerformCreate], 0) then
   begin
-    OutputDirEdit.Text := dir;
-    ini.WriteString('main', 'OutputDir', dir);
+    OutputDirEdit.Text := Dir;
+    Ini.WriteString(DefaultConfigIniSection, 'OutputDir', Dir);
   end;
 end;
 
 procedure TMainForm.OutputDirEditChange(Sender: TObject);
 begin
-    ini.WriteString('main', 'OutputDir', OutputDirEdit.Text);
+    Ini.WriteString(DefaultConfigIniSection, 'OutputDir', OutputDirEdit.Text);
 end;
 
 procedure TMainForm.CaptureIntervalChange(Sender: TObject);
 begin
-  ini.WriteInteger('main', 'CaptureInterval', CaptureInterval.Value);
+  Ini.WriteInteger(DefaultConfigIniSection, 'CaptureInterval', CaptureInterval.Value);
   Timer.Interval := CaptureInterval.Value * 60 * 1000;
 end;
 
@@ -196,11 +197,13 @@ procedure TMainForm.TimerTimer(Sender: TObject);
 begin
   if StopWhenInactiveCheckBox.Checked then
   begin
-    // Не сохранять скриншот при бездействии пользователя
-    // ToDo: Можно добавить проверку наличия заставки
-    // или что пользователь вышел из сеанса
-    // ToDo: Можно добавить сравнение текущего снимка с последним
-    // сохранённым и если они одинаковы, не сохранять текущий
+    // Skip taking screenshot if there are no user activity
+    // for autocapture interval minutes
+
+    // ToDo: May add check for screensaver active
+    // or user logged off from the session
+    // ToDo: May add comparision of current screenshot with the last one,
+    // and if they equal, do not save current
     if Timer.Interval > LastInput then
       MakeScreenshot;
   end
@@ -239,49 +242,52 @@ end;
 
 procedure TMainForm.MakeScreenshot;
 var
-  dirname, filename{, fullpath}: string;
-  png: TPNGObject;
-  bmp:TBitmap;
-  jpg: TJPEGImage;
+  DirName, FileName: String;
+  Bitmap: TBitmap;
+  PNG: TPNGObject;
+  JPG: TJPEGImage;
   ScreenDC: HDC;
 begin
-  DateTimeToString(filename, 'yyyy-mm-dd hh.mm.ss', Now());
+  DateTimeToString(FileName, 'yyyy-mm-dd hh.mm.ss', Now());
 
-  dirname := FinalOutputDir;
+  DirName := FinalOutputDir;
 
-
-  bmp := TBitmap.Create;
-  bmp.Width := Screen.Width;
-  bmp.Height := Screen.Height;
+  Bitmap := TBitmap.Create;
+  Bitmap.Width := Screen.Width;
+  Bitmap.Height := Screen.Height;
   ScreenDC := GetDC(0);
-  BitBlt(bmp.Canvas.Handle, 0,0, Screen.Width, Screen.Height,
-           ScreenDC, 0,0,SRCCOPY);
+  BitBlt(Bitmap.Canvas.Handle, 0, 0, Screen.Width, Screen.Height,
+           ScreenDC, 0, 0, SRCCOPY);
   ReleaseDC(0, ScreenDC);
 
-  if ImageFormatComboBox.ItemIndex = Ord(fmtPNG) then
-  begin                   // PNG
-    PNG := TPNGObject.Create;
-    try
-      PNG.Assign(bmp);
-      PNG.SaveToFile(dirname + filename + '.png');
-    finally
-      bmp.Free;
-      PNG.Free;
-    end;
-  end;
+  try
+    case TImageFormat(ImageFormatComboBox.ItemIndex) of
+      fmtPNG:      // PNG
+        begin
+          PNG := TPNGObject.Create;
+          try
+            PNG.Assign(Bitmap);
+            PNG.SaveToFile(DirName + FileName + '.png');
+          finally
+            PNG.Free;
+          end;
+        end;
 
-  if ImageFormatComboBox.ItemIndex = Ord(fmtJPG) then
-  begin                 // JPG
-    jpg := TJPEGImage.Create;
-    try
-      jpg.Assign(bmp);
-      jpg.CompressionQuality := JPEGQualitySpinEdit.Value;
-      jpg.Compress;
-      jpg.SaveToFile(dirname + filename + '.jpg');
-    finally
-      jpg.Free;
-      bmp.Free;
+      fmtJPG:     // JPEG
+        begin
+          JPG := TJPEGImage.Create;
+          try
+            JPG.Assign(Bitmap);
+            JPG.CompressionQuality := JPEGQualitySpinEdit.Value;
+            JPG.Compress;
+            JPG.SaveToFile(DirName + FileName + '.jpg');
+          finally
+            JPG.Free;
+          end;
+        end;
     end;
+  finally
+    Bitmap.Free;
   end;
 end;
 
@@ -303,22 +309,22 @@ end;
 procedure TMainForm.JPEGQualitySpinEditChange(Sender: TObject);
 begin
   try
-    ini.WriteInteger('main', 'JPEGQuality', JPEGQualitySpinEdit.Value);
+    Ini.WriteInteger(DefaultConfigIniSection, 'JPEGQuality', JPEGQualitySpinEdit.Value);
   finally
   end;
 end;
 
 function TMainForm.GetFinalOutputDir: String;
 var
-  dirname: string;
+  DirName: String;
 begin
-  DateTimeToString(dirname, 'yyyy-mm-dd', Now());
+  DateTimeToString(DirName, 'yyyy-mm-dd', Now());
 
-  dirname := IncludeTrailingPathDelimiter(ini.ReadString('main', 'OutputDir', '')) + dirname + '\';
-  if not DirectoryExists(dirname) then
-    CreateDir(dirname);
+  DirName := IncludeTrailingPathDelimiter(Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '')) + dirname + '\';
+  if not DirectoryExists(DirName) then
+    CreateDir(DirName);
 
-  Result := dirname;
+  Result := DirName;
 end;
 
 procedure TMainForm.OpenOutputDirButtonClick(Sender: TObject);
@@ -328,11 +334,11 @@ end;
 
 procedure TMainForm.StopWhenInactiveCheckBoxClick(Sender: TObject);
 begin
-  ini.WriteBool('main', 'StopWhenInactive', StopWhenInactiveCheckBox.Checked);
+  Ini.WriteBool(DefaultConfigIniSection, 'StopWhenInactive', StopWhenInactiveCheckBox.Checked);
 end;
 
-// Функции/процедуры
-
+// Retrieves the time (in ms) of the last input event (mouse moved or key pressed).
+// Also works if current application window has no focus (hidden or minimized).
 function LastInput: DWord;
 var
   LInput: TLastInputInfo;
@@ -351,7 +357,7 @@ begin
   JPEGQualityLabel.{Enabled}Visible := Format = fmtJPG;
   JPEGQualityPercentLabel.{Enabled}Visible := Format = fmtJPG;
 
-  ini.WriteString('main', 'ImageFormat', ImageFormatNames[Format]);
+  Ini.WriteString(DefaultConfigIniSection, 'ImageFormat', ImageFormatNames[Format]);
 end;
 
 procedure TMainForm.ToggleAutoCaptureTrayMenuItemClick(Sender: TObject);
@@ -410,7 +416,7 @@ begin
     Exit;}
 
   FLanguage := Lang;
-  ini.WriteString('main', 'language', LanguageCodes[Lang]);
+  Ini.WriteString(DefaultConfigIniSection, 'language', LanguageCodes[Lang]);
   LanguageRadioGroup.ItemIndex := Ord(Lang);
   I18NSetLang(LanguageCodes[Lang]);
   TranslateForm;
@@ -444,12 +450,12 @@ end;
 
 procedure TMainForm.StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
 begin
-  ini.WriteBool('main', 'StartCaptureOnStartUp', StartCaptureOnStartUpCheckBox.Checked);
+  Ini.WriteBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', StartCaptureOnStartUpCheckBox.Checked);
 end;
 
 procedure TMainForm.StartMinimizedCheckBoxClick(Sender: TObject);
 begin
-  ini.WriteBool('main', 'StartMinimized', StartMinimizedCheckBox.Checked);
+  Ini.WriteBool(DefaultConfigIniSection, 'StartMinimized', StartMinimizedCheckBox.Checked);
 end;
 
 end.
