@@ -322,7 +322,10 @@ begin
 
   DirName := IncludeTrailingPathDelimiter(Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '')) + dirname + '\';
   if not DirectoryExists(DirName) then
-    CreateDir(DirName);
+  begin
+    if not ForceDirectories(DirName) then
+      RaiseLastOSError;
+  end;
 
   Result := DirName;
 end;
