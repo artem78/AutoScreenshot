@@ -248,7 +248,7 @@ var
   JPG: TJPEGImage;
   ScreenDC: HDC;
 begin
-  DateTimeToString(FileName, 'yyyy-mm-dd hh.mm.ss', Now());
+  DateTimeToString(FileName, 'yyyy-mm-dd hh.nn.ss', Now());
 
   DirName := FinalOutputDir;
 
