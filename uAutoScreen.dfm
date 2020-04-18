@@ -4,7 +4,7 @@ object MainForm: TMainForm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Auto Screenshot'
-  ClientHeight = 288
+  ClientHeight = 314
   ClientWidth = 633
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -65,7 +65,7 @@ object MainForm: TMainForm
   end
   object CaptureIntervalLabel: TLabel
     Left = 78
-    Top = 53
+    Top = 77
     Width = 123
     Height = 13
     Alignment = taRightJustify
@@ -73,7 +73,7 @@ object MainForm: TMainForm
   end
   object ImageFormatLabel: TLabel
     Left = 166
-    Top = 84
+    Top = 108
     Width = 35
     Height = 13
     Alignment = taRightJustify
@@ -81,7 +81,7 @@ object MainForm: TMainForm
   end
   object JPEGQualityLabel: TLabel
     Left = 306
-    Top = 85
+    Top = 109
     Width = 63
     Height = 13
     Alignment = taRightJustify
@@ -89,10 +89,18 @@ object MainForm: TMainForm
   end
   object JPEGQualityPercentLabel: TLabel
     Left = 440
-    Top = 85
+    Top = 109
     Width = 8
     Height = 13
     Caption = '%'
+  end
+  object PathTemplateLabel: TLabel
+    Left = 42
+    Top = 50
+    Width = 159
+    Height = 13
+    Alignment = taRightJustify
+    Caption = 'Path template (without extension):'
   end
   object OutputDirEdit: TEdit
     Left = 208
@@ -113,7 +121,7 @@ object MainForm: TMainForm
   end
   object CaptureInterval: TSpinEdit
     Left = 208
-    Top = 48
+    Top = 72
     Width = 57
     Height = 22
     MaxValue = 99999
@@ -124,7 +132,7 @@ object MainForm: TMainForm
   end
   object TakeScreenshotButton: TButton
     Left = 48
-    Top = 236
+    Top = 260
     Width = 99
     Height = 25
     Caption = 'Take screenshot'
@@ -133,7 +141,7 @@ object MainForm: TMainForm
   end
   object JPEGQualitySpinEdit: TSpinEdit
     Left = 376
-    Top = 80
+    Top = 104
     Width = 57
     Height = 22
     MaxValue = 100
@@ -153,7 +161,7 @@ object MainForm: TMainForm
   end
   object StopWhenInactiveCheckBox: TCheckBox
     Left = 208
-    Top = 112
+    Top = 136
     Width = 257
     Height = 17
     Caption = 'Pause taking screenshots while idle'
@@ -162,7 +170,7 @@ object MainForm: TMainForm
   end
   object LanguageRadioGroup: TRadioGroup
     Left = 480
-    Top = 56
+    Top = 80
     Width = 137
     Height = 57
     Caption = 'Language'
@@ -174,7 +182,7 @@ object MainForm: TMainForm
   end
   object ImageFormatComboBox: TComboBox
     Left = 208
-    Top = 80
+    Top = 104
     Width = 57
     Height = 21
     AutoComplete = False
@@ -186,7 +194,7 @@ object MainForm: TMainForm
   end
   object AutoCaptureControlGroup: TGroupBox
     Left = 208
-    Top = 208
+    Top = 232
     Width = 233
     Height = 65
     Caption = 'Automatic capture'
@@ -212,7 +220,7 @@ object MainForm: TMainForm
   end
   object AboutButton: TButton
     Left = 520
-    Top = 232
+    Top = 256
     Width = 97
     Height = 25
     Caption = 'About'
@@ -221,7 +229,7 @@ object MainForm: TMainForm
   end
   object StartCaptureOnStartUpCheckBox: TCheckBox
     Left = 208
-    Top = 136
+    Top = 160
     Width = 265
     Height = 17
     Caption = 'Start auto capture when program starts'
@@ -230,12 +238,20 @@ object MainForm: TMainForm
   end
   object StartMinimizedCheckBox: TCheckBox
     Left = 208
-    Top = 160
+    Top = 184
     Width = 265
     Height = 17
     Caption = 'Start minimized to tray'
     TabOrder = 12
     OnClick = StartMinimizedCheckBoxClick
+  end
+  object PathTemplateEdit: TEdit
+    Left = 208
+    Top = 46
+    Width = 265
+    Height = 21
+    TabOrder = 13
+    OnChange = PathTemplateEditChange
   end
   object Timer: TTimer
     Enabled = False
