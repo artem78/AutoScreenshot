@@ -121,7 +121,7 @@ begin
   Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
 
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', ExtractFilePath(Application.ExeName));
-  PathTemplateEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'PathTemplate', 'yyyy-mm-dd\yyyy-mm-dd hh.nn.ss');
+  PathTemplateEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'PathTemplate', '%Y-%M-%D\%Y-%M-%D %H.%N.%S');
   CaptureInterval.Value := Ini.ReadInteger(DefaultConfigIniSection, 'CaptureInterval', 5);
   StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
   FmtStr := Ini.ReadString(DefaultConfigIniSection, 'ImageFormat', ImageFormatNames[fmtPNG]);
@@ -251,7 +251,7 @@ var
   ScreenDC: HDC;
 begin
   FileName := ExtractFileName(PathTemplateEdit.Text);
-  DateTimeToString(FileName, FileName, Now());
+  FileName := FormatPath(FileName);
 
   DirName := FinalOutputDir;
 
@@ -322,7 +322,7 @@ var
   DirName: String;
 begin
   DirName := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'PathTemplate', '')} PathTemplateEdit.Text);
-  DateTimeToString(DirName, DirName, Now());
+  DirName := FormatPath(DirName);
 
   DirName := IncludeTrailingPathDelimiter(Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '')) + DirName + '\';
   if not DirectoryExists(DirName) then
