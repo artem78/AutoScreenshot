@@ -4,7 +4,8 @@ uses
   Forms,
   uAutoScreen in 'uAutoScreen.pas' {MainForm},
   uAbout in 'uAbout.pas' {AboutForm},
-  uLocalization in 'uLocalization.pas';
+  uLocalization in 'uLocalization.pas',
+  uUtils in 'uUtils.pas';
 
 {$R *.res}
 

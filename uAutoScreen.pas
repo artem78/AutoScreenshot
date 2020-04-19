@@ -99,7 +99,7 @@ var
 
 implementation
 
-uses uAbout{, DateUtils}, uLocalization;
+uses uAbout{, DateUtils}, uLocalization, uUtils;
 
 {$R *.dfm}
 
@@ -190,8 +190,6 @@ begin
   Ini.WriteInteger(DefaultConfigIniSection, 'CaptureInterval', CaptureInterval.Value);
   Timer.Interval := CaptureInterval.Value * 60 * 1000;
 end;
-
-function LastInput: DWord; forward;
 
 procedure TMainForm.TimerTimer(Sender: TObject);
 begin
@@ -338,17 +336,6 @@ end;
 procedure TMainForm.StopWhenInactiveCheckBoxClick(Sender: TObject);
 begin
   Ini.WriteBool(DefaultConfigIniSection, 'StopWhenInactive', StopWhenInactiveCheckBox.Checked);
-end;
-
-// Retrieves the time (in ms) of the last input event (mouse moved or key pressed).
-// Also works if current application window has no focus (hidden or minimized).
-function LastInput: DWord;
-var
-  LInput: TLastInputInfo;
-begin
-  LInput.cbSize := SizeOf(TLastInputInfo);
-  GetLastInputInfo(LInput);
-  Result := GetTickCount - LInput.dwTime;
 end;
 
 procedure TMainForm.ImageFormatComboBoxChange(Sender: TObject);
