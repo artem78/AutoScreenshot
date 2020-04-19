@@ -259,6 +259,15 @@ object MainForm: TMainForm
       '%Y-%M\%D\%Y-%M-%D_%H.%N.%S'
       '%Y\%M\%D\%H_%N_%S')
   end
+  object PathTemplateHelpButton: TButton
+    Left = 480
+    Top = 44
+    Width = 33
+    Height = 25
+    Caption = '?'
+    TabOrder = 14
+    OnClick = PathTemplateHelpButtonClick
+  end
   object Timer: TTimer
     Enabled = False
     OnTimer = TimerTimer

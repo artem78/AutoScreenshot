@@ -44,6 +44,7 @@ type
     Separator1TrayMenuItem: TMenuItem;
     PathTemplateLabel: TLabel;
     PathTemplateComboBox: TComboBox;
+    PathTemplateHelpButton: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -67,6 +68,7 @@ type
     procedure StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
     procedure StartMinimizedCheckBoxClick(Sender: TObject);
     procedure PathTemplateComboBoxChange(Sender: TObject);
+    procedure PathTemplateHelpButtonClick(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
@@ -457,6 +459,19 @@ end;
 procedure TMainForm.PathTemplateComboBoxChange(Sender: TObject);
 begin
   Ini.WriteString(DefaultConfigIniSection, 'PathTemplate', PathTemplateComboBox.Text);
+end;
+
+procedure TMainForm.PathTemplateHelpButtonClick(Sender: TObject);
+begin
+  ShowMessage(
+      'Template variables:' + #13 + #10 + #13 + #10 +
+      '%D' + #9 + 'day (2 digits)' + #13 + #10 +
+      '%M' + #9 + 'month (2 digits)' + #13 + #10 +
+      '%Y' + #9 + 'year (4 digits)' + #13 + #10 +
+      '%H' + #9 + 'hour (2 digits)' + #13 + #10 +
+      '%N' + #9 + 'minute (2 digits)' + #13 + #10 +
+      '%S' + #9 + 'second (2 digits)'
+  );
 end;
 
 end.
