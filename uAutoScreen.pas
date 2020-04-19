@@ -43,7 +43,7 @@ type
     StartMinimizedCheckBox: TCheckBox;
     Separator1TrayMenuItem: TMenuItem;
     PathTemplateLabel: TLabel;
-    PathTemplateEdit: TEdit;
+    PathTemplateComboBox: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -66,7 +66,7 @@ type
     procedure LanguageRadioGroupClick(Sender: TObject);
     procedure StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
     procedure StartMinimizedCheckBoxClick(Sender: TObject);
-    procedure PathTemplateEditChange(Sender: TObject);
+    procedure PathTemplateComboBoxChange(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
@@ -121,7 +121,7 @@ begin
   Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
 
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', ExtractFilePath(Application.ExeName));
-  PathTemplateEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'PathTemplate', '%Y-%M-%D\%Y-%M-%D %H.%N.%S');
+  PathTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'PathTemplate', '%Y-%M-%D\%Y-%M-%D %H.%N.%S');
   CaptureInterval.Value := Ini.ReadInteger(DefaultConfigIniSection, 'CaptureInterval', 5);
   StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
   FmtStr := Ini.ReadString(DefaultConfigIniSection, 'ImageFormat', ImageFormatNames[fmtPNG]);
@@ -250,7 +250,7 @@ var
   JPG: TJPEGImage;
   ScreenDC: HDC;
 begin
-  FileName := ExtractFileName(PathTemplateEdit.Text);
+  FileName := ExtractFileName(PathTemplateComboBox.Text);
   FileName := FormatPath(FileName);
 
   DirName := FinalOutputDir;
@@ -321,7 +321,7 @@ function TMainForm.GetFinalOutputDir: String;
 var
   DirName: String;
 begin
-  DirName := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'PathTemplate', '')} PathTemplateEdit.Text);
+  DirName := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'PathTemplate', '')} PathTemplateComboBox.Text);
   DirName := FormatPath(DirName);
 
   DirName := IncludeTrailingPathDelimiter(Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '')) + DirName + '\';
@@ -454,9 +454,9 @@ begin
   Ini.WriteBool(DefaultConfigIniSection, 'StartMinimized', StartMinimizedCheckBox.Checked);
 end;
 
-procedure TMainForm.PathTemplateEditChange(Sender: TObject);
+procedure TMainForm.PathTemplateComboBoxChange(Sender: TObject);
 begin
-  Ini.WriteString(DefaultConfigIniSection, 'PathTemplate', PathTemplateEdit.Text);
+  Ini.WriteString(DefaultConfigIniSection, 'PathTemplate', PathTemplateComboBox.Text);
 end;
 
 end.

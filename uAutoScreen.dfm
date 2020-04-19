@@ -245,13 +245,19 @@ object MainForm: TMainForm
     TabOrder = 12
     OnClick = StartMinimizedCheckBoxClick
   end
-  object PathTemplateEdit: TEdit
+  object PathTemplateComboBox: TComboBox
     Left = 208
     Top = 46
     Width = 265
     Height = 21
+    ItemHeight = 13
     TabOrder = 13
-    OnChange = PathTemplateEditChange
+    Text = 'PathTemplateComboBox'
+    OnChange = PathTemplateComboBoxChange
+    Items.Strings = (
+      '%Y-%M-%D\%Y-%M-%D %H.%N.%S'
+      '%Y-%M\%D\%Y-%M-%D_%H.%N.%S'
+      '%Y\%M\%D\%H_%N_%S')
   end
   object Timer: TTimer
     Enabled = False
