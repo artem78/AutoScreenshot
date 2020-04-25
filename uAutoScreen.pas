@@ -427,6 +427,7 @@ begin
   OutputDirLabel.Caption := I18N('OutputDirectory') + ':';
   //ChooseOutputDirButton.Caption := I18N('Choose') + '...';
   OpenOutputDirButton.Caption := I18N('OpenDirectory');
+  FileNameTemplateLabel.Caption := I18N('FileNameTemplate') + ':';
   CaptureIntervalLabel.Caption := I18N('CaptureInterval') + ':';
   StopWhenInactiveCheckBox.Caption := I18N('PauseCaptureWhenIdle');
   ImageFormatLabel.Caption := I18N('Format') + ':';
@@ -463,22 +464,7 @@ end;
 
 procedure TMainForm.FileNameTemplateHelpButtonClick(Sender: TObject);
 begin
-  ShowMessage(
-      'Template variables:' + #13 + #10 + #13 + #10 +
-      '%D' + #9 + 'day (2 digits)' + #13 + #10 +
-      '%M' + #9 + 'month (2 digits)' + #13 + #10 +
-      '%Y' + #9 + 'year (4 digits)' + #13 + #10 +
-      '%H' + #9 + 'hour (2 digits)' + #13 + #10 +
-      '%N' + #9 + 'minute (2 digits)' + #13 + #10 +
-      '%S' + #9 + 'second (2 digits)' + #13 + #10 +
-      #13 + #10 +
-      'You allowed to use subdirectories.' + #13 + #10 +
-      'It`s not needed to specify file extension.' + #13 + #10 +
-      #13 + #10 +
-      'Example:' + #13 + #10 +
-      #9 + '%Y-%M-%D\screenshot_%H-%N-%S' + #13 + #10 +
-      #9 + 'will create file "2020-04-19\screenshot_12-34-56.png"'
-  );
+  ShowMessage(I18N('FileNameTemplateHelpText'));
 end;
 
 end.
