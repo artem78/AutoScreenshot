@@ -94,13 +94,13 @@ object MainForm: TMainForm
     Height = 13
     Caption = '%'
   end
-  object PathTemplateLabel: TLabel
-    Left = 42
+  object FileNameTemplateLabel: TLabel
+    Left = 113
     Top = 50
-    Width = 159
+    Width = 88
     Height = 13
     Alignment = taRightJustify
-    Caption = 'Path template (without extension):'
+    Caption = 'Filename template:'
   end
   object OutputDirEdit: TEdit
     Left = 208
@@ -245,28 +245,27 @@ object MainForm: TMainForm
     TabOrder = 12
     OnClick = StartMinimizedCheckBoxClick
   end
-  object PathTemplateComboBox: TComboBox
+  object FileNameTemplateComboBox: TComboBox
     Left = 208
     Top = 46
     Width = 265
     Height = 21
     ItemHeight = 13
     TabOrder = 13
-    Text = 'PathTemplateComboBox'
-    OnChange = PathTemplateComboBoxChange
+    OnChange = FileNameTemplateComboBoxChange
     Items.Strings = (
       '%Y-%M-%D\%Y-%M-%D %H.%N.%S'
       '%Y-%M\%D\%Y-%M-%D_%H.%N.%S'
       '%Y\%M\%D\%H_%N_%S')
   end
-  object PathTemplateHelpButton: TButton
+  object FileNameTemplateHelpButton: TButton
     Left = 480
     Top = 44
     Width = 33
     Height = 25
     Caption = '?'
     TabOrder = 14
-    OnClick = PathTemplateHelpButtonClick
+    OnClick = FileNameTemplateHelpButtonClick
   end
   object Timer: TTimer
     Enabled = False

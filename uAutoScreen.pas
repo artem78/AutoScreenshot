@@ -42,9 +42,9 @@ type
     StartCaptureOnStartUpCheckBox: TCheckBox;
     StartMinimizedCheckBox: TCheckBox;
     Separator1TrayMenuItem: TMenuItem;
-    PathTemplateLabel: TLabel;
-    PathTemplateComboBox: TComboBox;
-    PathTemplateHelpButton: TButton;
+    FileNameTemplateLabel: TLabel;
+    FileNameTemplateComboBox: TComboBox;
+    FileNameTemplateHelpButton: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -67,8 +67,8 @@ type
     procedure LanguageRadioGroupClick(Sender: TObject);
     procedure StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
     procedure StartMinimizedCheckBoxClick(Sender: TObject);
-    procedure PathTemplateComboBoxChange(Sender: TObject);
-    procedure PathTemplateHelpButtonClick(Sender: TObject);
+    procedure FileNameTemplateComboBoxChange(Sender: TObject);
+    procedure FileNameTemplateHelpButtonClick(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
@@ -123,7 +123,7 @@ begin
   Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
 
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', ExtractFilePath(Application.ExeName));
-  PathTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'PathTemplate', '%Y-%M-%D\%Y-%M-%D %H.%N.%S');
+  FileNameTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '%Y-%M-%D\%Y-%M-%D %H.%N.%S');
   CaptureInterval.Value := Ini.ReadInteger(DefaultConfigIniSection, 'CaptureInterval', 5);
   StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
   FmtStr := Ini.ReadString(DefaultConfigIniSection, 'ImageFormat', ImageFormatNames[fmtPNG]);
@@ -252,7 +252,7 @@ var
   JPG: TJPEGImage;
   ScreenDC: HDC;
 begin
-  FileName := ExtractFileName(PathTemplateComboBox.Text);
+  FileName := ExtractFileName(FileNameTemplateComboBox.Text);
   FileName := FormatPath(FileName);
 
   DirName := FinalOutputDir;
@@ -323,7 +323,7 @@ function TMainForm.GetFinalOutputDir: String;
 var
   DirName: String;
 begin
-  DirName := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'PathTemplate', '')} PathTemplateComboBox.Text);
+  DirName := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '')} FileNameTemplateComboBox.Text);
   DirName := FormatPath(DirName);
 
   DirName := IncludeTrailingPathDelimiter(Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '')) + DirName + '\';
@@ -456,12 +456,12 @@ begin
   Ini.WriteBool(DefaultConfigIniSection, 'StartMinimized', StartMinimizedCheckBox.Checked);
 end;
 
-procedure TMainForm.PathTemplateComboBoxChange(Sender: TObject);
+procedure TMainForm.FileNameTemplateComboBoxChange(Sender: TObject);
 begin
-  Ini.WriteString(DefaultConfigIniSection, 'PathTemplate', PathTemplateComboBox.Text);
+  Ini.WriteString(DefaultConfigIniSection, 'FileNameTemplate', FileNameTemplateComboBox.Text);
 end;
 
-procedure TMainForm.PathTemplateHelpButtonClick(Sender: TObject);
+procedure TMainForm.FileNameTemplateHelpButtonClick(Sender: TObject);
 begin
   ShowMessage(
       'Template variables:' + #13 + #10 + #13 + #10 +
@@ -470,7 +470,14 @@ begin
       '%Y' + #9 + 'year (4 digits)' + #13 + #10 +
       '%H' + #9 + 'hour (2 digits)' + #13 + #10 +
       '%N' + #9 + 'minute (2 digits)' + #13 + #10 +
-      '%S' + #9 + 'second (2 digits)'
+      '%S' + #9 + 'second (2 digits)' + #13 + #10 +
+      #13 + #10 +
+      'You allowed to use subdirectories.' + #13 + #10 +
+      'It`s not needed to specify file extension.' + #13 + #10 +
+      #13 + #10 +
+      'Example:' + #13 + #10 +
+      #9 + '%Y-%M-%D\screenshot_%H-%N-%S' + #13 + #10 +
+      #9 + 'will create file "2020-04-19\screenshot_12-34-56.png"'
   );
 end;
 
