@@ -10,7 +10,7 @@ function I18N(Str: String): String;
 
 implementation
 
-uses SysUtils;
+uses SysUtils, uUtils;
 
 var
   Lang: String;
@@ -32,6 +32,8 @@ function I18N(Str: String): String;
 begin
   //Result := '[' + Lang + ']' + Str + '';
   Result := ini.ReadString('translation', Str, Str);
+
+  Result := DecodeControlCharacters(Result);
 end;
 
 initialization

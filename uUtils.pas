@@ -18,6 +18,9 @@ function FormatPath(Path: String): String; overload;
 // ToDo: add description
 function Int2Str(Val: Integer; LeadingZeros: Integer = 0): String;
 
+// Decodes control characters (like \r, \n, \t and etc.) from given string.
+function DecodeControlCharacters(Str: String): String;
+
 
 implementation
 
@@ -89,6 +92,39 @@ begin
     Result := Result + StringOfChar('0', LeadingZeros - Length(Tmp));
 
   Result := Result + Tmp;
+end;
+
+function DecodeControlCharacters(Str: String): String;
+// https://programmersforum.ru/showthread.php?p=1813831#post1813831
+// ToDo: So similar to FormatPath(). Need to reduce code duplication.
+var
+  I: Integer;
+  IsSpecial: Boolean;
+begin
+  Result := '';
+
+  IsSpecial := False;
+  for I := 1 to Length(Str) do
+  begin
+    if IsSpecial then
+    begin
+      case Str[I] of
+        'r': Result := Result + #13;
+        'n': Result := Result + #10;
+        't': Result := Result + #9;
+        '\': Result := Result + '\';
+        // ToDo: add more...
+      end;
+      IsSpecial := False;
+    end
+    else
+    begin
+      if Str[I] = '\' then
+        IsSpecial := True
+      else
+        Result := Result + Str[I]; // ToDo: Looks not good in the loop
+    end;
+  end;
 end;
 
 end.
