@@ -1,5 +1,8 @@
 ###############################################
 ######   Basic ignore rules for Delphi   ######
+######   Source: https://github.com/     ######
+######   github/gitignore/blob/master/   ######
+######   Delphi.gitignore                ######
 ###############################################
 
 # Uncomment these types if you want even more clean repository. But be careful.
