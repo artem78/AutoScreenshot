@@ -86,3 +86,4 @@ modules/
 *.tmp
 *.bak
 /config.ini
+dunit.ini
