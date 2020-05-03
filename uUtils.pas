@@ -9,17 +9,29 @@ uses
 // Also works if current application window has no focus (hidden or minimized).
 function LastInput: DWord;
 
-// ToDo: add description
-function FormatPath(Path: String; DateTime: TDateTime): String; overload;
+{ Formats given string Str. If DateTime not provided, use result of Now().
 
-// ToDo: add description
-function FormatPath(Path: String): String; overload;
+  Format characters list:
+     %D    day (2 digits)
+     %M    month (2 digits)
+     %Y    year (4 digits)
+     %H    hour (2 digits)
+     %N    minute (2 digits)
+     %S    second (2 digits)
 
-// ToDo: add description
+  Usage example:
+    Str := FormatDateTime2('%Y/%M/%D %H:%N:%S', EncodeDateTime(2020, 4, 19, 12, 34, 56, 789));
+
+    Result string will be '2020/04/19 12:34:56' }
+
+function FormatDateTime2(const Str: String; const DateTime: TDateTime): String; overload;
+function FormatDateTime2(const Str: String): String; overload;
+
+// Same as IntToStr(), but adds leading zeros before number
 function Int2Str(Val: Integer; LeadingZeros: Integer = 0): String;
 
 // Decodes control characters (like \r, \n, \t and etc.) from given string.
-function DecodeControlCharacters(Str: String): String;
+function DecodeControlCharacters(const Str: String): String;
 
 
 implementation
@@ -36,45 +48,21 @@ begin
   Result := GetTickCount - LInput.dwTime;
 end;
 
-function FormatPath(Path: String; DateTime: TDateTime): String;
+function FormatDateTime2(const Str: String; const DateTime: TDateTime): String;
 const
   TmplVarsChar = '%';
-var
-  I: Integer;
-  IsVariable: Boolean;
 begin
-  Result := '';
-
-  IsVariable := False;
-  for I := 1 to Length(Path) do
-  begin
-    if Path[I] = TmplVarsChar then
-      IsVariable := True
-    else
-    begin
-      if IsVariable then
-      begin
-        case Path[I] of
-          'D': Result := Result + Int2Str(DayOf(DateTime), 2);
-          'M': Result := Result + Int2Str(MonthOf(DateTime), 2);
-          'Y': Result := Result + Int2Str(YearOf(DateTime), 4);
-          'H': Result := Result + Int2Str(HourOf(DateTime), 2);
-          'N': Result := Result + Int2Str(MinuteOf(DateTime), 2);
-          'S': Result := Result + Int2Str(SecondOf(DateTime), 2);
-        end;
-        IsVariable := False;
-      end
-      else
-      begin
-        Result := Result + Path[I];
-      end;
-    end;
-  end;
+  Result := StringReplace(Str,    TmplVarsChar + 'D', Int2Str(DayOf(DateTime), 2),    [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'M', Int2Str(MonthOf(DateTime), 2),  [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'Y', Int2Str(YearOf(DateTime), 4),   [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'H', Int2Str(HourOf(DateTime), 2),   [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'N', Int2Str(MinuteOf(DateTime), 2), [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'S', Int2Str(SecondOf(DateTime), 2), [rfReplaceAll]);
 end;
 
-function FormatPath(Path: String): String;
+function FormatDateTime2(const Str: String): String;
 begin
-  Result := FormatPath(Path, Now());
+  Result := FormatDateTime2(Str, Now());
 end;
 
 function Int2Str(Val: Integer; LeadingZeros: Integer): String;
@@ -94,37 +82,12 @@ begin
   Result := Result + Tmp;
 end;
 
-function DecodeControlCharacters(Str: String): String;
-// https://programmersforum.ru/showthread.php?p=1813831#post1813831
-// ToDo: So similar to FormatPath(). Need to reduce code duplication.
-var
-  I: Integer;
-  IsSpecial: Boolean;
+function DecodeControlCharacters(const Str: String): String;
 begin
-  Result := '';
-
-  IsSpecial := False;
-  for I := 1 to Length(Str) do
-  begin
-    if IsSpecial then
-    begin
-      case Str[I] of
-        'r': Result := Result + #13;
-        'n': Result := Result + #10;
-        't': Result := Result + #9;
-        '\': Result := Result + '\';
-        // ToDo: add more...
-      end;
-      IsSpecial := False;
-    end
-    else
-    begin
-      if Str[I] = '\' then
-        IsSpecial := True
-      else
-        Result := Result + Str[I]; // ToDo: Looks not good in the loop
-    end;
-  end;
+  Result := StringReplace(Str,    '\r', #13, [rfReplaceAll]);
+  Result := StringReplace(Result, '\n', #10, [rfReplaceAll]);
+  Result := StringReplace(Result, '\t', #9,  [rfReplaceAll]);
+  Result := StringReplace(Result, '\\', '\', [rfReplaceAll]);
 end;
 
 end.

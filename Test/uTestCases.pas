@@ -24,7 +24,7 @@ var
   DateTime: TDateTime;
 begin
   DateTime := EncodeDateTime(2020, 4, 19, 12, 34, 56, 789);
-  Result := FormatPath(Path, DateTime);
+  Result := FormatDateTime2(Path, DateTime);
 end;
 
 procedure TMyTestCase.TestDecode;
@@ -54,6 +54,7 @@ begin
   CheckEqualsString('скриншот 123456.jpeg',
       GetFormattedPath('скриншот %H%N%S.jpeg'),
       'Non ASCII symbols');
+  CheckEqualsString('20200419_123456/123456-19042020', GetFormattedPath('%Y%M%D_%H%N%S/%H%N%S-%D%M%Y'))
 
   // ToDo: Test incorect strings
 end;

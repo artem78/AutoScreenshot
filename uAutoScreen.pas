@@ -253,7 +253,7 @@ var
   ScreenDC: HDC;
 begin
   FileName := ExtractFileName(FileNameTemplateComboBox.Text);
-  FileName := FormatPath(FileName);
+  FileName := FormatDateTime2(FileName);
 
   DirName := FinalOutputDir;
 
@@ -324,7 +324,7 @@ var
   DirName: String;
 begin
   DirName := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '')} FileNameTemplateComboBox.Text);
-  DirName := FormatPath(DirName);
+  DirName := FormatDateTime2(DirName);
 
   DirName := IncludeTrailingPathDelimiter(Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '')) + DirName + '\';
   if not DirectoryExists(DirName) then
