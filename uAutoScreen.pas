@@ -246,16 +246,33 @@ end;
 
 procedure TMainForm.MakeScreenshot;
 var
-  DirName, FileName: String;
+  DirName, FileName, Ext, FullFileName: String;
   Bitmap: TBitmap;
   PNG: TPNGObject;
   JPG: TJPEGImage;
   ScreenDC: HDC;
+  I: Integer;
 begin
   FileName := ExtractFileName(FileNameTemplateComboBox.Text);
   FileName := FormatDateTime2(FileName);
 
   DirName := FinalOutputDir;
+
+  case TImageFormat(ImageFormatComboBox.ItemIndex) of
+    fmtPNG: Ext := 'png';
+    fmtJPG: Ext := 'jpg';
+  end;
+
+  // If image file already exist create new one with order number 
+  I := 1;
+  repeat
+    if I = 1 then
+      FullFileName := DirName + FileName + '.' + Ext
+    else
+      FullFileName := DirName + FileName + ' (' + IntToStr(I) + ')' + '.' + Ext;
+
+    Inc(I);
+  until not FileExists(FullFileName);
 
   Bitmap := TBitmap.Create;
   Bitmap.Width := Screen.Width;
@@ -272,7 +289,7 @@ begin
           PNG := TPNGObject.Create;
           try
             PNG.Assign(Bitmap);
-            PNG.SaveToFile(DirName + FileName + '.png');
+            PNG.SaveToFile(FullFileName);
           finally
             PNG.Free;
           end;
@@ -285,7 +302,7 @@ begin
             JPG.Assign(Bitmap);
             JPG.CompressionQuality := JPEGQualitySpinEdit.Value;
             JPG.Compress;
-            JPG.SaveToFile(DirName + FileName + '.jpg');
+            JPG.SaveToFile(FullFileName);
           finally
             JPG.Free;
           end;
