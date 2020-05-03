@@ -162,7 +162,7 @@ object MainForm: TMainForm
   object StopWhenInactiveCheckBox: TCheckBox
     Left = 208
     Top = 136
-    Width = 257
+    Width = 329
     Height = 17
     Caption = 'Pause taking screenshots while idle'
     TabOrder = 6
