@@ -76,6 +76,7 @@ type
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
     function GetFinalOutputDir: String;
+    function GetImagePath: String;
     procedure MakeScreenshot;
     procedure MinimizeToTray;
     procedure RestoreFromTray;
@@ -88,6 +89,7 @@ type
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
+    property ImagePath: String read GetImagePath;
     property Language: TLanguage read FLanguage write SetLanguage;
   public
     { Public declarations }
@@ -246,34 +248,11 @@ end;
 
 procedure TMainForm.MakeScreenshot;
 var
-  DirName, FileName, Ext, FullFileName: String;
   Bitmap: TBitmap;
   PNG: TPNGObject;
   JPG: TJPEGImage;
   ScreenDC: HDC;
-  I: Integer;
 begin
-  FileName := ExtractFileName(FileNameTemplateComboBox.Text);
-  FileName := FormatDateTime2(FileName);
-
-  DirName := FinalOutputDir;
-
-  case TImageFormat(ImageFormatComboBox.ItemIndex) of
-    fmtPNG: Ext := 'png';
-    fmtJPG: Ext := 'jpg';
-  end;
-
-  // If image file already exist create new one with order number 
-  I := 1;
-  repeat
-    if I = 1 then
-      FullFileName := DirName + FileName + '.' + Ext
-    else
-      FullFileName := DirName + FileName + ' (' + IntToStr(I) + ')' + '.' + Ext;
-
-    Inc(I);
-  until not FileExists(FullFileName);
-
   Bitmap := TBitmap.Create;
   Bitmap.Width := Screen.Width;
   Bitmap.Height := Screen.Height;
@@ -289,7 +268,7 @@ begin
           PNG := TPNGObject.Create;
           try
             PNG.Assign(Bitmap);
-            PNG.SaveToFile(FullFileName);
+            PNG.SaveToFile(ImagePath);
           finally
             PNG.Free;
           end;
@@ -302,7 +281,7 @@ begin
             JPG.Assign(Bitmap);
             JPG.CompressionQuality := JPEGQualitySpinEdit.Value;
             JPG.Compress;
-            JPG.SaveToFile(FullFileName);
+            JPG.SaveToFile(ImagePath);
           finally
             JPG.Free;
           end;
@@ -351,6 +330,35 @@ begin
   end;
 
   Result := DirName;
+end;
+
+function TMainForm.GetImagePath: String;
+var
+  DirName, FileName, Ext, FullFileName: String;
+  I: Integer;
+begin
+  FileName := ExtractFileName(FileNameTemplateComboBox.Text);
+  FileName := FormatDateTime2(FileName);
+
+  DirName := FinalOutputDir;
+
+  case TImageFormat(ImageFormatComboBox.ItemIndex) of
+    fmtPNG: Ext := 'png';
+    fmtJPG: Ext := 'jpg';
+  end;
+
+  // If image file already exist create new one with order number
+  I := 1;
+  repeat
+    if I = 1 then
+      FullFileName := DirName + FileName + '.' + Ext
+    else
+      FullFileName := DirName + FileName + ' (' + IntToStr(I) + ')' + '.' + Ext;
+
+    Inc(I);
+  until not FileExists(FullFileName);
+
+  Result := FullFileName;
 end;
 
 procedure TMainForm.OpenOutputDirButtonClick(Sender: TObject);
