@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ShellApi;
+  Dialogs, StdCtrls, ShellApi, ExtCtrls;
 
 type
   TAboutForm = class(TForm)
@@ -13,6 +13,7 @@ type
     AuthorLabel: TLabel;
     CloseButton: TButton;
     LinkLabel: TLabel;
+    Logo: TImage;
     procedure CloseButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LinkLabelClick(Sender: TObject);
@@ -42,6 +43,9 @@ end;
 procedure TAboutForm.FormCreate(Sender: TObject);
 begin
   Caption := I18N('About');
+
+  Logo.Picture.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
+      64, 64, LR_DEFAULTCOLOR);
 
   ProgramNameLabel.Caption := Application.Title;
   VersionLabel.Caption := I18N('Version') + ': ' + GetProgramVersionStr(True);
