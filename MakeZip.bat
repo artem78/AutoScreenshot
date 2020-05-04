@@ -19,8 +19,12 @@ REM ******************************************************
 
 
 REM ***  Set variables ***
-REM Path to 7Zip archiver
+REM Path to 7Zip console archiver (7z.exe)
 set SevenZipPath="C:\Program Files (x86)\7-Zip\7z.exe"
+
+REM Output dirs
+set BuildDir="build\files"
+set TargetZipDir="build\zip"
 
 REM Program version
 set ProgramVersion=
@@ -31,41 +35,62 @@ for /f "usebackq tokens=1,3 delims='; " %%i in ("version.inc") do (
 	)
 )
 
+REM ***********************
+
+
+REM Some initial checks
+if not exist %SevenZipPath% call :StopBuild "Make sure you have installed 7-zip and set correct path to your 7z.exe in "SevenZipPath" variable in this batch file"
+if not exist AutoScreen.exe call :StopBuild "You need to manually compile project from Delphi 7 IDE before run this batch"
+
 
 REM Create and clear build directory
 echo Clear build directory...
-if not exist build mkdir build
-del /S /Q build\
+if not exist %BuildDir% mkdir %BuildDir%
+del /S /Q %BuildDir%\
 echo Done!
 echo.
 
 REM Executable
 echo Copy EXE...
-copy AutoScreen.exe build\AutoScreenshot.exe
+copy AutoScreen.exe %BuildDir%\AutoScreenshot.exe
 echo Done!
 echo.
 
 REM REM Config
 REM echo Copy config.ini...
-REM copy config.sample.ini build\config.ini
+REM copy config.sample.ini %BuildDir%\config.ini
 REM echo Done!
 REM echo.
 
 REM Translations
 echo Copy translation files...
-if not exist build\lang mkdir build\lang
-del /S /Q build\lang\
-copy lang\ build\lang\
+if not exist %BuildDir%\lang mkdir %BuildDir%\lang
+del /S /Q %BuildDir%\lang\
+copy lang\ %BuildDir%\lang\
 echo Done!
 echo.
 
 REM Pack to ZIP archive
 echo Pack all files to ZIP archive...
-%SevenZipPath% a -tzip build\autoscreenshot_%ProgramVersion%.zip .\build\*
+%SevenZipPath% a -tzip %TargetZipDir%\autoscreenshot_%ProgramVersion%.zip .\%BuildDir%\*
 echo Done!
 
 echo.
 echo.
-echo === Build finished!  ===
+echo === Build successfully finished!  ===
 echo.
 pause
+
+exit 0
+
+:StopBuild
+echo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+echo !!!                Fatal error!                !!!
+echo.
+echo.%~1
+echo.
+echo !!!          Build failed. Sorry :(            !!!
+echo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+echo .
+pause
+exit 1
