@@ -33,6 +33,22 @@ function Int2Str(Val: Integer; LeadingZeros: Integer = 0): String;
 // Decodes control characters (like \r, \n, \t and etc.) from given string.
 function DecodeControlCharacters(const Str: String): String;
 
+{ Returns string with program version. If ShortFormat is True prints release
+  and build values only if they are not equal zero.
+
+  Examples:
+      GetProgramVersionStr(True);
+
+      Version   | Result
+      ----------------------
+      2.1.0.0   | '2.1'
+      1.0.0.0   | '1.0'
+      0.0.0.0   | '0.0'
+      5.6.7.8   | '5.6.7.8'
+      0.0.0.9   | '0.0.0.9'
+ }
+
+function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean = False): string;
 
 implementation
 
@@ -88,6 +104,69 @@ begin
   Result := StringReplace(Result, '\n', #10, [rfReplaceAll]);
   Result := StringReplace(Result, '\t', #9,  [rfReplaceAll]);
   Result := StringReplace(Result, '\\', '\', [rfReplaceAll]);
+end;
+
+{function GetProgramVersionStr: string;
+var
+  Rec: LongRec;
+begin
+  Rec := LongRec(GetFileVersion(ParamStr(0)));
+  Result := Format('%d.%d', [Rec.Hi, Rec.Lo])
+end;}
+
+function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean): String;
+var
+  FileName: String;
+  VerInfoSize: Cardinal;
+  VerValueSize: Cardinal;
+  Dummy: Cardinal;
+  PVerInfo: Pointer;
+  PVerValue: PVSFixedFileInfo;
+
+  Major, Minor, Release, Build: Cardinal;
+begin
+  // Note: Also we can get version string from FileVersion
+  // or ProductVersion section
+
+  FileName := ParamStr(0);
+  Result := '';
+  VerInfoSize := GetFileVersionInfoSize(PChar(FileName), Dummy);
+  GetMem(PVerInfo, VerInfoSize);
+  try
+    if GetFileVersionInfo(PChar(FileName), 0, VerInfoSize, PVerInfo) then
+      if VerQueryValue(PVerInfo, '\', Pointer(PVerValue), VerValueSize) then
+        with PVerValue^ do
+          {Result := Format('v%d.%d.%d build %d', [
+            HiWord(dwFileVersionMS), //Major
+            LoWord(dwFileVersionMS), //Minor
+            HiWord(dwFileVersionLS), //Release
+            LoWord(dwFileVersionLS)]); //Build}
+        begin
+          Major := HiWord(dwFileVersionMS);
+          Minor := LoWord(dwFileVersionMS);
+          Release := HiWord(dwFileVersionLS);
+          Build := LoWord(dwFileVersionLS);
+
+          if not {HideRealeaseAndBuildIfZero} ShortFormat then
+            Result := Format('%d.%d.%d.%d', [Major, Minor, Release, Build])
+          else
+          begin
+            // Writes minor and major parts in any case
+            Result := Format('%d.%d', [Major, Minor]);
+
+            // Writes realease and build only if they exist
+            if (Release > 0) or (Build > 0) then
+            begin
+              Result := Result + '.' + IntToStr(Release);
+
+              if Build > 0 then
+                Result := Result + '.' + IntToStr(Build);
+            end;
+          end;
+        end;
+  finally
+    FreeMem(PVerInfo, VerInfoSize);
+  end;
 end;
 
 end.

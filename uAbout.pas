@@ -27,10 +27,9 @@ var
 
 implementation
 
-uses uLocalization;
+uses uLocalization, uUtils;
 
 {$R *.dfm}
-{$I version.inc}
 
 const
   ProjectGitHubURL = 'https://github.com/artem78/AutoScreenshot';
@@ -45,7 +44,7 @@ begin
   Caption := I18N('About');
 
   ProgramNameLabel.Caption := Application.Title;
-  VersionLabel.Caption := I18N('Version') + ': ' + ProgramVersion;
+  VersionLabel.Caption := I18N('Version') + ': ' + GetProgramVersionStr(True);
   AuthorLabel.Caption := I18N('Author') + ': ' + 'artem78      e-mail: megabyte1024@ya.ru';
   LinkLabel.Caption := ProjectGitHubURL;
 
