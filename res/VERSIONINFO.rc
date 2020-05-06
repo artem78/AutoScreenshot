@@ -1,0 +1,28 @@
+1 VERSIONINFO
+FILEVERSION 1,2,0,0
+PRODUCTVERSION 1,2,0,0
+FILEOS 0x4
+FILETYPE 0x1
+{
+BLOCK "StringFileInfo"
+{
+	BLOCK "041304E4"
+	{
+		VALUE "CompanyName", ""
+		VALUE "FileDescription", "Automatic screenshot maker"
+		VALUE "FileVersion", "1.2"
+		VALUE "InternalName", ""
+		VALUE "LegalCopyright", ""
+		VALUE "LegalTrademarks", ""
+		VALUE "OriginalFilename", ""
+		VALUE "ProductName", "Auto Screenshot"
+		VALUE "ProductVersion", "1.2"
+		VALUE "Comments", ""
+	}
+}
+
+BLOCK "VarFileInfo"
+{
+	VALUE "Translation", 1033 1252
+}
+}

@@ -1,5 +1,8 @@
 program AutoScreen;
 
+{$R 'res\MAINICON.res' 'res\MAINICON.rc'}
+{$R 'res\VERSIONINFO.res' 'res\VERSIONINFO.rc'}
+
 uses
   Forms,
   uAutoScreen in 'uAutoScreen.pas' {MainForm},
@@ -7,7 +10,7 @@ uses
   uLocalization in 'uLocalization.pas',
   uUtils in 'uUtils.pas';
 
-{$R *.res}
+//{$R *.res}
 
 begin
   Application.Initialize;
