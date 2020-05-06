@@ -138,12 +138,8 @@ Comments=
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=5
+Count=1
 Item0=libs\PNGImage
-Item1=D:\Programms\Borland\Delphi7\Projects\autoscreen\PNGImage
-Item2=D:\Programms\Borland\Delphi7\DUnit
-Item3=D:\Programms\Borland\Delphi7\Projects\TEST\autoscreen\PNGImage
-Item4=D:\Programms\Borland\Delphi7\Projects\TEST\screenshot1\PNGImage
 [HistoryLists\hlOutputDirectorry]
 Count=1
 Item0=build\

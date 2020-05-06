@@ -94,7 +94,7 @@ OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=D:\Programms\Borland\Delphi7\DUnit;D:\Programms\Borland\Delphi7\DUnit\src
+SearchPath=
 Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP
 Conditionals=
 DebugSourceDirs=
@@ -137,13 +137,6 @@ Comments=
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
-[HistoryLists\hlSearchPath]
-Count=5
-Item0=D:\Programms\Borland\Delphi7\DUnit;D:\Programms\Borland\Delphi7\DUnit\src
-Item1=D:\Programms\Borland\Delphi7\DUnit
-Item2=D:\Programms\Borland\Delphi7\Projects\autoscreen\PNGImage
-Item3=D:\Programms\Borland\Delphi7\Projects\TEST\autoscreen\PNGImage
-Item4=D:\Programms\Borland\Delphi7\Projects\TEST\screenshot1\PNGImage
 [HistoryLists\hlOutputDirectorry]
 Count=1
 Item0=build\
