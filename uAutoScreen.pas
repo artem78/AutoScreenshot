@@ -8,7 +8,7 @@ uses
   TrayIcon, XPMan, jpeg, ShellAPI, Menus;
 
 type
-  TImageFormat = (fmtPNG=0, fmtJPG);
+  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP);
   TLanguage = (lngEnglish=0, lngRussian);
 
   TMainForm = class(TForm)
@@ -96,7 +96,7 @@ type
   end;
 
 const
-  ImageFormatNames: array [TImageFormat] of String = ('PNG', 'JPG');
+  ImageFormatNames: array [TImageFormat] of String = ('PNG', 'JPG', 'BMP');
   LanguageCodes: array [TLanguage] of String = ('en', 'ru');
   DefaultConfigIniSection = 'main';
 
@@ -290,6 +290,11 @@ begin
             JPG.Free;
           end;
         end;
+
+      fmtBMP:    // Bitmap (BMP)
+        begin
+          Bitmap.SaveToFile(ImagePath);
+        end;
     end;
   finally
     Bitmap.Free;
@@ -349,6 +354,7 @@ begin
   case TImageFormat(ImageFormatComboBox.ItemIndex) of
     fmtPNG: Ext := 'png';
     fmtJPG: Ext := 'jpg';
+    fmtBMP: Ext := 'bmp';
   end;
 
   // If image file already exist create new one with order number
