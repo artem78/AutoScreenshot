@@ -50,6 +50,9 @@ function DecodeControlCharacters(const Str: String): String;
 
 function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean = False): string;
 
+// Returns build time from TimeDateStamp PE header
+function GetLinkerTimeStamp: TDateTime{; overload};
+
 implementation
 
 uses
@@ -167,6 +170,21 @@ begin
   finally
     FreeMem(PVerInfo, VerInfoSize);
   end;
+end;
+
+{function LinkerTimeStamp(const FileName: string): TDateTime; overload;
+var
+  LI: TLoadedImage;
+begin
+  Win32Check(MapAndLoad(PChar(FileName), nil, @LI, False, True));
+  Result := LI.FileHeader.FileHeader.TimeDateStamp / SecsPerDay + UnixDateDelta;
+  UnMapAndLoad(@LI);
+end;}
+
+function GetLinkerTimeStamp: TDateTime{; overload};
+begin
+  Result := PImageNtHeaders(HInstance + Cardinal(PImageDosHeader(HInstance)^
+        ._lfanew))^.FileHeader.TimeDateStamp / SecsPerDay + UnixDateDelta;
 end;
 
 end.

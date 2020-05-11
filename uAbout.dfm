@@ -64,6 +64,13 @@ object AboutForm: TAboutForm
     Width = 64
     Height = 64
   end
+  object BuildDateLabel: TLabel
+    Left = 216
+    Top = 64
+    Width = 115
+    Height = 13
+    Caption = 'Build date: XX.XX.XXXX'
+  end
   object CloseButton: TButton
     Left = 160
     Top = 152
