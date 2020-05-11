@@ -119,6 +119,10 @@ var
 begin
   Application.OnMinimize := ApplicationMinimize;
 
+  // Without next line tray icon with incorrect size be taken
+  TrayIcon.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
+      16, 16, LR_DEFAULTCOLOR);
+
   for Fmt := Low(TImageFormat) to High(TImageFormat) do
     ImageFormatComboBox.Items.Append(ImageFormatNames[Fmt]);
 
