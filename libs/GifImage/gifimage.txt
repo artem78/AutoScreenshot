@@ -1,0 +1,28 @@
+Changed 2009.10.14
+
+TGIFImage
+for Delphi 2, 3, 4, 5 and C++ Builder 3, 4,
+and Delphi 6, Delphi 7, Delphi 2005, Delphi 2006, Delphi 2007, Delphi 2009, Delphi 2010.
+It supports animated GIF files.
+
+It only works in VCL applications for Win32 platform.
+It doesn't work in .NET applications.
+
+WARNING: Use it at your own risk.
+
+I'm posting it with permission from the original author Anders Melander.
+Anders Melander's website can be found here:
+http://melander.dk/delphi/gifimage/
+
+Please look at the comments in the pas file to see changes.
+
+You should also look at the GIF FAQ on the website and
+you should download and look at the gif demo applications.
+
+Regards,
+Finn Tolderlund
+
+Mail:
+finn@tolderlund.eu
+website:
+http://www.tolderlund.eu/delphi/

@@ -5,10 +5,10 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, inifiles, Spin, FileCtrl, pngImage,
-  TrayIcon, XPMan, jpeg, ShellAPI, Menus;
+  TrayIcon, XPMan, jpeg, ShellAPI, Menus, GifImage;
 
 type
-  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP);
+  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP, fmtGIF);
   TLanguage = (lngEnglish=0, lngRussian);
 
   TMainForm = class(TForm)
@@ -96,7 +96,7 @@ type
   end;
 
 const
-  ImageFormatNames: array [TImageFormat] of String = ('PNG', 'JPG', 'BMP');
+  ImageFormatNames: array [TImageFormat] of String = ('PNG', 'JPG', 'BMP', 'GIF');
   LanguageCodes: array [TLanguage] of String = ('en', 'ru');
   DefaultConfigIniSection = 'main';
 
@@ -255,6 +255,7 @@ var
   Bitmap: TBitmap;
   PNG: TPNGObject;
   JPG: TJPEGImage;
+  GIF: TGIFImage;
   ScreenDC: HDC;
 begin
   Bitmap := TBitmap.Create;
@@ -294,6 +295,18 @@ begin
       fmtBMP:    // Bitmap (BMP)
         begin
           Bitmap.SaveToFile(ImagePath);
+        end;
+
+      fmtGIF:    // GIF
+        begin
+          GIF := TGIFImage.Create;
+          try
+            GIF.Assign(Bitmap);
+            GIF.OptimizeColorMap;
+            GIF.SaveToFile(ImagePath);
+          finally
+            GIF.Free;
+          end;
         end;
     end;
   finally
@@ -355,6 +368,7 @@ begin
     fmtPNG: Ext := 'png';
     fmtJPG: Ext := 'jpg';
     fmtBMP: Ext := 'bmp';
+    fmtGIF: Ext := 'gif';
   end;
 
   // If image file already exist create new one with order number
