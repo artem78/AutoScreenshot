@@ -9,6 +9,15 @@ uses
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP, fmtGIF);
+
+  TImageFormatInfo = record
+    Name: String[10];
+    Extension: String[3];
+    HasQuality: Boolean;
+  end;
+
+  TImageFormatInfoArray = array [TImageFormat] of TImageFormatInfo;
+
   TLanguage = (lngEnglish=0, lngRussian);
 
   TMainForm = class(TForm)
@@ -100,7 +109,29 @@ type
   end;
 
 const
-  ImageFormatNames: array [TImageFormat] of String = ('PNG', 'JPG', 'BMP', 'GIF');
+  ImageFormatInfoArray: TImageFormatInfoArray = (
+    (
+      Name:       'PNG';
+      Extension:  'png';
+      HasQuality: False;
+    ),
+    (
+      Name:       'JPG';
+      Extension:  'jpg';
+      HasQuality: True;
+    ),
+    (
+      Name:       'BMP';
+      Extension:  'bmp';
+      HasQuality: False;
+    ),
+    (
+      Name:       'GIF';
+      Extension:  'gif';
+      HasQuality: False;
+    )
+  );
+  
   LanguageCodes: array [TLanguage] of String = ('en', 'ru');
   DefaultConfigIniSection = 'main';
 
@@ -130,7 +161,7 @@ begin
       16, 16, LR_DEFAULTCOLOR);
 
   for Fmt := Low(TImageFormat) to High(TImageFormat) do
-    ImageFormatComboBox.Items.Append(ImageFormatNames[Fmt]);
+    ImageFormatComboBox.Items.Append(ImageFormatInfoArray[Fmt].Name);
 
   Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
 
@@ -139,7 +170,8 @@ begin
   CaptureInterval.Value := Ini.ReadInteger(DefaultConfigIniSection, 'CaptureInterval', 5);
   StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
 
-  FmtStr := Ini.ReadString(DefaultConfigIniSection, 'ImageFormat', ImageFormatNames[fmtPNG]);
+  FmtStr := Ini.ReadString(DefaultConfigIniSection, 'ImageFormat',
+      ImageFormatInfoArray[DefaultImageFormat].Name);
   try
     SetImageFormatByStr(FmtStr);
   except
@@ -368,12 +400,7 @@ begin
 
   DirName := FinalOutputDir;
 
-  case ImageFormat of
-    fmtPNG: Ext := 'png';
-    fmtJPG: Ext := 'jpg';
-    fmtBMP: Ext := 'bmp';
-    fmtGIF: Ext := 'gif';
-  end;
+  Ext := ImageFormatInfoArray[ImageFormat].Extension;
 
   // If image file already exist create new one with order number
   I := 1;
@@ -402,13 +429,16 @@ end;
 procedure TMainForm.ImageFormatComboBoxChange(Sender: TObject);
 var
   Format: TImageFormat;
+  IsQualityVisible: Boolean;
 begin
-  Format := TImageFormat(ImageFormatComboBox.ItemIndex);
-  JPEGQualitySpinEdit.{Enabled}Visible := Format = fmtJPG;
-  JPEGQualityLabel.{Enabled}Visible := Format = fmtJPG;
-  JPEGQualityPercentLabel.{Enabled}Visible := Format = fmtJPG;
+  Format := ImageFormat;
+  IsQualityVisible := ImageFormatInfoArray[Format].HasQuality;
 
-  Ini.WriteString(DefaultConfigIniSection, 'ImageFormat', ImageFormatNames[Format]);
+  JPEGQualitySpinEdit.Visible := IsQualityVisible;
+  JPEGQualityLabel.Visible    := IsQualityVisible;
+  JPEGQualityPercentLabel.Visible := IsQualityVisible;
+
+  Ini.WriteString(DefaultConfigIniSection, 'ImageFormat', ImageFormatInfoArray[Format].Name);
 end;
 
 procedure TMainForm.ToggleAutoCaptureTrayMenuItemClick(Sender: TObject);
@@ -531,7 +561,7 @@ var
 begin
   for Fmt := Low(TImageFormat) to High(TImageFormat) do
   begin
-    if ImageFormatNames[Fmt] = FmtStr then
+    if ImageFormatInfoArray[Fmt].Name = FmtStr then
     begin
       SetImageFormat(Fmt);
       Exit;
