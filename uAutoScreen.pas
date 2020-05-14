@@ -77,6 +77,9 @@ type
     function GetTimerEnabled: Boolean;
     function GetFinalOutputDir: String;
     function GetImagePath: String;
+    procedure SetImageFormatByStr(FmtStr: String);
+    procedure SetImageFormat(Fmt: TImageFormat);
+    function GetImageFormat: TImageFormat;
     procedure MakeScreenshot;
     procedure MinimizeToTray;
     procedure RestoreFromTray;
@@ -91,6 +94,7 @@ type
     property FinalOutputDir: String read GetFinalOutputDir;
     property ImagePath: String read GetImagePath;
     property Language: TLanguage read FLanguage write SetLanguage;
+    property ImageFormat: TImageFormat read GetImageFormat write SetImageFormat;
   public
     { Public declarations }
   end;
@@ -111,6 +115,8 @@ uses uAbout{, DateUtils}, uLocalization, uUtils;
 {$R *.dfm}
 
 procedure TMainForm.FormCreate(Sender: TObject);
+const
+  DefaultImageFormat = fmtPNG;
 var
   Fmt: TImageFormat;
   FmtStr: String;
@@ -132,19 +138,17 @@ begin
   FileNameTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '%Y-%M-%D\%Y-%M-%D %H.%N.%S');
   CaptureInterval.Value := Ini.ReadInteger(DefaultConfigIniSection, 'CaptureInterval', 5);
   StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
+
   FmtStr := Ini.ReadString(DefaultConfigIniSection, 'ImageFormat', ImageFormatNames[fmtPNG]);
-  for Fmt := Low(TImageFormat) to High(TImageFormat) do
-  begin
-    if ImageFormatNames[Fmt] = FmtStr then
-    begin
-      ImageFormatComboBox.ItemIndex := Ord(Fmt);
-      Break;
-    end;
+  try
+    SetImageFormatByStr(FmtStr);
+  except
+    ImageFormat := DefaultImageFormat;
   end;
+  
   JPEGQualitySpinEdit.MinValue := Low(TJPEGQualityRange);
   JPEGQualitySpinEdit.MaxValue := High(TJPEGQualityRange);
   JPEGQualitySpinEdit.Value := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', 80);
-  ImageFormatComboBox.OnChange(ImageFormatComboBox);
 
   // Language
   LangCode := Ini.ReadString(DefaultConfigIniSection, 'language', 'en');
@@ -267,7 +271,7 @@ begin
   ReleaseDC(0, ScreenDC);
 
   try
-    case TImageFormat(ImageFormatComboBox.ItemIndex) of
+    case ImageFormat of
       fmtPNG:      // PNG
         begin
           PNG := TPNGObject.Create;
@@ -364,7 +368,7 @@ begin
 
   DirName := FinalOutputDir;
 
-  case TImageFormat(ImageFormatComboBox.ItemIndex) of
+  case ImageFormat of
     fmtPNG: Ext := 'png';
     fmtJPG: Ext := 'jpg';
     fmtBMP: Ext := 'bmp';
@@ -514,6 +518,33 @@ end;
 procedure TMainForm.FileNameTemplateHelpButtonClick(Sender: TObject);
 begin
   ShowMessage(I18N('FileNameTemplateHelpText'));
+end;
+
+function TMainForm.GetImageFormat: TImageFormat;
+begin
+  Result := TImageFormat(ImageFormatComboBox.ItemIndex);
+end;
+
+procedure TMainForm.SetImageFormatByStr(FmtStr: String);
+var
+  Fmt: TImageFormat;
+begin
+  for Fmt := Low(TImageFormat) to High(TImageFormat) do
+  begin
+    if ImageFormatNames[Fmt] = FmtStr then
+    begin
+      SetImageFormat(Fmt);
+      Exit;
+    end;
+  end;
+
+  raise Exception.CreateFmt('Unknown format "%s"', [FmtStr]);
+end;
+
+procedure TMainForm.SetImageFormat(Fmt: TImageFormat);
+begin
+  ImageFormatComboBox.ItemIndex := Ord(Fmt);
+  ImageFormatComboBox.OnChange(ImageFormatComboBox);
 end;
 
 end.
