@@ -132,9 +132,9 @@ object MainForm: TMainForm
     OnClick = StopWhenInactiveCheckBoxClick
   end
   object LanguageRadioGroup: TRadioGroup
-    Left = 480
-    Top = 80
-    Width = 137
+    Left = 520
+    Top = 160
+    Width = 97
     Height = 57
     Caption = 'Language'
     Items.Strings = (
@@ -229,6 +229,15 @@ object MainForm: TMainForm
     Caption = '?'
     TabOrder = 14
     OnClick = FileNameTemplateHelpButtonClick
+  end
+  object GrayscaleCheckBox: TCheckBox
+    Left = 476
+    Top = 106
+    Width = 97
+    Height = 17
+    Caption = 'Grayscale'
+    TabOrder = 15
+    OnClick = GrayscaleCheckBoxClick
   end
   object Timer: TTimer
     Enabled = False

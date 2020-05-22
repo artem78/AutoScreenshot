@@ -14,6 +14,7 @@ type
     Name: String[10];
     Extension: String[3];
     HasQuality: Boolean;
+    HasGrayscale: Boolean;
   end;
 
   TImageFormatInfoArray = array [TImageFormat] of TImageFormatInfo;
@@ -54,6 +55,7 @@ type
     FileNameTemplateLabel: TLabel;
     FileNameTemplateComboBox: TComboBox;
     FileNameTemplateHelpButton: TButton;
+    GrayscaleCheckBox: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -78,6 +80,7 @@ type
     procedure StartMinimizedCheckBoxClick(Sender: TObject);
     procedure FileNameTemplateComboBoxChange(Sender: TObject);
     procedure FileNameTemplateHelpButtonClick(Sender: TObject);
+    procedure GrayscaleCheckBoxClick(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
@@ -111,24 +114,28 @@ type
 const
   ImageFormatInfoArray: TImageFormatInfoArray = (
     (
-      Name:       'PNG';
-      Extension:  'png';
-      HasQuality: False;
+      Name:         'PNG';
+      Extension:    'png';
+      HasQuality:   False;
+      HasGrayscale: False;
     ),
     (
-      Name:       'JPG';
-      Extension:  'jpg';
-      HasQuality: True;
+      Name:         'JPG';
+      Extension:    'jpg';
+      HasQuality:   True;
+      HasGrayscale: True;
     ),
     (
-      Name:       'BMP';
-      Extension:  'bmp';
-      HasQuality: False;
+      Name:         'BMP';
+      Extension:    'bmp';
+      HasQuality:   False;
+      HasGrayscale: False;
     ),
     (
-      Name:       'GIF';
-      Extension:  'gif';
-      HasQuality: False;
+      Name:         'GIF';
+      Extension:    'gif';
+      HasQuality:   False;
+      HasGrayscale: False;
     )
   );
   
@@ -181,6 +188,8 @@ begin
   JPEGQualitySpinEdit.MinValue := Low(TJPEGQualityRange);
   JPEGQualitySpinEdit.MaxValue := High(TJPEGQualityRange);
   JPEGQualitySpinEdit.Value := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', 80);
+
+  GrayscaleCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'Grayscale', False);
 
   // Language
   LangCode := Ini.ReadString(DefaultConfigIniSection, 'language', 'en');
@@ -319,8 +328,9 @@ begin
         begin
           JPG := TJPEGImage.Create;
           try
-            JPG.Assign(Bitmap);
             JPG.CompressionQuality := JPEGQualitySpinEdit.Value;
+            JPG.Grayscale := GrayscaleCheckBox.Checked;
+            JPG.Assign(Bitmap);
             JPG.Compress;
             JPG.SaveToFile(ImagePath);
           finally
@@ -429,7 +439,7 @@ end;
 procedure TMainForm.ImageFormatComboBoxChange(Sender: TObject);
 var
   Format: TImageFormat;
-  IsQualityVisible: Boolean;
+  IsQualityVisible, IsGrayscaleVisible: Boolean;
 begin
   Format := ImageFormat;
   IsQualityVisible := ImageFormatInfoArray[Format].HasQuality;
@@ -437,6 +447,9 @@ begin
   JPEGQualitySpinEdit.Visible := IsQualityVisible;
   JPEGQualityLabel.Visible    := IsQualityVisible;
   JPEGQualityPercentLabel.Visible := IsQualityVisible;
+
+  IsGrayscaleVisible := ImageFormatInfoArray[Format].HasGrayscale;
+  GrayscaleCheckBox.Visible := IsGrayscaleVisible;
 
   Ini.WriteString(DefaultConfigIniSection, 'ImageFormat', ImageFormatInfoArray[Format].Name);
 end;
@@ -515,6 +528,7 @@ begin
   StopWhenInactiveCheckBox.Caption := I18N('PauseCaptureWhenIdle');
   ImageFormatLabel.Caption := I18N('Format') + ':';
   JPEGQualityLabel.Caption := I18N('Quality') + ':';
+  GrayscaleCheckBox.Caption := I18N('Grayscale');
   AutoCaptureControlGroup.Caption := I18N('AutoCapture');
   StartAutoCaptureButton.Caption := I18N('StartCapture');
   StopAutoCaptureButton.Caption := I18N('StopCapture');
@@ -575,6 +589,11 @@ procedure TMainForm.SetImageFormat(Fmt: TImageFormat);
 begin
   ImageFormatComboBox.ItemIndex := Ord(Fmt);
   ImageFormatComboBox.OnChange(ImageFormatComboBox);
+end;
+
+procedure TMainForm.GrayscaleCheckBoxClick(Sender: TObject);
+begin
+  Ini.WriteBool(DefaultConfigIniSection, 'Grayscale', GrayscaleCheckBox.Checked);
 end;
 
 end.
