@@ -219,7 +219,8 @@ object MainForm: TMainForm
     Items.Strings = (
       '%Y-%M-%D\%Y-%M-%D %H.%N.%S'
       '%Y-%M\%D\%Y-%M-%D_%H.%N.%S'
-      '%Y\%M\%D\%H_%N_%S')
+      '%Y\%M\%D\%H_%N_%S'
+      'screenshot %Y-%M-%D %H%N%S')
   end
   object FileNameTemplateHelpButton: TButton
     Left = 480
