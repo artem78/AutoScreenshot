@@ -402,20 +402,22 @@ end;
 
 function TMainForm.GetFinalOutputDir: String;
 var
-  DirName: String;
+  BaseDir, SubDir, FullDir: String;
 begin
-  DirName := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '')} FileNameTemplateComboBox.Text);
-  DirName := FormatDateTime2(DirName);
+  BaseDir := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '');
 
-  DirName := IncludeTrailingPathDelimiter(Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '')) + DirName + '\';
-  DirName := RemoveExtraPathDelimiters(DirName);
-  if not DirectoryExists(DirName) then
+  SubDir := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '')} FileNameTemplateComboBox.Text);
+  SubDir := FormatDateTime2(SubDir);
+
+  FullDir := IncludeTrailingPathDelimiter(JoinPath(BaseDir, SubDir));
+
+  if not DirectoryExists(FullDir) then
   begin
-    if not ForceDirectories(DirName) then
+    if not ForceDirectories(FullDir) then
       RaiseLastOSError;
   end;
 
-  Result := DirName;
+  Result := FullDir;
 end;
 
 function TMainForm.GetImagePath: String;
@@ -426,11 +428,11 @@ begin
   FileName := ExtractFileName(FileNameTemplateComboBox.Text);
   FileName := FormatDateTime2(FileName);
 
-  DirName := FinalOutputDir;
+  DirName := IncludeTrailingPathDelimiter(FinalOutputDir);
 
   Ext := ImageFormatInfoArray[ImageFormat].Extension;
 
-  // If image file already exist create new one with order number
+  // If image file already exist create new one with index number
   I := 1;
   repeat
     if I = 1 then

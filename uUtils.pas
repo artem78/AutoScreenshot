@@ -1,4 +1,6 @@
 unit uUtils;
+{ Various general usefull functions }
+
 
 interface
 
@@ -44,6 +46,7 @@ function DecodeControlCharacters(const Str: String): String;
       2.1.0.0   | '2.1'
       1.0.0.0   | '1.0'
       0.0.0.0   | '0.0'
+      3.0.1.0   | '3.0.1'
       5.6.7.8   | '5.6.7.8'
       0.0.0.9   | '0.0.0.9'
  }
@@ -59,6 +62,8 @@ function GetLinkerTimeStamp: TDateTime{; overload};
       Result: c:\dir1\dir2\file.txt
 }
 function RemoveExtraPathDelimiters(const Path: String): String;
+
+function JoinPath(const Base: String; const Path: String): String;
 
 implementation
 
@@ -221,6 +226,12 @@ begin
        IsPrevDelim := False;
      end;
   end;
+end;
+
+function JoinPath(const Base: String; const Path: String): String;
+begin
+  Result := IncludeTrailingPathDelimiter(Base) + Path;
+  Result := RemoveExtraPathDelimiters(Result);
 end;
 
 end.
