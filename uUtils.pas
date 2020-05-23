@@ -53,6 +53,13 @@ function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean 
 // Returns build time from TimeDateStamp PE header
 function GetLinkerTimeStamp: TDateTime{; overload};
 
+{ Removes duplicated slashes from given path.
+  Example:
+      RemoveExtraPathDelimiters('c:\dir1\\dir2\\\file.txt');
+      Result: c:\dir1\dir2\file.txt
+}
+function RemoveExtraPathDelimiters(const Path: String): String;
+
 implementation
 
 uses
@@ -185,6 +192,35 @@ function GetLinkerTimeStamp: TDateTime{; overload};
 begin
   Result := PImageNtHeaders(HInstance + Cardinal(PImageDosHeader(HInstance)^
         ._lfanew))^.FileHeader.TimeDateStamp / SecsPerDay + UnixDateDelta;
+end;
+
+function RemoveExtraPathDelimiters(const Path: String): String;
+var
+  I: Integer;
+  Ch: Char;
+  IsPrevDelim: Boolean;
+begin
+  // Result := StringReplace(Path, PathDelim + PathDelim, PathDelim, [rfReplaceAll]);
+
+  Result := '';
+  IsPrevDelim := False;
+  for I := 1 to Length(Path) do
+  begin
+     Ch := Path[I];
+     if Ch = PathDelim then
+     begin
+       if not IsPrevDelim then
+       begin
+         Result := Result + Ch;
+         IsPrevDelim := True;
+       end;
+     end
+     else
+     begin
+       Result := Result + Ch;
+       IsPrevDelim := False;
+     end;
+  end;
 end;
 
 end.

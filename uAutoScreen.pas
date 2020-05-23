@@ -408,6 +408,7 @@ begin
   DirName := FormatDateTime2(DirName);
 
   DirName := IncludeTrailingPathDelimiter(Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '')) + DirName + '\';
+  DirName := RemoveExtraPathDelimiters(DirName);
   if not DirectoryExists(DirName) then
   begin
     if not ForceDirectories(DirName) then
