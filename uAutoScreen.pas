@@ -96,7 +96,10 @@ type
     procedure MinimizeToTray;
     procedure RestoreFromTray;
     procedure SetLanguage(Lang: TLanguage);
+    procedure SetLanguageByCode(LangCode: String);
     procedure TranslateForm();
+    procedure InitUI;
+    procedure ReadSettings;
 
     // ToDo: Why this do not work?
     //    property IsTimerEnabled: Boolean read Timer.Enabled write SetTimerEnabled;
@@ -152,31 +155,40 @@ uses uAbout{, DateUtils}, uLocalization, uUtils;
 
 {$R *.dfm}
 
-procedure TMainForm.FormCreate(Sender: TObject);
-const
-  DefaultImageFormat = fmtPNG;
+procedure TMainForm.InitUI;
 var
   Fmt: TImageFormat;
-  FmtStr: String;
-  LangCode: String;
-  LangId, I: TLanguage;
 begin
-  Application.OnMinimize := ApplicationMinimize;
-
   // Without next line tray icon with incorrect size be taken
   TrayIcon.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
       16, 16, LR_DEFAULTCOLOR);
 
+  // Fill combobox with image formats
   for Fmt := Low(TImageFormat) to High(TImageFormat) do
     ImageFormatComboBox.Items.Append(ImageFormatInfoArray[Fmt].Name);
 
-  Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
+  // Set min/max values for JPEG quality
+  JPEGQualitySpinEdit.MinValue := Low(TJPEGQualityRange);
+  JPEGQualitySpinEdit.MaxValue := High(TJPEGQualityRange);
+end;
 
+procedure TMainForm.ReadSettings;
+const
+  DefaultFileNameTemplate = '%Y-%M-%D\%Y-%M-%D %H.%N.%S';
+  DefaultCaptureInterval  = 5;
+  DefaultImageFormat      = fmtPNG;
+  DefaultJPEGQuality      = 80;
+  DefaultLanguage         = lngEnglish;
+var
+  FmtStr: String;
+  LangCode: String;
+begin
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', ExtractFilePath(Application.ExeName));
-  FileNameTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '%Y-%M-%D\%Y-%M-%D %H.%N.%S');
-  CaptureInterval.Value := Ini.ReadInteger(DefaultConfigIniSection, 'CaptureInterval', 5);
+  FileNameTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', DefaultFileNameTemplate);
+  CaptureInterval.Value := Ini.ReadInteger(DefaultConfigIniSection, 'CaptureInterval', DefaultCaptureInterval);
   StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
 
+  // Image format
   FmtStr := Ini.ReadString(DefaultConfigIniSection, 'ImageFormat',
       ImageFormatInfoArray[DefaultImageFormat].Name);
   try
@@ -184,31 +196,26 @@ begin
   except
     ImageFormat := DefaultImageFormat;
   end;
-  
-  JPEGQualitySpinEdit.MinValue := Low(TJPEGQualityRange);
-  JPEGQualitySpinEdit.MaxValue := High(TJPEGQualityRange);
-  JPEGQualitySpinEdit.Value := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', 80);
+
+  JPEGQualitySpinEdit.Value := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', DefaultJPEGQuality);
 
   GrayscaleCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'Grayscale', False);
 
   // Language
-  LangCode := Ini.ReadString(DefaultConfigIniSection, 'language', 'en');
-  LangId := lngEnglish;
-  for I := Low(TLanguage) to High(TLanguage) do
-  begin
-    if (LangCode = LanguageCodes[I]) then
-    begin
-      LangId := I;
-      Break;
-    end;
+  LangCode := Ini.ReadString(DefaultConfigIniSection, 'Language', LanguageCodes[DefaultLanguage]);
+  try
+    SetLanguageByCode(LangCode);
+  except
+    SetLanguage(DefaultLanguage);
   end;
-  SetLanguage(LangId);
 
+  // Start autocapture
   Timer.Interval := CaptureInterval.Value * 60 * 1000;
   StartCaptureOnStartUpCheckBox.Checked :=
       Ini.ReadBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', {True} False);
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
 
+  // Start minimized
   if Ini.ReadBool(DefaultConfigIniSection, 'StartMinimized', False) then
   begin
     StartMinimizedCheckBox.Checked := True;
@@ -216,6 +223,16 @@ begin
   end
   else
     RestoreFromTray;
+end;
+
+procedure TMainForm.FormCreate(Sender: TObject);
+begin
+  Application.OnMinimize := ApplicationMinimize;
+
+  InitUI;
+
+  Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
+  ReadSettings;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -514,6 +531,22 @@ begin
   LanguageRadioGroup.ItemIndex := Ord(Lang);
   I18NSetLang(LanguageCodes[Lang]);
   TranslateForm;
+end;
+
+procedure TMainForm.SetLanguageByCode(LangCode: String);
+var
+  LangIdx: TLanguage;
+begin
+  for LangIdx := Low(TLanguage) to High(TLanguage) do
+  begin
+    if LangCode = LanguageCodes[LangIdx] then
+    begin
+      SetLanguage(LangIdx);
+      Exit;
+    end;
+  end;
+
+  raise Exception.CreateFmt('Unknown language code "%s"', [LangCode]);
 end;
 
 procedure TMainForm.TranslateForm;
