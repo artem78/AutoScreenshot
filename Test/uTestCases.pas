@@ -13,6 +13,8 @@ type
     procedure TestFormatPath;
     procedure TestInt2Str;
     procedure TestDecode;
+    procedure TestJoinPath;
+    procedure TestRemoveExtraPathDelimiters;
   end;
 
 implementation
@@ -70,6 +72,30 @@ begin
   CheckEqualsString('000000', Int2Str(0, 6));
   CheckEqualsString('303', Int2Str(303, 3));
   CheckEqualsString('-505', Int2Str(-505, 3));
+end;
+
+procedure TMyTestCase.TestJoinPath;
+begin
+  //CheckEqualsString('', JoinPath('', ''));
+  {$IFDEF MSWINDOWS}
+  CheckEqualsString('c:\root\subdir\', JoinPath('c:\root', 'subdir\'));
+  CheckEqualsString('d:\folder1\folder2\folder3\folder4\',
+    JoinPath('d:\folder1\folder2\', '\folder3\folder4\'), 'Path starts with backslash');
+  CheckEqualsString('a:\DisketDir\', JoinPath('a:\DisketDir', ''), 'Empty path');
+  CheckEqualsString('mydir\picture.jpeg', JoinPath('mydir', 'picture.jpeg'),
+    'Relative path');
+  {$ENDIF}
+end;
+
+procedure TMyTestCase.TestRemoveExtraPathDelimiters;
+begin
+  //CheckEqualsString('', RemoveExtraPathDelimiters(''));
+  {$IFDEF MSWINDOWS}
+  CheckEqualsString('c:\dir1\dir2\dir3\file.txt', RemoveExtraPathDelimiters('c:\dir1\\dir2\\\dir3\\\\file.txt'));
+  CheckEqualsString('folder\', RemoveExtraPathDelimiters('folder\\'));
+  CheckEqualsString('\my folder\', RemoveExtraPathDelimiters('\\my folder\\'));
+  CheckEqualsString('d:\dir\file.txt', RemoveExtraPathDelimiters('d:\dir\file.txt'), 'Nothing to do');
+  {$ENDIF}
 end;
 
 initialization
