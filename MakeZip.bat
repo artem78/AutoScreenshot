@@ -28,14 +28,12 @@ set TargetZipDir="build\zip"
 
 REM Program version
 set ProgramVersion=
-for /f "usebackq tokens=2,3 delims=', " %%i in ("res\VERSIONINFO.rc") do (
-	REM echo i=%%~i j=%%~j
-	if "%%~i" equ "ProductVersion" (
-		set ProgramVersion=%%~j
-		goto EndLoop
-	)
+for /f tokens^=4^ delims^=^"^\ %%a in ('findstr /rc:"VALUE \"ProductVersion\"," "res\VERSIONINFO.rc"') do (
+	set ProgramVersion=%%a
+	goto EndLoop
 )
 :EndLoop
+REM echo version=%ProgramVersion%
 
 REM ***********************
 
