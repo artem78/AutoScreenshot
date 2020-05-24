@@ -65,6 +65,14 @@ object MainForm: TMainForm
     Alignment = taRightJustify
     Caption = 'Filename template:'
   end
+  object ColorDepthLabel: TLabel
+    Left = 320
+    Top = 108
+    Width = 57
+    Height = 13
+    Alignment = taRightJustify
+    Caption = 'Color depth:'
+  end
   object OutputDirEdit: TEdit
     Left = 208
     Top = 20
@@ -239,6 +247,18 @@ object MainForm: TMainForm
     Caption = 'Grayscale'
     TabOrder = 15
     OnClick = GrayscaleCheckBoxClick
+  end
+  object ColorDepthComboBox: TComboBox
+    Left = 384
+    Top = 104
+    Width = 65
+    Height = 21
+    AutoComplete = False
+    Style = csDropDownList
+    DropDownCount = 10
+    ItemHeight = 13
+    TabOrder = 16
+    OnChange = ColorDepthComboBoxChange
   end
   object Timer: TTimer
     Enabled = False

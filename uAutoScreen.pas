@@ -10,11 +10,14 @@ uses
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP, fmtGIF);
 
+  TColorDepth = (cd8Bit=8, cd16Bit=16, cd24Bit=24, cd32Bit=32);
+
   TImageFormatInfo = record
     Name: String[10];
     Extension: String[3];
     HasQuality: Boolean;
     HasGrayscale: Boolean;
+    ColorDepth: Set of TColorDepth;
   end;
 
   TImageFormatInfoArray = array [TImageFormat] of TImageFormatInfo;
@@ -56,6 +59,8 @@ type
     FileNameTemplateComboBox: TComboBox;
     FileNameTemplateHelpButton: TButton;
     GrayscaleCheckBox: TCheckBox;
+    ColorDepthLabel: TLabel;
+    ColorDepthComboBox: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -81,9 +86,11 @@ type
     procedure FileNameTemplateComboBoxChange(Sender: TObject);
     procedure FileNameTemplateHelpButtonClick(Sender: TObject);
     procedure GrayscaleCheckBoxClick(Sender: TObject);
+    procedure ColorDepthComboBoxChange(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
+    FColorDepth: TColorDepth;
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -92,6 +99,8 @@ type
     procedure SetImageFormatByStr(FmtStr: String);
     procedure SetImageFormat(Fmt: TImageFormat);
     function GetImageFormat: TImageFormat;
+    procedure SetColorDepth(AColorDepth: TColorDepth);
+    function GetColorDepth: TColorDepth;
     procedure MakeScreenshot;
     procedure MinimizeToTray;
     procedure RestoreFromTray;
@@ -100,6 +109,7 @@ type
     procedure TranslateForm();
     procedure InitUI;
     procedure ReadSettings;
+    procedure UpdateColorDepthValues;
 
     // ToDo: Why this do not work?
     //    property IsTimerEnabled: Boolean read Timer.Enabled write SetTimerEnabled;
@@ -110,6 +120,7 @@ type
     property ImagePath: String read GetImagePath;
     property Language: TLanguage read FLanguage write SetLanguage;
     property ImageFormat: TImageFormat read GetImageFormat write SetImageFormat;
+    property ColorDepth: TColorDepth read GetColorDepth write SetColorDepth;
   public
     { Public declarations }
   end;
@@ -121,24 +132,28 @@ const
       Extension:    'png';
       HasQuality:   False;
       HasGrayscale: False;
+      ColorDepth:   [cd8Bit, cd24Bit]
     ),
     (
       Name:         'JPG';
       Extension:    'jpg';
       HasQuality:   True;
       HasGrayscale: True;
+      ColorDepth:   []
     ),
     (
       Name:         'BMP';
       Extension:    'bmp';
       HasQuality:   False;
       HasGrayscale: False;
+      ColorDepth:   [cd8Bit, cd16Bit, cd24Bit, cd32Bit]
     ),
     (
       Name:         'GIF';
       Extension:    'gif';
       HasQuality:   False;
       HasGrayscale: False;
+      ColorDepth:   []
     )
   );
   
@@ -179,6 +194,7 @@ const
   DefaultImageFormat      = fmtPNG;
   DefaultJPEGQuality      = 80;
   DefaultLanguage         = lngEnglish;
+  DefaultColorDepth       = cd24Bit;
 var
   FmtStr: String;
   LangCode: String;
@@ -189,6 +205,9 @@ begin
   StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
 
   // Image format
+  FColorDepth := TColorDepth(0); // Set value as unitialized to prevent
+        // reset to max available value in UpdateColorDepthValues() before
+        // reading color depth from ini file
   FmtStr := Ini.ReadString(DefaultConfigIniSection, 'ImageFormat',
       ImageFormatInfoArray[DefaultImageFormat].Name);
   try
@@ -200,6 +219,14 @@ begin
   JPEGQualitySpinEdit.Value := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', DefaultJPEGQuality);
 
   GrayscaleCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'Grayscale', False);
+
+  // Color depth
+  try
+    ColorDepth := TColorDepth(Ini.ReadInteger(DefaultConfigIniSection,
+        'ColorDepth', Integer(DefaultColorDepth)));
+  except
+    FColorDepth := DefaultColorDepth;
+  end;
 
   // Language
   LangCode := Ini.ReadString(DefaultConfigIniSection, 'Language', LanguageCodes[DefaultLanguage]);
@@ -321,6 +348,22 @@ var
   ScreenDC: HDC;
 begin
   Bitmap := TBitmap.Create;
+
+  // Set color depth for bitmap
+  try
+    case Integer(ColorDepth) of
+      1:  Bitmap.PixelFormat := pf1bit;
+      4:  Bitmap.PixelFormat := pf4bit;
+      8:  Bitmap.PixelFormat := pf8bit;
+      16: Bitmap.PixelFormat := pf16bit;
+      24: Bitmap.PixelFormat := pf24bit;
+      32: Bitmap.PixelFormat := pf32bit;
+      //else raise Exception.CreateFmt('Color depth %d bit not supported in TBitmap', [Integer(ColorDepth)]);
+    end;
+  except
+    // Leave bitmap pixel fomat as default
+  end;
+
   Bitmap.Width := Screen.Width;
   Bitmap.Height := Screen.Height;
   ScreenDC := GetDC(0);
@@ -471,6 +514,8 @@ begin
   IsGrayscaleVisible := ImageFormatInfoArray[Format].HasGrayscale;
   GrayscaleCheckBox.Visible := IsGrayscaleVisible;
 
+  UpdateColorDepthValues;
+  
   Ini.WriteString(DefaultConfigIniSection, 'ImageFormat', ImageFormatInfoArray[Format].Name);
 end;
 
@@ -563,6 +608,7 @@ begin
   CaptureIntervalLabel.Caption := I18N('CaptureInterval') + ':';
   StopWhenInactiveCheckBox.Caption := I18N('PauseCaptureWhenIdle');
   ImageFormatLabel.Caption := I18N('Format') + ':';
+  ColorDepthLabel.Caption := I18N('ColorDepth') + ':';
   JPEGQualityLabel.Caption := I18N('Quality') + ':';
   GrayscaleCheckBox.Caption := I18N('Grayscale');
   AutoCaptureControlGroup.Caption := I18N('AutoCapture');
@@ -630,6 +676,100 @@ end;
 procedure TMainForm.GrayscaleCheckBoxClick(Sender: TObject);
 begin
   Ini.WriteBool(DefaultConfigIniSection, 'Grayscale', GrayscaleCheckBox.Checked);
+end;
+
+procedure TMainForm.ColorDepthComboBoxChange(Sender: TObject);
+var
+  Idx: Integer;
+begin
+  Idx := ColorDepthComboBox.ItemIndex;
+  if Idx <> -1 then
+    ColorDepth := TColorDepth(ColorDepthComboBox.Items.Objects[Idx]);
+end;
+
+procedure TMainForm.UpdateColorDepthValues;
+var
+  ColorDepthTmp: TColorDepth;
+  IsEmpty: Boolean;
+  Idx: Integer;
+begin
+  {if ImageFormatComboBox.ItemIndex = 1 then
+    Exit;}
+
+  ColorDepthComboBox.Clear;
+  ColorDepthComboBox.ItemIndex := -1;
+
+  IsEmpty := ImageFormatInfoArray[ImageFormat].ColorDepth = [];
+
+  if not IsEmpty then
+  begin
+    Idx := 0;
+    for ColorDepthTmp := Low(TColorDepth) to High(TColorDepth) do
+    begin
+      if ColorDepthTmp in ImageFormatInfoArray[ImageFormat].ColorDepth then
+      begin
+        ColorDepthComboBox.Items.AddObject(Format('%d bit', [Integer(ColorDepthTmp)]), TObject(Integer(ColorDepthTmp)));
+        if ColorDepthTmp = FColorDepth then
+        begin
+          // Select last saved color depth if available
+          ColorDepth := TColorDepth(ColorDepthComboBox.Items.Objects[Idx]);
+        end;
+        Inc(Idx);
+      end;
+    end;
+
+    if (ColorDepthComboBox.ItemIndex = -1) and (FColorDepth <> TColorDepth(0)) then
+    begin
+      // Select best color depth (last one in the list)
+      Idx := ColorDepthComboBox.Items.Count - 1;
+      ColorDepth := TColorDepth(ColorDepthComboBox.Items.Objects[Idx]);
+    end;
+  end;
+
+  ColorDepthLabel.Visible := not IsEmpty;
+  ColorDepthComboBox.Visible := not IsEmpty;
+
+  ColorDepthComboBox.OnChange(ColorDepthComboBox);
+end;
+
+function TMainForm.GetColorDepth: TColorDepth;
+begin
+  if ImageFormatInfoArray[ImageFormat].ColorDepth = [] then
+    raise Exception.CreateFmt('%s format has no color depth option',
+          [ImageFormatInfoArray[ImageFormat].Name])
+  else
+  begin
+    if FColorDepth = TColorDepth(0) then
+      raise Exception.Create('Color depth not initialized')
+    else
+      Result := FColorDepth;
+  end;
+end;
+
+procedure TMainForm.SetColorDepth(AColorDepth: TColorDepth);
+var
+  Idx: Integer;
+begin
+  ColorDepthComboBox.ItemIndex := -1;
+
+  if AColorDepth in ImageFormatInfoArray[ImageFormat].ColorDepth then
+  begin
+    // Choose new value in combobox
+    for Idx := 0 to ColorDepthComboBox.Items.Count - 1 do
+    begin
+      if TColorDepth(ColorDepthComboBox.Items.Objects[Idx]) = AColorDepth then
+      begin
+        ColorDepthComboBox.ItemIndex := Idx;
+        Break;
+      end;
+    end;
+
+    FColorDepth := AColorDepth;
+    Ini.WriteInteger(DefaultConfigIniSection, 'ColorDepth', Integer(AColorDepth));
+  end
+  else
+    raise Exception.CreateFmt('Color depth %d-bit not allowed for %s format',
+      [integer(AColorDepth), ImageFormatInfoArray[ImageFormat].Name]);
 end;
 
 end.
