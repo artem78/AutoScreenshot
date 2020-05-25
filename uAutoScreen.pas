@@ -111,10 +111,6 @@ type
     procedure ReadSettings;
     procedure UpdateColorDepthValues;
 
-    // ToDo: Why this do not work?
-    //    property IsTimerEnabled: Boolean read Timer.Enabled write SetTimerEnabled;
-    //    Error: Record, object or class type required
-
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
     property ImagePath: String read GetImagePath;
@@ -602,7 +598,6 @@ begin
   // Main form
   LanguageRadioGroup.Caption := I18N('Language');
   OutputDirLabel.Caption := I18N('OutputDirectory') + ':';
-  //ChooseOutputDirButton.Caption := I18N('Choose') + '...';
   OpenOutputDirButton.Caption := I18N('OpenDirectory');
   FileNameTemplateLabel.Caption := I18N('FileNameTemplate') + ':';
   CaptureIntervalLabel.Caption := I18N('CaptureInterval') + ':';

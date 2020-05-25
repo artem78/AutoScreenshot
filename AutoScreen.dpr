@@ -10,8 +10,6 @@ uses
   uLocalization in 'uLocalization.pas',
   uUtils in 'uUtils.pas';
 
-//{$R *.res}
-
 var
   MutexHandle: THandle;
   //MutexName: PChar;
@@ -30,7 +28,7 @@ begin
   MutexHandle := CreateMutex(nil, false, MutexName);
 
   Application.Initialize;
-  Application.Title := 'Auto Screenshot'; // ToDo: Also rename executable to AutoScreenshot.exe
+  Application.Title := 'Auto Screenshot';
   Application.CreateForm(TMainForm, MainForm);
   Application.ShowMainForm := False;
   Application.Run;
