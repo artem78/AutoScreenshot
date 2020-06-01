@@ -571,7 +571,7 @@ begin
     Exit;}
 
   FLanguage := Lang;
-  Ini.WriteString(DefaultConfigIniSection, 'language', LanguageCodes[Lang]);
+  Ini.WriteString(DefaultConfigIniSection, 'Language', LanguageCodes[Lang]);
   LanguageRadioGroup.ItemIndex := Ord(Lang);
   I18NSetLang(LanguageCodes[Lang]);
   TranslateForm;
