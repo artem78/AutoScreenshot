@@ -27,12 +27,12 @@ object MainForm: TMainForm
     Caption = 'Saving directory:'
   end
   object CaptureIntervalLabel: TLabel
-    Left = 78
+    Left = 128
     Top = 77
-    Width = 123
+    Width = 73
     Height = 13
     Alignment = taRightJustify
-    Caption = 'Saving interval in minutes:'
+    Caption = 'Saving interval:'
   end
   object ImageFormatLabel: TLabel
     Left = 166
@@ -90,24 +90,13 @@ object MainForm: TMainForm
     TabOrder = 1
     OnClick = ChooseOutputDirButtonClick
   end
-  object CaptureInterval: TSpinEdit
-    Left = 208
-    Top = 72
-    Width = 57
-    Height = 22
-    MaxValue = 99999
-    MinValue = 1
-    TabOrder = 2
-    Value = 1
-    OnChange = CaptureIntervalChange
-  end
   object TakeScreenshotButton: TButton
     Left = 48
     Top = 260
     Width = 99
     Height = 25
     Caption = 'Take screenshot'
-    TabOrder = 3
+    TabOrder = 2
     OnClick = TakeScreenshotButtonClick
   end
   object JPEGQualitySpinEdit: TSpinEdit
@@ -117,7 +106,7 @@ object MainForm: TMainForm
     Height = 22
     MaxValue = 100
     MinValue = 0
-    TabOrder = 4
+    TabOrder = 3
     Value = 0
     OnChange = JPEGQualitySpinEditChange
   end
@@ -127,7 +116,7 @@ object MainForm: TMainForm
     Width = 97
     Height = 25
     Caption = 'Open directory'
-    TabOrder = 5
+    TabOrder = 4
     OnClick = OpenOutputDirButtonClick
   end
   object StopWhenInactiveCheckBox: TCheckBox
@@ -136,7 +125,7 @@ object MainForm: TMainForm
     Width = 329
     Height = 17
     Caption = 'Pause taking screenshots while idle'
-    TabOrder = 6
+    TabOrder = 5
     OnClick = StopWhenInactiveCheckBoxClick
   end
   object LanguageRadioGroup: TRadioGroup
@@ -148,7 +137,7 @@ object MainForm: TMainForm
     Items.Strings = (
       'English'
       #1056#1091#1089#1089#1082#1080#1081)
-    TabOrder = 10
+    TabOrder = 9
     OnClick = LanguageRadioGroupClick
   end
   object ImageFormatComboBox: TComboBox
@@ -160,7 +149,7 @@ object MainForm: TMainForm
     Style = csDropDownList
     DropDownCount = 10
     ItemHeight = 13
-    TabOrder = 7
+    TabOrder = 6
     OnChange = ImageFormatComboBoxChange
   end
   object AutoCaptureControlGroup: TGroupBox
@@ -169,7 +158,7 @@ object MainForm: TMainForm
     Width = 233
     Height = 65
     Caption = 'Automatic capture'
-    TabOrder = 8
+    TabOrder = 7
     object StartAutoCaptureButton: TButton
       Left = 24
       Top = 24
@@ -195,7 +184,7 @@ object MainForm: TMainForm
     Width = 97
     Height = 25
     Caption = 'About'
-    TabOrder = 9
+    TabOrder = 8
     OnClick = AboutButtonClick
   end
   object StartCaptureOnStartUpCheckBox: TCheckBox
@@ -204,7 +193,7 @@ object MainForm: TMainForm
     Width = 265
     Height = 17
     Caption = 'Start auto capture when program starts'
-    TabOrder = 11
+    TabOrder = 10
     OnClick = StartCaptureOnStartUpCheckBoxClick
   end
   object StartMinimizedCheckBox: TCheckBox
@@ -213,7 +202,7 @@ object MainForm: TMainForm
     Width = 265
     Height = 17
     Caption = 'Start minimized to tray'
-    TabOrder = 12
+    TabOrder = 11
     OnClick = StartMinimizedCheckBoxClick
   end
   object FileNameTemplateComboBox: TComboBox
@@ -222,7 +211,7 @@ object MainForm: TMainForm
     Width = 265
     Height = 21
     ItemHeight = 13
-    TabOrder = 13
+    TabOrder = 12
     OnChange = FileNameTemplateComboBoxChange
     Items.Strings = (
       '%Y-%M-%D\%Y-%M-%D %H.%N.%S'
@@ -236,7 +225,7 @@ object MainForm: TMainForm
     Width = 33
     Height = 25
     Caption = '?'
-    TabOrder = 14
+    TabOrder = 13
     OnClick = FileNameTemplateHelpButtonClick
   end
   object GrayscaleCheckBox: TCheckBox
@@ -245,7 +234,7 @@ object MainForm: TMainForm
     Width = 97
     Height = 17
     Caption = 'Grayscale'
-    TabOrder = 15
+    TabOrder = 14
     OnClick = GrayscaleCheckBoxClick
   end
   object ColorDepthComboBox: TComboBox
@@ -257,8 +246,19 @@ object MainForm: TMainForm
     Style = csDropDownList
     DropDownCount = 10
     ItemHeight = 13
-    TabOrder = 16
+    TabOrder = 15
     OnChange = ColorDepthComboBoxChange
+  end
+  object CaptureInterval: TDateTimePicker
+    Left = 208
+    Top = 72
+    Width = 73
+    Height = 21
+    Date = 44009.000000000000000000
+    Time = 44009.000000000000000000
+    Kind = dtkTime
+    TabOrder = 16
+    OnChange = CaptureIntervalChange
   end
   object Timer: TTimer
     Enabled = False

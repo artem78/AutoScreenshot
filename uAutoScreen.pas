@@ -28,7 +28,6 @@ type
     OutputDirEdit: TEdit;
     ChooseOutputDirButton: TButton;
     Timer: TTimer;
-    CaptureInterval: TSpinEdit;
     OutputDirLabel: TLabel;
     CaptureIntervalLabel: TLabel;
     TrayIcon: TTrayIcon;
@@ -61,6 +60,7 @@ type
     GrayscaleCheckBox: TCheckBox;
     ColorDepthLabel: TLabel;
     ColorDepthComboBox: TComboBox;
+    CaptureInterval: TDateTimePicker;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -156,13 +156,15 @@ const
   LanguageCodes: array [TLanguage] of String = ('en', 'ru');
   DefaultConfigIniSection = 'main';
 
+  MinCaptureIntervalInSeconds = 1;
+
 var
   MainForm: TMainForm;
   Ini: TIniFile;
 
 implementation
 
-uses uAbout{, DateUtils}, uLocalization, uUtils;
+uses uAbout, DateUtils, uLocalization, uUtils, Math;
 
 {$R *.dfm}
 
@@ -194,10 +196,16 @@ const
 var
   FmtStr: String;
   LangCode: String;
+  Seconds: Integer;
 begin
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', ExtractFilePath(Application.ExeName));
   FileNameTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', DefaultFileNameTemplate);
-  CaptureInterval.Value := Ini.ReadInteger(DefaultConfigIniSection, 'CaptureInterval', DefaultCaptureInterval);
+
+  Seconds := Round(Ini.ReadFloat(DefaultConfigIniSection, 'CaptureInterval', DefaultCaptureInterval) * 60);
+  Seconds := Max(Seconds, MinCaptureIntervalInSeconds);
+  CaptureInterval.Time := EncodeTime(0, 0, 0, 0);
+  CaptureInterval.Time := IncSecond(CaptureInterval.Time, Seconds);
+
   StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
 
   // Image format
@@ -233,7 +241,7 @@ begin
   end;
 
   // Start autocapture
-  Timer.Interval := CaptureInterval.Value * 60 * 1000;
+  Timer.Interval := SecondOfTheDay(CaptureInterval.Time) * 1000;
   StartCaptureOnStartUpCheckBox.Checked :=
       Ini.ReadBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', {True} False);
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
@@ -283,9 +291,18 @@ begin
 end;
 
 procedure TMainForm.CaptureIntervalChange(Sender: TObject);
+var
+  Seconds: Integer;
 begin
-  Ini.WriteInteger(DefaultConfigIniSection, 'CaptureInterval', CaptureInterval.Value);
-  Timer.Interval := CaptureInterval.Value * 60 * 1000;
+  Seconds := SecondOfTheDay(CaptureInterval.Time);
+  if Seconds < MinCaptureIntervalInSeconds then
+  begin
+    Seconds := MinCaptureIntervalInSeconds;
+    CaptureInterval.Time := EncodeTime(0, 0, 0, 0);
+    CaptureInterval.Time := IncSecond(CaptureInterval.Time, Seconds);
+  end;
+  Ini.WriteFloat(DefaultConfigIniSection, 'CaptureInterval', Seconds / 60);
+  Timer.Interval := Seconds * 1000;
 end;
 
 procedure TMainForm.TimerTimer(Sender: TObject);
