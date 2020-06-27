@@ -2,6 +2,7 @@ program AutoScreen;
 
 {$R 'res\MAINICON.res' 'res\MAINICON.rc'}
 {$R 'res\VERSIONINFO.res' 'res\VERSIONINFO.rc'}
+{$R 'res\ICONS.res' 'res\ICONS.rc'}
 
 uses
   Forms, Windows, Dialogs,

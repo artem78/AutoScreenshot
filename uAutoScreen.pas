@@ -24,6 +24,8 @@ type
 
   TLanguage = (lngEnglish=0, lngRussian);
 
+  TTrayIconState = (tisDefault, tisBlackWhite);
+
   TMainForm = class(TForm)
     OutputDirEdit: TEdit;
     ChooseOutputDirButton: TButton;
@@ -91,6 +93,7 @@ type
     { Private declarations }
     FLanguage: TLanguage;
     FColorDepth: TColorDepth;
+    FTrayIconState: TTrayIconState;
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -101,6 +104,7 @@ type
     function GetImageFormat: TImageFormat;
     procedure SetColorDepth(AColorDepth: TColorDepth);
     function GetColorDepth: TColorDepth;
+    procedure SetTrayIconState(IconState: TTrayIconState);
     procedure MakeScreenshot;
     procedure MinimizeToTray;
     procedure RestoreFromTray;
@@ -117,6 +121,7 @@ type
     property Language: TLanguage read FLanguage write SetLanguage;
     property ImageFormat: TImageFormat read GetImageFormat write SetImageFormat;
     property ColorDepth: TColorDepth read GetColorDepth write SetColorDepth;
+    property TrayIconState: TTrayIconState write SetTrayIconState;
   public
     { Public declarations }
   end;
@@ -172,9 +177,8 @@ procedure TMainForm.InitUI;
 var
   Fmt: TImageFormat;
 begin
-  // Without next line tray icon with incorrect size be taken
-  TrayIcon.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
-      16, 16, LR_DEFAULTCOLOR);
+  // Set default tray icon
+  TrayIconState := tisDefault;
 
   // Fill combobox with image formats
   for Fmt := Low(TImageFormat) to High(TImageFormat) do
@@ -335,6 +339,11 @@ begin
   StopAutoCaptureButton.Enabled := IsEnabled;
   // Tray menu
   ToggleAutoCaptureTrayMenuItem.Checked := IsEnabled;
+  // Tray icon
+  if IsEnabled then
+    TrayIconState := tisDefault
+  else
+    TrayIconState := tisBlackWhite;
 end;
 
 procedure TMainForm.StartAutoCaptureButtonClick(Sender: TObject);
@@ -782,6 +791,22 @@ begin
   else
     raise Exception.CreateFmt('Color depth %d-bit not allowed for %s format',
       [integer(AColorDepth), ImageFormatInfoArray[ImageFormat].Name]);
+end;
+
+procedure TMainForm.SetTrayIconState(IconState: TTrayIconState);
+var
+  ResName: PChar;
+begin
+  FTrayIconState := IconState;
+  
+  case IconState of
+    tisBlackWhite: ResName := 'CAMERA_BW';
+    //tisDefault:
+    else ResName := 'MAINICON';
+  end;
+
+  TrayIcon.Icon.Handle := LoadImage(HInstance, ResName, IMAGE_ICON,
+    16, 16, LR_DEFAULTCOLOR);
 end;
 
 end.
