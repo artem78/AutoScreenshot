@@ -387,7 +387,7 @@ begin
       //else raise Exception.CreateFmt('Color depth %d bit not supported in TBitmap', [Integer(ColorDepth)]);
     end;
   except
-    // Leave bitmap pixel fomat as default
+    // Leave bitmap pixel format as default
   end;
 
   Bitmap.Width := Screen.Width;
