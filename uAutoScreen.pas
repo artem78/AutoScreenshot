@@ -209,7 +209,7 @@ begin
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', ExtractFilePath(Application.ExeName));
   FileNameTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', DefaultFileNameTemplate);
 
-  Seconds := Round(Ini.ReadFloat(DefaultConfigIniSection, 'CaptureInterval', DefaultCaptureInterval) * 60);
+  Seconds := Round(Ini.ReadFloat(DefaultConfigIniSection, 'CaptureInterval', DefaultCaptureInterval) * SecsPerMin);
   Seconds := Max(Seconds, MinCaptureIntervalInSeconds);
   CaptureInterval.Time := EncodeTime(0, 0, 0, 0);
   CaptureInterval.Time := IncSecond(CaptureInterval.Time, Seconds);
@@ -249,7 +249,7 @@ begin
   end;
 
   // Start autocapture
-  Timer.Interval := SecondOfTheDay(CaptureInterval.Time) * 1000;
+  Timer.Interval := SecondOfTheDay(CaptureInterval.Time) * MSecsPerSec;
   StartCaptureOnStartUpCheckBox.Checked :=
       Ini.ReadBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', {True} False);
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
@@ -309,8 +309,8 @@ begin
     CaptureInterval.Time := EncodeTime(0, 0, 0, 0);
     CaptureInterval.Time := IncSecond(CaptureInterval.Time, Seconds);
   end;
-  Ini.WriteFloat(DefaultConfigIniSection, 'CaptureInterval', Seconds / 60);
-  Timer.Interval := Seconds * 1000;
+  Ini.WriteFloat(DefaultConfigIniSection, 'CaptureInterval', Seconds / SecsPerMin);
+  Timer.Interval := Seconds * MSecsPerSec;
 end;
 
 procedure TMainForm.TimerTimer(Sender: TObject);
