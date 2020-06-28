@@ -24,7 +24,7 @@ type
 
   TLanguage = (lngEnglish=0, lngRussian);
 
-  TTrayIconState = (tisDefault, tisBlackWhite);
+  TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
 
   TMainForm = class(TForm)
     OutputDirEdit: TEdit;
@@ -63,6 +63,7 @@ type
     ColorDepthLabel: TLabel;
     ColorDepthComboBox: TComboBox;
     CaptureInterval: TDateTimePicker;
+    TrayIconAnimationTimer: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -89,11 +90,14 @@ type
     procedure FileNameTemplateHelpButtonClick(Sender: TObject);
     procedure GrayscaleCheckBoxClick(Sender: TObject);
     procedure ColorDepthComboBoxChange(Sender: TObject);
+    procedure TrayIconAnimationTimerTimer(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
     FColorDepth: TColorDepth;
     FTrayIconState: TTrayIconState;
+
+    TrayIconIdx: 1..7;
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -392,6 +396,8 @@ begin
   BitBlt(Bitmap.Canvas.Handle, 0, 0, Screen.Width, Screen.Height,
            ScreenDC, 0, 0, SRCCOPY);
   ReleaseDC(0, ScreenDC);
+
+  TrayIconState := tisFlashAnimation;
 
   try
     case ImageFormat of
@@ -795,18 +801,46 @@ end;
 
 procedure TMainForm.SetTrayIconState(IconState: TTrayIconState);
 var
-  ResName: PChar;
+  ResName: String;
 begin
-  FTrayIconState := IconState;
+  if IconState <> tisFlashAnimation then
+    FTrayIconState := IconState;
   
   case IconState of
     tisBlackWhite: ResName := 'CAMERA_BW';
+    tisFlashAnimation:
+      begin
+        TrayIconIdx := Low(TrayIconIdx);
+        TrayIconAnimationTimer.Enabled := True;
+        ResName := Format('CAMERA_FLASH_%d', [TrayIconIdx]);
+      end
     //tisDefault:
     else ResName := 'MAINICON';
   end;
 
-  TrayIcon.Icon.Handle := LoadImage(HInstance, ResName, IMAGE_ICON,
+  TrayIcon.Icon.Handle := LoadImage(HInstance, PChar(ResName), IMAGE_ICON,
     16, 16, LR_DEFAULTCOLOR);
+end;
+
+procedure TMainForm.TrayIconAnimationTimerTimer(Sender: TObject);
+var
+  ResName: String;
+begin
+  Inc(TrayIconIdx);
+  if (TrayIconIdx <= High(TrayIconIdx)) then
+  begin
+    ResName := Format('CAMERA_FLASH_%d', [TrayIconIdx]);
+    TrayIcon.Icon.Handle := LoadImage(HInstance, PChar(ResName), IMAGE_ICON,
+      16, 16, LR_DEFAULTCOLOR);
+  end
+  else
+  begin
+    TrayIconIdx := Low(TrayIconIdx);
+    TrayIconAnimationTimer.Enabled := False; // Stop animation
+
+    // Restore previous tray icon
+    TrayIconState := FTrayIconState;
+  end;
 end;
 
 end.

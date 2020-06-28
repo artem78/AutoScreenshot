@@ -305,4 +305,11 @@ object MainForm: TMainForm
       OnClick = ExitTrayMenuItemClick
     end
   end
+  object TrayIconAnimationTimer: TTimer
+    Enabled = False
+    Interval = 160
+    OnTimer = TrayIconAnimationTimerTimer
+    Left = 16
+    Top = 168
+  end
 end

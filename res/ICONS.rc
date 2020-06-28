@@ -1,1 +1,8 @@
 CAMERA_BW ICON res/camera_bw.ico
+CAMERA_FLASH_1 ICON res/camera_flash1.ico
+CAMERA_FLASH_2 ICON res/camera_flash2.ico
+CAMERA_FLASH_3 ICON res/camera_flash3.ico
+CAMERA_FLASH_4 ICON res/camera_flash4.ico
+CAMERA_FLASH_5 ICON res/camera_flash5.ico
+CAMERA_FLASH_6 ICON res/camera_flash6.ico
+CAMERA_FLASH_7 ICON res/camera_flash7.ico
