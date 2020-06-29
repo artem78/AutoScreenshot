@@ -807,12 +807,12 @@ begin
     FTrayIconState := IconState;
   
   case IconState of
-    tisBlackWhite: ResName := 'CAMERA_BW';
+    tisBlackWhite: ResName := '_CAMERA_BW';
     tisFlashAnimation:
       begin
         TrayIconIdx := Low(TrayIconIdx);
         TrayIconAnimationTimer.Enabled := True;
-        ResName := Format('CAMERA_FLASH_%d', [TrayIconIdx]);
+        ResName := Format('_CAMERA_FLASH_%d', [TrayIconIdx]);
       end
     //tisDefault:
     else ResName := 'MAINICON';
@@ -829,7 +829,7 @@ begin
   Inc(TrayIconIdx);
   if (TrayIconIdx <= High(TrayIconIdx)) then
   begin
-    ResName := Format('CAMERA_FLASH_%d', [TrayIconIdx]);
+    ResName := Format('_CAMERA_FLASH_%d', [TrayIconIdx]);
     TrayIcon.Icon.Handle := LoadImage(HInstance, PChar(ResName), IMAGE_ICON,
       16, 16, LR_DEFAULTCOLOR);
   end
