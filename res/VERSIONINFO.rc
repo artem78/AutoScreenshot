@@ -1,6 +1,6 @@
 1 VERSIONINFO
-FILEVERSION 1,3,0,0
-PRODUCTVERSION 1,3,0,0
+FILEVERSION 1,4,0,0
+PRODUCTVERSION 1,4,0,0
 FILEOS VOS__WINDOWS32
 FILETYPE VFT_APP
 FILESUBTYPE VFT2_UNKNOWN
@@ -11,13 +11,13 @@ BLOCK "StringFileInfo"
 	{
 		VALUE "CompanyName", "\000"
 		VALUE "FileDescription", "Automatic screenshot maker\000"
-		VALUE "FileVersion", "1.3\000"
+		VALUE "FileVersion", "1.4\000"
 		VALUE "InternalName", "\000"
 		VALUE "LegalCopyright", "\000"
 		VALUE "LegalTrademarks", "\000"
 		VALUE "OriginalFilename", "\000"
 		VALUE "ProductName", "Auto Screenshot\000"
-		VALUE "ProductVersion", "1.3\000"
+		VALUE "ProductVersion", "1.4\000"
 		VALUE "Comments", "\000"
 	}
 }
