@@ -202,11 +202,17 @@ const
   DefaultLanguage         = lngEnglish;
   DefaultColorDepth       = cd24Bit;
 var
+  DefaultOutputDir: String;
   FmtStr: String;
   LangCode: String;
   Seconds: Integer;
 begin
-  OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', ExtractFilePath(Application.ExeName));
+  DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ExtractFilePath(Application.ExeName), 'screenshots'));
+  OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
+  // ToDo: Check that directory exists or can be created (with subdirs if needed)
+  if OutputDirEdit.Text = '' then
+    OutputDirEdit.Text := DefaultOutputDir;
+
   FileNameTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', DefaultFileNameTemplate);
 
   Seconds := Round(Ini.ReadFloat(DefaultConfigIniSection, 'CaptureInterval', DefaultCaptureInterval) * SecsPerMin);
