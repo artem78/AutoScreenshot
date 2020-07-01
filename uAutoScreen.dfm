@@ -96,7 +96,7 @@ object MainForm: TMainForm
     Width = 99
     Height = 25
     Caption = 'Take screenshot'
-    TabOrder = 2
+    TabOrder = 14
     OnClick = TakeScreenshotButtonClick
   end
   object JPEGQualitySpinEdit: TSpinEdit
@@ -106,7 +106,7 @@ object MainForm: TMainForm
     Height = 22
     MaxValue = 100
     MinValue = 0
-    TabOrder = 3
+    TabOrder = 8
     Value = 0
     OnChange = JPEGQualitySpinEditChange
   end
@@ -116,7 +116,7 @@ object MainForm: TMainForm
     Width = 97
     Height = 25
     Caption = 'Open directory'
-    TabOrder = 4
+    TabOrder = 2
     OnClick = OpenOutputDirButtonClick
   end
   object StopWhenInactiveCheckBox: TCheckBox
@@ -125,7 +125,7 @@ object MainForm: TMainForm
     Width = 329
     Height = 17
     Caption = 'Pause taking screenshots while idle'
-    TabOrder = 5
+    TabOrder = 10
     OnClick = StopWhenInactiveCheckBoxClick
   end
   object LanguageRadioGroup: TRadioGroup
@@ -137,7 +137,7 @@ object MainForm: TMainForm
     Items.Strings = (
       'English'
       #1056#1091#1089#1089#1082#1080#1081)
-    TabOrder = 9
+    TabOrder = 13
     OnClick = LanguageRadioGroupClick
   end
   object ImageFormatComboBox: TComboBox
@@ -158,7 +158,7 @@ object MainForm: TMainForm
     Width = 233
     Height = 65
     Caption = 'Automatic capture'
-    TabOrder = 7
+    TabOrder = 15
     object StartAutoCaptureButton: TButton
       Left = 24
       Top = 24
@@ -184,7 +184,7 @@ object MainForm: TMainForm
     Width = 97
     Height = 25
     Caption = 'About'
-    TabOrder = 8
+    TabOrder = 16
     OnClick = AboutButtonClick
   end
   object StartCaptureOnStartUpCheckBox: TCheckBox
@@ -193,7 +193,7 @@ object MainForm: TMainForm
     Width = 265
     Height = 17
     Caption = 'Start auto capture when program starts'
-    TabOrder = 10
+    TabOrder = 11
     OnClick = StartCaptureOnStartUpCheckBoxClick
   end
   object StartMinimizedCheckBox: TCheckBox
@@ -202,7 +202,7 @@ object MainForm: TMainForm
     Width = 265
     Height = 17
     Caption = 'Start minimized to tray'
-    TabOrder = 11
+    TabOrder = 12
     OnClick = StartMinimizedCheckBoxClick
   end
   object FileNameTemplateComboBox: TComboBox
@@ -211,7 +211,7 @@ object MainForm: TMainForm
     Width = 265
     Height = 21
     ItemHeight = 13
-    TabOrder = 12
+    TabOrder = 3
     OnChange = FileNameTemplateComboBoxChange
     Items.Strings = (
       '%Y-%M-%D\%Y-%M-%D %H.%N.%S'
@@ -225,7 +225,7 @@ object MainForm: TMainForm
     Width = 33
     Height = 25
     Caption = '?'
-    TabOrder = 13
+    TabOrder = 4
     OnClick = FileNameTemplateHelpButtonClick
   end
   object GrayscaleCheckBox: TCheckBox
@@ -234,7 +234,7 @@ object MainForm: TMainForm
     Width = 97
     Height = 17
     Caption = 'Grayscale'
-    TabOrder = 14
+    TabOrder = 9
     OnClick = GrayscaleCheckBoxClick
   end
   object ColorDepthComboBox: TComboBox
@@ -246,7 +246,7 @@ object MainForm: TMainForm
     Style = csDropDownList
     DropDownCount = 10
     ItemHeight = 13
-    TabOrder = 15
+    TabOrder = 7
     OnChange = ColorDepthComboBoxChange
   end
   object CaptureInterval: TDateTimePicker
@@ -257,7 +257,7 @@ object MainForm: TMainForm
     Date = 44009.000000000000000000
     Time = 44009.000000000000000000
     Kind = dtkTime
-    TabOrder = 16
+    TabOrder = 5
     OnChange = CaptureIntervalChange
   end
   object Timer: TTimer
