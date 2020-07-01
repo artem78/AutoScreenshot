@@ -27,7 +27,7 @@ Auto Screenshot
 <!-- ToDo: Написать подробно про шаблоны имён -->
 
 ## Системные требования
-* Операционная система Microsoft Windows XP или выше
+* Операционная система Microsoft Windows XP или выше (32-х или 64-битная)
 
 ## Установка
 * [Скачайте](https://github.com/artem78/AutoScreenshot/releases/latest) самую свежую версию программы

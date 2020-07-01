@@ -27,7 +27,7 @@ Auto Screenshot
 * [Russian](README-ru.md)
 
 ## Requirements
-* Microsoft Windows XP or higher
+* Microsoft Windows XP or higher (32-bit and 64-bit)
 
 ## Installation
 * [Download](https://github.com/artem78/AutoScreenshot/releases/latest) latest release
