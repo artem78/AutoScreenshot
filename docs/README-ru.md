@@ -17,6 +17,9 @@ Auto Screenshot
 ## Снимки экрана
 ![](images/main_window_ru.png "Основное окно программы")
 
+### Значок в трее
+![](images/tray_icon_animation.gif "Значок в трее")
+
 ## Языки интерфейса
 * Английский
 * Русский

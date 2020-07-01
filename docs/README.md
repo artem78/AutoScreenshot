@@ -19,6 +19,9 @@ Auto Screenshot
 ## Screenshots
 ![](images/main_window.png "Main program window")
 
+### Tray icon
+![](images/tray_icon_animation.gif "Tray icon")
+
 ## Languages
 * English
 * [Russian](README-ru.md)
