@@ -34,7 +34,7 @@ uses uLocalization, uUtils, DateUtils;
 {$R *.dfm}
 
 const
-  ProjectGitHubURL = 'https://github.com/artem78/AutoScreenshot';
+  ProjectGitHubURL = 'https://github.com/artem78/AutoScreenshot#readme';
 
 procedure TAboutForm.CloseButtonClick(Sender: TObject);
 begin
