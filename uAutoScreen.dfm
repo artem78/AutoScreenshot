@@ -27,12 +27,12 @@ object MainForm: TMainForm
     Caption = 'Saving directory:'
   end
   object CaptureIntervalLabel: TLabel
-    Left = 128
+    Left = 94
     Top = 77
-    Width = 73
+    Width = 107
     Height = 13
     Alignment = taRightJustify
-    Caption = 'Saving interval:'
+    Caption = 'Saving interval (h:m:s):'
   end
   object ImageFormatLabel: TLabel
     Left = 166
