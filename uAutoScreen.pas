@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, inifiles, Spin, FileCtrl, pngImage,
-  TrayIcon, XPMan, jpeg, ShellAPI, Menus, GifImage;
+  TrayIcon, XPMan, jpeg, ShellAPI, Menus, GifImage, Buttons;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP, fmtGIF);
@@ -44,8 +44,8 @@ type
     ImageFormatComboBox: TComboBox;
     JPEGQualityPercentLabel: TLabel;
     AutoCaptureControlGroup: TGroupBox;
-    StartAutoCaptureButton: TButton;
-    StopAutoCaptureButton: TButton;
+    StartAutoCaptureButton: TBitBtn;
+    StopAutoCaptureButton: TBitBtn;
     TrayIconPopupMenu: TPopupMenu;
     ExitTrayMenuItem: TMenuItem;
     TakeScreenshotTrayMenuItem: TMenuItem;
@@ -191,6 +191,10 @@ begin
   // Set min/max values for JPEG quality
   JPEGQualitySpinEdit.MinValue := Low(TJPEGQualityRange);
   JPEGQualitySpinEdit.MaxValue := High(TJPEGQualityRange);
+
+  // Icons
+  StartAutoCaptureButton.Glyph.LoadFromResourceName(HInstance, '_START_ICON');
+  StopAutoCaptureButton.Glyph.LoadFromResourceName(HInstance, '_STOP_ICON');
 end;
 
 procedure TMainForm.ReadSettings;

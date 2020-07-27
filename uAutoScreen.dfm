@@ -155,27 +155,31 @@ object MainForm: TMainForm
   object AutoCaptureControlGroup: TGroupBox
     Left = 208
     Top = 232
-    Width = 233
+    Width = 281
     Height = 65
     Caption = 'Automatic capture'
     TabOrder = 15
-    object StartAutoCaptureButton: TButton
+    object StartAutoCaptureButton: TBitBtn
       Left = 24
       Top = 24
-      Width = 75
+      Width = 105
       Height = 25
       Caption = 'Enable'
       TabOrder = 0
       OnClick = StartAutoCaptureButtonClick
+      NumGlyphs = 2
+      Spacing = 8
     end
-    object StopAutoCaptureButton: TButton
-      Left = 136
+    object StopAutoCaptureButton: TBitBtn
+      Left = 152
       Top = 24
-      Width = 75
+      Width = 105
       Height = 25
       Caption = 'Disable'
       TabOrder = 1
       OnClick = StopAutoCaptureButtonClick
+      NumGlyphs = 2
+      Spacing = 8
     end
   end
   object AboutButton: TButton
