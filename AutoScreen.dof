@@ -94,7 +94,7 @@ OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=libs\PNGImage;libs\GifImage
+SearchPath=libs\PNGImage;libs\GifImage;libs
 Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP
 Conditionals=
 DebugSourceDirs=
@@ -138,9 +138,10 @@ Comments=
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=2
-Item0=libs\PNGImage;libs\GifImage
-Item1=libs\PNGImage
+Count=3
+Item0=libs\PNGImage;libs\GifImage;libs
+Item1=libs\PNGImage;libs\GifImage
+Item2=libs\PNGImage
 [HistoryLists\hlOutputDirectorry]
 Count=1
 Item0=build\

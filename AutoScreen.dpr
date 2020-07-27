@@ -5,11 +5,14 @@ program AutoScreen;
 {$R 'res\ICONS.res' 'res\ICONS.rc'}
 
 uses
-  Forms, Windows, Dialogs,
+  Forms,
+  Windows,
+  Dialogs,
   uAutoScreen in 'uAutoScreen.pas' {MainForm},
   uAbout in 'uAbout.pas' {AboutForm},
   uLocalization in 'uLocalization.pas',
-  uUtils in 'uUtils.pas';
+  uUtils in 'uUtils.pas',
+  VistaAltFixUnit in 'libs\VistaAltFixUnit.pas';
 
 var
   MutexHandle: THandle;

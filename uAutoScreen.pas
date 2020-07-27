@@ -173,7 +173,7 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uLocalization, uUtils, Math;
+uses uAbout, DateUtils, uLocalization, uUtils, Math, VistaAltFixUnit;
 
 {$R *.dfm}
 
@@ -279,6 +279,9 @@ begin
   Application.OnMinimize := ApplicationMinimize;
 
   InitUI;
+
+  // Fix components disappearing when ALT key pressed on Windows Vista and later
+  TVistaAltFix.Create(Self);
 
   Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
   ReadSettings;
