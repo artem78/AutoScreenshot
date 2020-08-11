@@ -116,6 +116,8 @@ object MainForm: TMainForm
     Width = 97
     Height = 25
     Caption = 'Open directory'
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 2
     OnClick = OpenOutputDirButtonClick
   end
@@ -125,6 +127,8 @@ object MainForm: TMainForm
     Width = 329
     Height = 17
     Caption = 'Pause taking screenshots while idle'
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 10
     OnClick = StopWhenInactiveCheckBoxClick
   end

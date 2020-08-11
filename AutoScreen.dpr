@@ -33,6 +33,7 @@ begin
 
   Application.Initialize;
   Application.Title := 'Auto Screenshot';
+  Application.HintHidePause := -1; // Do not hide hint
   Application.CreateForm(TMainForm, MainForm);
   Application.ShowMainForm := False;
   Application.Run;

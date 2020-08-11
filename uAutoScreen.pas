@@ -644,9 +644,11 @@ begin
   LanguageRadioGroup.Caption := I18N('Language');
   OutputDirLabel.Caption := I18N('OutputDirectory') + ':';
   OpenOutputDirButton.Caption := I18N('OpenDirectory');
+  OpenOutputDirButton.Hint := I18N('OpenDirectoryHint');
   FileNameTemplateLabel.Caption := I18N('FileNameTemplate') + ':';
   CaptureIntervalLabel.Caption := I18N('CaptureInterval') + ':';
   StopWhenInactiveCheckBox.Caption := I18N('PauseCaptureWhenIdle');
+  StopWhenInactiveCheckBox.Hint := I18N('PauseCaptureWhenIdleHint');
   ImageFormatLabel.Caption := I18N('Format') + ':';
   ColorDepthLabel.Caption := I18N('ColorDepth') + ':';
   JPEGQualityLabel.Caption := I18N('Quality') + ':';
