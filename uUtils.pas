@@ -65,6 +65,8 @@ function RemoveExtraPathDelimiters(const Path: String): String;
 
 function JoinPath(const Base: String; const Path: String): String;
 
+function GetLocalComputerName: string;
+
 implementation
 
 uses
@@ -89,6 +91,7 @@ begin
   Result := StringReplace(Result, TmplVarsChar + 'H', Int2Str(HourOf(DateTime), 2),   [rfReplaceAll]);
   Result := StringReplace(Result, TmplVarsChar + 'N', Int2Str(MinuteOf(DateTime), 2), [rfReplaceAll]);
   Result := StringReplace(Result, TmplVarsChar + 'S', Int2Str(SecondOf(DateTime), 2), [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'COMP', GetLocalComputerName, [rfReplaceAll]);
 end;
 
 function FormatDateTime2(const Str: String): String;
@@ -232,6 +235,20 @@ function JoinPath(const Base: String; const Path: String): String;
 begin
   Result := IncludeTrailingPathDelimiter(Base) + Path;
   Result := RemoveExtraPathDelimiters(Result);
+end;
+
+function GetLocalComputerName: string;
+var
+  Size: dword;
+  Buf: array [0..MAX_COMPUTERNAME_LENGTH + 1] of char;
+  Res: Boolean;
+begin
+  Size := MAX_COMPUTERNAME_LENGTH + 1;
+  Res := GetComputerName(@Buf, Size);
+  if Res and (Size > 0) then
+    Result := Buf
+  else
+    Result := '';
 end;
 
 end.

@@ -42,6 +42,8 @@ begin
 end;
 
 procedure TMyTestCase.TestFormatPath;
+var
+  CompName: String;
 begin
   CheckEqualsString('19-04-2020', GetFormattedPath('%D-%M-%Y'));
   CheckEqualsString('2020_04_19', GetFormattedPath('%Y_%M_%D'));
@@ -56,9 +58,13 @@ begin
   CheckEqualsString('скриншот 123456.jpeg',
       GetFormattedPath('скриншот %H%N%S.jpeg'),
       'Non ASCII symbols');
-  CheckEqualsString('20200419_123456/123456-19042020', GetFormattedPath('%Y%M%D_%H%N%S/%H%N%S-%D%M%Y'))
+  CheckEqualsString('20200419_123456/123456-19042020', GetFormattedPath('%Y%M%D_%H%N%S/%H%N%S-%D%M%Y'));
 
   // ToDo: Test incorect strings
+
+  // Note: On your machine this value may be different
+  CompName := 'PC';
+  CheckEqualsString('pc_' + CompName + '_image.tiff', GetFormattedPath('pc_%COMP_image.tiff'), 'PC name');
 end;
 
 procedure TMyTestCase.TestInt2Str;
