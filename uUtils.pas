@@ -67,6 +67,8 @@ function JoinPath(const Base: String; const Path: String): String;
 
 function GetLocalComputerName: string;
 
+function GetCurrentUserName: string;
+
 implementation
 
 uses
@@ -92,6 +94,7 @@ begin
   Result := StringReplace(Result, TmplVarsChar + 'N', Int2Str(MinuteOf(DateTime), 2), [rfReplaceAll]);
   Result := StringReplace(Result, TmplVarsChar + 'S', Int2Str(SecondOf(DateTime), 2), [rfReplaceAll]);
   Result := StringReplace(Result, TmplVarsChar + 'COMP', GetLocalComputerName, [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'USER', GetCurrentUserName,   [rfReplaceAll]);
 end;
 
 function FormatDateTime2(const Str: String): String;
@@ -251,5 +254,20 @@ begin
     Result := '';
 end;
 
+function GetCurrentUserName: string;
+const
+  UNLEN = 256; // Not defined in windows.pas
+var
+  Size: dword;
+  Buf: array [0..UNLEN + 1] of char;
+  Res: Boolean;
+begin
+  Size := UNLEN + 1;
+  Res := GetUserName(@Buf, Size);
+  if Res and (Size > 0) then
+    Result := Buf
+  else
+    Result := '';
+end;
+
 end.
- 

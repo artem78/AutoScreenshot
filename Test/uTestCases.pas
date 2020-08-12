@@ -43,7 +43,7 @@ end;
 
 procedure TMyTestCase.TestFormatPath;
 var
-  CompName: String;
+  CompName, UserName: String;
 begin
   CheckEqualsString('19-04-2020', GetFormattedPath('%D-%M-%Y'));
   CheckEqualsString('2020_04_19', GetFormattedPath('%Y_%M_%D'));
@@ -62,9 +62,12 @@ begin
 
   // ToDo: Test incorect strings
 
-  // Note: On your machine this value may be different
+  // Note: On your machine this values may be different
   CompName := 'PC';
-  CheckEqualsString('pc_' + CompName + '_image.tiff', GetFormattedPath('pc_%COMP_image.tiff'), 'PC name');
+  UserName := 'CraZZZy-GameRRR';
+  CheckEqualsString(CompName + '_' + UserName + '_image.tiff',
+      GetFormattedPath('%COMP_%USER_image.tiff'),
+      'PC and user name');
 end;
 
 procedure TMyTestCase.TestInt2Str;
