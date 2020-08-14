@@ -462,15 +462,20 @@ begin
 end;
 
 procedure TMainForm.TakeScreenshotButtonClick(Sender: TObject);
+var
+  DefaultTransparency: Byte;
 begin
-  Hide;
-  Sleep(2000); // Add some delay in order to window has time to hide
+  DefaultTransparency := AlphaBlendValue; // Save current transparency value (usually = 255)
+  // Set form transparency to 100%
+  AlphaBlendValue := 0;
+  AlphaBlend := True;
   try
     try
       MakeScreenshot;
-      Sleep(1000);
     finally
-      Show;
+      // Restore transparency to initial value
+      AlphaBlendValue := DefaultTransparency;
+      AlphaBlend := False;
     end;
   except
   end;
@@ -572,7 +577,10 @@ end;
 
 procedure TMainForm.TakeScreenshotTrayMenuItemClick(Sender: TObject);
 begin
-  Sleep(2000); // Add some delay before capture
+  // ToDo: How to minimize this delay?
+  Sleep(700); // Add some delay before capture, otherwise the popup
+              // menu may be still visible on screenshot
+              // (without delay: https://ibb.co/mHGKHzL)
   MakeScreenshot;
 end;
 
