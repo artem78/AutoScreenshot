@@ -22,11 +22,13 @@ object AboutForm: TAboutForm
     Width = 176
     Height = 37
     Caption = 'Auto Screen'
+    Color = clNone
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clNavy
+    Font.Color = 8611623
     Font.Height = -32
     Font.Name = 'MS Sans Serif'
     Font.Style = []
+    ParentColor = False
     ParentFont = False
   end
   object VersionLabel: TLabel
