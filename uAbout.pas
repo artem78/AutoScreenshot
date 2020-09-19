@@ -53,7 +53,7 @@ begin
 
   ProgramNameLabel.Caption := Application.Title;
   VersionLabel.Caption := I18N('Version') + ': ' + GetProgramVersionStr(True);
-  AuthorLabel.Caption := I18N('Author') + ': ' + 'artem78      e-mail: megabyte1024@ya.ru';
+  AuthorLabel.Caption := I18N('Author') + ': ' + 'Artem Demin (artem78) <megabyte1024@ya.ru>';
   LinkLabel.Caption := ProjectGitHubURL;
 
   BuildDate := GetLinkerTimeStamp;
