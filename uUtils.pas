@@ -33,7 +33,7 @@ function FormatDateTime2(const Str: String): String; overload;
 function Int2Str(Val: Integer; LeadingZeros: Integer = 0): String;
 
 // Decodes control characters (like \r, \n, \t and etc.) from given string.
-function DecodeControlCharacters(const Str: String): String;
+function DecodeControlCharacters(const Str: WideString): WideString;
 
 { Returns string with program version. If ShortFormat is True prints release
   and build values only if they are not equal zero.
@@ -72,7 +72,7 @@ function GetCurrentUserName: string;
 implementation
 
 uses
-  SysUtils, DateUtils;
+  SysUtils, DateUtils, TntSysUtils;
 
 function LastInput: DWord;
 var
@@ -119,12 +119,12 @@ begin
   Result := Result + Tmp;
 end;
 
-function DecodeControlCharacters(const Str: String): String;
+function DecodeControlCharacters(const Str: WideString): WideString;
 begin
-  Result := StringReplace(Str,    '\r', #13, [rfReplaceAll]);
-  Result := StringReplace(Result, '\n', #10, [rfReplaceAll]);
-  Result := StringReplace(Result, '\t', #9,  [rfReplaceAll]);
-  Result := StringReplace(Result, '\\', '\', [rfReplaceAll]);
+  Result := Tnt_WideStringReplace(Str,    '\r', #13, [rfReplaceAll]);
+  Result := Tnt_WideStringReplace(Result, '\n', #10, [rfReplaceAll]);
+  Result := Tnt_WideStringReplace(Result, '\t', #9,  [rfReplaceAll]);
+  Result := Tnt_WideStringReplace(Result, '\\', '\', [rfReplaceAll]);
 end;
 
 {function GetProgramVersionStr: string;

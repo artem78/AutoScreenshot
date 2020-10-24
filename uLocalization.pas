@@ -3,10 +3,10 @@ unit uLocalization;
 interface
 
 uses
-  IniFiles;
+  TntIniFiles;
 
 procedure I18NSetLang(ALang: String);
-function I18N(Str: String): String;
+function I18N(Str: String): WideString;
 
 implementation
 
@@ -14,7 +14,7 @@ uses SysUtils, uUtils;
 
 var
   Lang: String;
-  Ini: TIniFile;
+  Ini: TTntIniFile;
 
 const
   LangDir = 'lang/';
@@ -25,13 +25,13 @@ begin
 
   // Load ini file with strings for selected language
   FreeAndNil(Ini);
-  Ini := TIniFile.Create(LangDir + Lang + '.ini');
+  Ini := TTntIniFile.Create(LangDir + Lang + '.ini');
 end;
 
-function I18N(Str: String): String;
+function I18N(Str: String): WideString;
 begin
   //Result := '[' + Lang + ']' + Str + '';
-  Result := ini.ReadString('translation', Str, Str);
+  Result := ini.ReadString('translation', Str, {Str}'<unknown>');
 
   Result := DecodeControlCharacters(Result);
 end;

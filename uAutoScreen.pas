@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, inifiles, Spin, FileCtrl, pngImage,
-  TrayIcon, XPMan, jpeg, ShellAPI, Menus, GifImage, Buttons;
+  TrayIcon, XPMan, jpeg, ShellAPI, Menus, GifImage, Buttons, TntForms, TntStdCtrls,
+  TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP, fmtGIF);
@@ -26,43 +27,43 @@ type
 
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
 
-  TMainForm = class(TForm)
-    OutputDirEdit: TEdit;
-    ChooseOutputDirButton: TButton;
+  TMainForm = class({TTntForm} TForm)
+    OutputDirEdit: TTntEdit;
+    ChooseOutputDirButton: TTntButton;
     Timer: TTimer;
-    OutputDirLabel: TLabel;
-    CaptureIntervalLabel: TLabel;
+    OutputDirLabel: TTntLabel;
+    CaptureIntervalLabel: TTntLabel;
     TrayIcon: TTrayIcon;
     XPManifest: TXPManifest;
-    ImageFormatLabel: TLabel;
-    TakeScreenshotButton: TButton;
-    JPEGQualityLabel: TLabel;
+    ImageFormatLabel: TTntLabel;
+    TakeScreenshotButton: TTntButton;
+    JPEGQualityLabel: TTntLabel;
     JPEGQualitySpinEdit: TSpinEdit;
-    OpenOutputDirButton: TButton;
-    StopWhenInactiveCheckBox: TCheckBox;
-    LanguageRadioGroup: TRadioGroup;
-    ImageFormatComboBox: TComboBox;
-    JPEGQualityPercentLabel: TLabel;
-    AutoCaptureControlGroup: TGroupBox;
-    StartAutoCaptureButton: TBitBtn;
-    StopAutoCaptureButton: TBitBtn;
-    TrayIconPopupMenu: TPopupMenu;
-    ExitTrayMenuItem: TMenuItem;
-    TakeScreenshotTrayMenuItem: TMenuItem;
-    RestoreWindowTrayMenuItem: TMenuItem;
-    ToggleAutoCaptureTrayMenuItem: TMenuItem;
-    Separator2TrayMenuItem: TMenuItem;
-    AboutButton: TButton;
-    StartCaptureOnStartUpCheckBox: TCheckBox;
-    StartMinimizedCheckBox: TCheckBox;
-    Separator1TrayMenuItem: TMenuItem;
-    FileNameTemplateLabel: TLabel;
-    FileNameTemplateComboBox: TComboBox;
-    FileNameTemplateHelpButton: TButton;
-    GrayscaleCheckBox: TCheckBox;
-    ColorDepthLabel: TLabel;
-    ColorDepthComboBox: TComboBox;
-    CaptureInterval: TDateTimePicker;
+    OpenOutputDirButton: TTntButton;
+    StopWhenInactiveCheckBox: TTntCheckBox;
+    LanguageRadioGroup: TTntRadioGroup;
+    ImageFormatComboBox: TTntComboBox;
+    JPEGQualityPercentLabel: TTntLabel;
+    AutoCaptureControlGroup: TTntGroupBox;
+    StartAutoCaptureButton: TTntBitBtn;
+    StopAutoCaptureButton: TTntBitBtn;
+    TrayIconPopupMenu: TTntPopupMenu;
+    ExitTrayMenuItem: TTntMenuItem;
+    TakeScreenshotTrayMenuItem: TTntMenuItem;
+    RestoreWindowTrayMenuItem: TTntMenuItem;
+    ToggleAutoCaptureTrayMenuItem: TTntMenuItem;
+    Separator2TrayMenuItem: TTntMenuItem;
+    AboutButton: TTntButton;
+    StartCaptureOnStartUpCheckBox: TTntCheckBox;
+    StartMinimizedCheckBox: TTntCheckBox;
+    Separator1TrayMenuItem: TTntMenuItem;
+    FileNameTemplateLabel: TTntLabel;
+    FileNameTemplateComboBox: TTntComboBox;
+    FileNameTemplateHelpButton: TTntButton;
+    GrayscaleCheckBox: TTntCheckBox;
+    ColorDepthLabel: TTntLabel;
+    ColorDepthComboBox: TTntComboBox;
+    CaptureInterval: TTntDateTimePicker;
     TrayIconAnimationTimer: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -294,11 +295,11 @@ end;
 
 procedure TMainForm.ChooseOutputDirButtonClick(Sender: TObject);
 var
-  Dir: String;
+  Dir: WideString;
 begin
   Dir := OutputDirEdit.Text;
 
-  if SelectDirectory(I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
+  if WideSelectDirectory(I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
   //if SelectDirectory(dir, [sdAllowCreate, sdPerformCreate], 0) then
   begin
     OutputDirEdit.Text := Dir;
@@ -693,7 +694,7 @@ end;
 
 procedure TMainForm.FileNameTemplateHelpButtonClick(Sender: TObject);
 begin
-  ShowMessage(I18N('FileNameTemplateHelpText'));
+  WideShowMessage(I18N('FileNameTemplateHelpText'));
 end;
 
 function TMainForm.GetImageFormat: TImageFormat;

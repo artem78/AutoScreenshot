@@ -4,17 +4,17 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ShellApi, ExtCtrls;
+  Dialogs, StdCtrls, ShellApi, ExtCtrls, TntForms, TntStdCtrls, TntExtCtrls;
 
 type
-  TAboutForm = class(TForm)
-    ProgramNameLabel: TLabel;
-    VersionLabel: TLabel;
-    AuthorLabel: TLabel;
-    CloseButton: TButton;
-    LinkLabel: TLabel;
-    Logo: TImage;
-    BuildDateLabel: TLabel;
+  TAboutForm = class(TTntForm)
+    ProgramNameLabel: TTntLabel;
+    VersionLabel: TTntLabel;
+    AuthorLabel: TTntLabel;
+    CloseButton: TTntButton;
+    LinkLabel: TTntLabel;
+    Logo: TTntImage;
+    BuildDateLabel: TTntLabel;
     procedure CloseButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LinkLabelClick(Sender: TObject);
@@ -34,7 +34,7 @@ uses uLocalization, uUtils, DateUtils;
 {$R *.dfm}
 
 const
-  ProjectGitHubURL = 'https://github.com/artem78/AutoScreenshot#readme';
+  ProjectGitHubURL{: WideString} = 'https://github.com/artem78/AutoScreenshot#readme';
 
 procedure TAboutForm.CloseButtonClick(Sender: TObject);
 begin
@@ -44,14 +44,14 @@ end;
 procedure TAboutForm.FormCreate(Sender: TObject);
 var
   BuildDate: TDateTime;
-  BuildDateStr: String;
+  BuildDateStr: WideString;
 begin
   Caption := I18N('About');
 
   Logo.Picture.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
       64, 64, LR_DEFAULTCOLOR);
 
-  ProgramNameLabel.Caption := Application.Title;
+  ProgramNameLabel.Caption := TntApplication.Title;
   VersionLabel.Caption := I18N('Version') + ': ' + GetProgramVersionStr(True);
   AuthorLabel.Caption := I18N('Author') + ': ' + 'Artem Demin (artem78) <megabyte1024@ya.ru>';
   LinkLabel.Caption := ProjectGitHubURL;
