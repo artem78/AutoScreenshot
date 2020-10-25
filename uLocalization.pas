@@ -14,7 +14,7 @@ uses SysUtils, uUtils;
 
 var
   Lang: String;
-  Ini: TTntIniFile;
+  Ini: TTntMemIniFile;
 
 const
   LangDir = 'lang/';
@@ -25,7 +25,7 @@ begin
 
   // Load ini file with strings for selected language
   FreeAndNil(Ini);
-  Ini := TTntIniFile.Create(LangDir + Lang + '.ini');
+  Ini := TTntMemIniFile.Create(LangDir + Lang + '.ini');
 end;
 
 function I18N(Str: String): WideString;
