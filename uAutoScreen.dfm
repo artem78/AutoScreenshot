@@ -263,6 +263,7 @@ object MainForm: TMainForm
     Width = 73
     Height = 23
     Date = 44009.000000000000000000
+    Format = 'H:mm:ss'
     Time = 44009.000000000000000000
     Kind = dtkTime
     TabOrder = 5
