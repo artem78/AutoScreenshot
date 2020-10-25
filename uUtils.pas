@@ -69,6 +69,11 @@ function GetLocalComputerName: string;
 
 function GetCurrentUserName: string;
 
+//function GetSystemLanguageID: Integer;
+
+{ Returns two-letter language code from ISO 639 standard. }
+function GetSystemLanguageCode: String{[2]};
+
 implementation
 
 uses
@@ -268,6 +273,34 @@ begin
     Result := Buf
   else
     Result := '';
+end;
+
+{function GetSystemLanguageID: Integer;
+begin
+  Result := GetSystemDefaultLCID;
+end;}
+
+function GetSystemLanguageCode: String{[2]};
+{ FixMe: Not always returns code in ISO 639 standard. For example,
+  Belorussian ISO 639 code is BE/BEL, but function returns BL/BLR. }
+var
+  //LID: LangID;
+  Buffer: PChar;
+  Size: integer;
+begin
+  //LID := GetSystemLanguageID;
+  Size := GetLocaleInfo({LID} LOCALE_USER_DEFAULT, LOCALE_SABBREVCTRYNAME, nil, 0);
+  GetMem(Buffer, Size);
+  Result := '';
+  try
+    GetLocaleInfo({LID} LOCALE_USER_DEFAULT, LOCALE_SABBREVCTRYNAME, Buffer, Size);
+    { For Windows Vista and later recommended to use GetLocaleInfoEx instead,
+      but for compatibility with XP I use GetLocaleInfo. }
+    Result := Copy(Buffer, 0, 2); { return US / use  Result := Buffer to return USA }
+    Result := LowerCase(Result);
+  finally
+    FreeMem(Buffer);
+  end;
 end;
 
 end.

@@ -204,10 +204,12 @@ const
   DefaultCaptureInterval  = 5;
   DefaultImageFormat      = fmtPNG;
   DefaultJPEGQuality      = 80;
-  DefaultLanguage         = lngEnglish;
+  //DefaultLanguage         = lngEnglish;
   DefaultColorDepth       = cd24Bit;
 var
   DefaultOutputDir: String;
+  SystemLanguageCode: String;
+  DefaultLanguage: TLanguage;
   FmtStr: String;
   LangCode: String;
   Seconds: Integer;
@@ -252,6 +254,15 @@ begin
   end;
 
   // Language
+  SystemLanguageCode := GetSystemLanguageCode;
+  if (SystemLanguageCode = 'ru')      {Russian}
+       or (SystemLanguageCode = 'be') {Belorussian}
+       or (SystemLanguageCode = 'bl') {Belorussian}
+       or (SystemLanguageCode = 'uk') {Ukrainian} then
+    DefaultLanguage := lngRussian
+  else
+    DefaultLanguage := lngEnglish;
+
   LangCode := Ini.ReadString(DefaultConfigIniSection, 'Language', LanguageCodes[DefaultLanguage]);
   try
     SetLanguageByCode(LangCode);
