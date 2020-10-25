@@ -91,9 +91,9 @@ object MainForm: TMainForm
     OnClick = ChooseOutputDirButtonClick
   end
   object TakeScreenshotButton: TTntButton
-    Left = 48
+    Left = 32
     Top = 260
-    Width = 99
+    Width = 121
     Height = 25
     Caption = 'Take screenshot'
     TabOrder = 14
@@ -198,7 +198,7 @@ object MainForm: TMainForm
   object StartCaptureOnStartUpCheckBox: TTntCheckBox
     Left = 208
     Top = 160
-    Width = 265
+    Width = 305
     Height = 17
     Caption = 'Start auto capture when program starts'
     TabOrder = 11
@@ -207,7 +207,7 @@ object MainForm: TMainForm
   object StartMinimizedCheckBox: TTntCheckBox
     Left = 208
     Top = 184
-    Width = 265
+    Width = 305
     Height = 17
     Caption = 'Start minimized to tray'
     TabOrder = 12
@@ -239,7 +239,7 @@ object MainForm: TMainForm
   object GrayscaleCheckBox: TTntCheckBox
     Left = 476
     Top = 106
-    Width = 97
+    Width = 141
     Height = 17
     Caption = 'Grayscale'
     TabOrder = 9
