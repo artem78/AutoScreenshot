@@ -25,13 +25,11 @@ object AboutForm: TAboutForm
     Width = 174
     Height = 36
     Caption = 'Auto Screen'
-    Color = clNone
     Font.Charset = DEFAULT_CHARSET
     Font.Color = 8611623
     Font.Height = -32
     Font.Name = 'Arial'
     Font.Style = []
-    ParentColor = False
     ParentFont = False
   end
   object VersionLabel: TTntLabel
