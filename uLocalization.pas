@@ -17,11 +17,15 @@ var
   Ini: TTntMemIniFile;
 
 const
-  LangDir = 'lang/';
+  LangSubDir = 'lang';
 
 procedure I18NSetLang(ALang: String);
+var
+  LangDir: String;
 begin
   Lang := ALang;
+
+  LangDir := ExtractFilePath(ParamStr(0)) + LangSubDir + PathDelim;
 
   // Load ini file with strings for selected language
   FreeAndNil(Ini);
