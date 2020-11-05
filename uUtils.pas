@@ -74,10 +74,14 @@ function GetCurrentUserName: string;
 { Returns two-letter language code from ISO 639 standard. }
 function GetSystemLanguageCode: String{[2]};
 
+procedure AutoRun(const FileName: String; const AppTitle: String;
+    Enabled: Boolean = True);
+function CheckAutoRun(const AppTitle: String): Boolean;
+
 implementation
 
 uses
-  SysUtils, DateUtils, TntSysUtils;
+  SysUtils, DateUtils, TntSysUtils, Registry;
 
 function LastInput: DWord;
 var
@@ -300,6 +304,61 @@ begin
     Result := LowerCase(Result);
   finally
     FreeMem(Buffer);
+  end;
+end;
+
+procedure SetAutoRun(const FileName: String; const AppTitle: String);
+const
+  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
+  Args = '-autorun';
+var
+  Cmd: String;
+begin
+  Cmd := '"' + FileName + '" ' + Args;
+
+  with TRegIniFile.Create('') do
+  try
+    RootKey := HKEY_CURRENT_USER;
+    WriteString(Section, AppTitle, Cmd);
+  finally
+    Free;
+  end;
+end;
+
+procedure RemoveAutoRun(const AppTitle: String);
+const
+  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
+begin
+  with TRegIniFile.Create('') do
+  try
+    RootKey := HKEY_CURRENT_USER;
+    DeleteKey(Section, AppTitle);
+  finally
+    Free;
+  end;
+end;
+
+procedure AutoRun(const FileName: String; const AppTitle: String;
+    Enabled: Boolean = True);
+begin
+  if Enabled then
+    SetAutoRun(FileName, AppTitle)
+  else
+    RemoveAutoRun(AppTitle);
+end;
+
+function CheckAutoRun(const AppTitle: String): Boolean;
+const
+  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
+begin
+  Result := False;
+
+  with TRegIniFile.Create('') do
+  try
+    RootKey := HKEY_CURRENT_USER;
+    Result := ReadString(Section, AppTitle, '') <> '';
+  finally
+    Free;
   end;
 end;
 

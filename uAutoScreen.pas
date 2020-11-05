@@ -65,6 +65,7 @@ type
     ColorDepthComboBox: TTntComboBox;
     CaptureInterval: TTntDateTimePicker;
     TrayIconAnimationTimer: TTimer;
+    AutoRunCheckBox: TTntCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -92,6 +93,7 @@ type
     procedure GrayscaleCheckBoxClick(Sender: TObject);
     procedure ColorDepthComboBoxChange(Sender: TObject);
     procedure TrayIconAnimationTimerTimer(Sender: TObject);
+    procedure AutoRunCheckBoxClick(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
@@ -276,6 +278,10 @@ begin
       Ini.ReadBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', {True} False);
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
 
+  // Start with Windows
+  AutoRunCheckBox.Checked :=
+    ini.ReadBool(DefaultConfigIniSection, 'AutoRun', False);
+  
   // Start minimized
   if Ini.ReadBool(DefaultConfigIniSection, 'StartMinimized', False) then
   begin
@@ -297,6 +303,9 @@ begin
 
   Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
   ReadSettings;
+
+  //if FindCmdLineSwitch('autorun') then
+  //  OutputDebugString('AutoRun');
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -680,6 +689,7 @@ begin
   AboutButton.Caption := I18N('About');
   StartCaptureOnStartUpCheckBox.Caption := I18N('StartCaptureOnStartUp');
   StartMinimizedCheckBox.Caption := I18N('StartMinimized');
+  AutoRunCheckBox.Caption := I18N('AutoRun');
 
   // Tray icon
   RestoreWindowTrayMenuItem.Caption := I18N('Restore');
@@ -876,6 +886,15 @@ begin
     // Restore previous tray icon
     TrayIconState := FTrayIconState;
   end;
+end;
+
+procedure TMainForm.AutoRunCheckBoxClick(Sender: TObject);
+var
+  AutoRunEnabled: Boolean;
+begin
+  AutoRunEnabled := AutoRunCheckBox.Checked;
+  AutoRun(Application.ExeName, 'Auto Screenshot', AutoRunEnabled);
+  Ini.WriteBool(DefaultConfigIniSection, 'AutoRun', AutoRunEnabled);
 end;
 
 end.
