@@ -21,9 +21,9 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\AutoScreenshot
 DisableProgramGroupPage=yes
-LicenseFile=D:\Programms\Borland\Delphi7\Projects\autoscreen\LICENSE.txt
-OutputDir=D:\Programms\Borland\Delphi7\Projects\autoscreen\build\setup
-OutputBaseFilename=autoscreenshot_setup
+LicenseFile=LICENSE.txt
+OutputDir=build\setup
+OutputBaseFilename=autoscreenshot_{#MyAppVersion}_setup
 Compression=lzma
 SolidCompression=yes
 
@@ -35,9 +35,10 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "D:\Programms\Borland\Delphi7\Projects\autoscreen\build\files\AutoScreenshot.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Programms\Borland\Delphi7\Projects\autoscreen\build\files\lang\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "build\files\AutoScreenshot.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "build\files\lang\*"; DestDir: "{app}\lang"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+; ToDo: Remove config.ini when uninstall or make this optional
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -46,3 +47,6 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+[Registry]
+; Remove autorun
+Root: "HKCU"; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueName: "Auto Screenshot"; Flags: uninsdeletekey
