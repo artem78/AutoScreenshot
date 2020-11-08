@@ -1,4 +1,4 @@
-[![Russian](images/russian_icon.png) RU](README-ru.md "Russian")
+﻿[![Russian](images/russian_icon.png) RU](README-ru.md "Russian")
 
 -------------------------  
 
@@ -8,13 +8,14 @@ Auto Screenshot
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/artem78/AutoScreenshot?style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)&nbsp;&nbsp;&nbsp;[![GitHub license](https://img.shields.io/github/license/artem78/AutoScreenshot?style=plastic)](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt)
 
 ## Overview
-**Auto Screenshot** -- Windows application for automatic taking screenshots with specified time interval.
+**Auto Screenshot** — Windows application for automatic taking screenshots with specified time interval.
 
 ## Features
-* Automatic saving screenshots of full screen with specified time interval
+* Automatic saving screenshots of full screen with specified time interval (from 1 second to 24 hours)
 * Saving images in PNG, JPEG, BMP or GIF format
 * Pause capture when user is inactive (depending on mouse moves and keyboard events) 
-* Customizable output filenames including ability of grouping by folders (for example: by day or month)
+* Customizable output filenames with variables (date, time, user, computer name) and ability of grouping by folders (for example: by day or month)
+* Automatic capture can be started on Windows startup
 
 ## Screenshots
 ![](images/main_window.png "Main program window")
@@ -30,9 +31,7 @@ Auto Screenshot
 * Microsoft Windows XP or higher (32-bit and 64-bit)
 
 ## Installation
-* [Download](https://github.com/artem78/AutoScreenshot/releases/latest) latest release
-* Extract Zip-archive contents to any directory
-* Run `AutoScreenshot.exe`
+The latest version available [here](https://github.com/artem78/AutoScreenshot/releases/latest).
 
 ## License
 You are free to use, modify or distribute this software under the [GNU GPL v3.0](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt) license.
