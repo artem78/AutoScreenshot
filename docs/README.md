@@ -27,11 +27,23 @@ Auto Screenshot
 * English
 * [Russian](README-ru.md)
 
+[Want more?](https://github.com/artem78/AutoScreenshot/issues/5)
+
 ## Requirements
 * Microsoft Windows XP or higher (32-bit and 64-bit)
 
 ## Installation
 The latest version available [here](https://github.com/artem78/AutoScreenshot/releases/latest).
+
+## How can I help
+* Found bug?
+https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=
+
+* Want to suggest new idea?
+https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=
+
+* Can add localization for new languages?
+https://github.com/artem78/AutoScreenshot/issues/5
 
 ## License
 You are free to use, modify or distribute this software under the [GNU GPL v3.0](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt) license.

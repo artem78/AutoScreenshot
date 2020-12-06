@@ -25,14 +25,25 @@
 * Английский
 * Русский
 
+[Хотите ещё?](https://github.com/artem78/AutoScreenshot/issues/5)
+
 <!-- ToDo: Написать подробно про шаблоны имён -->
-<!-- ToDo: попросить помощи в локализации -->
 
 ## Системные требования
 * Операционная система Microsoft Windows XP или выше (32-х или 64-битная)
 
 ## Установка
 Последнюю версию программы вы можете скачать [отсюда](https://github.com/artem78/AutoScreenshot/releases/latest).
+
+## Чем я могу помочь проекту?
+* Нашли ошибку?
+https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=
+
+* Хотите предложить новую идею?
+https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=
+
+* Можете помочь с переводом?
+https://github.com/artem78/AutoScreenshot/issues/5
 
 ## Лицензия
 Вы можете свободно использовать, модифицировать и распространять данное ПО на условиях лицензии [GNU GPL v3.0](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt).
