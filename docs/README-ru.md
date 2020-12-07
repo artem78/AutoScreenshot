@@ -1,4 +1,4 @@
-﻿Auto Screenshot
+Auto Screenshot
 ===============
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/artem78/AutoScreenshot?style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)&nbsp;&nbsp;&nbsp;[![GitHub license](https://img.shields.io/github/license/artem78/AutoScreenshot?style=plastic)](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt)
@@ -14,6 +14,7 @@
 * Возможность приостановки захвата при бездействии пользователя (определяется по движениям мыши и нажатиям клавиш) 
 * Настраиваемые имена выходных файлов с использованием переменных (дата, время, название компьютера/пользователя) и возможностью группировки по папкам (например, по дням или месяцам)
 * Возможность автоматического запуска вместе с Windows
+* Захват с нескольких экранов
 
 ## Снимки экрана
 ![](images/main_window_ru.png "Основное окно программы")

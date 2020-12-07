@@ -406,6 +406,9 @@ var
   JPG: TJPEGImage;
   GIF: TGIFImage;
   ScreenDC: HDC;
+  ScreenWidth, ScreenHeight: Integer;
+  ScreenX, ScreenY: Integer;
+  //Rect: TRect;
 begin
   Bitmap := TBitmap.Create;
 
@@ -424,11 +427,17 @@ begin
     // Leave bitmap pixel format as default
   end;
 
-  Bitmap.Width := Screen.Width;
-  Bitmap.Height := Screen.Height;
+  ScreenWidth  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
+  ScreenHeight := GetSystemMetrics(SM_CYVIRTUALSCREEN);
+  ScreenX := GetSystemMetrics(SM_XVIRTUALSCREEN);
+  ScreenY := GetSystemMetrics(SM_YVIRTUALSCREEN);
+  //Rect := GetClientRect(0);
+
+  Bitmap.Width := ScreenWidth;
+  Bitmap.Height := ScreenHeight;
   ScreenDC := GetDC(0);
-  BitBlt(Bitmap.Canvas.Handle, 0, 0, Screen.Width, Screen.Height,
-           ScreenDC, 0, 0, SRCCOPY);
+  BitBlt(Bitmap.Canvas.Handle, 0, 0, ScreenWidth, ScreenHeight,
+           ScreenDC, ScreenX, ScreenY, SRCCOPY);
   ReleaseDC(0, ScreenDC);
 
   TrayIconState := tisFlashAnimation;
