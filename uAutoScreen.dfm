@@ -16,6 +16,9 @@ object MainForm: TMainForm
   Position = poScreenCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  DesignSize = (
+    633
+    328)
   PixelsPerInch = 96
   TextHeight = 15
   object OutputDirLabel: TTntLabel
@@ -95,6 +98,7 @@ object MainForm: TMainForm
     Top = 276
     Width = 121
     Height = 25
+    Anchors = [akLeft, akBottom]
     Caption = 'Take screenshot'
     TabOrder = 14
     OnClick = TakeScreenshotButtonClick
@@ -161,6 +165,7 @@ object MainForm: TMainForm
     Top = 248
     Width = 281
     Height = 65
+    Anchors = [akLeft, akBottom]
     Caption = 'Automatic capture'
     TabOrder = 17
     object StartAutoCaptureButton: TTntBitBtn
@@ -191,6 +196,7 @@ object MainForm: TMainForm
     Top = 272
     Width = 97
     Height = 25
+    Anchors = [akLeft, akBottom]
     Caption = 'About'
     TabOrder = 16
     OnClick = AboutButtonClick
