@@ -4,7 +4,7 @@ object MainForm: TMainForm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Auto Screenshot'
-  ClientHeight = 328
+  ClientHeight = 363
   ClientWidth = 633
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object MainForm: TMainForm
   OnDestroy = FormDestroy
   DesignSize = (
     633
-    328)
+    363)
   PixelsPerInch = 96
   TextHeight = 15
   object OutputDirLabel: TTntLabel
@@ -76,6 +76,14 @@ object MainForm: TMainForm
     Alignment = taRightJustify
     Caption = 'Color depth:'
   end
+  object MultipleMonitorsModeLabel: TLabel
+    Left = 8
+    Top = 236
+    Width = 193
+    Height = 15
+    Alignment = taRightJustify
+    Caption = 'Captured area for multiple monitors:'
+  end
   object OutputDirEdit: TTntEdit
     Left = 208
     Top = 20
@@ -95,7 +103,7 @@ object MainForm: TMainForm
   end
   object TakeScreenshotButton: TTntButton
     Left = 32
-    Top = 276
+    Top = 311
     Width = 121
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -162,7 +170,7 @@ object MainForm: TMainForm
   end
   object AutoCaptureControlGroup: TTntGroupBox
     Left = 208
-    Top = 248
+    Top = 283
     Width = 281
     Height = 65
     Anchors = [akLeft, akBottom]
@@ -193,7 +201,7 @@ object MainForm: TMainForm
   end
   object AboutButton: TTntButton
     Left = 520
-    Top = 272
+    Top = 307
     Width = 97
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -283,6 +291,19 @@ object MainForm: TMainForm
     Caption = 'Run application at system startup'
     TabOrder = 15
     OnClick = AutoRunCheckBoxClick
+  end
+  object MultipleMonitorsModeComboBox: TComboBox
+    Left = 208
+    Top = 232
+    Width = 265
+    Height = 23
+    Style = csDropDownList
+    ItemHeight = 15
+    TabOrder = 18
+    OnChange = MultipleMonitorsModeComboBoxChange
+    Items.Strings = (
+      ''
+      '')
   end
   object Timer: TTimer
     Enabled = False

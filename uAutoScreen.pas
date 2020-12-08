@@ -66,6 +66,8 @@ type
     CaptureInterval: TTntDateTimePicker;
     TrayIconAnimationTimer: TTimer;
     AutoRunCheckBox: TTntCheckBox;
+    MultipleMonitorsModeLabel: TLabel;
+    MultipleMonitorsModeComboBox: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -94,6 +96,7 @@ type
     procedure ColorDepthComboBoxChange(Sender: TObject);
     procedure TrayIconAnimationTimerTimer(Sender: TObject);
     procedure AutoRunCheckBoxClick(Sender: TObject);
+    procedure MultipleMonitorsModeComboBoxChange(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
@@ -208,6 +211,7 @@ const
   DefaultJPEGQuality      = 80;
   //DefaultLanguage         = lngEnglish;
   DefaultColorDepth       = cd24Bit;
+  DefaultMultipleMonitorsMode = 'all';
 var
   DefaultOutputDir: String;
   SystemLanguageCode: String;
@@ -215,6 +219,7 @@ var
   FmtStr: String;
   LangCode: String;
   Seconds: Integer;
+  MultipleMonitorsMode: String;
 begin
   DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ExtractFilePath(Application.ExeName), 'screenshots'));
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
@@ -290,6 +295,16 @@ begin
   end
   else
     RestoreFromTray;
+
+  // Multiple monitors
+  MultipleMonitorsMode := Ini.ReadString(DefaultConfigIniSection,
+      'MultipleMonitorsMode', DefaultMultipleMonitorsMode);
+  if (MultipleMonitorsMode <> 'all') and (MultipleMonitorsMode <> 'primary') then
+    MultipleMonitorsMode := DefaultMultipleMonitorsMode;
+  if MultipleMonitorsMode = 'all' then
+    MultipleMonitorsModeComboBox.ItemIndex := 0
+  else if MultipleMonitorsMode = 'primary' then
+    MultipleMonitorsModeComboBox.ItemIndex := 1;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -427,10 +442,24 @@ begin
     // Leave bitmap pixel format as default
   end;
 
-  ScreenWidth  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
-  ScreenHeight := GetSystemMetrics(SM_CYVIRTUALSCREEN);
-  ScreenX := GetSystemMetrics(SM_XVIRTUALSCREEN);
-  ScreenY := GetSystemMetrics(SM_YVIRTUALSCREEN);
+  case MultipleMonitorsModeComboBox.ItemIndex of
+    1: // Only primary screen
+    begin
+      ScreenWidth  := Screen.Width;
+      ScreenHeight := ScreenHeight;
+      ScreenX := 0;
+      ScreenY := 0;
+    end;
+
+    //0:
+  else // Full area
+    begin
+      ScreenWidth  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
+      ScreenHeight := GetSystemMetrics(SM_CYVIRTUALSCREEN);
+      ScreenX := GetSystemMetrics(SM_XVIRTUALSCREEN);
+      ScreenY := GetSystemMetrics(SM_YVIRTUALSCREEN);
+    end;
+  end;
   //Rect := GetClientRect(0);
 
   Bitmap.Width := ScreenWidth;
@@ -677,6 +706,8 @@ begin
 end;
 
 procedure TMainForm.TranslateForm;
+var
+  Idx: Integer;
 begin
   // Main form
   LanguageRadioGroup.Caption := I18N('Language');
@@ -699,6 +730,17 @@ begin
   StartCaptureOnStartUpCheckBox.Caption := I18N('StartCaptureOnStartUp');
   StartMinimizedCheckBox.Caption := I18N('StartMinimized');
   AutoRunCheckBox.Caption := I18N('AutoRun');
+  MultipleMonitorsModeLabel.Caption := I18N('MultipleMonitorsMode') + ':';
+  with MultipleMonitorsModeComboBox do
+  begin
+    Idx := ItemIndex;
+
+    Items.Strings[0] := I18N('AllMonitorsMode');
+    Items.Strings[1] := I18N('OnlyPrimaryMonitorMode');
+
+    // Restore previous selected item after strings updated
+    ItemIndex := Idx;
+  end;
 
   // Tray icon
   RestoreWindowTrayMenuItem.Caption := I18N('Restore');
@@ -906,4 +948,13 @@ begin
   Ini.WriteBool(DefaultConfigIniSection, 'AutoRun', AutoRunEnabled);
 end;
 
+procedure TMainForm.MultipleMonitorsModeComboBoxChange(Sender: TObject);
+begin
+  case MultipleMonitorsModeComboBox.ItemIndex of
+    0: Ini.WriteString(DefaultConfigIniSection, 'MultipleMonitorsMode', 'all');
+    1: Ini.WriteString(DefaultConfigIniSection, 'MultipleMonitorsMode', 'primary');
+  end;
+end;
+
 end.
+
