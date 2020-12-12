@@ -18,10 +18,9 @@ Auto Screenshot
 * Automatic capture can be started on Windows startup
 
 ## Screenshots
-![](images/main_window.png "Main program window")
+![Main program window](images/main_window.png "Main program window")
 
-### Tray icon
-![](images/tray_icon_animation.gif "Tray icon")
+![Tray icon](images/tray_icon_animation.gif "Tray icon")
 
 ## Languages
 * English
@@ -29,11 +28,12 @@ Auto Screenshot
 
 [Want more?](https://github.com/artem78/AutoScreenshot/issues/5)
 
-## Requirements
-* Microsoft Windows XP or higher (32-bit and 64-bit)
+## Supported operation systems
+* Microsoft Windows XP or higher (32/64-bit)
+* Linux (using [Wine](https://www.winehq.org/))
 
-## Installation
-The latest version available [here](https://github.com/artem78/AutoScreenshot/releases/latest).
+## Download
+The latest version available [here](https://github.com/artem78/AutoScreenshot/releases/latest). You can choose between portable zip or installer.
 
 ## How can I help
 * Found bug?
