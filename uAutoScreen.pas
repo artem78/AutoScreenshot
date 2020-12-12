@@ -66,8 +66,8 @@ type
     CaptureInterval: TTntDateTimePicker;
     TrayIconAnimationTimer: TTimer;
     AutoRunCheckBox: TTntCheckBox;
-    MultipleMonitorsModeLabel: TLabel;
-    MultipleMonitorsModeComboBox: TComboBox;
+    MonitorLabel: TLabel;
+    MonitorComboBox: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -96,7 +96,7 @@ type
     procedure ColorDepthComboBoxChange(Sender: TObject);
     procedure TrayIconAnimationTimerTimer(Sender: TObject);
     procedure AutoRunCheckBoxClick(Sender: TObject);
-    procedure MultipleMonitorsModeComboBoxChange(Sender: TObject);
+    procedure MonitorComboBoxChange(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
@@ -124,6 +124,7 @@ type
     procedure InitUI;
     procedure ReadSettings;
     procedure UpdateColorDepthValues;
+    procedure FillMonitorList;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -211,7 +212,7 @@ const
   DefaultJPEGQuality      = 80;
   //DefaultLanguage         = lngEnglish;
   DefaultColorDepth       = cd24Bit;
-  DefaultMultipleMonitorsMode = 'all';
+  DefaultMonitorId        = -1;
 var
   DefaultOutputDir: String;
   SystemLanguageCode: String;
@@ -219,7 +220,7 @@ var
   FmtStr: String;
   LangCode: String;
   Seconds: Integer;
-  MultipleMonitorsMode: String;
+  MonitorId: Integer;
 begin
   DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ExtractFilePath(Application.ExeName), 'screenshots'));
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
@@ -297,14 +298,12 @@ begin
     RestoreFromTray;
 
   // Multiple monitors
-  MultipleMonitorsMode := Ini.ReadString(DefaultConfigIniSection,
-      'MultipleMonitorsMode', DefaultMultipleMonitorsMode);
-  if (MultipleMonitorsMode <> 'all') and (MultipleMonitorsMode <> 'primary') then
-    MultipleMonitorsMode := DefaultMultipleMonitorsMode;
-  if MultipleMonitorsMode = 'all' then
-    MultipleMonitorsModeComboBox.ItemIndex := 0
-  else if MultipleMonitorsMode = 'primary' then
-    MultipleMonitorsModeComboBox.ItemIndex := 1;
+  MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Screen', DefaultMonitorId);
+  if MonitorId = -1 then
+    MonitorId := 0
+  else
+    Inc(MonitorId, 1);
+  MonitorComboBox.ItemIndex := MonitorId;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -424,6 +423,7 @@ var
   ScreenWidth, ScreenHeight: Integer;
   ScreenX, ScreenY: Integer;
   //Rect: TRect;
+  UsedMonitor: TMonitor;
 begin
   Bitmap := TBitmap.Create;
 
@@ -442,22 +442,22 @@ begin
     // Leave bitmap pixel format as default
   end;
 
-  case MultipleMonitorsModeComboBox.ItemIndex of
-    1: // Only primary screen
-    begin
-      ScreenWidth  := Screen.Width;
-      ScreenHeight := ScreenHeight;
-      ScreenX := 0;
-      ScreenY := 0;
-    end;
-
-    //0:
-  else // Full area
-    begin
+  case MonitorComboBox.ItemIndex of
+    0:
+    begin // All displays
       ScreenWidth  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
       ScreenHeight := GetSystemMetrics(SM_CYVIRTUALSCREEN);
       ScreenX := GetSystemMetrics(SM_XVIRTUALSCREEN);
       ScreenY := GetSystemMetrics(SM_YVIRTUALSCREEN);
+    end;
+
+  else // Only one display
+    begin
+      UsedMonitor := Screen.Monitors[MonitorComboBox.ItemIndex - 1];
+      ScreenWidth  := UsedMonitor.Width;
+      ScreenHeight := UsedMonitor.Height;
+      ScreenX := UsedMonitor.Left;
+      ScreenY := UsedMonitor.Top;
     end;
   end;
   //Rect := GetClientRect(0);
@@ -706,8 +706,6 @@ begin
 end;
 
 procedure TMainForm.TranslateForm;
-var
-  Idx: Integer;
 begin
   // Main form
   LanguageRadioGroup.Caption := I18N('Language');
@@ -730,17 +728,8 @@ begin
   StartCaptureOnStartUpCheckBox.Caption := I18N('StartCaptureOnStartUp');
   StartMinimizedCheckBox.Caption := I18N('StartMinimized');
   AutoRunCheckBox.Caption := I18N('AutoRun');
-  MultipleMonitorsModeLabel.Caption := I18N('MultipleMonitorsMode') + ':';
-  with MultipleMonitorsModeComboBox do
-  begin
-    Idx := ItemIndex;
-
-    Items.Strings[0] := I18N('AllMonitorsMode');
-    Items.Strings[1] := I18N('OnlyPrimaryMonitorMode');
-
-    // Restore previous selected item after strings updated
-    ItemIndex := Idx;
-  end;
+  MonitorLabel.Caption := I18N('UsedMonitor') + ':';
+  FillMonitorList;
 
   // Tray icon
   RestoreWindowTrayMenuItem.Caption := I18N('Restore');
@@ -948,11 +937,50 @@ begin
   Ini.WriteBool(DefaultConfigIniSection, 'AutoRun', AutoRunEnabled);
 end;
 
-procedure TMainForm.MultipleMonitorsModeComboBoxChange(Sender: TObject);
+procedure TMainForm.MonitorComboBoxChange(Sender: TObject);
+var
+  Idx: Integer;
 begin
-  case MultipleMonitorsModeComboBox.ItemIndex of
-    0: Ini.WriteString(DefaultConfigIniSection, 'MultipleMonitorsMode', 'all');
-    1: Ini.WriteString(DefaultConfigIniSection, 'MultipleMonitorsMode', 'primary');
+  if MonitorComboBox.ItemIndex = 0  then // All screens
+    Idx := -1
+  else
+    Idx := MonitorComboBox.ItemIndex - 1;
+
+  Ini.WriteInteger(DefaultConfigIniSection, 'Screen', Idx);
+end;
+
+procedure TMainForm.FillMonitorList;
+var
+  Idx, SelIdx: Integer;
+  Str: String;
+  
+begin
+  with MonitorComboBox do
+  begin
+    SelIdx := ItemIndex;
+
+    Items.Clear;
+    Items.Append(Format(I18N('AllMonitorsInfo'),
+        [GetSystemMetrics(SM_CXVIRTUALSCREEN),
+         GetSystemMetrics(SM_CYVIRTUALSCREEN)]
+    ));
+
+    for Idx := 0 to Screen.MonitorCount - 1 do
+    begin
+      Str := Format(I18N('MonitorInfo'),
+          [Screen.Monitors[Idx].MonitorNum,
+           Screen.Monitors[Idx].Width,
+           Screen.Monitors[Idx].Height]
+      );
+      // ToDo: Also may show screen model, diagonal size
+      if Screen.Monitors[Idx].Primary then
+        Str := Str + ' - ' + I18N('Primary');
+
+      Items.Append(Str);
+    end;
+
+    // Restore previous selected item after strings updated
+    ItemIndex := SelIdx;
   end;
 end;
 

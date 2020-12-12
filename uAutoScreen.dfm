@@ -76,13 +76,13 @@ object MainForm: TMainForm
     Alignment = taRightJustify
     Caption = 'Color depth:'
   end
-  object MultipleMonitorsModeLabel: TLabel
-    Left = 8
+  object MonitorLabel: TLabel
+    Left = 123
     Top = 236
-    Width = 193
+    Width = 78
     Height = 15
     Alignment = taRightJustify
-    Caption = 'Captured area for multiple monitors:'
+    Caption = 'Used monitor:'
   end
   object OutputDirEdit: TTntEdit
     Left = 208
@@ -292,7 +292,7 @@ object MainForm: TMainForm
     TabOrder = 15
     OnClick = AutoRunCheckBoxClick
   end
-  object MultipleMonitorsModeComboBox: TComboBox
+  object MonitorComboBox: TComboBox
     Left = 208
     Top = 232
     Width = 265
@@ -300,7 +300,7 @@ object MainForm: TMainForm
     Style = csDropDownList
     ItemHeight = 15
     TabOrder = 18
-    OnChange = MultipleMonitorsModeComboBoxChange
+    OnChange = MonitorComboBoxChange
     Items.Strings = (
       ''
       '')
