@@ -4,7 +4,7 @@ object MainForm: TMainForm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Auto Screenshot'
-  ClientHeight = 328
+  ClientHeight = 308
   ClientWidth = 633
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,13 +12,14 @@ object MainForm: TMainForm
   Font.Height = -12
   Font.Name = 'Arial'
   Font.Style = []
+  Menu = MainMenu
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   DesignSize = (
     633
-    328)
+    308)
   PixelsPerInch = 96
   TextHeight = 15
   object OutputDirLabel: TTntLabel
@@ -95,7 +96,7 @@ object MainForm: TMainForm
   end
   object TakeScreenshotButton: TTntButton
     Left = 32
-    Top = 276
+    Top = 256
     Width = 121
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -162,12 +163,12 @@ object MainForm: TMainForm
   end
   object AutoCaptureControlGroup: TTntGroupBox
     Left = 208
-    Top = 248
+    Top = 228
     Width = 281
     Height = 65
     Anchors = [akLeft, akBottom]
     Caption = 'Automatic capture'
-    TabOrder = 17
+    TabOrder = 16
     object StartAutoCaptureButton: TTntBitBtn
       Left = 24
       Top = 24
@@ -190,16 +191,6 @@ object MainForm: TMainForm
       NumGlyphs = 2
       Spacing = 8
     end
-  end
-  object AboutButton: TTntButton
-    Left = 520
-    Top = 272
-    Width = 97
-    Height = 25
-    Anchors = [akLeft, akBottom]
-    Caption = 'About'
-    TabOrder = 16
-    OnClick = AboutButtonClick
   end
   object StartCaptureOnStartUpCheckBox: TTntCheckBox
     Left = 208
@@ -335,5 +326,16 @@ object MainForm: TMainForm
     OnTimer = TrayIconAnimationTimerTimer
     Left = 16
     Top = 168
+  end
+  object MainMenu: TMainMenu
+    Left = 40
+    Top = 40
+    object HelpSubMenu: TMenuItem
+      Caption = 'Help'
+      object AboutMenuItem: TMenuItem
+        Caption = 'About...'
+        OnClick = AboutMenuItemClick
+      end
+    end
   end
 end

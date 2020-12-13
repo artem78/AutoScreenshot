@@ -53,7 +53,6 @@ type
     RestoreWindowTrayMenuItem: TTntMenuItem;
     ToggleAutoCaptureTrayMenuItem: TTntMenuItem;
     Separator2TrayMenuItem: TTntMenuItem;
-    AboutButton: TTntButton;
     StartCaptureOnStartUpCheckBox: TTntCheckBox;
     StartMinimizedCheckBox: TTntCheckBox;
     Separator1TrayMenuItem: TTntMenuItem;
@@ -66,6 +65,9 @@ type
     CaptureInterval: TTntDateTimePicker;
     TrayIconAnimationTimer: TTimer;
     AutoRunCheckBox: TTntCheckBox;
+    MainMenu: TMainMenu;
+    HelpSubMenu: TMenuItem;
+    AboutMenuItem: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -84,7 +86,6 @@ type
     procedure RestoreWindowTrayMenuItemClick(Sender: TObject);
     procedure TakeScreenshotTrayMenuItemClick(Sender: TObject);
     procedure ExitTrayMenuItemClick(Sender: TObject);
-    procedure AboutButtonClick(Sender: TObject);
     procedure LanguageRadioGroupClick(Sender: TObject);
     procedure StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
     procedure StartMinimizedCheckBoxClick(Sender: TObject);
@@ -94,6 +95,7 @@ type
     procedure ColorDepthComboBoxChange(Sender: TObject);
     procedure TrayIconAnimationTimerTimer(Sender: TObject);
     procedure AutoRunCheckBoxClick(Sender: TObject);
+    procedure AboutMenuItemClick(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
@@ -635,14 +637,6 @@ begin
   Application.BringToFront();
 end;
 
-procedure TMainForm.AboutButtonClick(Sender: TObject);
-begin
-  with TAboutForm.Create(Application) do
-  begin
-    ShowModal;
-  end;
-end;
-
 procedure TMainForm.LanguageRadioGroupClick(Sender: TObject);
 begin
   Language := TLanguage(LanguageRadioGroup.ItemIndex)
@@ -695,7 +689,7 @@ begin
   StartAutoCaptureButton.Caption := I18N('StartCapture');
   StopAutoCaptureButton.Caption := I18N('StopCapture');
   TakeScreenshotButton.Caption := I18N('TakeScreenshot');
-  AboutButton.Caption := I18N('About');
+  AboutMenuItem.Caption := I18N('About');
   StartCaptureOnStartUpCheckBox.Caption := I18N('StartCaptureOnStartUp');
   StartMinimizedCheckBox.Caption := I18N('StartMinimized');
   AutoRunCheckBox.Caption := I18N('AutoRun');
@@ -904,6 +898,14 @@ begin
   AutoRunEnabled := AutoRunCheckBox.Checked;
   AutoRun(Application.ExeName, 'Auto Screenshot', AutoRunEnabled);
   Ini.WriteBool(DefaultConfigIniSection, 'AutoRun', AutoRunEnabled);
+end;
+
+procedure TMainForm.AboutMenuItemClick(Sender: TObject);
+begin
+  with TAboutForm.Create(Application) do
+  begin
+    ShowModal;
+  end;
 end;
 
 end.
