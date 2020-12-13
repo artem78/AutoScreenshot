@@ -464,6 +464,8 @@ begin
 
   Bitmap.Width := ScreenWidth;
   Bitmap.Height := ScreenHeight;
+  Bitmap.Canvas.Brush.Color := clBlack;
+  Bitmap.Canvas.FillRect(Rect(0, 0, ScreenWidth, ScreenHeight));
   ScreenDC := GetDC(0);
   BitBlt(Bitmap.Canvas.Handle, 0, 0, ScreenWidth, ScreenHeight,
            ScreenDC, ScreenX, ScreenY, SRCCOPY);
