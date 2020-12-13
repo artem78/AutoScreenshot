@@ -66,8 +66,8 @@ type
     CaptureInterval: TTntDateTimePicker;
     TrayIconAnimationTimer: TTimer;
     AutoRunCheckBox: TTntCheckBox;
-    MonitorLabel: TLabel;
-    MonitorComboBox: TComboBox;
+    MonitorLabel: TTntLabel;
+    MonitorComboBox: TTntComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -954,7 +954,7 @@ end;
 procedure TMainForm.FillMonitorList;
 var
   Idx, SelIdx: Integer;
-  Str: String;
+  Str: WideString;
   
 begin
   with MonitorComboBox do
@@ -962,14 +962,14 @@ begin
     SelIdx := ItemIndex;
 
     Items.Clear;
-    Items.Append(Format(I18N('AllMonitorsInfo'),
+    Items.Append(WideFormat(I18N('AllMonitorsInfo'),
         [GetSystemMetrics(SM_CXVIRTUALSCREEN),
          GetSystemMetrics(SM_CYVIRTUALSCREEN)]
     ));
 
     for Idx := 0 to Screen.MonitorCount - 1 do
     begin
-      Str := Format(I18N('MonitorInfo'),
+      Str := WideFormat(I18N('MonitorInfo'),
           [Screen.Monitors[Idx].MonitorNum + 1, // Start numeration from 1
            Screen.Monitors[Idx].Width,
            Screen.Monitors[Idx].Height]

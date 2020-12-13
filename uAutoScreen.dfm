@@ -76,7 +76,7 @@ object MainForm: TMainForm
     Alignment = taRightJustify
     Caption = 'Color depth:'
   end
-  object MonitorLabel: TLabel
+  object MonitorLabel: TTntLabel
     Left = 123
     Top = 236
     Width = 78
@@ -292,7 +292,7 @@ object MainForm: TMainForm
     TabOrder = 15
     OnClick = AutoRunCheckBoxClick
   end
-  object MonitorComboBox: TComboBox
+  object MonitorComboBox: TTntComboBox
     Left = 208
     Top = 232
     Width = 265
