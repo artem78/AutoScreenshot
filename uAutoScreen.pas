@@ -955,13 +955,14 @@ end;
 
 procedure TMainForm.FillMonitorList;
 var
-  Idx, SelId: Integer;
+  Idx, SelIdx: Integer;
   Str: WideString;
 
 begin
   with MonitorComboBox do
   begin
-    SelId := MonitorId;
+    //SelId := MonitorId;
+    SelIdx := MonitorComboBox.ItemIndex;
 
     Items.Clear;
     Items.Append(WideFormat(I18N('AllMonitorsInfo'),
@@ -984,8 +985,8 @@ begin
     end;
 
     // Restore previous selected item after strings updated
-    if SelId <> -1 then
-      MonitorId := SelId;
+    //MonitorId := SelId;
+    MonitorComboBox.ItemIndex := SelIdx;
   end;
 end;
 
