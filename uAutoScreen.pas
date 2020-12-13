@@ -970,7 +970,7 @@ begin
     for Idx := 0 to Screen.MonitorCount - 1 do
     begin
       Str := Format(I18N('MonitorInfo'),
-          [Screen.Monitors[Idx].MonitorNum,
+          [Screen.Monitors[Idx].MonitorNum + 1, // Start numeration from 1
            Screen.Monitors[Idx].Width,
            Screen.Monitors[Idx].Height]
       );
