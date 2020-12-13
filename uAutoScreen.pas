@@ -302,7 +302,7 @@ begin
 
   // Multiple monitors
   try
-    MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Screen', DefaultMonitorId);
+    MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Monitor', DefaultMonitorId);
   except
     MonitorId := DefaultMonitorId;
   end;
@@ -996,7 +996,7 @@ begin
   else
     raise Exception.CreateFmt('Monitor id=%d not exists', [MonitorId]);
 
-  Ini.WriteInteger(DefaultConfigIniSection, 'Screen', MonitorId);
+  Ini.WriteInteger(DefaultConfigIniSection, 'Monitor', MonitorId);
 end;
 
 end.
