@@ -41,7 +41,6 @@ type
     JPEGQualitySpinEdit: TSpinEdit;
     OpenOutputDirButton: TTntButton;
     StopWhenInactiveCheckBox: TTntCheckBox;
-    LanguageRadioGroup: TTntRadioGroup;
     ImageFormatComboBox: TTntComboBox;
     JPEGQualityPercentLabel: TTntLabel;
     AutoCaptureControlGroup: TTntGroupBox;
@@ -68,6 +67,10 @@ type
     MainMenu: TMainMenu;
     HelpSubMenu: TMenuItem;
     AboutMenuItem: TMenuItem;
+    OptionsSubMenu: TMenuItem;
+    LanguageSubMenu: TMenuItem;
+    EnglishLanguageMenuItem: TMenuItem;
+    RussianLanguageMenuItem: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -86,7 +89,6 @@ type
     procedure RestoreWindowTrayMenuItemClick(Sender: TObject);
     procedure TakeScreenshotTrayMenuItemClick(Sender: TObject);
     procedure ExitTrayMenuItemClick(Sender: TObject);
-    procedure LanguageRadioGroupClick(Sender: TObject);
     procedure StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
     procedure StartMinimizedCheckBoxClick(Sender: TObject);
     procedure FileNameTemplateComboBoxChange(Sender: TObject);
@@ -96,6 +98,8 @@ type
     procedure TrayIconAnimationTimerTimer(Sender: TObject);
     procedure AutoRunCheckBoxClick(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
+    procedure EnglishLanguageMenuItemClick(Sender: TObject);
+    procedure RussianLanguageMenuItemClick(Sender: TObject);
   private
     { Private declarations }
     FLanguage: TLanguage;
@@ -637,11 +641,6 @@ begin
   Application.BringToFront();
 end;
 
-procedure TMainForm.LanguageRadioGroupClick(Sender: TObject);
-begin
-  Language := TLanguage(LanguageRadioGroup.ItemIndex)
-end;
-
 procedure TMainForm.SetLanguage(Lang: TLanguage);
 begin
   {if (FLanguage = Lang) then
@@ -649,7 +648,7 @@ begin
 
   FLanguage := Lang;
   Ini.WriteString(DefaultConfigIniSection, 'Language', LanguageCodes[Lang]);
-  LanguageRadioGroup.ItemIndex := Ord(Lang);
+  LanguageSubMenu.Items[Ord(Lang)].Checked := True;
   I18NSetLang(LanguageCodes[Lang]);
   TranslateForm;
 end;
@@ -672,8 +671,13 @@ end;
 
 procedure TMainForm.TranslateForm;
 begin
-  // Main form
-  LanguageRadioGroup.Caption := I18N('Language');
+  // Menubar
+  OptionsSubMenu.Caption := I18N('Options');
+  LanguageSubMenu.Caption := I18N('Language');
+  HelpSubMenu.Caption := I18N('Help');
+  AboutMenuItem.Caption := I18N('About') + '...';
+
+  // Main form components
   OutputDirLabel.Caption := I18N('OutputDirectory') + ':';
   OpenOutputDirButton.Caption := I18N('OpenDirectory');
   OpenOutputDirButton.Hint := I18N('OpenDirectoryHint');
@@ -689,7 +693,6 @@ begin
   StartAutoCaptureButton.Caption := I18N('StartCapture');
   StopAutoCaptureButton.Caption := I18N('StopCapture');
   TakeScreenshotButton.Caption := I18N('TakeScreenshot');
-  AboutMenuItem.Caption := I18N('About');
   StartCaptureOnStartUpCheckBox.Caption := I18N('StartCaptureOnStartUp');
   StartMinimizedCheckBox.Caption := I18N('StartMinimized');
   AutoRunCheckBox.Caption := I18N('AutoRun');
@@ -906,6 +909,16 @@ begin
   begin
     ShowModal;
   end;
+end;
+
+procedure TMainForm.EnglishLanguageMenuItemClick(Sender: TObject);
+begin
+  Language := lngEnglish;
+end;
+
+procedure TMainForm.RussianLanguageMenuItemClick(Sender: TObject);
+begin
+  Language := lngRussian;
 end;
 
 end.

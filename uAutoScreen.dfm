@@ -101,7 +101,7 @@ object MainForm: TMainForm
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Take screenshot'
-    TabOrder = 14
+    TabOrder = 13
     OnClick = TakeScreenshotButtonClick
   end
   object JPEGQualitySpinEdit: TSpinEdit
@@ -137,18 +137,6 @@ object MainForm: TMainForm
     TabOrder = 10
     OnClick = StopWhenInactiveCheckBoxClick
   end
-  object LanguageRadioGroup: TTntRadioGroup
-    Left = 520
-    Top = 160
-    Width = 97
-    Height = 57
-    Caption = 'Language'
-    Items.Strings = (
-      'English'
-      #1056#1091#1089#1089#1082#1080#1081)
-    TabOrder = 13
-    OnClick = LanguageRadioGroupClick
-  end
   object ImageFormatComboBox: TTntComboBox
     Left = 208
     Top = 104
@@ -168,7 +156,7 @@ object MainForm: TMainForm
     Height = 65
     Anchors = [akLeft, akBottom]
     Caption = 'Automatic capture'
-    TabOrder = 16
+    TabOrder = 15
     object StartAutoCaptureButton: TTntBitBtn
       Left = 24
       Top = 24
@@ -272,7 +260,7 @@ object MainForm: TMainForm
     Width = 265
     Height = 17
     Caption = 'Run application at system startup'
-    TabOrder = 15
+    TabOrder = 14
     OnClick = AutoRunCheckBoxClick
   end
   object Timer: TTimer
@@ -330,6 +318,22 @@ object MainForm: TMainForm
   object MainMenu: TMainMenu
     Left = 40
     Top = 40
+    object OptionsSubMenu: TMenuItem
+      Caption = 'Options'
+      object LanguageSubMenu: TMenuItem
+        Caption = 'Language'
+        object EnglishLanguageMenuItem: TMenuItem
+          Caption = 'English'
+          RadioItem = True
+          OnClick = EnglishLanguageMenuItemClick
+        end
+        object RussianLanguageMenuItem: TMenuItem
+          Caption = #1056#1091#1089#1089#1082#1080#1081
+          RadioItem = True
+          OnClick = RussianLanguageMenuItemClick
+        end
+      end
+    end
     object HelpSubMenu: TMenuItem
       Caption = 'Help'
       object AboutMenuItem: TMenuItem
