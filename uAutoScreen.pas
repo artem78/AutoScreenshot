@@ -125,6 +125,8 @@ type
     procedure ReadSettings;
     procedure UpdateColorDepthValues;
     procedure FillMonitorList;
+    procedure SetMonitorId(MonitorId: Integer);
+    function GetMonitorId: Integer;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -133,6 +135,7 @@ type
     property ImageFormat: TImageFormat read GetImageFormat write SetImageFormat;
     property ColorDepth: TColorDepth read GetColorDepth write SetColorDepth;
     property TrayIconState: TTrayIconState write SetTrayIconState;
+    property MonitorId: Integer read GetMonitorId write SetMonitorId;
   public
     { Public declarations }
   end;
@@ -173,6 +176,7 @@ const
   DefaultConfigIniSection = 'main';
 
   MinCaptureIntervalInSeconds = 1;
+  NoMonitorId = -1;
 
 var
   MainForm: TMainForm;
@@ -212,7 +216,7 @@ const
   DefaultJPEGQuality      = 80;
   //DefaultLanguage         = lngEnglish;
   DefaultColorDepth       = cd24Bit;
-  DefaultMonitorId        = -1;
+  DefaultMonitorId        = NoMonitorId;
 var
   DefaultOutputDir: String;
   SystemLanguageCode: String;
@@ -220,7 +224,6 @@ var
   FmtStr: String;
   LangCode: String;
   Seconds: Integer;
-  MonitorId: Integer;
 begin
   DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ExtractFilePath(Application.ExeName), 'screenshots'));
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
@@ -298,12 +301,11 @@ begin
     RestoreFromTray;
 
   // Multiple monitors
-  MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Screen', DefaultMonitorId);
-  if MonitorId = -1 then
-    MonitorId := 0
-  else
-    Inc(MonitorId, 1);
-  MonitorComboBox.ItemIndex := MonitorId;
+  try
+    MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Screen', DefaultMonitorId);
+  except
+    MonitorId := DefaultMonitorId;
+  end;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -442,23 +444,20 @@ begin
     // Leave bitmap pixel format as default
   end;
 
-  case MonitorComboBox.ItemIndex of
-    0:
-    begin // All displays
-      ScreenWidth  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
-      ScreenHeight := GetSystemMetrics(SM_CYVIRTUALSCREEN);
-      ScreenX := GetSystemMetrics(SM_XVIRTUALSCREEN);
-      ScreenY := GetSystemMetrics(SM_YVIRTUALSCREEN);
-    end;
-
+  if MonitorId = NoMonitorId then
+  begin // All displays
+    ScreenWidth  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    ScreenHeight := GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    ScreenX := GetSystemMetrics(SM_XVIRTUALSCREEN);
+    ScreenY := GetSystemMetrics(SM_YVIRTUALSCREEN);
+  end
   else // Only one display
-    begin
-      UsedMonitor := Screen.Monitors[MonitorComboBox.ItemIndex - 1];
-      ScreenWidth  := UsedMonitor.Width;
-      ScreenHeight := UsedMonitor.Height;
-      ScreenX := UsedMonitor.Left;
-      ScreenY := UsedMonitor.Top;
-    end;
+  begin
+    UsedMonitor := Screen.Monitors[MonitorId];
+    ScreenWidth  := UsedMonitor.Width;
+    ScreenHeight := UsedMonitor.Height;
+    ScreenX := UsedMonitor.Left;
+    ScreenY := UsedMonitor.Top;
   end;
   //Rect := GetClientRect(0);
 
@@ -940,26 +939,19 @@ begin
 end;
 
 procedure TMainForm.MonitorComboBoxChange(Sender: TObject);
-var
-  Idx: Integer;
 begin
-  if MonitorComboBox.ItemIndex = 0  then // All screens
-    Idx := -1
-  else
-    Idx := MonitorComboBox.ItemIndex - 1;
-
-  Ini.WriteInteger(DefaultConfigIniSection, 'Screen', Idx);
+  SetMonitorId(GetMonitorId);
 end;
 
 procedure TMainForm.FillMonitorList;
 var
-  Idx, SelIdx: Integer;
+  Idx, SelId: Integer;
   Str: WideString;
-  
+
 begin
   with MonitorComboBox do
   begin
-    SelIdx := ItemIndex;
+    SelId := MonitorId;
 
     Items.Clear;
     Items.Append(WideFormat(I18N('AllMonitorsInfo'),
@@ -982,8 +974,29 @@ begin
     end;
 
     // Restore previous selected item after strings updated
-    ItemIndex := SelIdx;
+    if SelId <> -1 then
+      MonitorId := SelId;
   end;
+end;
+
+function TMainForm.GetMonitorId: Integer;
+begin
+  if MonitorComboBox.ItemIndex <= 0 then
+    Result := NoMonitorId
+  else
+    Result := MonitorComboBox.ItemIndex - 1;
+end;
+
+procedure TMainForm.SetMonitorId(MonitorId: Integer);
+begin
+  if MonitorId = NoMonitorId then
+    MonitorComboBox.ItemIndex := 0
+  else if (MonitorId >= 0) and (MonitorId < {Screen.MonitorCount} MonitorComboBox.Items.Count) then
+    MonitorComboBox.ItemIndex := MonitorId + 1
+  else
+    raise Exception.CreateFmt('Monitor id=%d not exists', [MonitorId]);
+
+  Ini.WriteInteger(DefaultConfigIniSection, 'Screen', MonitorId);
 end;
 
 end.
