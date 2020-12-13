@@ -301,11 +301,21 @@ begin
     RestoreFromTray;
 
   // Multiple monitors
-  try
-    MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Monitor', DefaultMonitorId);
-  except
-    MonitorId := DefaultMonitorId;
-  end;
+  if Screen.MonitorCount >= 2 then
+  begin
+    try
+      MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Monitor', DefaultMonitorId);
+    except
+      MonitorId := DefaultMonitorId;
+    end;
+  end
+  else
+  begin // Only one monitor available
+    MonitorLabel.Enabled := False;
+    MonitorComboBox.Enabled := False;
+    //MonitorId := NoMonitorId;
+    MonitorId := 0;
+  end
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
