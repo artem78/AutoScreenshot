@@ -475,7 +475,7 @@ begin
   Bitmap.Height := ScreenHeight;
   Bitmap.Canvas.Brush.Color := clBlack;
   Bitmap.Canvas.FillRect(Rect(0, 0, ScreenWidth, ScreenHeight));
-  ScreenDC := GetDC(0);
+  ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
   BitBlt(Bitmap.Canvas.Handle, 0, 0, ScreenWidth, ScreenHeight,
            ScreenDC, ScreenX, ScreenY, SRCCOPY);
   ReleaseDC(0, ScreenDC);
