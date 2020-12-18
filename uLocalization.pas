@@ -5,6 +5,19 @@ interface
 uses
   TntIniFiles;
 
+type
+  TLocalizer = class
+  private
+    Lang: String;
+    Ini: TTntMemIniFile;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SetLang(ALang: String);
+    function I18N(Str: String): WideString;
+  end;
+
 procedure I18NSetLang(ALang: String);
 function I18N(Str: String): WideString;
 
@@ -13,13 +26,45 @@ implementation
 uses SysUtils, uUtils;
 
 var
-  Lang: String;
-  Ini: TTntMemIniFile;
+  Localizer: TLocalizer;
 
 const
   LangSubDir = 'lang';
 
 procedure I18NSetLang(ALang: String);
+begin
+  Localizer.SetLang(ALang);
+end;
+
+function I18N(Str: String): WideString;
+begin
+  Result := Localizer.I18N(Str);
+end;
+
+{ TLocalizer }
+
+constructor TLocalizer.Create;
+begin
+  Lang := 'en';
+  Ini := nil;
+end;
+
+destructor TLocalizer.Destroy;
+begin
+  FreeAndNil(Ini);
+
+  inherited;
+end;
+
+function TLocalizer.I18N(Str: String): WideString;
+begin
+  //Result := '[' + Lang + ']' + Str + '';
+  Result := Ini.ReadString('translation', Str, {Str}'<unknown>');
+
+  Result := DecodeControlCharacters(Result);
+end;
+
+procedure TLocalizer.SetLang(ALang: String);
 var
   LangDir: String;
 begin
@@ -32,24 +77,14 @@ begin
   Ini := TTntMemIniFile.Create(LangDir + Lang + '.ini');
 end;
 
-function I18N(Str: String): WideString;
-begin
-  //Result := '[' + Lang + ']' + Str + '';
-  Result := ini.ReadString('translation', Str, {Str}'<unknown>');
-
-  Result := DecodeControlCharacters(Result);
-end;
-
 initialization
 begin
-  // Sets default language
-  Lang := 'en';
-  Ini := nil;
+  Localizer := TLocalizer.Create;
 end;
 
 finalization
 begin
-  FreeAndNil(Ini);
+  FreeAndNil(Localizer);
 end;
 
 end.
