@@ -325,7 +325,7 @@ var
 begin
   Dir := OutputDirEdit.Text;
 
-  if WideSelectDirectory(I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
+  if WideSelectDirectory(Localizer.I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
   //if SelectDirectory(dir, [sdAllowCreate, sdPerformCreate], 0) then
   begin
     OutputDirEdit.Text := Dir;
@@ -649,7 +649,7 @@ begin
   FLanguage := Lang;
   Ini.WriteString(DefaultConfigIniSection, 'Language', LanguageCodes[Lang]);
   LanguageSubMenu.Items[Ord(Lang)].Checked := True;
-  I18NSetLang(LanguageCodes[Lang]);
+  Localizer.SetLang(LanguageCodes[Lang]);
   TranslateForm;
 end;
 
@@ -672,36 +672,36 @@ end;
 procedure TMainForm.TranslateForm;
 begin
   // Menubar
-  OptionsSubMenu.Caption := I18N('Options');
-  LanguageSubMenu.Caption := I18N('Language');
-  HelpSubMenu.Caption := I18N('Help');
-  AboutMenuItem.Caption := I18N('About') + '...';
+  OptionsSubMenu.Caption := Localizer.I18N('Options');
+  LanguageSubMenu.Caption := Localizer.I18N('Language');
+  HelpSubMenu.Caption := Localizer.I18N('Help');
+  AboutMenuItem.Caption := Localizer.I18N('About') + '...';
 
   // Main form components
-  OutputDirLabel.Caption := I18N('OutputDirectory') + ':';
-  OpenOutputDirButton.Caption := I18N('OpenDirectory');
-  OpenOutputDirButton.Hint := I18N('OpenDirectoryHint');
-  FileNameTemplateLabel.Caption := I18N('FileNameTemplate') + ':';
-  CaptureIntervalLabel.Caption := I18N('CaptureInterval') + ':';
-  StopWhenInactiveCheckBox.Caption := I18N('PauseCaptureWhenIdle');
-  StopWhenInactiveCheckBox.Hint := I18N('PauseCaptureWhenIdleHint');
-  ImageFormatLabel.Caption := I18N('Format') + ':';
-  ColorDepthLabel.Caption := I18N('ColorDepth') + ':';
-  JPEGQualityLabel.Caption := I18N('Quality') + ':';
-  GrayscaleCheckBox.Caption := I18N('Grayscale');
-  AutoCaptureControlGroup.Caption := I18N('AutoCapture');
-  StartAutoCaptureButton.Caption := I18N('StartCapture');
-  StopAutoCaptureButton.Caption := I18N('StopCapture');
-  TakeScreenshotButton.Caption := I18N('TakeScreenshot');
-  StartCaptureOnStartUpCheckBox.Caption := I18N('StartCaptureOnStartUp');
-  StartMinimizedCheckBox.Caption := I18N('StartMinimized');
-  AutoRunCheckBox.Caption := I18N('AutoRun');
+  OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
+  OpenOutputDirButton.Caption := Localizer.I18N('OpenDirectory');
+  OpenOutputDirButton.Hint := Localizer.I18N('OpenDirectoryHint');
+  FileNameTemplateLabel.Caption := Localizer.I18N('FileNameTemplate') + ':';
+  CaptureIntervalLabel.Caption := Localizer.I18N('CaptureInterval') + ':';
+  StopWhenInactiveCheckBox.Caption := Localizer.I18N('PauseCaptureWhenIdle');
+  StopWhenInactiveCheckBox.Hint := Localizer.I18N('PauseCaptureWhenIdleHint');
+  ImageFormatLabel.Caption := Localizer.I18N('Format') + ':';
+  ColorDepthLabel.Caption := Localizer.I18N('ColorDepth') + ':';
+  JPEGQualityLabel.Caption := Localizer.I18N('Quality') + ':';
+  GrayscaleCheckBox.Caption := Localizer.I18N('Grayscale');
+  AutoCaptureControlGroup.Caption := Localizer.I18N('AutoCapture');
+  StartAutoCaptureButton.Caption := Localizer.I18N('StartCapture');
+  StopAutoCaptureButton.Caption := Localizer.I18N('StopCapture');
+  TakeScreenshotButton.Caption := Localizer.I18N('TakeScreenshot');
+  StartCaptureOnStartUpCheckBox.Caption := Localizer.I18N('StartCaptureOnStartUp');
+  StartMinimizedCheckBox.Caption := Localizer.I18N('StartMinimized');
+  AutoRunCheckBox.Caption := Localizer.I18N('AutoRun');
 
   // Tray icon
-  RestoreWindowTrayMenuItem.Caption := I18N('Restore');
-  ToggleAutoCaptureTrayMenuItem.Caption := I18N('EnableAutoCapture');
-  TakeScreenshotTrayMenuItem.Caption := I18N('TakeScreenshot');
-  ExitTrayMenuItem.Caption := I18N('Exit');
+  RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
+  ToggleAutoCaptureTrayMenuItem.Caption := Localizer.I18N('EnableAutoCapture');
+  TakeScreenshotTrayMenuItem.Caption := Localizer.I18N('TakeScreenshot');
+  ExitTrayMenuItem.Caption := Localizer.I18N('Exit');
 end;
 
 procedure TMainForm.StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
@@ -721,7 +721,7 @@ end;
 
 procedure TMainForm.FileNameTemplateHelpButtonClick(Sender: TObject);
 begin
-  WideShowMessage(I18N('FileNameTemplateHelpText'));
+  WideShowMessage(Localizer.I18N('FileNameTemplateHelpText'));
 end;
 
 function TMainForm.GetImageFormat: TImageFormat;

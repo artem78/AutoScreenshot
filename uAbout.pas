@@ -46,14 +46,14 @@ var
   BuildDate: TDateTime;
   BuildDateStr: WideString;
 begin
-  Caption := I18N('About');
+  Caption := Localizer.I18N('About');
 
   Logo.Picture.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
       64, 64, LR_DEFAULTCOLOR);
 
   ProgramNameLabel.Caption := TntApplication.Title;
-  VersionLabel.Caption := I18N('Version') + ': ' + GetProgramVersionStr(True);
-  AuthorLabel.Caption := I18N('Author') + ': ' + 'Artem Demin (artem78) <megabyte1024@ya.ru>';
+  VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr(True);
+  AuthorLabel.Caption := Localizer.I18N('Author') + ': ' + 'Artem Demin (artem78) <megabyte1024@ya.ru>';
   LinkLabel.Caption := ProjectGitHubURL;
 
   BuildDate := GetLinkerTimeStamp;
@@ -64,9 +64,9 @@ begin
     BuildDateStr := 'unknown'
   else
     BuildDateStr := FormatDateTime({'dddddd tt'} 'dddddd', BuildDate);
-  BuildDateLabel.Caption := I18N('BuildDate') + ': ' + BuildDateStr;
+  BuildDateLabel.Caption := Localizer.I18N('BuildDate') + ': ' + BuildDateStr;
 
-  CloseButton.Caption := I18N('Close');
+  CloseButton.Caption := Localizer.I18N('Close');
 end;
 
 procedure TAboutForm.LinkLabelClick(Sender: TObject);

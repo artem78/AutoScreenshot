@@ -18,28 +18,15 @@ type
     function I18N(Str: String): WideString;
   end;
 
-procedure I18NSetLang(ALang: String);
-function I18N(Str: String): WideString;
+var
+  Localizer: TLocalizer;
 
 implementation
 
 uses SysUtils, uUtils;
 
-var
-  Localizer: TLocalizer;
-
 const
   LangSubDir = 'lang';
-
-procedure I18NSetLang(ALang: String);
-begin
-  Localizer.SetLang(ALang);
-end;
-
-function I18N(Str: String): WideString;
-begin
-  Result := Localizer.I18N(Str);
-end;
 
 { TLocalizer }
 
