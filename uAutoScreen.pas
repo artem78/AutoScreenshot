@@ -961,8 +961,7 @@ var
   Idx: integer;
   LangCode: TLanguageCode;
 begin
-  Idx := (Sender as TTntMenuItem).MenuIndex;
-  LangCode := AvailableLanguages[Idx].Code;
+  LangCode := GetLangCodeOfLangMenuItem(Sender as TTntMenuItem);
   SetLanguageByCode(LangCode);
 end;
 
