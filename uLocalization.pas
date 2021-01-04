@@ -3,7 +3,7 @@ unit uLocalization;
 interface
 
 uses
-  TntIniFiles;
+  TntIniFiles, SysUtils;
 
 type
   TLanguageCode = String[2];
@@ -15,6 +15,8 @@ type
   end;
 
   TLanguagesArray = array of TLanguageInfo;
+
+  ELocalizerException = class(Exception);
 
   TLocalizer = class
   private
@@ -35,7 +37,7 @@ var
 
 implementation
 
-uses SysUtils, uUtils;
+uses uUtils;
 
 { TLocalizer }
 
@@ -111,12 +113,18 @@ begin
 end;
 
 procedure TLocalizer.SetLang(ALang: TLanguageCode);
+var
+  FileName: String;
 begin
   Lang := ALang;
 
-  // Load ini file with strings for selected language
   FreeAndNil(Ini);
-  Ini := TTntMemIniFile.Create(LangsDir + Lang + '.ini');
+
+  // Load ini file with strings for selected language
+  FileName := LangsDir + Lang + '.ini';
+  if not FileExists(FileName) then
+    raise ELocalizerException.CreateFmt('Can`t open localization file "%s"', [FileName]);
+  Ini := TTntMemIniFile.Create(FileName);
 end;
 
 initialization
