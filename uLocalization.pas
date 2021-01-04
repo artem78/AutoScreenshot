@@ -12,6 +12,7 @@ type
     Code: TLanguageCode;
     Name, NativeName: WideString;
     FileName: String;
+    Author: WideString;
   end;
 
   TLanguagesArray = array of TLanguageInfo;
@@ -22,6 +23,9 @@ type
   private
     Ini: TTntMemIniFile;
     LangsDir: String;
+
+    function GetLanguageInfo: TLanguageInfo;
+    class function GetLanguageInfoFromIni(const AnIni: TTntMemIniFile): TLanguageInfo;
   public
     constructor Create(ALangsDir: String);
     destructor Destroy; override;
@@ -30,6 +34,8 @@ type
     procedure LoadFromFile(AFileName: String);
     function I18N(Str: String): WideString;
     procedure GetLanguages(var LangsArr: TLanguagesArray);
+
+    property LanguageInfo: TLanguageInfo read GetLanguageInfo;
   end;
 
 var
@@ -54,9 +60,24 @@ begin
   inherited;
 end;
 
-procedure TLocalizer.GetLanguages(var LangsArr: TLanguagesArray);
+function TLocalizer.GetLanguageInfo: TLanguageInfo;
+begin
+  Result := TLocalizer.GetLanguageInfoFromIni(Ini);
+end;
+
+class function TLocalizer.GetLanguageInfoFromIni(
+  const AnIni: TTntMemIniFile): TLanguageInfo;
 const
   IniSection = 'info';
+begin
+  Result.Code := {Wide}LowerCase(AnIni.ReadString(IniSection, 'LangCode', ''));
+  Result.Name := AnIni.ReadString(IniSection, 'LangName', '');
+  Result.NativeName := AnIni.ReadString(IniSection, 'LangNativeName', '');
+  Result.FileName := AnIni.FileName;
+  Result.Author := AnIni.ReadString(IniSection, 'Author', '');
+end;
+
+procedure TLocalizer.GetLanguages(var LangsArr: TLanguagesArray);
 var
   SearchRes: TSearchRec;
   LangsCount: integer;
@@ -87,10 +108,7 @@ begin
         try
           Inc(Idx);
 
-          LangsArr[Idx].Code := {Wide}LowerCase(Ini.ReadString(IniSection, 'LangCode', ''));
-          LangsArr[Idx].Name := Ini.ReadString(IniSection, 'LangName', '');
-          LangsArr[Idx].NativeName := Ini.ReadString(IniSection, 'LangNativeName', '');
-          LangsArr[Idx].FileName := LangsDir + SearchRes.Name;
+          LangsArr[Idx] := TLocalizer.GetLanguageInfoFromIni(Ini);
         finally
           //Ini.Free;
           FreeAndNil(Ini);

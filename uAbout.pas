@@ -15,6 +15,7 @@ type
     LinkLabel: TTntLabel;
     Logo: TTntImage;
     BuildDateLabel: TTntLabel;
+    LocalizationAuthorLabel: TLabel;
     procedure CloseButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LinkLabelClick(Sender: TObject);
@@ -54,6 +55,16 @@ begin
   ProgramNameLabel.Caption := TntApplication.Title;
   VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr(True);
   AuthorLabel.Caption := Localizer.I18N('Author') + ': ' + 'Artem Demin (artem78) <megabyte1024@ya.ru>';
+  with Localizer.LanguageInfo do
+  begin
+    if (Code <> 'en') and (Author <> '') then
+    begin
+      LocalizationAuthorLabel.Caption := Localizer.I18N('LocalizationAuthor') + ': ' + Author;
+      LocalizationAuthorLabel.Show;
+    end
+    else
+      LocalizationAuthorLabel.Hide;
+  end;
   LinkLabel.Caption := ProjectGitHubURL;
 
   BuildDate := GetLinkerTimeStamp;
