@@ -74,7 +74,7 @@ object AboutForm: TAboutForm
     Height = 15
     Caption = 'Build date: XX.XX.XXXX'
   end
-  object LocalizationAuthorLabel: TLabel
+  object LocalizationAuthorLabel: TTntLabel
     Left = 104
     Top = 112
     Width = 80

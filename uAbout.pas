@@ -15,7 +15,7 @@ type
     LinkLabel: TTntLabel;
     Logo: TTntImage;
     BuildDateLabel: TTntLabel;
-    LocalizationAuthorLabel: TLabel;
+    LocalizationAuthorLabel: TTntLabel;
     procedure CloseButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LinkLabelClick(Sender: TObject);

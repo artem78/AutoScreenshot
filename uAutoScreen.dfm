@@ -315,18 +315,18 @@ object MainForm: TMainForm
     Left = 16
     Top = 168
   end
-  object MainMenu: TMainMenu
+  object MainMenu: TTntMainMenu
     Left = 40
     Top = 40
-    object OptionsSubMenu: TMenuItem
+    object OptionsSubMenu: TTntMenuItem
       Caption = 'Options'
-      object LanguageSubMenu: TMenuItem
+      object LanguageSubMenu: TTntMenuItem
         Caption = 'Language'
       end
     end
-    object HelpSubMenu: TMenuItem
+    object HelpSubMenu: TTntMenuItem
       Caption = 'Help'
-      object AboutMenuItem: TMenuItem
+      object AboutMenuItem: TTntMenuItem
         Caption = 'About...'
         OnClick = AboutMenuItemClick
       end

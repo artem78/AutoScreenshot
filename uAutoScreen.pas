@@ -63,11 +63,11 @@ type
     CaptureInterval: TTntDateTimePicker;
     TrayIconAnimationTimer: TTimer;
     AutoRunCheckBox: TTntCheckBox;
-    MainMenu: TMainMenu;
-    HelpSubMenu: TMenuItem;
-    AboutMenuItem: TMenuItem;
-    OptionsSubMenu: TMenuItem;
-    LanguageSubMenu: TMenuItem;
+    MainMenu: TTntMainMenu;
+    HelpSubMenu: TTntMenuItem;
+    AboutMenuItem: TTntMenuItem;
+    OptionsSubMenu: TTntMenuItem;
+    LanguageSubMenu: TTntMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -125,8 +125,8 @@ type
     procedure UpdateColorDepthValues;
     procedure UpdateLanguages;
     procedure LanguageClick(Sender: TObject);
-    function GetLangCodeOfLangMenuItem(const LangItem: TMenuItem): TLanguageCode;
-    function FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
+    function GetLangCodeOfLangMenuItem(const LangItem: TTntMenuItem): TLanguageCode;
+    function FindLangMenuItem(ALangCode: TLanguageCode): TTntMenuItem;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -928,7 +928,7 @@ procedure TMainForm.UpdateLanguages;
 var
   Lang: TLanguageInfo;
   I: integer;
-  MenuItem: TMenuItem;
+  MenuItem: TTntMenuItem;
 begin
   while LanguageSubMenu.Count > 0 do
     LanguageSubMenu.Items[0].Free;
@@ -941,7 +941,7 @@ begin
 
     if (Lang.Name <> '') and (Lang.Code <> '') then
     begin
-      MenuItem := TMenuItem.Create(LanguageSubMenu);
+      MenuItem := TTntMenuItem.Create(LanguageSubMenu);
       MenuItem.Caption := Lang.Name;
       if (Lang.NativeName <> '') and (Lang.NativeName <> Lang.Name) then
         MenuItem.Caption := MenuItem.Caption + ' (' + Lang.NativeName + ')';
@@ -961,22 +961,24 @@ var
   Idx: integer;
   LangCode: TLanguageCode;
 begin
-  Idx := (Sender as TMenuItem).MenuIndex;
+  Idx := (Sender as TTntMenuItem).MenuIndex;
   LangCode := AvailableLanguages[Idx].Code;
   SetLanguageByCode(LangCode);
 end;
 
-function TMainForm.FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
+function TMainForm.FindLangMenuItem(ALangCode: TLanguageCode): TTntMenuItem;
 var
   I: integer;
   LangCode: TLanguageCode;
+  MenuItem: TTntMenuItem;
 begin
   for I := 0 to LanguageSubMenu.Count - 1 do
   begin
-    LangCode := GetLangCodeOfLangMenuItem(LanguageSubMenu.Items[I]);
+    MenuItem := (LanguageSubMenu.Items[I] as TTntMenuItem); // Items[] returns TMenuItem instead od TTntMenuItem
+    LangCode := GetLangCodeOfLangMenuItem(MenuItem);
     if LangCode = ALangCode then
     begin
-      Result := LanguageSubMenu.Items[I];
+      Result := MenuItem;
       Exit;
     end;
   end;
@@ -985,7 +987,7 @@ begin
 end;
 
 function TMainForm.GetLangCodeOfLangMenuItem(
-  const LangItem: TMenuItem): TLanguageCode;
+  const LangItem: TTntMenuItem): TLanguageCode;
 begin
   if Pos(LanguageSubMenuItemNamePrefix, LangItem.Name) = 1 then
     Result := Copy(LangItem.Name, Length(LanguageSubMenuItemNamePrefix) + 1, 2)
