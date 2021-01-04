@@ -20,14 +20,14 @@ type
 
   TLocalizer = class
   private
-    Lang: TLanguageCode;
     Ini: TTntMemIniFile;
     LangsDir: String;
   public
     constructor Create(ALangsDir: String);
     destructor Destroy; override;
 
-    procedure SetLang(ALang: TLanguageCode);
+    //procedure LoadByCode(ALang: TLanguageCode);
+    procedure LoadFromFile(AFileName: String);
     function I18N(Str: String): WideString;
     procedure GetLanguages(var LangsArr: TLanguagesArray);
   end;
@@ -43,7 +43,6 @@ uses uUtils;
 
 constructor TLocalizer.Create(ALangsDir: String);
 begin
-  Lang := 'en';
   Ini := nil;
   LangsDir := IncludeTrailingBackslash(ALangsDir);
 end;
@@ -106,25 +105,25 @@ end;
 
 function TLocalizer.I18N(Str: String): WideString;
 begin
+  if not Assigned(Ini) then
+    raise ELocalizerException.Create('No localization loaded');
+
   //Result := '[' + Lang + ']' + Str + '';
   Result := Ini.ReadString('translation', Str, {Str}'<unknown>');
 
   Result := DecodeControlCharacters(Result);
 end;
 
-procedure TLocalizer.SetLang(ALang: TLanguageCode);
+procedure TLocalizer.LoadFromFile(AFileName: String);
 var
   FileName: String;
 begin
-  Lang := ALang;
-
   FreeAndNil(Ini);
 
   // Load ini file with strings for selected language
-  FileName := LangsDir + Lang + '.ini';
-  if not FileExists(FileName) then
+  if not FileExists(AFileName) then
     raise ELocalizerException.CreateFmt('Can`t open localization file "%s"', [FileName]);
-  Ini := TTntMemIniFile.Create(FileName);
+  Ini := TTntMemIniFile.Create(AFileName);
 end;
 
 initialization

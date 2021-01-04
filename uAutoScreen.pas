@@ -670,7 +670,7 @@ begin
 
       Ini.WriteString(DefaultConfigIniSection, 'Language', LangCode);
       FindLangMenuItem(LangCode).Checked := True;
-      Localizer.SetLang(LangCode);
+      Localizer.LoadFromFile(AvailableLanguages[LangIdx].FileName);
       TranslateForm;
 
       Exit;
