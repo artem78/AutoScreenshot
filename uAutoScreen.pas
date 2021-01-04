@@ -125,6 +125,8 @@ type
     procedure UpdateColorDepthValues;
     procedure UpdateLanguages;
     procedure LanguageClick(Sender: TObject);
+    function GetLangCodeOfLangMenuItem(const LangItem: TMenuItem): TLanguageCode;
+    function FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -182,6 +184,9 @@ implementation
 uses uAbout, DateUtils, uUtils, Math, VistaAltFixUnit;
 
 {$R *.dfm}
+
+const
+  LanguageSubMenuItemNamePrefix = 'LanguageSubMenuItem_';
 
 procedure TMainForm.InitUI;
 var
@@ -664,7 +669,7 @@ begin
       FLanguage := LangCode;
 
       Ini.WriteString(DefaultConfigIniSection, 'Language', LangCode);
-      LanguageSubMenu.Items[LangIdx].Checked := True; { ??? }
+      FindLangMenuItem(LangCode).Checked := True;
       Localizer.SetLang(LangCode);
       TranslateForm;
 
@@ -937,12 +942,13 @@ begin
     if (Lang.Name <> '') and (Lang.Code <> '') then
     begin
       MenuItem := TMenuItem.Create(LanguageSubMenu);
-      MenuItem.Caption := AvailableLanguages[I].Name;
+      MenuItem.Caption := Lang.Name;
       if (Lang.NativeName <> '') and (Lang.NativeName <> Lang.Name) then
         MenuItem.Caption := MenuItem.Caption + ' (' + Lang.NativeName + ')';
       MenuItem.OnClick := LanguageClick;
       MenuItem.RadioItem := True;
       //MenuItem.GroupIndex := GroupIdx;
+      MenuItem.Name := LanguageSubMenuItemNamePrefix + Lang.Code;
 
       LanguageSubMenu.Add(MenuItem);
     end
@@ -958,6 +964,34 @@ begin
   Idx := (Sender as TMenuItem).MenuIndex;
   LangCode := AvailableLanguages[Idx].Code;
   SetLanguageByCode(LangCode);
+end;
+
+function TMainForm.FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
+var
+  I: integer;
+  LangCode: TLanguageCode;
+begin
+  for I := 0 to LanguageSubMenu.Count - 1 do
+  begin
+    LangCode := GetLangCodeOfLangMenuItem(LanguageSubMenu.Items[I]);
+    if LangCode = ALangCode then
+    begin
+      Result := LanguageSubMenu.Items[I];
+      Exit;
+    end;
+  end;
+
+  raise Exception.CreateFmt('Language code "%s" not found', [ALangCode]);
+end;
+
+function TMainForm.GetLangCodeOfLangMenuItem(
+  const LangItem: TMenuItem): TLanguageCode;
+begin
+  if Pos(LanguageSubMenuItemNamePrefix, LangItem.Name) = 1 then
+    Result := Copy(LangItem.Name, Length(LanguageSubMenuItemNamePrefix) + 1, 2)
+  else
+    raise Exception.CreateFmt('Can`t get language code from language menu item' +
+        ' "%s" (name=%s)', [LangItem.Caption, LangItem.Name]);
 end;
 
 end.
