@@ -20,8 +20,9 @@ type
   private
     Lang: TLanguageCode;
     Ini: TTntMemIniFile;
+    LangsDir: String;
   public
-    constructor Create;
+    constructor Create(ALangsDir: String);
     destructor Destroy; override;
 
     procedure SetLang(ALang: TLanguageCode);
@@ -36,15 +37,13 @@ implementation
 
 uses SysUtils, uUtils;
 
-const
-  LangSubDir = 'lang';
-
 { TLocalizer }
 
-constructor TLocalizer.Create;
+constructor TLocalizer.Create(ALangsDir: String);
 begin
   Lang := 'en';
   Ini := nil;
+  LangsDir := IncludeTrailingBackslash(ALangsDir);
 end;
 
 destructor TLocalizer.Destroy;
@@ -58,17 +57,14 @@ procedure TLocalizer.GetLanguages(var LangsArr: TLanguagesArray);
 const
   IniSection = 'info';
 var
-  LangDir: String;
   SearchRes: TSearchRec;
   LangsCount: integer;
   Idx: integer;
   Ini: TTntMemIniFile;
 begin
-  LangDir := ExtractFilePath(ParamStr(0)) + LangSubDir + PathDelim;
-
   // Get amount of available languages
   LangsCount := 0;
-  if FindFirst(LangDir + '*.ini', faAnyFile, SearchRes) = 0 then
+  if FindFirst(LangsDir + '*.ini', faAnyFile, SearchRes) = 0 then
   begin
     repeat
       Inc(LangsCount);
@@ -82,10 +78,10 @@ begin
 
   // Write language info in array
   Idx := -1;
-  if FindFirst(LangDir + '*.ini', faAnyFile, SearchRes) = 0 then
+  if FindFirst(LangsDir + '*.ini', faAnyFile, SearchRes) = 0 then
   begin
     repeat
-      Ini := TTntMemIniFile.Create(LangDir + SearchRes.Name);
+      Ini := TTntMemIniFile.Create(LangsDir + SearchRes.Name);
       try
         try
           Inc(Idx);
@@ -93,7 +89,7 @@ begin
           LangsArr[Idx].Code := {Wide}LowerCase(Ini.ReadString(IniSection, 'LangCode', ''));
           LangsArr[Idx].Name := Ini.ReadString(IniSection, 'LangName', '');
           LangsArr[Idx].NativeName := Ini.ReadString(IniSection, 'LangNativeName', '');
-          LangsArr[Idx].FileName := LangDir + SearchRes.Name;
+          LangsArr[Idx].FileName := LangsDir + SearchRes.Name;
         finally
           //Ini.Free;
           FreeAndNil(Ini);
@@ -115,21 +111,17 @@ begin
 end;
 
 procedure TLocalizer.SetLang(ALang: TLanguageCode);
-var
-  LangDir: String;
 begin
   Lang := ALang;
 
-  LangDir := ExtractFilePath(ParamStr(0)) + LangSubDir + PathDelim;
-
   // Load ini file with strings for selected language
   FreeAndNil(Ini);
-  Ini := TTntMemIniFile.Create(LangDir + Lang + '.ini');
+  Ini := TTntMemIniFile.Create(LangsDir + Lang + '.ini');
 end;
 
 initialization
 begin
-  Localizer := TLocalizer.Create;
+  Localizer := TLocalizer.Create(ExtractFilePath(ParamStr(0)) + 'lang' + PathDelim);
 end;
 
 finalization
