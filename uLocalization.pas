@@ -18,13 +18,13 @@ type
 
   TLocalizer = class
   private
-    Lang: String;
+    Lang: TLanguageCode;
     Ini: TTntMemIniFile;
   public
     constructor Create;
     destructor Destroy; override;
 
-    procedure SetLang(ALang: String);
+    procedure SetLang(ALang: TLanguageCode);
     function I18N(Str: String): WideString;
     procedure GetLanguages(var LangsArr: TLanguagesArray);
   end;
@@ -114,7 +114,7 @@ begin
   Result := DecodeControlCharacters(Result);
 end;
 
-procedure TLocalizer.SetLang(ALang: String);
+procedure TLocalizer.SetLang(ALang: TLanguageCode);
 var
   LangDir: String;
 begin
