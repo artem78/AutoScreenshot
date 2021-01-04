@@ -322,16 +322,6 @@ object MainForm: TMainForm
       Caption = 'Options'
       object LanguageSubMenu: TMenuItem
         Caption = 'Language'
-        object EnglishLanguageMenuItem: TMenuItem
-          Caption = 'English'
-          RadioItem = True
-          OnClick = EnglishLanguageMenuItemClick
-        end
-        object RussianLanguageMenuItem: TMenuItem
-          Caption = #1056#1091#1089#1089#1082#1080#1081
-          RadioItem = True
-          OnClick = RussianLanguageMenuItemClick
-        end
       end
     end
     object HelpSubMenu: TMenuItem

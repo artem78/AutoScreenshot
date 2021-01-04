@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, inifiles, Spin, FileCtrl, pngImage,
   TrayIcon, XPMan, jpeg, ShellAPI, Menus, GifImage, Buttons, TntForms, TntStdCtrls,
-  TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl;
+  TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl,
+  uLocalization;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP, fmtGIF);
@@ -22,8 +23,6 @@ type
   end;
 
   TImageFormatInfoArray = array [TImageFormat] of TImageFormatInfo;
-
-  TLanguage = (lngEnglish=0, lngRussian);
 
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
 
@@ -69,8 +68,6 @@ type
     AboutMenuItem: TMenuItem;
     OptionsSubMenu: TMenuItem;
     LanguageSubMenu: TMenuItem;
-    EnglishLanguageMenuItem: TMenuItem;
-    RussianLanguageMenuItem: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -98,11 +95,10 @@ type
     procedure TrayIconAnimationTimerTimer(Sender: TObject);
     procedure AutoRunCheckBoxClick(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
-    procedure EnglishLanguageMenuItemClick(Sender: TObject);
-    procedure RussianLanguageMenuItemClick(Sender: TObject);
   private
     { Private declarations }
-    FLanguage: TLanguage;
+    AvailableLanguages: TLanguagesArray;
+    FLanguage: TLanguageCode;  { ??? }
     FColorDepth: TColorDepth;
     FTrayIconState: TTrayIconState;
 
@@ -121,17 +117,19 @@ type
     procedure MakeScreenshot;
     procedure MinimizeToTray;
     procedure RestoreFromTray;
-    procedure SetLanguage(Lang: TLanguage);
-    procedure SetLanguageByCode(LangCode: String);
+    //procedure SetLanguage(Lang: TLanguage);
+    procedure SetLanguageByCode(LangCode: TLanguageCode);
     procedure TranslateForm();
     procedure InitUI;
     procedure ReadSettings;
     procedure UpdateColorDepthValues;
+    procedure UpdateLanguages;
+    procedure LanguageClick(Sender: TObject);
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
     property ImagePath: String read GetImagePath;
-    property Language: TLanguage read FLanguage write SetLanguage;
+    //property Language: TLanguage read FLanguage write SetLanguage;
     property ImageFormat: TImageFormat read GetImageFormat write SetImageFormat;
     property ColorDepth: TColorDepth read GetColorDepth write SetColorDepth;
     property TrayIconState: TTrayIconState write SetTrayIconState;
@@ -170,8 +168,7 @@ const
       ColorDepth:   []
     )
   );
-  
-  LanguageCodes: array [TLanguage] of String = ('en', 'ru');
+
   DefaultConfigIniSection = 'main';
 
   MinCaptureIntervalInSeconds = 1;
@@ -182,7 +179,7 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uLocalization, uUtils, Math, VistaAltFixUnit;
+uses uAbout, DateUtils, uUtils, Math, VistaAltFixUnit;
 
 {$R *.dfm}
 
@@ -204,6 +201,9 @@ begin
   // Icons
   StartAutoCaptureButton.Glyph.LoadFromResourceName(HInstance, '_START_ICON');
   StopAutoCaptureButton.Glyph.LoadFromResourceName(HInstance, '_STOP_ICON');
+
+  // Available languages
+  UpdateLanguages;
 end;
 
 procedure TMainForm.ReadSettings;
@@ -217,9 +217,9 @@ const
 var
   DefaultOutputDir: String;
   SystemLanguageCode: String;
-  DefaultLanguage: TLanguage;
+  DefaultLanguage: TLanguageCode;
   FmtStr: String;
-  LangCode: String;
+  LangCode: TLanguageCode;
   Seconds: Integer;
 begin
   DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ExtractFilePath(Application.ExeName), 'screenshots'));
@@ -267,15 +267,15 @@ begin
        or (SystemLanguageCode = 'be') {Belorussian}
        or (SystemLanguageCode = 'bl') {Belorussian}
        or (SystemLanguageCode = 'uk') {Ukrainian} then
-    DefaultLanguage := lngRussian
+    DefaultLanguage := 'ru'
   else
-    DefaultLanguage := lngEnglish;
+    DefaultLanguage := 'en';
 
-  LangCode := Ini.ReadString(DefaultConfigIniSection, 'Language', LanguageCodes[DefaultLanguage]);
+  LangCode := Ini.ReadString(DefaultConfigIniSection, 'Language', DefaultLanguage);
   try
     SetLanguageByCode(LangCode);
   except
-    SetLanguage(DefaultLanguage);
+    SetLanguageByCode(DefaultLanguage);
   end;
 
   // Start autocapture
@@ -641,27 +641,33 @@ begin
   Application.BringToFront();
 end;
 
-procedure TMainForm.SetLanguage(Lang: TLanguage);
-begin
-  {if (FLanguage = Lang) then
-    Exit;}
+//procedure TMainForm.SetLanguage(Lang: TLanguage);
+//begin
+//  {if (FLanguage = Lang) then
+//    Exit;}
+//
+//  FLanguage := Lang;
+//  Ini.WriteString(DefaultConfigIniSection, 'Language', LanguageCodes[Lang]);
+//  LanguageSubMenu.Items[Ord(Lang)].Checked := True;
+//  Localizer.SetLang(LanguageCodes[Lang]);
+//  TranslateForm;
+//end;
 
-  FLanguage := Lang;
-  Ini.WriteString(DefaultConfigIniSection, 'Language', LanguageCodes[Lang]);
-  LanguageSubMenu.Items[Ord(Lang)].Checked := True;
-  Localizer.SetLang(LanguageCodes[Lang]);
-  TranslateForm;
-end;
-
-procedure TMainForm.SetLanguageByCode(LangCode: String);
+procedure TMainForm.SetLanguageByCode(LangCode: TLanguageCode);
 var
-  LangIdx: TLanguage;
+  LangIdx: integer;
 begin
-  for LangIdx := Low(TLanguage) to High(TLanguage) do
+  for LangIdx := 0 to Length(AvailableLanguages) - 1 do
   begin
-    if LangCode = LanguageCodes[LangIdx] then
+    if LangCode = AvailableLanguages[LangIdx].Code then
     begin
-      SetLanguage(LangIdx);
+      FLanguage := LangCode;
+
+      Ini.WriteString(DefaultConfigIniSection, 'Language', LangCode);
+      LanguageSubMenu.Items[LangIdx].Checked := True; { ??? }
+      Localizer.SetLang(LangCode);
+      TranslateForm;
+
       Exit;
     end;
   end;
@@ -911,14 +917,47 @@ begin
   end;
 end;
 
-procedure TMainForm.EnglishLanguageMenuItemClick(Sender: TObject);
+procedure TMainForm.UpdateLanguages;
+{const
+  GroupIdx = 1;}
+var
+  Lang: TLanguageInfo;
+  I: integer;
+  MenuItem: TMenuItem;
 begin
-  Language := lngEnglish;
+  while LanguageSubMenu.Count > 0 do
+    LanguageSubMenu.Items[0].Free;
+  LanguageSubMenu.Clear;
+
+  Localizer.GetLanguages(AvailableLanguages);
+  for I := 0 to Length(AvailableLanguages) - 1 do
+  begin
+    Lang := AvailableLanguages[I];
+
+    if (Lang.Name <> '') and (Lang.Code <> '') then
+    begin
+      MenuItem := TMenuItem.Create(LanguageSubMenu);
+      MenuItem.Caption := AvailableLanguages[I].Name;
+      if (Lang.NativeName <> '') and (Lang.NativeName <> Lang.Name) then
+        MenuItem.Caption := MenuItem.Caption + ' (' + Lang.NativeName + ')';
+      MenuItem.OnClick := LanguageClick;
+      MenuItem.RadioItem := True;
+      //MenuItem.GroupIndex := GroupIdx;
+
+      LanguageSubMenu.Add(MenuItem);
+    end
+  end;
 end;
 
-procedure TMainForm.RussianLanguageMenuItemClick(Sender: TObject);
+
+procedure TMainForm.LanguageClick(Sender: TObject);
+var
+  Idx: integer;
+  LangCode: TLanguageCode;
 begin
-  Language := lngRussian;
+  Idx := (Sender as TMenuItem).MenuIndex;
+  LangCode := AvailableLanguages[Idx].Code;
+  SetLanguageByCode(LangCode);
 end;
 
 end.
