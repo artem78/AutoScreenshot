@@ -217,14 +217,12 @@ const
   DefaultCaptureInterval  = 5;
   DefaultImageFormat      = fmtPNG;
   DefaultJPEGQuality      = 80;
-  //DefaultLanguage         = lngEnglish;
+  DefaultLanguage         = 'en';
   DefaultColorDepth       = cd24Bit;
 var
   DefaultOutputDir: String;
-  SystemLanguageCode: String;
-  DefaultLanguage: TLanguageCode;
+  CfgLang, SysLang, AltLang: TLanguageCode;
   FmtStr: String;
-  LangCode: TLanguageCode;
   Seconds: Integer;
 begin
   DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ExtractFilePath(Application.ExeName), 'screenshots'));
@@ -267,20 +265,21 @@ begin
   end;
 
   // Language
-  SystemLanguageCode := GetSystemLanguageCode;
-  if (SystemLanguageCode = 'ru')      {Russian}
-       or (SystemLanguageCode = 'be') {Belorussian}
-       or (SystemLanguageCode = 'bl') {Belorussian}
-       or (SystemLanguageCode = 'uk') {Ukrainian} then
-    DefaultLanguage := 'ru'
-  else
-    DefaultLanguage := 'en';
-
-  LangCode := Ini.ReadString(DefaultConfigIniSection, 'Language', DefaultLanguage);
   try
-    SetLanguageByCode(LangCode);
+    CfgLang := Ini.ReadString(DefaultConfigIniSection, 'Language', '');
+    SetLanguageByCode(CfgLang);
   except
-    SetLanguageByCode(DefaultLanguage);
+    try
+      SysLang := GetSystemLanguageCode;
+      SetLanguageByCode(SysLang);
+    except
+      try
+        AltLang := GetAlternativeLanguage(AvailableLanguages, SysLang);
+        SetLanguageByCode(AltLang);
+      except
+        SetLanguageByCode(DefaultLanguage);
+      end;
+    end;
   end;
 
   // Start autocapture

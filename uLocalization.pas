@@ -12,6 +12,7 @@ type
     Code: TLanguageCode;
     Name, NativeName: WideString;
     FileName: String;
+    AlternativeFor: array of TLanguageCode;
     Author: WideString;
   end;
 
@@ -43,7 +44,7 @@ var
 
 implementation
 
-uses uUtils;
+uses uUtils, Classes;
 
 { TLocalizer }
 
@@ -69,11 +70,22 @@ class function TLocalizer.GetLanguageInfoFromIni(
   const AnIni: TTntMemIniFile): TLanguageInfo;
 const
   IniSection = 'info';
+var
+  AlternativeForStr: TStringList;
+  I: integer;
 begin
   Result.Code := {Wide}LowerCase(AnIni.ReadString(IniSection, 'LangCode', ''));
   Result.Name := AnIni.ReadString(IniSection, 'LangName', '');
   Result.NativeName := AnIni.ReadString(IniSection, 'LangNativeName', '');
   Result.FileName := AnIni.FileName;
+
+  AlternativeForStr := TStringList.Create;
+  AlternativeForStr.CommaText := AnIni.ReadString(IniSection, 'AlternativeFor', '');
+  SetLength(Result.AlternativeFor, AlternativeForStr.Count);
+  for I := 0 to AlternativeForStr.Count - 1 do
+    Result.AlternativeFor[I] := AlternativeForStr.Strings[I];
+  AlternativeForStr.Free;
+
   Result.Author := AnIni.ReadString(IniSection, 'Author', '');
 end;
 
