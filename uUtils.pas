@@ -289,6 +289,7 @@ end;}
 function GetSystemLanguageCode: String{[2]};
 { FixMe: Not always returns code in ISO 639 standard. For example,
   Belorussian ISO 639 code is BE/BEL, but function returns BL/BLR. }
+  // List of ISO 639 codes: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 var
   //LID: LangID;
   Buffer: PChar;
