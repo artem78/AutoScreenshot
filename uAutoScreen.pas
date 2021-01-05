@@ -957,7 +957,6 @@ end;
 
 procedure TMainForm.LanguageClick(Sender: TObject);
 var
-  Idx: integer;
   LangCode: TLanguageCode;
 begin
   LangCode := GetLangCodeOfLangMenuItem(Sender as TTntMenuItem);
