@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, inifiles, Spin, FileCtrl, pngImage,
   TrayIcon, XPMan, jpeg, ShellAPI, Menus, GifImage, Buttons, TntForms, TntStdCtrls,
-  TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl;
+  TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl,
+  uLocalization;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP, fmtGIF);
@@ -22,8 +23,6 @@ type
   end;
 
   TImageFormatInfoArray = array [TImageFormat] of TImageFormatInfo;
-
-  TLanguage = (lngEnglish=0, lngRussian);
 
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
 
@@ -41,7 +40,6 @@ type
     JPEGQualitySpinEdit: TSpinEdit;
     OpenOutputDirButton: TTntButton;
     StopWhenInactiveCheckBox: TTntCheckBox;
-    LanguageRadioGroup: TTntRadioGroup;
     ImageFormatComboBox: TTntComboBox;
     JPEGQualityPercentLabel: TTntLabel;
     AutoCaptureControlGroup: TTntGroupBox;
@@ -53,7 +51,6 @@ type
     RestoreWindowTrayMenuItem: TTntMenuItem;
     ToggleAutoCaptureTrayMenuItem: TTntMenuItem;
     Separator2TrayMenuItem: TTntMenuItem;
-    AboutButton: TTntButton;
     StartCaptureOnStartUpCheckBox: TTntCheckBox;
     StartMinimizedCheckBox: TTntCheckBox;
     Separator1TrayMenuItem: TTntMenuItem;
@@ -68,6 +65,11 @@ type
     AutoRunCheckBox: TTntCheckBox;
     MonitorLabel: TTntLabel;
     MonitorComboBox: TTntComboBox;
+    MainMenu: TTntMainMenu;
+    HelpSubMenu: TTntMenuItem;
+    AboutMenuItem: TTntMenuItem;
+    OptionsSubMenu: TTntMenuItem;
+    LanguageSubMenu: TTntMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -86,8 +88,6 @@ type
     procedure RestoreWindowTrayMenuItemClick(Sender: TObject);
     procedure TakeScreenshotTrayMenuItemClick(Sender: TObject);
     procedure ExitTrayMenuItemClick(Sender: TObject);
-    procedure AboutButtonClick(Sender: TObject);
-    procedure LanguageRadioGroupClick(Sender: TObject);
     procedure StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
     procedure StartMinimizedCheckBoxClick(Sender: TObject);
     procedure FileNameTemplateComboBoxChange(Sender: TObject);
@@ -97,9 +97,11 @@ type
     procedure TrayIconAnimationTimerTimer(Sender: TObject);
     procedure AutoRunCheckBoxClick(Sender: TObject);
     procedure MonitorComboBoxChange(Sender: TObject);
+    procedure AboutMenuItemClick(Sender: TObject);
   private
     { Private declarations }
-    FLanguage: TLanguage;
+    AvailableLanguages: TLanguagesArray;
+    FLanguage: TLanguageCode;  { ??? }
     FColorDepth: TColorDepth;
     FTrayIconState: TTrayIconState;
 
@@ -118,8 +120,8 @@ type
     procedure MakeScreenshot;
     procedure MinimizeToTray;
     procedure RestoreFromTray;
-    procedure SetLanguage(Lang: TLanguage);
-    procedure SetLanguageByCode(LangCode: String);
+    //procedure SetLanguage(Lang: TLanguage);
+    procedure SetLanguageByCode(LangCode: TLanguageCode);
     procedure TranslateForm();
     procedure InitUI;
     procedure ReadSettings;
@@ -127,11 +129,15 @@ type
     procedure FillMonitorList;
     procedure SetMonitorId(MonitorId: Integer);
     function GetMonitorId: Integer;
+    procedure UpdateLanguages;
+    procedure LanguageClick(Sender: TObject);
+    function GetLangCodeOfLangMenuItem(const LangItem: TTntMenuItem): TLanguageCode;
+    function FindLangMenuItem(ALangCode: TLanguageCode): TTntMenuItem;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
     property ImagePath: String read GetImagePath;
-    property Language: TLanguage read FLanguage write SetLanguage;
+    //property Language: TLanguage read FLanguage write SetLanguage;
     property ImageFormat: TImageFormat read GetImageFormat write SetImageFormat;
     property ColorDepth: TColorDepth read GetColorDepth write SetColorDepth;
     property TrayIconState: TTrayIconState write SetTrayIconState;
@@ -171,8 +177,7 @@ const
       ColorDepth:   []
     )
   );
-  
-  LanguageCodes: array [TLanguage] of String = ('en', 'ru');
+
   DefaultConfigIniSection = 'main';
 
   MinCaptureIntervalInSeconds = 1;
@@ -184,9 +189,12 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uLocalization, uUtils, Math, VistaAltFixUnit;
+uses uAbout, DateUtils, uUtils, Math, VistaAltFixUnit;
 
 {$R *.dfm}
+
+const
+  LanguageSubMenuItemNamePrefix = 'LanguageSubMenuItem_';
 
 procedure TMainForm.InitUI;
 var
@@ -206,6 +214,9 @@ begin
   // Icons
   StartAutoCaptureButton.Glyph.LoadFromResourceName(HInstance, '_START_ICON');
   StopAutoCaptureButton.Glyph.LoadFromResourceName(HInstance, '_STOP_ICON');
+
+  // Available languages
+  UpdateLanguages;
 end;
 
 procedure TMainForm.ReadSettings;
@@ -214,15 +225,13 @@ const
   DefaultCaptureInterval  = 5;
   DefaultImageFormat      = fmtPNG;
   DefaultJPEGQuality      = 80;
-  //DefaultLanguage         = lngEnglish;
+  DefaultLanguage         = 'en';
   DefaultColorDepth       = cd24Bit;
   DefaultMonitorId        = NoMonitorId;
 var
   DefaultOutputDir: String;
-  SystemLanguageCode: String;
-  DefaultLanguage: TLanguage;
+  CfgLang, SysLang, AltLang: TLanguageCode;
   FmtStr: String;
-  LangCode: String;
   Seconds: Integer;
 begin
   DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ExtractFilePath(Application.ExeName), 'screenshots'));
@@ -265,20 +274,21 @@ begin
   end;
 
   // Language
-  SystemLanguageCode := GetSystemLanguageCode;
-  if (SystemLanguageCode = 'ru')      {Russian}
-       or (SystemLanguageCode = 'be') {Belorussian}
-       or (SystemLanguageCode = 'bl') {Belorussian}
-       or (SystemLanguageCode = 'uk') {Ukrainian} then
-    DefaultLanguage := lngRussian
-  else
-    DefaultLanguage := lngEnglish;
-
-  LangCode := Ini.ReadString(DefaultConfigIniSection, 'Language', LanguageCodes[DefaultLanguage]);
   try
-    SetLanguageByCode(LangCode);
+    CfgLang := Ini.ReadString(DefaultConfigIniSection, 'Language', '');
+    SetLanguageByCode(CfgLang);
   except
-    SetLanguage(DefaultLanguage);
+    try
+      SysLang := GetSystemLanguageCode;
+      SetLanguageByCode(SysLang);
+    except
+      try
+        AltLang := GetAlternativeLanguage(AvailableLanguages, SysLang);
+        SetLanguageByCode(AltLang);
+      except
+        SetLanguageByCode(DefaultLanguage);
+      end;
+    end;
   end;
 
   // Start autocapture
@@ -345,7 +355,7 @@ var
 begin
   Dir := OutputDirEdit.Text;
 
-  if WideSelectDirectory(I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
+  if WideSelectDirectory(Localizer.I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
   //if SelectDirectory(dir, [sdAllowCreate, sdPerformCreate], 0) then
   begin
     OutputDirEdit.Text := Dir;
@@ -675,40 +685,33 @@ begin
   Application.BringToFront();
 end;
 
-procedure TMainForm.AboutButtonClick(Sender: TObject);
-begin
-  with TAboutForm.Create(Application) do
-  begin
-    ShowModal;
-  end;
-end;
+//procedure TMainForm.SetLanguage(Lang: TLanguage);
+//begin
+//  {if (FLanguage = Lang) then
+//    Exit;}
+//
+//  FLanguage := Lang;
+//  Ini.WriteString(DefaultConfigIniSection, 'Language', LanguageCodes[Lang]);
+//  LanguageSubMenu.Items[Ord(Lang)].Checked := True;
+//  Localizer.SetLang(LanguageCodes[Lang]);
+//  TranslateForm;
+//end;
 
-procedure TMainForm.LanguageRadioGroupClick(Sender: TObject);
-begin
-  Language := TLanguage(LanguageRadioGroup.ItemIndex)
-end;
-
-procedure TMainForm.SetLanguage(Lang: TLanguage);
-begin
-  {if (FLanguage = Lang) then
-    Exit;}
-
-  FLanguage := Lang;
-  Ini.WriteString(DefaultConfigIniSection, 'Language', LanguageCodes[Lang]);
-  LanguageRadioGroup.ItemIndex := Ord(Lang);
-  I18NSetLang(LanguageCodes[Lang]);
-  TranslateForm;
-end;
-
-procedure TMainForm.SetLanguageByCode(LangCode: String);
+procedure TMainForm.SetLanguageByCode(LangCode: TLanguageCode);
 var
-  LangIdx: TLanguage;
+  LangIdx: integer;
 begin
-  for LangIdx := Low(TLanguage) to High(TLanguage) do
+  for LangIdx := 0 to Length(AvailableLanguages) - 1 do
   begin
-    if LangCode = LanguageCodes[LangIdx] then
+    if LangCode = AvailableLanguages[LangIdx].Code then
     begin
-      SetLanguage(LangIdx);
+      FLanguage := LangCode;
+
+      Ini.WriteString(DefaultConfigIniSection, 'Language', LangCode);
+      FindLangMenuItem(LangCode).Checked := True;
+      Localizer.LoadFromFile(AvailableLanguages[LangIdx].FileName);
+      TranslateForm;
+
       Exit;
     end;
   end;
@@ -718,35 +721,39 @@ end;
 
 procedure TMainForm.TranslateForm;
 begin
-  // Main form
-  LanguageRadioGroup.Caption := I18N('Language');
-  OutputDirLabel.Caption := I18N('OutputDirectory') + ':';
-  OpenOutputDirButton.Caption := I18N('OpenDirectory');
-  OpenOutputDirButton.Hint := I18N('OpenDirectoryHint');
-  FileNameTemplateLabel.Caption := I18N('FileNameTemplate') + ':';
-  CaptureIntervalLabel.Caption := I18N('CaptureInterval') + ':';
-  StopWhenInactiveCheckBox.Caption := I18N('PauseCaptureWhenIdle');
-  StopWhenInactiveCheckBox.Hint := I18N('PauseCaptureWhenIdleHint');
-  ImageFormatLabel.Caption := I18N('Format') + ':';
-  ColorDepthLabel.Caption := I18N('ColorDepth') + ':';
-  JPEGQualityLabel.Caption := I18N('Quality') + ':';
-  GrayscaleCheckBox.Caption := I18N('Grayscale');
-  AutoCaptureControlGroup.Caption := I18N('AutoCapture');
-  StartAutoCaptureButton.Caption := I18N('StartCapture');
-  StopAutoCaptureButton.Caption := I18N('StopCapture');
-  TakeScreenshotButton.Caption := I18N('TakeScreenshot');
-  AboutButton.Caption := I18N('About');
-  StartCaptureOnStartUpCheckBox.Caption := I18N('StartCaptureOnStartUp');
-  StartMinimizedCheckBox.Caption := I18N('StartMinimized');
-  AutoRunCheckBox.Caption := I18N('AutoRun');
-  MonitorLabel.Caption := I18N('UsedMonitor') + ':';
+  // Menubar
+  OptionsSubMenu.Caption := Localizer.I18N('Options');
+  LanguageSubMenu.Caption := Localizer.I18N('Language');
+  HelpSubMenu.Caption := Localizer.I18N('Help');
+  AboutMenuItem.Caption := Localizer.I18N('About') + '...';
+
+  // Main form components
+  OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
+  OpenOutputDirButton.Caption := Localizer.I18N('OpenDirectory');
+  OpenOutputDirButton.Hint := Localizer.I18N('OpenDirectoryHint');
+  FileNameTemplateLabel.Caption := Localizer.I18N('FileNameTemplate') + ':';
+  CaptureIntervalLabel.Caption := Localizer.I18N('CaptureInterval') + ':';
+  StopWhenInactiveCheckBox.Caption := Localizer.I18N('PauseCaptureWhenIdle');
+  StopWhenInactiveCheckBox.Hint := Localizer.I18N('PauseCaptureWhenIdleHint');
+  ImageFormatLabel.Caption := Localizer.I18N('Format') + ':';
+  ColorDepthLabel.Caption := Localizer.I18N('ColorDepth') + ':';
+  JPEGQualityLabel.Caption := Localizer.I18N('Quality') + ':';
+  GrayscaleCheckBox.Caption := Localizer.I18N('Grayscale');
+  AutoCaptureControlGroup.Caption := Localizer.I18N('AutoCapture');
+  StartAutoCaptureButton.Caption := Localizer.I18N('StartCapture');
+  StopAutoCaptureButton.Caption := Localizer.I18N('StopCapture');
+  TakeScreenshotButton.Caption := Localizer.I18N('TakeScreenshot');
+  StartCaptureOnStartUpCheckBox.Caption := Localizer.I18N('StartCaptureOnStartUp');
+  StartMinimizedCheckBox.Caption := Localizer.I18N('StartMinimized');
+  AutoRunCheckBox.Caption := Localizer.I18N('AutoRun');
+  MonitorLabel.Caption := Localizer.I18N('UsedMonitor') + ':';
   FillMonitorList;
 
   // Tray icon
-  RestoreWindowTrayMenuItem.Caption := I18N('Restore');
-  ToggleAutoCaptureTrayMenuItem.Caption := I18N('EnableAutoCapture');
-  TakeScreenshotTrayMenuItem.Caption := I18N('TakeScreenshot');
-  ExitTrayMenuItem.Caption := I18N('Exit');
+  RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
+  ToggleAutoCaptureTrayMenuItem.Caption := Localizer.I18N('EnableAutoCapture');
+  TakeScreenshotTrayMenuItem.Caption := Localizer.I18N('TakeScreenshot');
+  ExitTrayMenuItem.Caption := Localizer.I18N('Exit');
 end;
 
 procedure TMainForm.StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
@@ -766,7 +773,7 @@ end;
 
 procedure TMainForm.FileNameTemplateHelpButtonClick(Sender: TObject);
 begin
-  WideShowMessage(I18N('FileNameTemplateHelpText'));
+  WideShowMessage(Localizer.I18N('FileNameTemplateHelpText'));
 end;
 
 function TMainForm.GetImageFormat: TImageFormat;
@@ -965,21 +972,21 @@ begin
     SelIdx := MonitorComboBox.ItemIndex;
 
     Items.Clear;
-    Items.Append(WideFormat(I18N('AllMonitorsInfo'),
+    Items.Append(WideFormat(Localizer.I18N('AllMonitorsInfo'),
         [GetSystemMetrics(SM_CXVIRTUALSCREEN),
          GetSystemMetrics(SM_CYVIRTUALSCREEN)]
     ));
 
     for Idx := 0 to Screen.MonitorCount - 1 do
     begin
-      Str := WideFormat(I18N('MonitorInfo'),
+      Str := WideFormat(Localizer.I18N('MonitorInfo'),
           [Screen.Monitors[Idx].MonitorNum + 1, // Start numeration from 1
            Screen.Monitors[Idx].Width,
            Screen.Monitors[Idx].Height]
       );
       // ToDo: Also may show screen model, diagonal size
       if Screen.Monitors[Idx].Primary then
-        Str := Str + ' - ' + I18N('Primary');
+        Str := Str + ' - ' + Localizer.I18N('Primary');
 
       Items.Append(Str);
     end;
@@ -1010,5 +1017,84 @@ begin
   Ini.WriteInteger(DefaultConfigIniSection, 'Monitor', MonitorId);
 end;
 
-end.
+procedure TMainForm.AboutMenuItemClick(Sender: TObject);
+begin
+  with TAboutForm.Create(Application) do
+  begin
+    ShowModal;
+  end;
+end;
 
+procedure TMainForm.UpdateLanguages;
+{const
+  GroupIdx = 1;}
+var
+  Lang: TLanguageInfo;
+  I: integer;
+  MenuItem: TTntMenuItem;
+begin
+  while LanguageSubMenu.Count > 0 do
+    LanguageSubMenu.Items[0].Free;
+  LanguageSubMenu.Clear;
+
+  Localizer.GetLanguages(AvailableLanguages);
+  for I := 0 to Length(AvailableLanguages) - 1 do
+  begin
+    Lang := AvailableLanguages[I];
+
+    if (Lang.Name <> '') and (Lang.Code <> '') then
+    begin
+      MenuItem := TTntMenuItem.Create(LanguageSubMenu);
+      MenuItem.Caption := Lang.Name;
+      if (Lang.NativeName <> '') and (Lang.NativeName <> Lang.Name) then
+        MenuItem.Caption := MenuItem.Caption + ' (' + Lang.NativeName + ')';
+      MenuItem.OnClick := LanguageClick;
+      MenuItem.RadioItem := True;
+      //MenuItem.GroupIndex := GroupIdx;
+      MenuItem.Name := LanguageSubMenuItemNamePrefix + Lang.Code;
+
+      LanguageSubMenu.Add(MenuItem);
+    end
+  end;
+end;
+
+
+procedure TMainForm.LanguageClick(Sender: TObject);
+var
+  LangCode: TLanguageCode;
+begin
+  LangCode := GetLangCodeOfLangMenuItem(Sender as TTntMenuItem);
+  SetLanguageByCode(LangCode);
+end;
+
+function TMainForm.FindLangMenuItem(ALangCode: TLanguageCode): TTntMenuItem;
+var
+  I: integer;
+  LangCode: TLanguageCode;
+  MenuItem: TTntMenuItem;
+begin
+  for I := 0 to LanguageSubMenu.Count - 1 do
+  begin
+    MenuItem := (LanguageSubMenu.Items[I] as TTntMenuItem); // Items[] returns TMenuItem instead od TTntMenuItem
+    LangCode := GetLangCodeOfLangMenuItem(MenuItem);
+    if LangCode = ALangCode then
+    begin
+      Result := MenuItem;
+      Exit;
+    end;
+  end;
+
+  raise Exception.CreateFmt('Language code "%s" not found', [ALangCode]);
+end;
+
+function TMainForm.GetLangCodeOfLangMenuItem(
+  const LangItem: TTntMenuItem): TLanguageCode;
+begin
+  if Pos(LanguageSubMenuItemNamePrefix, LangItem.Name) = 1 then
+    Result := Copy(LangItem.Name, Length(LanguageSubMenuItemNamePrefix) + 1, 2)
+  else
+    raise Exception.CreateFmt('Can`t get language code from language menu item' +
+        ' "%s" (name=%s)', [LangItem.Caption, LangItem.Name]);
+end;
+
+end.
