@@ -2,6 +2,8 @@ unit uLanguages;
 
 // Database source: https://github.com/bbqsrc/iso639-databases/blob/master/iso639-lcids.tsv
 
+// Wikipedia: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+
 interface
 
 type
