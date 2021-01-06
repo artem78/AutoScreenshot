@@ -1,4 +1,4 @@
-﻿[![Russian](images/russian_icon.png) RU](README-ru.md "Russian")
+[![Russian](images/russian_icon.png) RU](README-ru.md "Russian")
 
 -------------------------  
 
@@ -16,6 +16,7 @@ Auto Screenshot
 * Pause capture when user is inactive (depending on mouse moves and keyboard events) 
 * Customizable output filenames with variables (date, time, user, computer name) and ability of grouping by folders (for example: by day or month)
 * Automatic capture can be started on Windows startup
+* Multiple screens support
 
 ## Screenshots
 ![Main program window](images/main_window.png "Main program window")
