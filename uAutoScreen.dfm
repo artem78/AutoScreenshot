@@ -4,7 +4,7 @@ object MainForm: TMainForm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Auto Screenshot'
-  ClientHeight = 328
+  ClientHeight = 363
   ClientWidth = 633
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,10 +12,14 @@ object MainForm: TMainForm
   Font.Height = -12
   Font.Name = 'Arial'
   Font.Style = []
+  Menu = MainMenu
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  DesignSize = (
+    633
+    363)
   PixelsPerInch = 96
   TextHeight = 15
   object OutputDirLabel: TTntLabel
@@ -73,6 +77,14 @@ object MainForm: TMainForm
     Alignment = taRightJustify
     Caption = 'Color depth:'
   end
+  object MonitorLabel: TTntLabel
+    Left = 123
+    Top = 236
+    Width = 78
+    Height = 15
+    Alignment = taRightJustify
+    Caption = 'Used monitor:'
+  end
   object OutputDirEdit: TTntEdit
     Left = 208
     Top = 20
@@ -92,11 +104,12 @@ object MainForm: TMainForm
   end
   object TakeScreenshotButton: TTntButton
     Left = 32
-    Top = 276
+    Top = 311
     Width = 121
     Height = 25
+    Anchors = [akLeft, akBottom]
     Caption = 'Take screenshot'
-    TabOrder = 14
+    TabOrder = 15
     OnClick = TakeScreenshotButtonClick
   end
   object JPEGQualitySpinEdit: TSpinEdit
@@ -132,18 +145,6 @@ object MainForm: TMainForm
     TabOrder = 10
     OnClick = StopWhenInactiveCheckBoxClick
   end
-  object LanguageRadioGroup: TTntRadioGroup
-    Left = 520
-    Top = 160
-    Width = 97
-    Height = 57
-    Caption = 'Language'
-    Items.Strings = (
-      'English'
-      #1056#1091#1089#1089#1082#1080#1081)
-    TabOrder = 13
-    OnClick = LanguageRadioGroupClick
-  end
   object ImageFormatComboBox: TTntComboBox
     Left = 208
     Top = 104
@@ -158,11 +159,12 @@ object MainForm: TMainForm
   end
   object AutoCaptureControlGroup: TTntGroupBox
     Left = 208
-    Top = 248
+    Top = 283
     Width = 281
     Height = 65
+    Anchors = [akLeft, akBottom]
     Caption = 'Automatic capture'
-    TabOrder = 17
+    TabOrder = 16
     object StartAutoCaptureButton: TTntBitBtn
       Left = 24
       Top = 24
@@ -185,15 +187,6 @@ object MainForm: TMainForm
       NumGlyphs = 2
       Spacing = 8
     end
-  end
-  object AboutButton: TTntButton
-    Left = 520
-    Top = 272
-    Width = 97
-    Height = 25
-    Caption = 'About'
-    TabOrder = 16
-    OnClick = AboutButtonClick
   end
   object StartCaptureOnStartUpCheckBox: TTntCheckBox
     Left = 208
@@ -275,8 +268,21 @@ object MainForm: TMainForm
     Width = 265
     Height = 17
     Caption = 'Run application at system startup'
-    TabOrder = 15
+    TabOrder = 13
     OnClick = AutoRunCheckBoxClick
+  end
+  object MonitorComboBox: TTntComboBox
+    Left = 208
+    Top = 232
+    Width = 265
+    Height = 23
+    Style = csDropDownList
+    ItemHeight = 15
+    TabOrder = 14
+    OnChange = MonitorComboBoxChange
+    Items.Strings = (
+      ''
+      '')
   end
   object Timer: TTimer
     Enabled = False
@@ -329,5 +335,22 @@ object MainForm: TMainForm
     OnTimer = TrayIconAnimationTimerTimer
     Left = 16
     Top = 168
+  end
+  object MainMenu: TTntMainMenu
+    Left = 40
+    Top = 40
+    object OptionsSubMenu: TTntMenuItem
+      Caption = 'Options'
+      object LanguageSubMenu: TTntMenuItem
+        Caption = 'Language'
+      end
+    end
+    object HelpSubMenu: TTntMenuItem
+      Caption = 'Help'
+      object AboutMenuItem: TTntMenuItem
+        Caption = 'About...'
+        OnClick = AboutMenuItemClick
+      end
+    end
   end
 end

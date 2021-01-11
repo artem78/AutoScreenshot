@@ -3,7 +3,7 @@ object AboutForm: TAboutForm
   Top = 124
   BorderStyle = bsDialog
   Caption = 'About'
-  ClientHeight = 191
+  ClientHeight = 209
   ClientWidth = 481
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,7 +16,7 @@ object AboutForm: TAboutForm
   OnCreate = FormCreate
   DesignSize = (
     481
-    191)
+    209)
   PixelsPerInch = 96
   TextHeight = 15
   object ProgramNameLabel: TTntLabel
@@ -48,7 +48,7 @@ object AboutForm: TAboutForm
   end
   object LinkLabel: TTntLabel
     Left = 104
-    Top = 112
+    Top = 136
     Width = 25
     Height = 15
     Cursor = crHandPoint
@@ -74,9 +74,16 @@ object AboutForm: TAboutForm
     Height = 15
     Caption = 'Build date: XX.XX.XXXX'
   end
+  object LocalizationAuthorLabel: TTntLabel
+    Left = 104
+    Top = 112
+    Width = 80
+    Height = 15
+    Caption = 'Localization: ...'
+  end
   object CloseButton: TTntButton
     Left = 192
-    Top = 152
+    Top = 170
     Width = 97
     Height = 25
     Anchors = [akLeft, akBottom]

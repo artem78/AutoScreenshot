@@ -5,7 +5,7 @@ unit uUtils;
 interface
 
 uses
-  Windows;
+  Windows, uLocalization;
 
 // Retrieves the time (in ms) of the last input event (mouse moved or key pressed).
 // Also works if current application window has no focus (hidden or minimized).
@@ -73,6 +73,8 @@ function GetCurrentUserName: string;
 
 { Returns two-letter language code from ISO 639 standard. }
 function GetSystemLanguageCode: String{[2]};
+function GetAlternativeLanguage(const ALangs: TLanguagesArray;
+    ALangCode: TLanguageCode): TLanguageCode;
 
 procedure AutoRun(const FileName: String; const AppTitle: String;
     Enabled: Boolean = True);
@@ -287,6 +289,7 @@ end;}
 function GetSystemLanguageCode: String{[2]};
 { FixMe: Not always returns code in ISO 639 standard. For example,
   Belorussian ISO 639 code is BE/BEL, but function returns BL/BLR. }
+  // List of ISO 639 codes: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 var
   //LID: LangID;
   Buffer: PChar;
@@ -305,6 +308,26 @@ begin
   finally
     FreeMem(Buffer);
   end;
+end;
+
+function GetAlternativeLanguage(const ALangs: TLanguagesArray;
+    ALangCode: TLanguageCode): TLanguageCode;
+var
+  LangIdx, AltIdx: Integer;
+begin
+  for LangIdx := 0 to Length(ALangs) - 1 do
+  begin
+    for AltIdx := 0 to Length(ALangs[LangIdx].AlternativeFor) - 1 do
+    begin
+      if ALangs[LangIdx].AlternativeFor[AltIdx] = ALangCode then
+      begin
+        Result := ALangs[LangIdx].Code;
+        Exit;
+      end;
+    end;
+  end;
+
+  Result := ''; // Not found
 end;
 
 procedure SetAutoRun(const FileName: String; const AppTitle: String);

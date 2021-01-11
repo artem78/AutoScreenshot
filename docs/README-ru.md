@@ -1,4 +1,4 @@
-﻿Auto Screenshot
+Auto Screenshot
 ===============
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/artem78/AutoScreenshot?style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)&nbsp;&nbsp;&nbsp;[![GitHub license](https://img.shields.io/github/license/artem78/AutoScreenshot?style=plastic)](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt)
@@ -14,12 +14,12 @@
 * Возможность приостановки захвата при бездействии пользователя (определяется по движениям мыши и нажатиям клавиш) 
 * Настраиваемые имена выходных файлов с использованием переменных (дата, время, название компьютера/пользователя) и возможностью группировки по папкам (например, по дням или месяцам)
 * Возможность автоматического запуска вместе с Windows
+* Захват с нескольких экранов
 
 ## Снимки экрана
-![](images/main_window_ru.png "Основное окно программы")
+![Основное окно программы](images/main_window_ru.png "Основное окно программы")
 
-### Значок в трее
-![](images/tray_icon_animation.gif "Значок в трее")
+![Значок в трее](images/tray_icon_animation.gif "Значок в трее")
 
 ## Языки интерфейса
 * Английский
@@ -29,11 +29,12 @@
 
 <!-- ToDo: Написать подробно про шаблоны имён -->
 
-## Системные требования
-* Операционная система Microsoft Windows XP или выше (32-х или 64-битная)
+## Операционная система
+* Microsoft Windows XP или выше (32/64-битная)
+* Linux (используя [Wine](https://www.winehq.org/))
 
-## Установка
-Последнюю версию программы вы можете скачать [отсюда](https://github.com/artem78/AutoScreenshot/releases/latest).
+## Скачать
+Последнюю версию программы вы можете скачать [отсюда](https://github.com/artem78/AutoScreenshot/releases/latest).  Можно выбрать zip-архив или установщик.
 
 ## Чем я могу помочь проекту?
 * Нашли ошибку?

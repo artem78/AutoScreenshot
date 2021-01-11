@@ -1,4 +1,4 @@
-﻿[![Russian](images/russian_icon.png) RU](README-ru.md "Russian")
+[![Russian](images/russian_icon.png) RU](README-ru.md "Russian")
 
 -------------------------  
 
@@ -16,12 +16,12 @@ Auto Screenshot
 * Pause capture when user is inactive (depending on mouse moves and keyboard events) 
 * Customizable output filenames with variables (date, time, user, computer name) and ability of grouping by folders (for example: by day or month)
 * Automatic capture can be started on Windows startup
+* Multiple screens support
 
 ## Screenshots
-![](images/main_window.png "Main program window")
+![Main program window](images/main_window.png "Main program window")
 
-### Tray icon
-![](images/tray_icon_animation.gif "Tray icon")
+![Tray icon](images/tray_icon_animation.gif "Tray icon")
 
 ## Languages
 * English
@@ -29,11 +29,12 @@ Auto Screenshot
 
 [Want more?](https://github.com/artem78/AutoScreenshot/issues/5)
 
-## Requirements
-* Microsoft Windows XP or higher (32-bit and 64-bit)
+## Supported operation systems
+* Microsoft Windows XP or higher (32/64-bit)
+* Linux (using [Wine](https://www.winehq.org/))
 
-## Installation
-The latest version available [here](https://github.com/artem78/AutoScreenshot/releases/latest).
+## Download
+The latest version available [here](https://github.com/artem78/AutoScreenshot/releases/latest). You can choose between portable zip or installer.
 
 ## How can I help
 * Found bug?
