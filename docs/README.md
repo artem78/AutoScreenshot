@@ -26,6 +26,7 @@ Auto Screenshot
 ## Languages
 * English
 * [Russian](README-ru.md)
+* Chinese
 
 [Want more?](https://github.com/artem78/AutoScreenshot/issues/5)
 
