@@ -5,7 +5,7 @@ object MainForm: TMainForm
   BorderStyle = bsSingle
   Caption = 'Auto Screenshot'
   ClientHeight = 363
-  ClientWidth = 633
+  ClientWidth = 656
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   DesignSize = (
-    633
+    656
     363)
   PixelsPerInch = 96
   TextHeight = 15
@@ -126,7 +126,7 @@ object MainForm: TMainForm
   object OpenOutputDirButton: TTntButton
     Left = 520
     Top = 16
-    Width = 97
+    Width = 121
     Height = 25
     Caption = 'Open directory'
     ParentShowHint = False

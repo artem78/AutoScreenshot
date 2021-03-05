@@ -4,7 +4,7 @@ object AboutForm: TAboutForm
   BorderStyle = bsDialog
   Caption = 'About'
   ClientHeight = 209
-  ClientWidth = 481
+  ClientWidth = 545
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,7 +15,7 @@ object AboutForm: TAboutForm
   Position = poOwnerFormCenter
   OnCreate = FormCreate
   DesignSize = (
-    481
+    545
     209)
   PixelsPerInch = 96
   TextHeight = 15
@@ -68,7 +68,7 @@ object AboutForm: TAboutForm
     Height = 64
   end
   object BuildDateLabel: TTntLabel
-    Left = 216
+    Left = 248
     Top = 64
     Width = 123
     Height = 15
@@ -82,7 +82,7 @@ object AboutForm: TAboutForm
     Caption = 'Localization: ...'
   end
   object CloseButton: TTntButton
-    Left = 192
+    Left = 224
     Top = 170
     Width = 97
     Height = 25
