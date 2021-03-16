@@ -70,7 +70,7 @@ object MainForm: TMainForm
     Caption = 'Filename template:'
   end
   object ColorDepthLabel: TTntLabel
-    Left = 310
+    Left = 374
     Top = 108
     Width = 67
     Height = 15
@@ -239,7 +239,7 @@ object MainForm: TMainForm
     OnClick = GrayscaleCheckBoxClick
   end
   object ColorDepthComboBox: TTntComboBox
-    Left = 384
+    Left = 448
     Top = 104
     Width = 65
     Height = 23
