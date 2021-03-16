@@ -26,6 +26,8 @@ Auto Screenshot
 * Русский
 * Китайский
 * Украинский
+* Португальский
+* Испанский
 
 [Хотите ещё?](https://github.com/artem78/AutoScreenshot/issues/5)
 
