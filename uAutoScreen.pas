@@ -133,6 +133,7 @@ type
     procedure LanguageClick(Sender: TObject);
     function GetLangCodeOfLangMenuItem(const LangItem: TTntMenuItem): TLanguageCode;
     function FindLangMenuItem(ALangCode: TLanguageCode): TTntMenuItem;
+    function FormatPath(Str: string): string;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -576,7 +577,7 @@ begin
   BaseDir := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '');
 
   SubDir := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '')} FileNameTemplateComboBox.Text);
-  SubDir := FormatDateTime2(SubDir);
+  SubDir := FormatPath(SubDir);
 
   FullDir := IncludeTrailingPathDelimiter(JoinPath(BaseDir, SubDir));
 
@@ -595,7 +596,7 @@ var
   I: Integer;
 begin
   FileName := ExtractFileName(FileNameTemplateComboBox.Text);
-  FileName := FormatDateTime2(FileName);
+  FileName := FormatPath(FileName);
 
   DirName := IncludeTrailingPathDelimiter(FinalOutputDir);
 
@@ -1095,6 +1096,19 @@ begin
   else
     raise Exception.CreateFmt('Can`t get language code from language menu item' +
         ' "%s" (name=%s)', [LangItem.Caption, LangItem.Name]);
+end;
+
+function TMainForm.FormatPath(Str: string): string;
+const
+  TmplVarsChar = '%';
+begin
+  Result := Str;
+
+  Result := StringReplace(Result, TmplVarsChar + 'COMP', GetLocalComputerName, [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'USER', GetCurrentUserName,   [rfReplaceAll]);
+
+  // Date/time
+  Result := FormatDateTime2(Result);
 end;
 
 end.
