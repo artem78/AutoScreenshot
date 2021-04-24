@@ -70,6 +70,9 @@ type
     AboutMenuItem: TTntMenuItem;
     OptionsSubMenu: TTntMenuItem;
     LanguageSubMenu: TTntMenuItem;
+    SeqNumberGroup: TGroupBox;
+    SeqNumberValueLabel: TLabel;
+    SeqNumberValueSpinEdit: TSpinEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -98,6 +101,7 @@ type
     procedure AutoRunCheckBoxClick(Sender: TObject);
     procedure MonitorComboBoxChange(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
+    procedure SeqNumberValueSpinEditChange(Sender: TObject);
   private
     { Private declarations }
     AvailableLanguages: TLanguagesArray;
@@ -187,6 +191,7 @@ const
 
   MinCaptureIntervalInSeconds = 1;
   NoMonitorId = -1;
+  MinCounter = 1;
 
 var
   MainForm: TMainForm;
@@ -222,6 +227,9 @@ begin
 
   // Available languages
   UpdateLanguages;
+
+  // Sequential number
+  SeqNumberValueSpinEdit.MinValue := MinCounter;
 end;
 
 procedure TMainForm.ReadSettings;
@@ -233,7 +241,7 @@ const
   DefaultLanguage         = 'en';
   DefaultColorDepth       = cd24Bit;
   DefaultMonitorId        = NoMonitorId;
-  DefaultCounter          = 1;
+  DefaultCounter          = MinCounter;
 var
   DefaultOutputDir: String;
   CfgLang, SysLang, AltLang: TLanguageCode;
@@ -761,6 +769,8 @@ begin
   AutoRunCheckBox.Caption := Localizer.I18N('AutoRun');
   MonitorLabel.Caption := Localizer.I18N('UsedMonitor') + ':';
   FillMonitorList;
+  SeqNumberGroup.Caption := Localizer.I18N('SequentialNumber');
+  SeqNumberValueLabel.Caption := Localizer.I18N('NextValue') + ':';
 
   // Tray icon
   RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
@@ -1128,6 +1138,15 @@ procedure TMainForm.SetCounter(Val: Integer);
 begin
   FCounter := Val;
   Ini.WriteInteger(DefaultConfigIniSection, 'Counter', FCounter);
+  SeqNumberValueSpinEdit.Value := FCounter;
+end;
+
+procedure TMainForm.SeqNumberValueSpinEditChange(Sender: TObject);
+begin
+  try
+    Counter := SeqNumberValueSpinEdit.Value;
+  finally
+  end;
 end;
 
 end.
