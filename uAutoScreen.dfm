@@ -4,7 +4,7 @@ object MainForm: TMainForm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Auto Screenshot'
-  ClientHeight = 438
+  ClientHeight = 474
   ClientWidth = 656
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object MainForm: TMainForm
   OnDestroy = FormDestroy
   DesignSize = (
     656
-    438)
+    474)
   PixelsPerInch = 96
   TextHeight = 15
   object OutputDirLabel: TTntLabel
@@ -104,7 +104,7 @@ object MainForm: TMainForm
   end
   object TakeScreenshotButton: TTntButton
     Left = 32
-    Top = 386
+    Top = 422
     Width = 121
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -159,7 +159,7 @@ object MainForm: TMainForm
   end
   object AutoCaptureControlGroup: TTntGroupBox
     Left = 208
-    Top = 358
+    Top = 394
     Width = 281
     Height = 65
     Anchors = [akLeft, akBottom]
@@ -289,7 +289,7 @@ object MainForm: TMainForm
     Left = 208
     Top = 264
     Width = 305
-    Height = 73
+    Height = 105
     Caption = 'Sequential number'
     TabOrder = 17
     object SeqNumberValueLabel: TLabel
@@ -299,6 +299,14 @@ object MainForm: TMainForm
       Height = 15
       Alignment = taRightJustify
       Caption = 'Next value:'
+    end
+    object SeqNumberDigitsCountLabel: TLabel
+      Left = 120
+      Top = 64
+      Width = 35
+      Height = 15
+      Alignment = taRightJustify
+      Caption = 'Digits:'
     end
     object SeqNumberValueSpinEdit: TSpinEdit
       Left = 160
@@ -310,6 +318,17 @@ object MainForm: TMainForm
       TabOrder = 0
       Value = 0
       OnChange = SeqNumberValueSpinEditChange
+    end
+    object SeqNumberDigitsCountSpinEdit: TSpinEdit
+      Left = 160
+      Top = 59
+      Width = 49
+      Height = 24
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 1
+      Value = 0
+      OnChange = SeqNumberDigitsCountSpinEditChange
     end
   end
   object Timer: TTimer

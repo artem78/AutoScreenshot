@@ -73,6 +73,8 @@ type
     SeqNumberGroup: TGroupBox;
     SeqNumberValueLabel: TLabel;
     SeqNumberValueSpinEdit: TSpinEdit;
+    SeqNumberDigitsCountSpinEdit: TSpinEdit;
+    SeqNumberDigitsCountLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -102,6 +104,7 @@ type
     procedure MonitorComboBoxChange(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
     procedure SeqNumberValueSpinEditChange(Sender: TObject);
+    procedure SeqNumberDigitsCountSpinEditChange(Sender: TObject);
   private
     { Private declarations }
     AvailableLanguages: TLanguagesArray;
@@ -112,6 +115,7 @@ type
     TrayIconIdx: 1..7;
 
     FCounter: Integer;
+    FCounterDigits: Integer {Byte};
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -141,6 +145,7 @@ type
     function FindLangMenuItem(ALangCode: TLanguageCode): TTntMenuItem;
     function FormatPath(Str: string): string;
     procedure SetCounter(Val: Integer);
+    procedure SetCounterDigits(Val: Integer);
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -151,6 +156,7 @@ type
     property TrayIconState: TTrayIconState write SetTrayIconState;
     property MonitorId: Integer read GetMonitorId write SetMonitorId;
     property Counter: Integer read FCounter write SetCounter;
+    property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
   public
     { Public declarations }
   end;
@@ -192,6 +198,8 @@ const
   MinCaptureIntervalInSeconds = 1;
   NoMonitorId = -1;
   MinCounter = 1;
+  MinCounterDigits = 1;
+  MaxCounterDigits = 10;
 
 var
   MainForm: TMainForm;
@@ -230,6 +238,8 @@ begin
 
   // Sequential number
   SeqNumberValueSpinEdit.MinValue := MinCounter;
+  SeqNumberDigitsCountSpinEdit.MinValue := MinCounterDigits;
+  SeqNumberDigitsCountSpinEdit.MaxValue := MaxCounterDigits;
 end;
 
 procedure TMainForm.ReadSettings;
@@ -242,6 +252,7 @@ const
   DefaultColorDepth       = cd24Bit;
   DefaultMonitorId        = NoMonitorId;
   DefaultCounter          = MinCounter;
+  DefaultCounterDigits    = 6;
 var
   DefaultOutputDir: String;
   CfgLang, SysLang, AltLang: TLanguageCode;
@@ -343,6 +354,7 @@ begin
 
   // Incremental counter
   Counter := Ini.ReadInteger(DefaultConfigIniSection, 'Counter', DefaultCounter);
+  CounterDigits := Ini.ReadInteger(DefaultConfigIniSection, 'CounterDigits', DefaultCounterDigits);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -771,6 +783,7 @@ begin
   FillMonitorList;
   SeqNumberGroup.Caption := Localizer.I18N('SequentialNumber');
   SeqNumberValueLabel.Caption := Localizer.I18N('NextValue') + ':';
+  SeqNumberDigitsCountLabel.Caption := Localizer.I18N('Digits') + ':';
 
   // Tray icon
   RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
@@ -1123,12 +1136,16 @@ end;
 function TMainForm.FormatPath(Str: string): string;
 const
   TmplVarsChar = '%';
+var
+  CounterStr: String[MaxCounterDigits];
 begin
   Result := Str;
 
+  CounterStr := Format('%.' + IntToStr(CounterDigits) + 'd', [Counter]); // Add leading zeros to Counter value
+
   Result := StringReplace(Result, TmplVarsChar + 'COMP', GetLocalComputerName, [rfReplaceAll]);
   Result := StringReplace(Result, TmplVarsChar + 'USER', GetCurrentUserName,   [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'NUM',  IntToStr(Counter),    [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'NUM',  CounterStr,           [rfReplaceAll]);
 
   // Date/time
   Result := FormatDateTime2(Result);
@@ -1145,6 +1162,21 @@ procedure TMainForm.SeqNumberValueSpinEditChange(Sender: TObject);
 begin
   try
     Counter := SeqNumberValueSpinEdit.Value;
+  finally
+  end;
+end;
+
+procedure TMainForm.SetCounterDigits(Val: Integer);
+begin
+  FCounterDigits := Val;
+  Ini.WriteInteger(DefaultConfigIniSection, 'CounterDigits', FCounterDigits);
+  SeqNumberDigitsCountSpinEdit.Value := FCounterDigits;
+end;
+
+procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
+begin
+  try
+    CounterDigits := SeqNumberDigitsCountSpinEdit.Value;
   finally
   end;
 end;
