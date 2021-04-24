@@ -106,6 +106,8 @@ type
     FTrayIconState: TTrayIconState;
 
     TrayIconIdx: 1..7;
+
+    FCounter: Integer;
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -134,6 +136,7 @@ type
     function GetLangCodeOfLangMenuItem(const LangItem: TTntMenuItem): TLanguageCode;
     function FindLangMenuItem(ALangCode: TLanguageCode): TTntMenuItem;
     function FormatPath(Str: string): string;
+    procedure SetCounter(Val: Integer);
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -143,6 +146,7 @@ type
     property ColorDepth: TColorDepth read GetColorDepth write SetColorDepth;
     property TrayIconState: TTrayIconState write SetTrayIconState;
     property MonitorId: Integer read GetMonitorId write SetMonitorId;
+    property Counter: Integer read FCounter write SetCounter;
   public
     { Public declarations }
   end;
@@ -229,6 +233,7 @@ const
   DefaultLanguage         = 'en';
   DefaultColorDepth       = cd24Bit;
   DefaultMonitorId        = NoMonitorId;
+  DefaultCounter          = 1;
 var
   DefaultOutputDir: String;
   CfgLang, SysLang, AltLang: TLanguageCode;
@@ -326,7 +331,10 @@ begin
     MonitorComboBox.Enabled := False;
     //MonitorId := NoMonitorId;
     MonitorId := 0;
-  end
+  end;
+
+  // Incremental counter
+  Counter := Ini.ReadInteger(DefaultConfigIniSection, 'Counter', DefaultCounter);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -540,6 +548,10 @@ begin
   finally
     Bitmap.Free;
   end;
+
+  // Increment counter after successful capture
+  //Inc(Counter);
+  Counter := Counter + 1;
 end;
 
 procedure TMainForm.TakeScreenshotButtonClick(Sender: TObject);
@@ -1106,9 +1118,16 @@ begin
 
   Result := StringReplace(Result, TmplVarsChar + 'COMP', GetLocalComputerName, [rfReplaceAll]);
   Result := StringReplace(Result, TmplVarsChar + 'USER', GetCurrentUserName,   [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'NUM',  IntToStr(Counter),    [rfReplaceAll]);
 
   // Date/time
   Result := FormatDateTime2(Result);
+end;
+
+procedure TMainForm.SetCounter(Val: Integer);
+begin
+  FCounter := Val;
+  Ini.WriteInteger(DefaultConfigIniSection, 'Counter', FCounter);
 end;
 
 end.
