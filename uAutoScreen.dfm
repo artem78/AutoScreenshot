@@ -218,7 +218,8 @@ object MainForm: TMainForm
       '%Y-%M-%D\%Y-%M-%D %H.%N.%S'
       '%Y-%M\%D\%Y-%M-%D_%H.%N.%S'
       '%Y\%M\%D\%H_%N_%S'
-      'screenshot %Y-%M-%D %H%N%S')
+      'screenshot %Y-%M-%D %H%N%S'
+      'screenshot %NUM')
   end
   object FileNameTemplateHelpButton: TTntButton
     Left = 480
