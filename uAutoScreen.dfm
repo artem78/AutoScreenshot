@@ -32,7 +32,7 @@ object MainForm: TMainForm
   end
   object CaptureIntervalLabel: TTntLabel
     Left = 77
-    Top = 77
+    Top = 197
     Width = 124
     Height = 15
     Alignment = taRightJustify
@@ -40,7 +40,7 @@ object MainForm: TMainForm
   end
   object ImageFormatLabel: TTntLabel
     Left = 159
-    Top = 108
+    Top = 228
     Width = 42
     Height = 15
     Alignment = taRightJustify
@@ -48,7 +48,7 @@ object MainForm: TMainForm
   end
   object JPEGQualityLabel: TTntLabel
     Left = 290
-    Top = 109
+    Top = 229
     Width = 79
     Height = 15
     Alignment = taRightJustify
@@ -56,7 +56,7 @@ object MainForm: TMainForm
   end
   object JPEGQualityPercentLabel: TTntLabel
     Left = 440
-    Top = 109
+    Top = 229
     Width = 11
     Height = 15
     Caption = '%'
@@ -71,7 +71,7 @@ object MainForm: TMainForm
   end
   object ColorDepthLabel: TTntLabel
     Left = 374
-    Top = 108
+    Top = 228
     Width = 67
     Height = 15
     Alignment = taRightJustify
@@ -79,7 +79,7 @@ object MainForm: TMainForm
   end
   object MonitorLabel: TTntLabel
     Left = 123
-    Top = 236
+    Top = 356
     Width = 78
     Height = 15
     Alignment = taRightJustify
@@ -109,17 +109,17 @@ object MainForm: TMainForm
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Take screenshot'
-    TabOrder = 15
+    TabOrder = 16
     OnClick = TakeScreenshotButtonClick
   end
   object JPEGQualitySpinEdit: TSpinEdit
     Left = 376
-    Top = 104
+    Top = 224
     Width = 57
     Height = 24
     MaxValue = 100
     MinValue = 0
-    TabOrder = 8
+    TabOrder = 9
     Value = 0
     OnChange = JPEGQualitySpinEditChange
   end
@@ -136,25 +136,25 @@ object MainForm: TMainForm
   end
   object StopWhenInactiveCheckBox: TTntCheckBox
     Left = 208
-    Top = 136
+    Top = 256
     Width = 329
     Height = 17
     Caption = 'Pause taking screenshots while idle'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 10
+    TabOrder = 11
     OnClick = StopWhenInactiveCheckBoxClick
   end
   object ImageFormatComboBox: TTntComboBox
     Left = 208
-    Top = 104
+    Top = 224
     Width = 57
     Height = 23
     AutoComplete = False
     Style = csDropDownList
     DropDownCount = 10
     ItemHeight = 15
-    TabOrder = 6
+    TabOrder = 7
     OnChange = ImageFormatComboBoxChange
   end
   object AutoCaptureControlGroup: TTntGroupBox
@@ -164,7 +164,7 @@ object MainForm: TMainForm
     Height = 65
     Anchors = [akLeft, akBottom]
     Caption = 'Automatic capture'
-    TabOrder = 16
+    TabOrder = 17
     object StartAutoCaptureButton: TTntBitBtn
       Left = 24
       Top = 24
@@ -190,20 +190,20 @@ object MainForm: TMainForm
   end
   object StartCaptureOnStartUpCheckBox: TTntCheckBox
     Left = 208
-    Top = 160
+    Top = 280
     Width = 305
     Height = 17
     Caption = 'Start auto capture when program starts'
-    TabOrder = 11
+    TabOrder = 12
     OnClick = StartCaptureOnStartUpCheckBoxClick
   end
   object StartMinimizedCheckBox: TTntCheckBox
     Left = 208
-    Top = 184
+    Top = 304
     Width = 305
     Height = 17
     Caption = 'Start minimized to tray'
-    TabOrder = 12
+    TabOrder = 13
     OnClick = StartMinimizedCheckBoxClick
   end
   object FileNameTemplateComboBox: TTntComboBox
@@ -232,54 +232,54 @@ object MainForm: TMainForm
   end
   object GrayscaleCheckBox: TTntCheckBox
     Left = 476
-    Top = 106
+    Top = 226
     Width = 141
     Height = 17
     Caption = 'Grayscale'
-    TabOrder = 9
+    TabOrder = 10
     OnClick = GrayscaleCheckBoxClick
   end
   object ColorDepthComboBox: TTntComboBox
     Left = 448
-    Top = 104
+    Top = 224
     Width = 65
     Height = 23
     AutoComplete = False
     Style = csDropDownList
     DropDownCount = 10
     ItemHeight = 15
-    TabOrder = 7
+    TabOrder = 8
     OnChange = ColorDepthComboBoxChange
   end
   object CaptureInterval: TTntDateTimePicker
     Left = 208
-    Top = 72
+    Top = 192
     Width = 73
     Height = 23
     Date = 44009.000000000000000000
     Format = 'H:mm:ss'
     Time = 44009.000000000000000000
     Kind = dtkTime
-    TabOrder = 5
+    TabOrder = 6
     OnChange = CaptureIntervalChange
   end
   object AutoRunCheckBox: TTntCheckBox
     Left = 208
-    Top = 208
+    Top = 328
     Width = 265
     Height = 17
     Caption = 'Run application at system startup'
-    TabOrder = 13
+    TabOrder = 14
     OnClick = AutoRunCheckBoxClick
   end
   object MonitorComboBox: TTntComboBox
     Left = 208
-    Top = 232
+    Top = 352
     Width = 265
     Height = 23
     Style = csDropDownList
     ItemHeight = 15
-    TabOrder = 14
+    TabOrder = 15
     OnChange = MonitorComboBoxChange
     Items.Strings = (
       ''
@@ -287,11 +287,11 @@ object MainForm: TMainForm
   end
   object SeqNumberGroup: TGroupBox
     Left = 208
-    Top = 264
+    Top = 80
     Width = 305
-    Height = 105
+    Height = 97
     Caption = 'Sequential number'
-    TabOrder = 17
+    TabOrder = 5
     object SeqNumberValueLabel: TLabel
       Left = 96
       Top = 32
@@ -351,7 +351,7 @@ object MainForm: TMainForm
   end
   object TrayIconPopupMenu: TTntPopupMenu
     Left = 136
-    Top = 120
+    Top = 240
     object RestoreWindowTrayMenuItem: TTntMenuItem
       Caption = 'Restore'
       Default = True
