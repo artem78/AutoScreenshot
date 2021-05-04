@@ -3,7 +3,7 @@ unit uLocalization;
 interface
 
 uses
-  TntIniFiles, SysUtils;
+  TntIniFiles, SysUtils, TntClasses;
 
 type
   TLanguageCode = String[2];
@@ -22,11 +22,13 @@ type
 
   TLocalizer = class
   private
-    Ini: TTntMemIniFile;
+    LangInfo: TLanguageInfo;
+    Strings: TTntStringList;
     LangsDir: String;
 
     function GetLanguageInfo: TLanguageInfo;
     class function GetLanguageInfoFromIni(const AnIni: TTntMemIniFile): TLanguageInfo;
+    procedure ClearLangInfoAndStrings;
   public
     constructor Create(ALangsDir: String);
     destructor Destroy; override;
@@ -48,22 +50,42 @@ uses uUtils, Classes;
 
 { TLocalizer }
 
+procedure TLocalizer.ClearLangInfoAndStrings;
+begin
+  with LangInfo do
+  begin
+    Code       := '';
+    Name       := '';
+    NativeName := '';
+    FileName   := '';
+    SetLength(AlternativeFor, 0);
+    Author     := '';
+  end;
+
+  Strings.Clear;
+end;
+
 constructor TLocalizer.Create(ALangsDir: String);
 begin
-  Ini := nil;
+  Strings := TTntStringList.Create;
+  Strings.NameValueSeparator := '=';
+  LangInfo.AlternativeFor := nil;
+  ClearLangInfoAndStrings;
   LangsDir := IncludeTrailingBackslash(ALangsDir);
 end;
 
 destructor TLocalizer.Destroy;
 begin
-  FreeAndNil(Ini);
+  //FreeAndNil(LangInfo.AlternativeFor);
+  LangInfo.AlternativeFor := nil;
+  FreeAndNil(Strings);
 
   inherited;
 end;
 
 function TLocalizer.GetLanguageInfo: TLanguageInfo;
 begin
-  Result := TLocalizer.GetLanguageInfoFromIni(Ini);
+  Result := LangInfo;
 end;
 
 class function TLocalizer.GetLanguageInfoFromIni(
@@ -135,11 +157,13 @@ end;
 
 function TLocalizer.I18N(Str: String): WideString;
 begin
-  if not Assigned(Ini) then
+  if LangInfo.Code = '' then
     raise ELocalizerException.Create('No localization loaded');
 
   //Result := '[' + Lang + ']' + Str + '';
-  Result := Ini.ReadString('translation', Str, {Str}'<unknown>');
+  Result := Strings.Values[Str];
+  if Result = '' then
+    Result := '<unknown>';
 
   Result := DecodeControlCharacters(Result);
 end;
@@ -147,13 +171,24 @@ end;
 procedure TLocalizer.LoadFromFile(AFileName: String);
 var
   FileName: String;
+  Ini: TTntMemIniFile;
 begin
-  FreeAndNil(Ini);
+  ClearLangInfoAndStrings;
 
   // Load ini file with strings for selected language
   if not FileExists(AFileName) then
     raise ELocalizerException.CreateFmt('Can`t open localization file "%s"', [FileName]);
+
   Ini := TTntMemIniFile.Create(AFileName);
+  try
+    // Read language info
+    LangInfo := GetLanguageInfoFromIni(Ini);
+
+    // Read translation strings
+    Ini.ReadSectionValues('translation', Strings);
+  finally
+    Ini.Free;
+  end;
 end;
 
 initialization
