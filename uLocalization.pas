@@ -25,12 +25,13 @@ type
     LangInfo: TLanguageInfo;
     Strings: TTntStringList;
     LangsDir: String;
+    UseAltsForMissedStrings: Boolean; // Try or not read missed strings from default or alternative languages
 
     function GetLanguageInfo: TLanguageInfo;
     class function GetLanguageInfoFromIni(const AnIni: TTntMemIniFile): TLanguageInfo;
     procedure ClearLangInfoAndStrings;
   public
-    constructor Create(ALangsDir: String);
+    constructor Create(ALangsDir: String; AnUseAltsForMissedStrings: Boolean = True);
     destructor Destroy; override;
 
     //procedure LoadByCode(ALang: TLanguageCode);
@@ -65,13 +66,14 @@ begin
   Strings.Clear;
 end;
 
-constructor TLocalizer.Create(ALangsDir: String);
+constructor TLocalizer.Create(ALangsDir: String; AnUseAltsForMissedStrings: Boolean);
 begin
   Strings := TTntStringList.Create;
   Strings.NameValueSeparator := '=';
   LangInfo.AlternativeFor := nil;
   ClearLangInfoAndStrings;
   LangsDir := IncludeTrailingBackslash(ALangsDir);
+  UseAltsForMissedStrings := AnUseAltsForMissedStrings;
 end;
 
 destructor TLocalizer.Destroy;
@@ -191,7 +193,7 @@ begin
     raise ELocalizerException.CreateFmt('Can`t open localization file "%s"', [FileName]);
 
   { Read strings from default (English) translation }
-  if not AnsiEndsStr('en.ini', AFileName) then // Skip for English
+  if (UseAltsForMissedStrings and not AnsiEndsStr('en.ini', AFileName)) then // Skip for English
   begin
     Ini := TTntMemIniFile.Create(LangsDir + 'en.ini');
     try
@@ -222,7 +224,8 @@ end;
 
 initialization
 begin
-  Localizer := TLocalizer.Create(ExtractFilePath(ParamStr(0)) + 'lang' + PathDelim);
+  // ToDo: Use alternatives only in Release build
+  Localizer := TLocalizer.Create(ExtractFilePath(ParamStr(0)) + 'lang' + PathDelim, True);
 end;
 
 finalization
