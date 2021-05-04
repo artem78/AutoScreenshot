@@ -171,12 +171,15 @@ begin
 end;
 
 procedure TLocalizer.LoadFromFile(AFileName: String);
+// ToDo: Optimization needed - reduce the number of file reading operations
 const
   TranslationIniSection = 'translation';
 var
   FileName: String;
   Ini: TTntMemIniFile;
   TmpStr: TTntStringList;
+  AllLangs: TLanguagesArray;
+  AltLang: TLanguageCode;
 
   procedure CombineValues(L1: TTntStrings; const L2: TTntStrings);
   var
@@ -192,23 +195,46 @@ begin
   if not FileExists(AFileName) then
     raise ELocalizerException.CreateFmt('Can`t open localization file "%s"', [FileName]);
 
-  { Read strings from default (English) translation }
-  if (UseAltsForMissedStrings and not AnsiEndsStr('en.ini', AFileName)) then // Skip for English
+  { Read language info }
+  Ini := TTntMemIniFile.Create(AFileName);
+  try
+    LangInfo := GetLanguageInfoFromIni(Ini);
+  finally
+    FreeAndNil(Ini);
+  end;
+
+  if UseAltsForMissedStrings then
   begin
-    Ini := TTntMemIniFile.Create(LangsDir + 'en.ini');
-    try
-      Ini.ReadSectionValues(TranslationIniSection, Strings);
-    finally
-      FreeAndNil(Ini);
+    { Read strings from default (English) translation }
+    if not AnsiEndsStr('en.ini', AFileName) then // Skip for English
+    begin
+      Ini := TTntMemIniFile.Create(LangsDir + 'en.ini');
+      try
+        Ini.ReadSectionValues(TranslationIniSection, Strings);
+      finally
+        FreeAndNil(Ini);
+      end;
+    end;
+
+    { Read and update strings from alternative of specified translation }
+    GetLanguages(AllLangs);
+    AltLang := GetAlternativeLanguage(AllLangs, LangInfo.Code);
+    if AltLang <> '' then
+    begin
+      Ini := TTntMemIniFile.Create(LangsDir + AltLang + '.ini');
+      TmpStr := TTntStringList.Create;
+      try
+        Ini.ReadSectionValues(TranslationIniSection, TmpStr);
+        CombineValues(Strings, TmpStr);
+      finally
+        FreeAndNil(TmpStr);
+      end;
     end;
   end;
 
   { Read and update strings from specified translation }
   Ini := TTntMemIniFile.Create(AFileName);
   try
-    // Read language info
-    LangInfo := GetLanguageInfoFromIni(Ini);
-
     // Combine translation strings with defaults
     TmpStr := TTntStringList.Create;
     try
