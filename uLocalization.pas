@@ -46,7 +46,7 @@ var
 
 implementation
 
-uses uUtils, Classes;
+uses uUtils, Classes, StrUtils;
 
 { TLocalizer }
 
@@ -169,25 +169,54 @@ begin
 end;
 
 procedure TLocalizer.LoadFromFile(AFileName: String);
+const
+  TranslationIniSection = 'translation';
 var
   FileName: String;
   Ini: TTntMemIniFile;
+  TmpStr: TTntStringList;
+
+  procedure CombineValues(L1: TTntStrings; const L2: TTntStrings);
+  var
+    Idx: integer;
+  begin
+    for Idx := 0 to L2.Count - 1 do
+      L1.Values[L2.Names[Idx]] := L2.ValueFromIndex[Idx];
+  end;
 begin
   ClearLangInfoAndStrings;
 
-  // Load ini file with strings for selected language
+  { Check if selected translation file exists }
   if not FileExists(AFileName) then
     raise ELocalizerException.CreateFmt('Can`t open localization file "%s"', [FileName]);
 
+  { Read strings from default (English) translation }
+  if not AnsiEndsStr('en.ini', AFileName) then // Skip for English
+  begin
+    Ini := TTntMemIniFile.Create(LangsDir + 'en.ini');
+    try
+      Ini.ReadSectionValues(TranslationIniSection, Strings);
+    finally
+      FreeAndNil(Ini);
+    end;
+  end;
+
+  { Read and update strings from specified translation }
   Ini := TTntMemIniFile.Create(AFileName);
   try
     // Read language info
     LangInfo := GetLanguageInfoFromIni(Ini);
 
-    // Read translation strings
-    Ini.ReadSectionValues('translation', Strings);
+    // Combine translation strings with defaults
+    TmpStr := TTntStringList.Create;
+    try
+      Ini.ReadSectionValues(TranslationIniSection, TmpStr);
+      CombineValues(Strings, TmpStr);
+    finally
+      FreeAndNil(TmpStr);
+    end;
   finally
-    Ini.Free;
+    FreeAndNil(Ini);
   end;
 end;
 
