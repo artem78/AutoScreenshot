@@ -17,6 +17,7 @@ Auto Screenshot
 * Customizable output filenames with variables (date, time, user, computer name) and ability of grouping by folders (for example: by day or month)
 * Automatic capture can be started on Windows startup
 * Multiple screens support
+* Absolutely free and open source
 
 ## Screenshots
 ![Main program window](images/main_window.png "Main program window")
