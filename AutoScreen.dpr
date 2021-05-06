@@ -12,7 +12,8 @@ uses
   uAbout in 'uAbout.pas' {AboutForm},
   uLocalization in 'uLocalization.pas',
   uUtils in 'uUtils.pas',
-  VistaAltFixUnit in 'libs\VistaAltFixUnit.pas';
+  VistaAltFixUnit in 'libs\VistaAltFixUnit.pas',
+  uLanguages in 'uLanguages.pas';
 
 var
   MutexHandle: THandle;

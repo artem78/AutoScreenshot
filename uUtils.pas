@@ -5,7 +5,7 @@ unit uUtils;
 interface
 
 uses
-  Windows;
+  Windows, uLocalization;
 
 // Retrieves the time (in ms) of the last input event (mouse moved or key pressed).
 // Also works if current application window has no focus (hidden or minimized).
@@ -73,6 +73,8 @@ function GetCurrentUserName: string;
 
 { Returns two-letter language code from ISO 639 standard. }
 function GetSystemLanguageCode: String{[2]};
+function GetAlternativeLanguage(const ALangs: TLanguagesArray;
+    ALangCode: TLanguageCode): TLanguageCode;
 
 procedure AutoRun(const FileName: String; const AppTitle: String;
     Enabled: Boolean = True);
@@ -81,7 +83,7 @@ function CheckAutoRun(const AppTitle: String): Boolean;
 implementation
 
 uses
-  SysUtils, DateUtils, TntSysUtils, Registry;
+  SysUtils, DateUtils, TntSysUtils, Registry, uLanguages;
 
 function LastInput: DWord;
 var
@@ -102,8 +104,6 @@ begin
   Result := StringReplace(Result, TmplVarsChar + 'H', Int2Str(HourOf(DateTime), 2),   [rfReplaceAll]);
   Result := StringReplace(Result, TmplVarsChar + 'N', Int2Str(MinuteOf(DateTime), 2), [rfReplaceAll]);
   Result := StringReplace(Result, TmplVarsChar + 'S', Int2Str(SecondOf(DateTime), 2), [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'COMP', GetLocalComputerName, [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'USER', GetCurrentUserName,   [rfReplaceAll]);
 end;
 
 function FormatDateTime2(const Str: String): String;
@@ -285,26 +285,28 @@ begin
 end;}
 
 function GetSystemLanguageCode: String{[2]};
-{ FixMe: Not always returns code in ISO 639 standard. For example,
-  Belorussian ISO 639 code is BE/BEL, but function returns BL/BLR. }
-var
-  //LID: LangID;
-  Buffer: PChar;
-  Size: integer;
 begin
-  //LID := GetSystemLanguageID;
-  Size := GetLocaleInfo({LID} LOCALE_USER_DEFAULT, LOCALE_SABBREVCTRYNAME, nil, 0);
-  GetMem(Buffer, Size);
-  Result := '';
-  try
-    GetLocaleInfo({LID} LOCALE_USER_DEFAULT, LOCALE_SABBREVCTRYNAME, Buffer, Size);
-    { For Windows Vista and later recommended to use GetLocaleInfoEx instead,
-      but for compatibility with XP I use GetLocaleInfo. }
-    Result := Copy(Buffer, 0, 2); { return US / use  Result := Buffer to return USA }
-    Result := LowerCase(Result);
-  finally
-    FreeMem(Buffer);
+  Result := Iso6391FromLcid(GetUserDefaultLCID);
+end;
+
+function GetAlternativeLanguage(const ALangs: TLanguagesArray;
+    ALangCode: TLanguageCode): TLanguageCode;
+var
+  LangIdx, AltIdx: Integer;
+begin
+  for LangIdx := 0 to Length(ALangs) - 1 do
+  begin
+    for AltIdx := 0 to Length(ALangs[LangIdx].AlternativeFor) - 1 do
+    begin
+      if ALangs[LangIdx].AlternativeFor[AltIdx] = ALangCode then
+      begin
+        Result := ALangs[LangIdx].Code;
+        Exit;
+      end;
+    end;
   end;
+
+  Result := ''; // Not found
 end;
 
 procedure SetAutoRun(const FileName: String; const AppTitle: String);
