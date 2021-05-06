@@ -14,12 +14,31 @@
       <Title Value="AutoScreen"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <Icon Value="0"/>
+      <Resources Count="10">
+        <Resource_0 FileName="res\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
+        <Resource_1 FileName="res\camera_flash1.ico" Type="ICON" ResourceName="_CAMERA_FLASH_1"/>
+        <Resource_2 FileName="res\camera_flash2.ico" Type="ICON" ResourceName="_CAMERA_FLASH_2"/>
+        <Resource_3 FileName="res\camera_flash3.ico" Type="ICON" ResourceName="_CAMERA_FLASH_3"/>
+        <Resource_4 FileName="res\camera_flash4.ico" Type="ICON" ResourceName="_CAMERA_FLASH_4"/>
+        <Resource_5 FileName="res\camera_flash5.ico" Type="ICON" ResourceName="_CAMERA_FLASH_5"/>
+        <Resource_6 FileName="res\camera_flash6.ico" Type="ICON" ResourceName="_CAMERA_FLASH_6"/>
+        <Resource_7 FileName="res\camera_flash7.ico" Type="ICON" ResourceName="_CAMERA_FLASH_7"/>
+        <Resource_8 FileName="res\start.bmp" Type="BITMAP" ResourceName="_START_ICON"/>
+        <Resource_9 FileName="res\stop.bmp" Type="BITMAP" ResourceName="_STOP_ICON"/>
+      </Resources>
     </General>
     <i18n>
       <EnableI18N LFM="False"/>
     </i18n>
     <VersionInfo>
-      <StringTable ProductVersion=""/>
+      <UseVersionInfo Value="True"/>
+      <MajorVersionNr Value="1"/>
+      <MinorVersionNr Value="6"/>
+      <RevisionNr Value="2"/>
+      <Attributes pvaPrivateBuild="True"/>
+      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.6.2"/>
     </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>
@@ -81,14 +100,14 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="libs\PNGImage;libs"/>
+      <IncludeFiles Value="libs\PNGImage;libs;$(ProjOutDir)"/>
       <Libraries Value="libs\PNGImage"/>
       <OtherUnitFiles Value="libs\PNGImage;libs"/>
       <ObjectPath Value="libs\PNGImage"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
-        <SyntaxMode Value="delphi"/>
+        <SyntaxMode Value="Delphi"/>
       </SyntaxOptions>
     </Parsing>
     <Linking>

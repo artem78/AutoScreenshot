@@ -2,9 +2,7 @@ program AutoScreen;
 
 {$MODE Delphi}
 
-{$R 'res\MAINICON.res' 'res\MAINICON.rc'}
-{$R 'res\VERSIONINFO.res' 'res\VERSIONINFO.rc'}
-{$R 'res\ICONS.res' 'res\ICONS.rc'}
+{$R *.res}
 
 uses
   Forms,
@@ -22,6 +20,7 @@ var
   //MutexName: PChar;
 const
   MutexName = 'AutoScreenshotMutex';
+
 begin
   // Prevent the launch of more than one instance of process
   //MutexName := PChar(Application.ExeName);
