@@ -46,8 +46,8 @@ end;
 
 procedure TAboutForm.FormCreate(Sender: TObject);
 var
-  BuildDate: TDateTime;
-  BuildDateStr: WideString;
+  BuildDateTime: TDateTime;
+  BuildStr: WideString;
 begin
   Caption := Localizer.I18N('About');
 
@@ -69,15 +69,9 @@ begin
   end;
   LinkLabel.Caption := ProjectGitHubURL;
 
-  BuildDate := GetLinkerTimeStamp;
-  { Check if date is correct
-    (Older versions of Delphi may put incorrect TimeDateStamp in exe
-    without this patch - http://cc.embarcadero.com/Item/19823) }
-  if YearOf(BuildDate) < 2000 then
-    BuildDateStr := 'unknown'
-  else
-    BuildDateStr := FormatDateTime({'dddddd tt'} 'dddddd', BuildDate);
-  BuildDateLabel.Caption := Localizer.I18N('BuildDate') + ': ' + BuildDateStr;
+  BuildDateTime := GetBuildDateTime;
+  BuildStr := FormatDateTime({'dddddd tt'} 'dddddd', BuildDateTime);
+  BuildDateLabel.Caption := Localizer.I18N('BuildDate') + ': ' + BuildStr;
 
   CloseButton.Caption := Localizer.I18N('Close');
 end;

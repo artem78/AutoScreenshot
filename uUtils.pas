@@ -56,8 +56,8 @@ function DecodeControlCharacters(const Str: WideString): WideString;
 
 function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean = False): string;
 
-// Returns build time from TimeDateStamp PE header
-function GetLinkerTimeStamp: TDateTime{; overload};
+// Returns program build date and time
+function GetBuildDateTime: TDateTime;
 
 { Removes duplicated slashes from given path.
   Example:
@@ -215,19 +215,15 @@ begin
   end;
 end;
 
-{function LinkerTimeStamp(const FileName: string): TDateTime; overload;
+function GetBuildDateTime: TDateTime;
 var
-  LI: TLoadedImage;
+  BuildDate, BuildTime: String;
 begin
-  Win32Check(MapAndLoad(PChar(FileName), nil, @LI, False, True));
-  Result := LI.FileHeader.FileHeader.TimeDateStamp / SecsPerDay + UnixDateDelta;
-  UnMapAndLoad(@LI);
-end;}
+  BuildDate := {$I %DATE%};
+  BuildTime := {$I %TIME%};
+  BuildDate := StringReplace(BuildDate, '/', '-', [rfReplaceAll]);  // For unknown reason doesn`t work with "/" date separator
 
-function GetLinkerTimeStamp: TDateTime{; overload};
-begin
-  Result := PImageNtHeaders(HInstance + Cardinal(PImageDosHeader(HInstance)^
-        ._lfanew))^.FileHeader.TimeDateStamp / SecsPerDay + UnixDateDelta;
+  Result := ScanDateTime('yyyy-mm-dd hh:nn:ss', BuildDate + ' ' + BuildTime);
 end;
 
 function RemoveExtraPathDelimiters(const Path: String): String;
