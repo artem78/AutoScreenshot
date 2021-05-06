@@ -285,14 +285,14 @@ object MainForm: TMainForm
       ''
       '')
   end
-  object SeqNumberGroup: TGroupBox
+  object SeqNumberGroup: TTntGroupBox
     Left = 208
     Top = 80
     Width = 305
     Height = 97
     Caption = 'Sequential number'
     TabOrder = 5
-    object SeqNumberValueLabel: TLabel
+    object SeqNumberValueLabel: TTntLabel
       Left = 96
       Top = 32
       Width = 59
@@ -300,7 +300,7 @@ object MainForm: TMainForm
       Alignment = taRightJustify
       Caption = 'Next value:'
     end
-    object SeqNumberDigitsCountLabel: TLabel
+    object SeqNumberDigitsCountLabel: TTntLabel
       Left = 120
       Top = 64
       Width = 35

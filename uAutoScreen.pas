@@ -70,11 +70,11 @@ type
     AboutMenuItem: TTntMenuItem;
     OptionsSubMenu: TTntMenuItem;
     LanguageSubMenu: TTntMenuItem;
-    SeqNumberGroup: TGroupBox;
-    SeqNumberValueLabel: TLabel;
+    SeqNumberGroup: TTntGroupBox;
+    SeqNumberValueLabel: TTntLabel;
     SeqNumberValueSpinEdit: TSpinEdit;
     SeqNumberDigitsCountSpinEdit: TSpinEdit;
-    SeqNumberDigitsCountLabel: TLabel;
+    SeqNumberDigitsCountLabel: TTntLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
