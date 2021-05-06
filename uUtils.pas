@@ -1,4 +1,7 @@
 unit uUtils;
+
+{$MODE Delphi}
+
 { Various general usefull functions }
 
 
@@ -83,7 +86,18 @@ function CheckAutoRun(const AppTitle: String): Boolean;
 implementation
 
 uses
-  SysUtils, DateUtils, TntSysUtils, Registry, uLanguages;
+  SysUtils, DateUtils, {TntSysUtils,} Registry, uLanguages;
+
+type
+  PLASTINPUTINFO = ^LASTINPUTINFO;
+  tagLASTINPUTINFO = record
+    cbSize: UINT;
+    dwTime: DWORD;
+  end;
+  LASTINPUTINFO = tagLASTINPUTINFO;
+  TLastInputInfo = LASTINPUTINFO;
+
+function GetLastInputInfo(var plii: TLastInputInfo): BOOL;stdcall; external 'user32' name 'GetLastInputInfo';
 
 function LastInput: DWord;
 var
@@ -132,10 +146,10 @@ end;
 
 function DecodeControlCharacters(const Str: WideString): WideString;
 begin
-  Result := Tnt_WideStringReplace(Str,    '\r', #13, [rfReplaceAll]);
-  Result := Tnt_WideStringReplace(Result, '\n', #10, [rfReplaceAll]);
-  Result := Tnt_WideStringReplace(Result, '\t', #9,  [rfReplaceAll]);
-  Result := Tnt_WideStringReplace(Result, '\\', '\', [rfReplaceAll]);
+  Result := {Tnt_WideStringReplace} StringReplace(Str,    '\r', #13, [rfReplaceAll]);
+  Result := {Tnt_WideStringReplace} StringReplace(Result, '\n', #10, [rfReplaceAll]);
+  Result := {Tnt_WideStringReplace} StringReplace(Result, '\t', #9,  [rfReplaceAll]);
+  Result := {Tnt_WideStringReplace} StringReplace(Result, '\\', '\', [rfReplaceAll]);
 end;
 
 {function GetProgramVersionStr: string;

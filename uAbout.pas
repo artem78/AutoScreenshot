@@ -1,21 +1,23 @@
 unit uAbout;
 
+{$MODE Delphi}
+
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ShellApi, ExtCtrls, TntForms, TntStdCtrls, TntExtCtrls;
+  Dialogs, StdCtrls, {ShellApi,} LCLIntf, ExtCtrls{, TntForms, TntStdCtrls, TntExtCtrls};
 
 type
-  TAboutForm = class(TTntForm)
-    ProgramNameLabel: TTntLabel;
-    VersionLabel: TTntLabel;
-    AuthorLabel: TTntLabel;
-    CloseButton: TTntButton;
-    LinkLabel: TTntLabel;
-    Logo: TTntImage;
-    BuildDateLabel: TTntLabel;
-    LocalizationAuthorLabel: TTntLabel;
+  TAboutForm = class(TForm)
+    ProgramNameLabel: TLabel;
+    VersionLabel: TLabel;
+    AuthorLabel: TLabel;
+    CloseButton: TButton;
+    LinkLabel: TLabel;
+    Logo: TImage;
+    BuildDateLabel: TLabel;
+    LocalizationAuthorLabel: TLabel;
     procedure CloseButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LinkLabelClick(Sender: TObject);
@@ -32,7 +34,7 @@ implementation
 
 uses uLocalization, uUtils, DateUtils;
 
-{$R *.dfm}
+{$R *.lfm}
 
 const
   ProjectGitHubURL{: WideString} = 'https://github.com/artem78/AutoScreenshot#readme';
@@ -52,7 +54,7 @@ begin
   Logo.Picture.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
       64, 64, LR_DEFAULTCOLOR);
 
-  ProgramNameLabel.Caption := TntApplication.Title;
+  ProgramNameLabel.Caption := Application.Title;
   VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr(True);
   AuthorLabel.Caption := Localizer.I18N('Author') + ': ' + 'Artem Demin (artem78) <megabyte1024@ya.ru>';
   with Localizer.LanguageInfo do
@@ -82,7 +84,8 @@ end;
 
 procedure TAboutForm.LinkLabelClick(Sender: TObject);
 begin
-  ShellExecute(handle, 'open', ProjectGitHubURL, nil, nil, SW_SHOW);
+   //OpenDocument(ProjectGitHubURL); { *Преобразовано из ShellExecute* }
+  OpenURL(ProjectGitHubURL);
 end;
 
 end.

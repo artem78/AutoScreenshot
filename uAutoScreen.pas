@@ -4,10 +4,10 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ComCtrls, ExtCtrls, StdCtrls, inifiles, Spin, FileCtrl, pngImage,
-  TrayIcon, XPMan, jpeg, ShellAPI, Menus, GifImage, Buttons, TntForms, TntStdCtrls,
-  TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl,
-  uLocalization;
+  Dialogs, ComCtrls, ExtCtrls, StdCtrls, inifiles, Spin, FileCtrl, {pngImage,}
+  {TrayIcon,} {XPMan,} {jpeg,} ShellAPI, Menus, {GifImage,} Buttons, {TntForms, TntStdCtrls,}
+  {TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl,}
+  uLocalization, DateTimePicker;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP, fmtGIF);
@@ -26,50 +26,52 @@ type
 
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
 
-  TMainForm = class({TTntForm} TForm)
-    OutputDirEdit: TTntEdit;
-    ChooseOutputDirButton: TTntButton;
+  { TMainForm }
+
+  TMainForm = class(TForm)
+    OutputDirEdit: TEdit;
+    ChooseOutputDirButton: TButton;
     Timer: TTimer;
-    OutputDirLabel: TTntLabel;
-    CaptureIntervalLabel: TTntLabel;
+    OutputDirLabel: TLabel;
+    CaptureIntervalLabel: TLabel;
     TrayIcon: TTrayIcon;
-    XPManifest: TXPManifest;
-    ImageFormatLabel: TTntLabel;
-    TakeScreenshotButton: TTntButton;
-    JPEGQualityLabel: TTntLabel;
+    //XPManifest: TXPManifest;
+    ImageFormatLabel: TLabel;
+    TakeScreenshotButton: TButton;
+    JPEGQualityLabel: TLabel;
     JPEGQualitySpinEdit: TSpinEdit;
-    OpenOutputDirButton: TTntButton;
-    StopWhenInactiveCheckBox: TTntCheckBox;
-    ImageFormatComboBox: TTntComboBox;
-    JPEGQualityPercentLabel: TTntLabel;
-    AutoCaptureControlGroup: TTntGroupBox;
-    StartAutoCaptureButton: TTntBitBtn;
-    StopAutoCaptureButton: TTntBitBtn;
-    TrayIconPopupMenu: TTntPopupMenu;
-    ExitTrayMenuItem: TTntMenuItem;
-    TakeScreenshotTrayMenuItem: TTntMenuItem;
-    RestoreWindowTrayMenuItem: TTntMenuItem;
-    ToggleAutoCaptureTrayMenuItem: TTntMenuItem;
-    Separator2TrayMenuItem: TTntMenuItem;
-    StartCaptureOnStartUpCheckBox: TTntCheckBox;
-    StartMinimizedCheckBox: TTntCheckBox;
-    Separator1TrayMenuItem: TTntMenuItem;
-    FileNameTemplateLabel: TTntLabel;
-    FileNameTemplateComboBox: TTntComboBox;
-    FileNameTemplateHelpButton: TTntButton;
-    GrayscaleCheckBox: TTntCheckBox;
-    ColorDepthLabel: TTntLabel;
-    ColorDepthComboBox: TTntComboBox;
-    CaptureInterval: TTntDateTimePicker;
+    OpenOutputDirButton: TButton;
+    StopWhenInactiveCheckBox: TCheckBox;
+    ImageFormatComboBox: TComboBox;
+    JPEGQualityPercentLabel: TLabel;
+    AutoCaptureControlGroup: TGroupBox;
+    StartAutoCaptureButton: TBitBtn;
+    StopAutoCaptureButton: TBitBtn;
+    TrayIconPopupMenu: TPopupMenu;
+    ExitTrayMenuItem: TMenuItem;
+    TakeScreenshotTrayMenuItem: TMenuItem;
+    RestoreWindowTrayMenuItem: TMenuItem;
+    ToggleAutoCaptureTrayMenuItem: TMenuItem;
+    Separator2TrayMenuItem: TMenuItem;
+    StartCaptureOnStartUpCheckBox: TCheckBox;
+    StartMinimizedCheckBox: TCheckBox;
+    Separator1TrayMenuItem: TMenuItem;
+    FileNameTemplateLabel: TLabel;
+    FileNameTemplateComboBox: TComboBox;
+    FileNameTemplateHelpButton: TButton;
+    GrayscaleCheckBox: TCheckBox;
+    ColorDepthLabel: TLabel;
+    ColorDepthComboBox: TComboBox;
+    CaptureInterval: TDateTimePicker;
     TrayIconAnimationTimer: TTimer;
-    AutoRunCheckBox: TTntCheckBox;
-    MonitorLabel: TTntLabel;
-    MonitorComboBox: TTntComboBox;
-    MainMenu: TTntMainMenu;
-    HelpSubMenu: TTntMenuItem;
-    AboutMenuItem: TTntMenuItem;
-    OptionsSubMenu: TTntMenuItem;
-    LanguageSubMenu: TTntMenuItem;
+    AutoRunCheckBox: TCheckBox;
+    MonitorLabel: TLabel;
+    MonitorComboBox: TComboBox;
+    MainMenu: TMainMenu;
+    HelpSubMenu: TMenuItem;
+    AboutMenuItem: TMenuItem;
+    OptionsSubMenu: TMenuItem;
+    LanguageSubMenu: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -98,6 +100,7 @@ type
     procedure AutoRunCheckBoxClick(Sender: TObject);
     procedure MonitorComboBoxChange(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
+    procedure TrayIconDblClick(Sender: TObject);
   private
     { Private declarations }
     AvailableLanguages: TLanguagesArray;
@@ -131,8 +134,8 @@ type
     function GetMonitorId: Integer;
     procedure UpdateLanguages;
     procedure LanguageClick(Sender: TObject);
-    function GetLangCodeOfLangMenuItem(const LangItem: TTntMenuItem): TLanguageCode;
-    function FindLangMenuItem(ALangCode: TLanguageCode): TTntMenuItem;
+    function GetLangCodeOfLangMenuItem(const LangItem: TMenuItem): TLanguageCode;
+    function FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -189,9 +192,10 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uUtils, Math, VistaAltFixUnit;
+uses uAbout, DateUtils, uUtils, Math{, VistaAltFixUnit};
 
-{$R *.dfm}
+//{$R *.dfm}
+{$R *.lfm}
 
 const
   LanguageSubMenuItemNamePrefix = 'LanguageSubMenuItem_';
@@ -334,8 +338,8 @@ begin
 
   InitUI;
 
-  // Fix components disappearing when ALT key pressed on Windows Vista and later
-  TVistaAltFix.Create(Self);
+  {// Fix components disappearing when ALT key pressed on Windows Vista and later
+  TVistaAltFix.Create(Self);}
 
   Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
   ReadSettings;
@@ -351,11 +355,12 @@ end;
 
 procedure TMainForm.ChooseOutputDirButtonClick(Sender: TObject);
 var
-  Dir: WideString;
+  Dir: {WideString} String;
 begin
   Dir := OutputDirEdit.Text;
 
-  if WideSelectDirectory(Localizer.I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
+  //if WideSelectDirectory(Localizer.I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
+  if SelectDirectory(Localizer.I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
   //if SelectDirectory(dir, [sdAllowCreate, sdPerformCreate], 0) then
   begin
     OutputDirEdit.Text := Dir;
@@ -394,6 +399,8 @@ begin
     // or user logged off from the session
     // ToDo: May add comparision of current screenshot with the last one,
     // and if they equal, do not save current
+
+    // ToDo: Use TIdleTimer instead (https://forum.lazarus.freepascal.org/index.php/topic,15811.msg126545.html#msg126545)
     if Timer.Interval > LastInput then
       MakeScreenshot;
   end
@@ -438,9 +445,9 @@ end;
 procedure TMainForm.MakeScreenshot;
 var
   Bitmap: TBitmap;
-  PNG: TPNGObject;
-  JPG: TJPEGImage;
-  GIF: TGIFImage;
+  PNG: {TPNGObject} TPortableNetworkGraphic;
+  JPG: {TJPEGImage} TJPEGImage;
+  GIF: {TGIFImage} TGIFImage;
   ScreenDC: HDC;
   ScreenWidth, ScreenHeight: Integer;
   ScreenX, ScreenY: Integer;
@@ -496,7 +503,7 @@ begin
     case ImageFormat of
       fmtPNG:      // PNG
         begin
-          PNG := TPNGObject.Create;
+          PNG := TPortableNetworkGraphic.Create;
           try
             PNG.Assign(Bitmap);
             PNG.SaveToFile(ImagePath);
@@ -510,9 +517,9 @@ begin
           JPG := TJPEGImage.Create;
           try
             JPG.CompressionQuality := JPEGQualitySpinEdit.Value;
-            JPG.Grayscale := GrayscaleCheckBox.Checked;
+            //JPG.GrayScale := GrayscaleCheckBox.Checked; FixMe: Can not set grayscale
             JPG.Assign(Bitmap);
-            JPG.Compress;
+            //JPG.Compress;
             JPG.SaveToFile(ImagePath);
           finally
             JPG.Free;
@@ -529,7 +536,7 @@ begin
           GIF := TGIFImage.Create;
           try
             GIF.Assign(Bitmap);
-            GIF.OptimizeColorMap;
+            //GIF.OptimizeColorMap;
             GIF.SaveToFile(ImagePath);
           finally
             GIF.Free;
@@ -671,18 +678,34 @@ end;
 
 procedure TMainForm.MinimizeToTray;
 begin
-  TrayIcon.AppVisible := False;
+  {TrayIcon.AppVisible := False;
   TrayIcon.FormVisible := False;
-  TrayIcon.IconVisible := True;
+  TrayIcon.IconVisible := True; }
+
+  {Application.MainFormOnTaskBar := False;
+  Application.ShowMainForm := False;
+  //Hide;}
+  WindowState := wsMinimized;
+  Hide;
+  TrayIcon.Show;
 end;
 
 procedure TMainForm.RestoreFromTray;
 begin
-  TrayIcon.IconVisible := False;
+  {TrayIcon.IconVisible := False;
   TrayIcon.AppVisible := True;
   TrayIcon.FormVisible := True;
   Application.Restore;
-  Application.BringToFront();
+  Application.BringToFront();}
+
+  TrayIcon.Hide;
+  {Application.MainFormOnTaskBar := True;
+  Application.ShowMainForm := True;
+  //Show;
+  Application.Restore;
+  Application.BringToFront;}
+  WindowState := wsNormal;
+  Show;
 end;
 
 //procedure TMainForm.SetLanguage(Lang: TLanguage);
@@ -773,7 +796,7 @@ end;
 
 procedure TMainForm.FileNameTemplateHelpButtonClick(Sender: TObject);
 begin
-  WideShowMessage(Localizer.I18N('FileNameTemplateHelpText'));
+  ShowMessage(Localizer.I18N('FileNameTemplateHelpText'));
 end;
 
 function TMainForm.GetImageFormat: TImageFormat;
@@ -1025,13 +1048,18 @@ begin
   end;
 end;
 
+procedure TMainForm.TrayIconDblClick(Sender: TObject);
+begin
+  RestoreFromTray;
+end;
+
 procedure TMainForm.UpdateLanguages;
 {const
   GroupIdx = 1;}
 var
   Lang: TLanguageInfo;
   I: integer;
-  MenuItem: TTntMenuItem;
+  MenuItem: TMenuItem;
 begin
   while LanguageSubMenu.Count > 0 do
     LanguageSubMenu.Items[0].Free;
@@ -1044,7 +1072,7 @@ begin
 
     if (Lang.Name <> '') and (Lang.Code <> '') then
     begin
-      MenuItem := TTntMenuItem.Create(LanguageSubMenu);
+      MenuItem := TMenuItem.Create(LanguageSubMenu);
       MenuItem.Caption := Lang.Name;
       if (Lang.NativeName <> '') and (Lang.NativeName <> Lang.Name) then
         MenuItem.Caption := MenuItem.Caption + ' (' + Lang.NativeName + ')';
@@ -1063,19 +1091,19 @@ procedure TMainForm.LanguageClick(Sender: TObject);
 var
   LangCode: TLanguageCode;
 begin
-  LangCode := GetLangCodeOfLangMenuItem(Sender as TTntMenuItem);
+  LangCode := GetLangCodeOfLangMenuItem(Sender as TMenuItem);
   SetLanguageByCode(LangCode);
 end;
 
-function TMainForm.FindLangMenuItem(ALangCode: TLanguageCode): TTntMenuItem;
+function TMainForm.FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
 var
   I: integer;
   LangCode: TLanguageCode;
-  MenuItem: TTntMenuItem;
+  MenuItem: TMenuItem;
 begin
   for I := 0 to LanguageSubMenu.Count - 1 do
   begin
-    MenuItem := (LanguageSubMenu.Items[I] as TTntMenuItem); // Items[] returns TMenuItem instead od TTntMenuItem
+    MenuItem := {(}LanguageSubMenu.Items[I] {as TMenuItem)}; {// Items[] returns TMenuItem instead od TTntMenuItem}
     LangCode := GetLangCodeOfLangMenuItem(MenuItem);
     if LangCode = ALangCode then
     begin
@@ -1088,7 +1116,7 @@ begin
 end;
 
 function TMainForm.GetLangCodeOfLangMenuItem(
-  const LangItem: TTntMenuItem): TLanguageCode;
+  const LangItem: TMenuItem): TLanguageCode;
 begin
   if Pos(LanguageSubMenuItemNamePrefix, LangItem.Name) = 1 then
     Result := Copy(LangItem.Name, Length(LanguageSubMenuItemNamePrefix) + 1, 2)

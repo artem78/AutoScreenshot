@@ -1,9 +1,11 @@
 unit uLocalization;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  TntIniFiles, SysUtils;
+  {TntIniFiles} IniFiles, SysUtils;
 
 type
   TLanguageCode = String[2];
@@ -22,11 +24,11 @@ type
 
   TLocalizer = class
   private
-    Ini: TTntMemIniFile;
+    Ini: {TTntMemIniFile} TMemIniFile;
     LangsDir: String;
 
     function GetLanguageInfo: TLanguageInfo;
-    class function GetLanguageInfoFromIni(const AnIni: TTntMemIniFile): TLanguageInfo;
+    class function GetLanguageInfoFromIni(const AnIni: TMemIniFile): TLanguageInfo;
   public
     constructor Create(ALangsDir: String);
     destructor Destroy; override;
@@ -67,7 +69,7 @@ begin
 end;
 
 class function TLocalizer.GetLanguageInfoFromIni(
-  const AnIni: TTntMemIniFile): TLanguageInfo;
+  const AnIni: TMemIniFile): TLanguageInfo;
 const
   IniSection = 'info';
 var
@@ -94,7 +96,7 @@ var
   SearchRes: TSearchRec;
   LangsCount: integer;
   Idx: integer;
-  Ini: TTntMemIniFile;
+  Ini: TMemIniFile;
 begin
   // Get amount of available languages
   LangsCount := 0;
@@ -115,7 +117,7 @@ begin
   if FindFirst(LangsDir + '*.ini', faAnyFile, SearchRes) = 0 then
   begin
     repeat
-      Ini := TTntMemIniFile.Create(LangsDir + SearchRes.Name);
+      Ini := TMemIniFile.Create(LangsDir + SearchRes.Name);
       try
         try
           Inc(Idx);
@@ -153,7 +155,7 @@ begin
   // Load ini file with strings for selected language
   if not FileExists(AFileName) then
     raise ELocalizerException.CreateFmt('Can`t open localization file "%s"', [FileName]);
-  Ini := TTntMemIniFile.Create(AFileName);
+  Ini := TMemIniFile.Create(AFileName);
 end;
 
 initialization
