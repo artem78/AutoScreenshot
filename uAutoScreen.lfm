@@ -263,7 +263,7 @@ object MainForm: TMainForm
     MinDate = -53780
     TabOrder = 5
     TrailingSeparator = False
-    LeadingZeros = True
+    LeadingZeros = False
     Kind = dtkTime
     TimeFormat = tf24
     TimeDisplay = tdHMS
