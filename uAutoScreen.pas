@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, inifiles, Spin, FileCtrl, {pngImage,}
-  {TrayIcon,} {XPMan,} {jpeg,} ShellAPI, Menus, {GifImage,} Buttons, {TntForms, TntStdCtrls,}
+  {TrayIcon,} {XPMan,} {jpeg,} ShellAPI, Menus, Buttons, UniqueInstance, {TntForms, TntStdCtrls,}
   {TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl,}
   uLocalization, DateTimePicker;
 
@@ -72,6 +72,7 @@ type
     AboutMenuItem: TMenuItem;
     OptionsSubMenu: TMenuItem;
     LanguageSubMenu: TMenuItem;
+    UniqueInstance: TUniqueInstance;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);

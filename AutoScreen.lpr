@@ -22,10 +22,8 @@ const
   MutexName = 'AutoScreenshotMutex';
 
 begin
-  // Prevent the launch of more than one instance of process
-  //MutexName := PChar(Application.ExeName);
-
-  // FixMe
+  //// Prevent the launch of more than one instance of process
+  ////MutexName := PChar(Application.ExeName);
   //MutexHandle := OpenMutex(MUTEX_ALL_ACCESS, False, MutexName);
   //if MutexHandle <> 0 then
   //begin
