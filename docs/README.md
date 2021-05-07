@@ -14,7 +14,7 @@ Auto Screenshot
 * Automatic saving screenshots of full screen with specified time interval (from 1 second to 24 hours)
 * Saving images in PNG, JPEG, BMP or GIF format
 * Pause capture when user is inactive (depending on mouse moves and keyboard events) 
-* Customizable output filenames with variables (date, time, user, computer name) and ability of grouping by folders (for example: by day or month)
+* Customizable output filenames with variables (date, time, user, computer name, sequential number) and ability of grouping by folders (for example: by day or month)
 * Automatic capture can be started on Windows startup
 * Multiple screens support
 * Absolutely free and open source
