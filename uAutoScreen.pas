@@ -197,7 +197,7 @@ const
 
   MinCaptureIntervalInSeconds = 1;
   NoMonitorId = -1;
-  MinCounter = 1;
+  MinCounterValue  = 1;
   MinCounterDigits = 1;
   MaxCounterDigits = 10;
 
@@ -237,7 +237,7 @@ begin
   UpdateLanguages;
 
   // Sequential number
-  SeqNumberValueSpinEdit.MinValue := MinCounter;
+  SeqNumberValueSpinEdit.MinValue := MinCounterValue;
   SeqNumberDigitsCountSpinEdit.MinValue := MinCounterDigits;
   SeqNumberDigitsCountSpinEdit.MaxValue := MaxCounterDigits;
 end;
@@ -251,7 +251,7 @@ const
   DefaultLanguage         = 'en';
   DefaultColorDepth       = cd24Bit;
   DefaultMonitorId        = NoMonitorId;
-  DefaultCounter          = MinCounter;
+  DefaultCounterValue     = MinCounterValue;
   DefaultCounterDigits    = 6;
 var
   DefaultOutputDir: String;
@@ -353,7 +353,7 @@ begin
   end;
 
   // Incremental counter
-  Counter := Ini.ReadInteger(DefaultConfigIniSection, 'Counter', DefaultCounter);
+  Counter := Ini.ReadInteger(DefaultConfigIniSection, 'Counter', DefaultCounterValue);
   CounterDigits := Ini.ReadInteger(DefaultConfigIniSection, 'CounterDigits', DefaultCounterDigits);
 end;
 
