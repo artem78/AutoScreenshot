@@ -98,9 +98,13 @@
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="AutoScreen"/>
+    </Target>
     <SearchPaths>
       <IncludeFiles Value="libs;$(ProjOutDir)"/>
       <OtherUnitFiles Value="libs"/>
+      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       <ObjectPath Value="libs\PNGImage"/>
     </SearchPaths>
     <Parsing>
