@@ -77,9 +77,12 @@ __recovery/
 modules/
 
 
-####################################
-######      Lazarus rules     ######
-####################################
+###########################################
+######     Lazarus ignore rules      ######
+###### Source: https://github.com/   ######
+###### github/gitignore/blob/master/ ######
+###### Global/Lazarus.gitignore      ######
+###########################################
 
 # Lazarus compiler-generated binaries (safe to delete)
 *.exe
