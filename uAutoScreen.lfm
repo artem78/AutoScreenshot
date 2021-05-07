@@ -25,6 +25,7 @@ object MainForm: TMainForm
     Top = 24
     Width = 89
     Alignment = taRightJustify
+    Anchors = [akTop, akRight]
     Caption = 'Saving directory:'
     ParentColor = False
   end
@@ -34,6 +35,7 @@ object MainForm: TMainForm
     Top = 77
     Width = 124
     Alignment = taRightJustify
+    Anchors = [akTop, akRight]
     Caption = 'Saving interval (h:m:s):'
     ParentColor = False
   end
@@ -43,6 +45,7 @@ object MainForm: TMainForm
     Top = 108
     Width = 42
     Alignment = taRightJustify
+    Anchors = [akTop, akRight]
     Caption = 'Format:'
     ParentColor = False
   end
@@ -52,6 +55,7 @@ object MainForm: TMainForm
     Top = 109
     Width = 79
     Alignment = taRightJustify
+    Anchors = [akTop, akRight]
     Caption = 'Compression:'
     ParentColor = False
   end
@@ -60,6 +64,7 @@ object MainForm: TMainForm
     Height = 15
     Top = 109
     Width = 11
+    Anchors = [akTop, akRight]
     Caption = '%'
     ParentColor = False
   end
@@ -69,6 +74,7 @@ object MainForm: TMainForm
     Top = 50
     Width = 106
     Alignment = taRightJustify
+    Anchors = [akTop, akRight]
     Caption = 'Filename template:'
     ParentColor = False
   end
@@ -78,6 +84,7 @@ object MainForm: TMainForm
     Top = 108
     Width = 67
     Alignment = taRightJustify
+    Anchors = [akTop, akRight]
     Caption = 'Color depth:'
     ParentColor = False
   end
@@ -87,6 +94,7 @@ object MainForm: TMainForm
     Top = 236
     Width = 78
     Alignment = taRightJustify
+    Anchors = [akTop, akRight]
     Caption = 'Used monitor:'
     ParentColor = False
   end
