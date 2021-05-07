@@ -1,13 +1,13 @@
 object MainForm: TMainForm
   Left = 192
-  Height = 363
+  Height = 377
   Top = 124
   Width = 656
   ActiveControl = OutputDirEdit
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Auto Screenshot'
-  ClientHeight = 363
+  ClientHeight = 377
   ClientWidth = 656
   Color = clBtnFace
   Font.Color = clWindowText
@@ -118,7 +118,7 @@ object MainForm: TMainForm
   object TakeScreenshotButton: TButton
     Left = 32
     Height = 25
-    Top = 291
+    Top = 324
     Width = 121
     Anchors = [akLeft, akBottom]
     Caption = 'Take screenshot'
@@ -169,7 +169,7 @@ object MainForm: TMainForm
   object AutoCaptureControlGroup: TGroupBox
     Left = 208
     Height = 65
-    Top = 263
+    Top = 296
     Width = 281
     Anchors = [akLeft, akBottom]
     Caption = 'Automatic capture'
@@ -179,7 +179,7 @@ object MainForm: TMainForm
     object StartAutoCaptureButton: TBitBtn
       Left = 24
       Height = 25
-      Top = 24
+      Top = 8
       Width = 105
       Caption = 'Enable'
       NumGlyphs = 2
@@ -190,7 +190,7 @@ object MainForm: TMainForm
     object StopAutoCaptureButton: TBitBtn
       Left = 152
       Height = 25
-      Top = 24
+      Top = 8
       Width = 105
       Caption = 'Disable'
       NumGlyphs = 2
