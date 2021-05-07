@@ -103,9 +103,8 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="libs\PNGImage;libs;$(ProjOutDir)"/>
-      <Libraries Value="libs\PNGImage"/>
-      <OtherUnitFiles Value="libs\PNGImage;libs"/>
+      <IncludeFiles Value="libs;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="libs"/>
       <ObjectPath Value="libs\PNGImage"/>
     </SearchPaths>
     <Parsing>
