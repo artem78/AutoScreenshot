@@ -3,8 +3,8 @@ unit uAutoScreen;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ComCtrls, ExtCtrls, StdCtrls, inifiles, Spin, FileCtrl, {pngImage,}
+  Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,} {pngImage,}
   {TrayIcon,} {XPMan,} {jpeg,} ShellAPI, Menus, Buttons, UniqueInstance, {TntForms, TntStdCtrls,}
   {TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl,}
   uLocalization, DateTimePicker;

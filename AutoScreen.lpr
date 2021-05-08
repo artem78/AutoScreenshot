@@ -15,11 +15,11 @@ uses
   //VistaAltFixUnit in 'libs\VistaAltFixUnit.pas',
   uLanguages in 'uLanguages.pas';
 
-var
-  MutexHandle: THandle;
+{var
+  MutexHandle: THandle;}
   //MutexName: PChar;
-const
-  MutexName = 'AutoScreenshotMutex';
+{const
+  MutexName = 'AutoScreenshotMutex';}
 
 begin
   //// Prevent the launch of more than one instance of process
