@@ -583,14 +583,11 @@ begin
   AlphaBlendValue := 0;
   AlphaBlend := True;
   try
-    try
-      MakeScreenshot;
-    finally
-      // Restore transparency to initial value
-      AlphaBlendValue := DefaultTransparency;
-      AlphaBlend := False;
-    end;
-  except
+    MakeScreenshot;
+  finally
+    // Restore transparency to initial value
+    AlphaBlendValue := DefaultTransparency;
+    AlphaBlend := False;
   end;
 end;
 
