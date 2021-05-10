@@ -16,7 +16,7 @@
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <Icon Value="0"/>
-      <Resources Count="10">
+      <Resources Count="11">
         <Resource_0 FileName="res\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
         <Resource_1 FileName="res\camera_flash1.ico" Type="ICON" ResourceName="_CAMERA_FLASH_1"/>
         <Resource_2 FileName="res\camera_flash2.ico" Type="ICON" ResourceName="_CAMERA_FLASH_2"/>
@@ -27,6 +27,7 @@
         <Resource_7 FileName="res\camera_flash7.ico" Type="ICON" ResourceName="_CAMERA_FLASH_7"/>
         <Resource_8 FileName="res\start.bmp" Type="BITMAP" ResourceName="_START_ICON"/>
         <Resource_9 FileName="res\stop.bmp" Type="BITMAP" ResourceName="_STOP_ICON"/>
+        <Resource_10 FileName="res\logo.png" Type="RCDATA" ResourceName="_LOGO"/>
       </Resources>
     </General>
     <i18n>

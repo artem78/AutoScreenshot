@@ -9,6 +9,9 @@ uses
   Dialogs, StdCtrls, {ShellApi,} LCLIntf, ExtCtrls{, TntForms, TntStdCtrls, TntExtCtrls};
 
 type
+
+  { TAboutForm }
+
   TAboutForm = class(TForm)
     ProgramNameLabel: TLabel;
     VersionLabel: TLabel;
@@ -48,11 +51,20 @@ procedure TAboutForm.FormCreate(Sender: TObject);
 var
   BuildDateTime: TDateTime;
   BuildStr: WideString;
+  png: TPortableNetworkGraphic;
 begin
   Caption := Localizer.I18N('About');
 
-  Logo.Picture.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
-      64, 64, LR_DEFAULTCOLOR);
+  //Logo.Picture.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
+  //    64, 64, LR_DEFAULTCOLOR);
+  //Logo.Picture.LoadFromLazarusResource('_LOGO');
+  png := TPortableNetworkGraphic.Create;
+  try
+     Png.LoadFromResourceName(Hinstance, '_LOGO');
+     Logo.Picture.Graphic := Png;
+  finally
+     Png.Free;
+  end;
 
   ProgramNameLabel.Caption := Application.Title;
   VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr(True);

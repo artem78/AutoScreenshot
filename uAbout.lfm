@@ -1,13 +1,14 @@
 object AboutForm: TAboutForm
   Left = 192
-  Height = 209
+  Height = 215
   Top = 124
-  Width = 545
+  Width = 358
   ActiveControl = CloseButton
+  AutoSize = True
   BorderStyle = bsDialog
   Caption = 'About'
-  ClientHeight = 209
-  ClientWidth = 545
+  ClientHeight = 215
+  ClientWidth = 358
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -12
@@ -17,10 +18,14 @@ object AboutForm: TAboutForm
   LCLVersion = '1.6.0.4'
   Visible = False
   object ProgramNameLabel: TLabel
-    Left = 104
+    AnchorSideLeft.Control = Logo
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = Logo
+    Left = 94
     Height = 36
-    Top = 16
+    Top = 15
     Width = 174
+    BorderSpacing.Left = 15
     Caption = 'Auto Screen'
     Font.Color = 8611623
     Font.Height = -32
@@ -29,27 +34,44 @@ object AboutForm: TAboutForm
     ParentFont = False
   end
   object VersionLabel: TLabel
-    Left = 104
+    AnchorSideLeft.Control = ProgramNameLabel
+    AnchorSideTop.Control = ProgramNameLabel
+    AnchorSideTop.Side = asrBottom
+    Left = 94
     Height = 15
-    Top = 64
+    Top = 57
     Width = 74
+    BorderSpacing.Top = 6
+    BorderSpacing.Bottom = 6
     Caption = 'Version: X.X.X'
     ParentColor = False
   end
   object AuthorLabel: TLabel
-    Left = 104
+    AnchorSideLeft.Control = ProgramNameLabel
+    AnchorSideTop.Control = VersionLabel
+    AnchorSideTop.Side = asrBottom
+    Left = 94
     Height = 15
-    Top = 88
+    Top = 78
     Width = 50
+    BorderSpacing.Top = 6
+    BorderSpacing.Right = 15
+    BorderSpacing.Bottom = 6
     Caption = 'Author: ...'
     ParentColor = False
   end
   object LinkLabel: TLabel
+    AnchorSideLeft.Control = ProgramNameLabel
+    AnchorSideTop.Control = LocalizationAuthorLabel
+    AnchorSideTop.Side = asrBottom
     Cursor = crHandPoint
-    Left = 104
+    Left = 94
     Height = 15
-    Top = 136
+    Top = 120
     Width = 25
+    BorderSpacing.Top = 6
+    BorderSpacing.Right = 15
+    BorderSpacing.Bottom = 15
     Caption = 'Url...'
     Font.Color = clBlue
     Font.Height = -12
@@ -60,33 +82,57 @@ object AboutForm: TAboutForm
     OnClick = LinkLabelClick
   end
   object Logo: TImage
-    Left = 16
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    Left = 15
     Height = 64
-    Top = 16
+    Top = 15
     Width = 64
+    BorderSpacing.Left = 15
+    BorderSpacing.Top = 15
   end
   object BuildDateLabel: TLabel
-    Left = 248
+    AnchorSideLeft.Control = VersionLabel
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = VersionLabel
+    AnchorSideTop.Side = asrCenter
+    Left = 192
     Height = 15
-    Top = 64
+    Top = 57
     Width = 123
+    BorderSpacing.Left = 24
+    BorderSpacing.Right = 15
     Caption = 'Build date: XX.XX.XXXX'
     ParentColor = False
   end
   object LocalizationAuthorLabel: TLabel
-    Left = 104
+    AnchorSideLeft.Control = ProgramNameLabel
+    AnchorSideTop.Control = AuthorLabel
+    AnchorSideTop.Side = asrBottom
+    Left = 94
     Height = 15
-    Top = 112
+    Top = 99
     Width = 80
+    BorderSpacing.Top = 6
+    BorderSpacing.Right = 15
+    BorderSpacing.Bottom = 6
     Caption = 'Localization: ...'
     ParentColor = False
   end
   object CloseButton: TButton
-    Left = 224
+    AnchorSideLeft.Control = Owner
+    AnchorSideLeft.Side = asrCenter
+    AnchorSideTop.Control = LinkLabel
+    AnchorSideTop.Side = asrBottom
+    Left = 150
     Height = 25
-    Top = 170
-    Width = 97
-    Anchors = [akLeft, akBottom]
+    Top = 150
+    Width = 59
+    AutoSize = True
+    BorderSpacing.Left = 15
+    BorderSpacing.Top = 15
+    BorderSpacing.Right = 15
+    BorderSpacing.Bottom = 15
     Caption = 'Close'
     OnClick = CloseButtonClick
     TabOrder = 0
