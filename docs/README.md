@@ -29,7 +29,7 @@ Auto Screenshot
 * [Russian](README-ru.md)
 * Chinese
 * Ukrainian
-* Portugese
+* Portuguese
 * Spanish
 
 [Want more?](https://github.com/artem78/AutoScreenshot/issues/5)
