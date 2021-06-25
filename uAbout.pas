@@ -51,7 +51,7 @@ procedure TAboutForm.FormCreate(Sender: TObject);
 var
   BuildDateTime: TDateTime;
   BuildStr: WideString;
-  png: TPortableNetworkGraphic;
+  Png: TPortableNetworkGraphic;
 begin
   Caption := Localizer.I18N('About');
 
