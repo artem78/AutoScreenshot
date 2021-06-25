@@ -7,6 +7,10 @@ object AboutForm: TAboutForm
   AutoSize = True
   BorderStyle = bsDialog
   Caption = 'About'
+  ChildSizing.LeftRightSpacing = 15
+  ChildSizing.TopBottomSpacing = 15
+  ChildSizing.HorizontalSpacing = 15
+  ChildSizing.VerticalSpacing = 6
   ClientHeight = 215
   ClientWidth = 358
   Color = clBtnFace
@@ -41,8 +45,6 @@ object AboutForm: TAboutForm
     Height = 15
     Top = 57
     Width = 74
-    BorderSpacing.Top = 6
-    BorderSpacing.Bottom = 6
     Caption = 'Version: X.X.X'
     ParentColor = False
   end
@@ -54,9 +56,6 @@ object AboutForm: TAboutForm
     Height = 15
     Top = 78
     Width = 50
-    BorderSpacing.Top = 6
-    BorderSpacing.Right = 15
-    BorderSpacing.Bottom = 6
     Caption = 'Author: ...'
     ParentColor = False
   end
@@ -69,9 +68,6 @@ object AboutForm: TAboutForm
     Height = 15
     Top = 120
     Width = 25
-    BorderSpacing.Top = 6
-    BorderSpacing.Right = 15
-    BorderSpacing.Bottom = 15
     Caption = 'Url...'
     Font.Color = clBlue
     Font.Height = -12
@@ -88,8 +84,6 @@ object AboutForm: TAboutForm
     Height = 64
     Top = 15
     Width = 64
-    BorderSpacing.Left = 15
-    BorderSpacing.Top = 15
   end
   object BuildDateLabel: TLabel
     AnchorSideLeft.Control = VersionLabel
@@ -101,7 +95,6 @@ object AboutForm: TAboutForm
     Top = 57
     Width = 123
     BorderSpacing.Left = 24
-    BorderSpacing.Right = 15
     Caption = 'Build date: XX.XX.XXXX'
     ParentColor = False
   end
@@ -113,9 +106,6 @@ object AboutForm: TAboutForm
     Height = 15
     Top = 99
     Width = 80
-    BorderSpacing.Top = 6
-    BorderSpacing.Right = 15
-    BorderSpacing.Bottom = 6
     Caption = 'Localization: ...'
     ParentColor = False
   end
@@ -129,9 +119,7 @@ object AboutForm: TAboutForm
     Top = 150
     Width = 59
     AutoSize = True
-    BorderSpacing.Left = 15
     BorderSpacing.Top = 15
-    BorderSpacing.Right = 15
     BorderSpacing.Bottom = 15
     Caption = 'Close'
     OnClick = CloseButtonClick
