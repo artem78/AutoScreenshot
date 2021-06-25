@@ -121,6 +121,7 @@ object AboutForm: TAboutForm
     AutoSize = True
     BorderSpacing.Top = 15
     BorderSpacing.Bottom = 15
+    Cancel = True
     Caption = 'Close'
     OnClick = CloseButtonClick
     TabOrder = 0
