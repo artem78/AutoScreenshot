@@ -745,39 +745,46 @@ end;
 
 procedure TMainForm.TranslateForm;
 begin
-  // Menubar
-  OptionsSubMenu.Caption := Localizer.I18N('Options');
-  LanguageSubMenu.Caption := Localizer.I18N('Language');
-  HelpSubMenu.Caption := Localizer.I18N('Help');
-  AboutMenuItem.Caption := Localizer.I18N('About') + '...';
+  DisableAutoSizing;
 
-  // Main form components
-  OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
-  OpenOutputDirButton.Caption := Localizer.I18N('OpenDirectory');
-  OpenOutputDirButton.Hint := Localizer.I18N('OpenDirectoryHint');
-  FileNameTemplateLabel.Caption := Localizer.I18N('FileNameTemplate') + ':';
-  CaptureIntervalLabel.Caption := Localizer.I18N('CaptureInterval') + ':';
-  StopWhenInactiveCheckBox.Caption := Localizer.I18N('PauseCaptureWhenIdle');
-  StopWhenInactiveCheckBox.Hint := Localizer.I18N('PauseCaptureWhenIdleHint');
-  ImageFormatLabel.Caption := Localizer.I18N('Format') + ':';
-  ColorDepthLabel.Caption := Localizer.I18N('ColorDepth') + ':';
-  JPEGQualityLabel.Caption := Localizer.I18N('Quality') + ':';
-  GrayscaleCheckBox.Caption := Localizer.I18N('Grayscale');
-  AutoCaptureControlGroup.Caption := Localizer.I18N('AutoCapture');
-  StartAutoCaptureButton.Caption := Localizer.I18N('StartCapture');
-  StopAutoCaptureButton.Caption := Localizer.I18N('StopCapture');
-  TakeScreenshotButton.Caption := Localizer.I18N('TakeScreenshot');
-  StartCaptureOnStartUpCheckBox.Caption := Localizer.I18N('StartCaptureOnStartUp');
-  StartMinimizedCheckBox.Caption := Localizer.I18N('StartMinimized');
-  AutoRunCheckBox.Caption := Localizer.I18N('AutoRun');
-  MonitorLabel.Caption := Localizer.I18N('UsedMonitor') + ':';
-  FillMonitorList;
+  try
+    // Menubar
+    OptionsSubMenu.Caption := Localizer.I18N('Options');
+    LanguageSubMenu.Caption := Localizer.I18N('Language');
+    HelpSubMenu.Caption := Localizer.I18N('Help');
+    AboutMenuItem.Caption := Localizer.I18N('About') + '...';
 
-  // Tray icon
-  RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
-  ToggleAutoCaptureTrayMenuItem.Caption := Localizer.I18N('EnableAutoCapture');
-  TakeScreenshotTrayMenuItem.Caption := Localizer.I18N('TakeScreenshot');
-  ExitTrayMenuItem.Caption := Localizer.I18N('Exit');
+    // Main form components
+    OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
+    OpenOutputDirButton.Caption := Localizer.I18N('OpenDirectory');
+    OpenOutputDirButton.Hint := Localizer.I18N('OpenDirectoryHint');
+    FileNameTemplateLabel.Caption := Localizer.I18N('FileNameTemplate') + ':';
+    CaptureIntervalLabel.Caption := Localizer.I18N('CaptureInterval') + ':';
+    StopWhenInactiveCheckBox.Caption := Localizer.I18N('PauseCaptureWhenIdle');
+    StopWhenInactiveCheckBox.Hint := Localizer.I18N('PauseCaptureWhenIdleHint');
+    ImageFormatLabel.Caption := Localizer.I18N('Format') + ':';
+    ColorDepthLabel.Caption := Localizer.I18N('ColorDepth') + ':';
+    JPEGQualityLabel.Caption := Localizer.I18N('Quality') + ':';
+    GrayscaleCheckBox.Caption := Localizer.I18N('Grayscale');
+    AutoCaptureControlGroup.Caption := Localizer.I18N('AutoCapture');
+    StartAutoCaptureButton.Caption := Localizer.I18N('StartCapture');
+    StopAutoCaptureButton.Caption := Localizer.I18N('StopCapture');
+    TakeScreenshotButton.Caption := Localizer.I18N('TakeScreenshot');
+    StartCaptureOnStartUpCheckBox.Caption := Localizer.I18N('StartCaptureOnStartUp');
+    StartMinimizedCheckBox.Caption := Localizer.I18N('StartMinimized');
+    AutoRunCheckBox.Caption := Localizer.I18N('AutoRun');
+    MonitorLabel.Caption := Localizer.I18N('UsedMonitor') + ':';
+    FillMonitorList;
+
+    // Tray icon
+    RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
+    ToggleAutoCaptureTrayMenuItem.Caption := Localizer.I18N('EnableAutoCapture');
+    TakeScreenshotTrayMenuItem.Caption := Localizer.I18N('TakeScreenshot');
+    ExitTrayMenuItem.Caption := Localizer.I18N('Exit');
+
+  finally
+    EnableAutoSizing;
+  end;
 end;
 
 procedure TMainForm.StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
