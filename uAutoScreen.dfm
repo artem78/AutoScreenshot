@@ -215,10 +215,10 @@ object MainForm: TMainForm
     TabOrder = 3
     OnChange = FileNameTemplateComboBoxChange
     Items.Strings = (
-      '%Y-%M-%D\%Y-%M-%D %H.%N.%S'
-      '%Y-%M\%D\%Y-%M-%D_%H.%N.%S'
-      '%Y\%M\%D\%H_%N_%S'
-      'screenshot %Y-%M-%D %H%N%S'
+      'screenshot %Y-%M-%D %H-%N-%S'
+      '%Y\%M\%D\screenshot %H-%N-%S'
+      '%Y-%M\%D\screenshot %H-%N-%S'
+      '%COMP\%USER\screenshot %Y-%M-%D %H-%N-%S'
       'screenshot %NUM')
   end
   object FileNameTemplateHelpButton: TTntButton
