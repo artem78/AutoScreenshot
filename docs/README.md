@@ -31,8 +31,9 @@ Auto Screenshot
 * Ukrainian
 * Portuguese
 * Spanish
+* Turkish
 
-[Want more?](https://github.com/artem78/AutoScreenshot/issues/5)
+[Want to add more?](https://github.com/artem78/AutoScreenshot/issues/5)
 
 ## Supported operation systems
 * Microsoft Windows XP or higher (32/64-bit)
