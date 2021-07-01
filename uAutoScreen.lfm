@@ -303,10 +303,10 @@ object MainForm: TMainForm
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 15
     Items.Strings = (
-      '%Y-%M-%D\%Y-%M-%D %H.%N.%S'
-      '%Y-%M\%D\%Y-%M-%D_%H.%N.%S'
-      '%Y\%M\%D\%H_%N_%S'
-      'screenshot %Y-%M-%D %H%N%S'
+      'screenshot %Y-%M-%D %H-%N-%S'
+      '%Y\%M\%D\screenshot %H-%N-%S'
+      '%Y-%M\%D\screenshot %H-%N-%S'
+      '%COMP\%USER\screenshot %Y-%M-%D %H-%N-%S'
       'screenshot %NUM'
     )
     OnChange = FileNameTemplateComboBoxChange
