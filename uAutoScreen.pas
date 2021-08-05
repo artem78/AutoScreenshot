@@ -140,6 +140,7 @@ type
     procedure InitUI;
     procedure ReadSettings;
     procedure UpdateColorDepthValues;
+    procedure UpdateMonitorList;
     procedure FillMonitorList;
     procedure SetMonitorId(MonitorId: Integer);
     function GetMonitorId: Integer;
@@ -254,6 +255,9 @@ begin
   SeqNumberValueSpinEdit.MinValue := MinCounterValue;
   SeqNumberDigitsCountSpinEdit.MinValue := MinCounterDigits;
   SeqNumberDigitsCountSpinEdit.MaxValue := MaxCounterDigits;
+
+  // Available monitors
+  UpdateMonitorList;
 end;
 
 procedure TMainForm.ReadSettings;
@@ -350,20 +354,10 @@ begin
     RestoreFromTray;
 
   // Multiple monitors
-  if Screen.MonitorCount >= 2 then
-  begin
-    try
-      MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Monitor', DefaultMonitorId);
-    except
-      MonitorId := DefaultMonitorId;
-    end;
-  end
-  else
-  begin // Only one monitor available
-    MonitorLabel.Enabled := False;
-    MonitorComboBox.Enabled := False;
-    //MonitorId := NoMonitorId;
-    MonitorId := 0;
+  try
+    MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Monitor', DefaultMonitorId);
+  except
+    MonitorId := DefaultMonitorId;
   end;
 
   // Incremental counter
@@ -937,6 +931,29 @@ begin
   ColorDepthComboBox.OnChange(ColorDepthComboBox);
 end;
 
+procedure TMainForm.UpdateMonitorList;
+begin
+  if Screen.MonitorCount >= 2 then
+  begin // Multiple monitors
+    MonitorLabel.Enabled := True;
+    MonitorComboBox.Enabled := True;
+
+    // Fix out of bounds
+    if MonitorId >= Screen.MonitorCount then
+      //MonitorId := Screen.MonitorCount - 1; // Last
+      MonitorId := NoMonitorId;
+  end
+  else
+  begin // Only one monitor available
+    MonitorLabel.Enabled := False;
+    MonitorComboBox.Enabled := False;
+    //MonitorId := NoMonitorId;
+    MonitorId := 0;
+  end;
+
+  FillMonitorList;
+end;
+
 function TMainForm.GetColorDepth: TColorDepth;
 begin
   if ImageFormatInfoArray[ImageFormat].ColorDepth = [] then
@@ -1039,8 +1056,20 @@ procedure TMainForm.FillMonitorList;
 var
   Idx, SelIdx: Integer;
   Str: WideString;
+  IsLocalizationLoaded: Boolean;
 
 begin
+  IsLocalizationLoaded := True;
+  try
+    Localizer.I18N('test...')
+  except
+    IsLocalizationLoaded := False;
+  end;
+
+  if not IsLocalizationLoaded then
+    Exit;
+
+
   with MonitorComboBox do
   begin
     //SelId := MonitorId;
@@ -1089,7 +1118,8 @@ begin
   else
     raise Exception.CreateFmt('Monitor id=%d not exists', [MonitorId]);
 
-  Ini.WriteInteger(DefaultConfigIniSection, 'Monitor', MonitorId);
+  if Ini <> Nil then
+    Ini.WriteInteger(DefaultConfigIniSection, 'Monitor', MonitorId);
 end;
 
 procedure TMainForm.AboutMenuItemClick(Sender: TObject);
