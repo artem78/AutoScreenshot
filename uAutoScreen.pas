@@ -120,6 +120,8 @@ type
 
     FCounter: Integer;
     FCounterDigits: Integer {Byte};
+
+    PrevWndProc: WndProc;
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -224,6 +226,22 @@ uses uAbout, DateUtils, uUtils, Math{, VistaAltFixUnit}, uFileNameTemplateHelpFo
 
 const
   LanguageSubMenuItemNamePrefix = 'LanguageSubMenuItem_';
+
+function WndCallback(MyHWND: HWND; uMSG: UINT; wParam: WParam; lParam: LParam): LRESULT; StdCall;
+begin
+  case uMSG of
+    WM_DISPLAYCHANGE, // Screen resolution/orientation changed
+    WM_DEVICECHANGE:  // Any hardware configuration changed (including monitors)
+      begin
+        MainForm.UpdateMonitorList;
+      end;
+  end;
+
+  //if WindowInfo^.WinControl is TForm1 then //Eliminate form1 global variable for safer handling.
+  //  Result:= CallWindowProc(TForm1(WindowInfo^.WinControl).PrevWndProc, MyHWND, uMSG, WParam, LParam);
+
+  Result := CallWindowProc(MainForm.PrevWndProc, MyHWND, uMsg, WParam, LParam);
+end;
 
 procedure TMainForm.InitUI;
 var
@@ -368,6 +386,11 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+  { Replace default window function with custom one
+    for process messages when screen configuration changed }
+  PrevWndProc := Windows.WNDPROC
+    (SetWindowLongPtr(Self.Handle, GWL_WNDPROC {GWLP_WNDPROC}, PtrUInt(@WndCallback)));
+
   Application.OnMinimize := ApplicationMinimize;
 
   InitUI;
@@ -595,6 +618,9 @@ end;
 
 procedure TMainForm.JPEGQualitySpinEditChange(Sender: TObject);
 begin
+  if Ini = Nil then
+    Exit;
+
   try
     Ini.WriteInteger(DefaultConfigIniSection, 'JPEGQuality', JPEGQualitySpinEdit.Value);
   finally
@@ -933,6 +959,10 @@ end;
 
 procedure TMainForm.UpdateMonitorList;
 begin
+  // Update array in Screen variable first
+  Screen.UpdateMonitors;
+
+  // Disable choosing monitor if only one available
   if Screen.MonitorCount >= 2 then
   begin // Multiple monitors
     MonitorLabel.Enabled := True;
@@ -951,6 +981,7 @@ begin
     MonitorId := 0;
   end;
 
+  // Fill combobox
   FillMonitorList;
 end;
 
@@ -1070,6 +1101,7 @@ begin
     Exit;
 
 
+  // Fill combobox with monitor list
   with MonitorComboBox do
   begin
     //SelId := MonitorId;
@@ -1257,6 +1289,9 @@ end;
 
 procedure TMainForm.SeqNumberValueSpinEditChange(Sender: TObject);
 begin
+  if Ini = Nil then
+    Exit;
+
   try
     Counter := SeqNumberValueSpinEdit.Value;
   finally
@@ -1277,6 +1312,9 @@ end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
 begin
+  if Ini = Nil then
+    Exit;
+
   try
     CounterDigits := SeqNumberDigitsCountSpinEdit.Value;
   finally
