@@ -48,6 +48,14 @@ begin
 end;
 
 procedure TAboutForm.FormCreate(Sender: TObject);
+const
+  Bitness =
+  {$IFDEF WIN64}
+    '64-bit'
+  {$ELSE}
+    '32-bit'
+  {$ENDIF}
+  ;
 var
   BuildDateTime: TDateTime;
   BuildStr: WideString;
@@ -67,7 +75,7 @@ begin
   end;
 
   ProgramNameLabel.Caption := Application.Title;
-  VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr(True);
+  VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr(True) + ' (' + Bitness + ')';
   AuthorLabel.Caption := Localizer.I18N('Author') + ': ' + 'Artem Demin (artem78) <megabyte1024@ya.ru>';
   with Localizer.LanguageInfo do
   begin
