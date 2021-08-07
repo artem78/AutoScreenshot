@@ -42,8 +42,8 @@
       <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.6.2"/>
     </VersionInfo>
     <BuildModes Count="3">
-      <Item1 Name="Default" Default="True"/>
-      <Item2 Name="Debug">
+      <Item1 Name="Default (32bit)" Default="True"/>
+      <Item2 Name="Debug (32bit)">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -69,6 +69,8 @@
               <OverflowChecks Value="True"/>
               <StackChecks Value="True"/>
             </Checks>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -87,7 +89,7 @@
           </Other>
         </CompilerOptions>
       </Item2>
-      <Item3 Name="Release">
+      <Item3 Name="Release (32bit)">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -107,6 +109,8 @@
           </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -197,6 +201,10 @@
         <SyntaxMode Value="Delphi"/>
       </SyntaxOptions>
     </Parsing>
+    <CodeGeneration>
+      <TargetCPU Value="i386"/>
+      <TargetOS Value="win32"/>
+    </CodeGeneration>
     <Linking>
       <Options>
         <Win32>
