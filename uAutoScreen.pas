@@ -960,9 +960,9 @@ procedure TMainForm.TrayIconAnimationTimerTimer(Sender: TObject);
 var
   ResName: String;
 begin
-  Inc(TrayIconIdx);
-  if (TrayIconIdx <= High(TrayIconIdx)) then
+  if (TrayIconIdx < High(TrayIconIdx)) then
   begin
+    Inc(TrayIconIdx);
     ResName := Format('_CAMERA_FLASH_%d', [TrayIconIdx]);
     TrayIcon.Icon.Handle := LoadImage(HInstance, PChar(ResName), IMAGE_ICON,
       16, 16, LR_DEFAULTCOLOR);
