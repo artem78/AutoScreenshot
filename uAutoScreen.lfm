@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 192
+  Left = 278
   Height = 400
-  Top = 124
+  Top = 153
   Width = 656
   ActiveControl = OutputDirEdit
   AutoSize = True
@@ -12,7 +12,7 @@ object MainForm: TMainForm
   ChildSizing.TopBottomSpacing = 15
   ChildSizing.HorizontalSpacing = 6
   ChildSizing.VerticalSpacing = 6
-  ClientHeight = 400
+  ClientHeight = 380
   ClientWidth = 656
   Color = clBtnFace
   Font.Color = clWindowText
@@ -23,7 +23,6 @@ object MainForm: TMainForm
   OnDestroy = FormDestroy
   Position = poScreenCenter
   LCLVersion = '1.6.0.4'
-  Visible = False
   object OutputDirLabel: TLabel
     AnchorSideTop.Control = OutputDirEdit
     AnchorSideTop.Side = asrCenter

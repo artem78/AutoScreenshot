@@ -1,7 +1,7 @@
 object AboutForm: TAboutForm
-  Left = 192
+  Left = 277
   Height = 215
-  Top = 124
+  Top = 184
   Width = 358
   ActiveControl = CloseButton
   AutoSize = True
@@ -20,7 +20,6 @@ object AboutForm: TAboutForm
   OnCreate = FormCreate
   Position = poOwnerFormCenter
   LCLVersion = '1.6.0.4'
-  Visible = False
   object ProgramNameLabel: TLabel
     AnchorSideLeft.Control = Logo
     AnchorSideLeft.Side = asrBottom
