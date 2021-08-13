@@ -10,7 +10,7 @@ uses
   uLocalization, DateTimePicker;
 
 type
-  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP, fmtGIF);
+  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF});
 
   TColorDepth = (cd8Bit=8, cd16Bit=16, cd24Bit=24, cd32Bit=32);
 
@@ -152,18 +152,21 @@ type
 
 const
   ImageFormatInfoArray: TImageFormatInfoArray = (
+    { FixMe: Unsupported modes by Free Pascal Graphics unit are commented.
+      Think about use any third party graphics library instead
+      (https://wiki.freepascal.org/Graphics_libraries). }
     (
       Name:         'PNG';
       Extension:    'png';
       HasQuality:   False;
       HasGrayscale: False;
-      ColorDepth:   [cd8Bit, cd24Bit]
+      ColorDepth:   [{cd8Bit, cd16Bit, cd24Bit, cd32Bit}] // Only 24bit
     ),
     (
       Name:         'JPG';
       Extension:    'jpg';
       HasQuality:   True;
-      HasGrayscale: True;
+      HasGrayscale: {True} False;
       ColorDepth:   []
     ),
     (
@@ -171,15 +174,15 @@ const
       Extension:    'bmp';
       HasQuality:   False;
       HasGrayscale: False;
-      ColorDepth:   [cd8Bit, cd16Bit, cd24Bit, cd32Bit]
-    ),
+      ColorDepth:   [{cd8Bit, cd16Bit,} cd24Bit, cd32Bit]
+    ){,
     (
       Name:         'GIF';
       Extension:    'gif';
       HasQuality:   False;
       HasGrayscale: False;
       ColorDepth:   []
-    )
+    )}
   );
 
   DefaultConfigIniSection = 'main';
@@ -532,7 +535,7 @@ begin
           Bitmap.SaveToFile(ImagePath);
         end;
 
-      fmtGIF:    // GIF
+      {fmtGIF:    // GIF
         begin
           GIF := TGIFImage.Create;
           try
@@ -542,7 +545,7 @@ begin
           finally
             GIF.Free;
           end;
-        end;
+        end;}
     end;
   finally
     Bitmap.Free;
