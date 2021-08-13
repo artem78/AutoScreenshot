@@ -151,7 +151,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="7">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -182,6 +182,13 @@
         <Filename Value="uLanguages.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="ufilenametemplatehelpform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FileNameTemplateHelpForm"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uFileNameTemplateHelpForm"/>
+      </Unit6>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

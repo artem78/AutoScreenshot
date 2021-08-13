@@ -196,7 +196,7 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uUtils, Math{, VistaAltFixUnit};
+uses uAbout, DateUtils, uUtils, Math{, VistaAltFixUnit}, uFileNameTemplateHelpForm;
 
 //{$R *.dfm}
 {$R *.lfm}
@@ -807,7 +807,12 @@ end;
 
 procedure TMainForm.FileNameTemplateHelpButtonClick(Sender: TObject);
 begin
-  ShowMessage(Localizer.I18N('FileNameTemplateHelpText'));
+  //ShowMessage(Localizer.I18N('FileNameTemplateHelpText')); // Can`t show tabs in Windows
+
+  with TFileNameTemplateHelpForm.Create(Application) do
+  begin
+    ShowModal;
+  end;
 end;
 
 function TMainForm.GetImageFormat: TImageFormat;
