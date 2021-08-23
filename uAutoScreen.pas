@@ -76,6 +76,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
@@ -137,6 +138,7 @@ type
     procedure LanguageClick(Sender: TObject);
     function GetLangCodeOfLangMenuItem(const LangItem: TMenuItem): TLanguageCode;
     function FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
+    procedure RecalculateLabelWidths;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -370,6 +372,11 @@ begin
     OutputDirEdit.Text := Dir;
     Ini.WriteString(DefaultConfigIniSection, 'OutputDir', Dir);
   end;
+end;
+
+procedure TMainForm.FormShow(Sender: TObject);
+begin
+  RecalculateLabelWidths;
 end;
 
 procedure TMainForm.OutputDirEditChange(Sender: TObject);
@@ -787,6 +794,9 @@ begin
 
   finally
     EnableAutoSizing;
+
+    // Recalculate with of labels area
+    RecalculateLabelWidths;
   end;
 end;
 
@@ -1129,6 +1139,21 @@ begin
   end;
 
   raise Exception.CreateFmt('Language code "%s" not found', [ALangCode]);
+end;
+
+procedure TMainForm.RecalculateLabelWidths;
+var
+  MaxWidth: Integer;
+begin
+  MaxWidth := 0;
+  MaxWidth := max(MaxWidth, OutputDirLabel.Width);
+  MaxWidth := max(MaxWidth, FileNameTemplateLabel.Width);
+  MaxWidth := max(MaxWidth, CaptureIntervalLabel.Width);
+  MaxWidth := max(MaxWidth, ImageFormatLabel.Width);
+  MaxWidth := max(MaxWidth, MonitorLabel.Width);
+
+  OutputDirEdit.Left := MaxWidth + ChildSizing.LeftRightSpacing
+      + ChildSizing.HorizontalSpacing;
 end;
 
 function TMainForm.GetLangCodeOfLangMenuItem(

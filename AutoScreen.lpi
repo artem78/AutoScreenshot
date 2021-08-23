@@ -186,6 +186,7 @@
         <Filename Value="ufilenametemplatehelpform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FileNameTemplateHelpForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uFileNameTemplateHelpForm"/>
       </Unit6>

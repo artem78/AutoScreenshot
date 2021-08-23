@@ -21,6 +21,7 @@ object MainForm: TMainForm
   Menu = MainMenu
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '1.6.0.4'
   object OutputDirLabel: TLabel
@@ -177,6 +178,8 @@ object MainForm: TMainForm
     TabOrder = 6
   end
   object OpenOutputDirButton: TButton
+    AnchorSideLeft.Control = ChooseOutputDirButton
+    AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = ChooseOutputDirButton
     AnchorSideTop.Side = asrCenter
     Left = 503
@@ -223,10 +226,11 @@ object MainForm: TMainForm
     TabOrder = 5
   end
   object AutoCaptureControlGroup: TGroupBox
-    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideLeft.Control = Owner
+    AnchorSideLeft.Side = asrCenter
     AnchorSideTop.Control = MonitorComboBox
     AnchorSideTop.Side = asrBottom
-    Left = 191
+    Left = 217
     Height = 57
     Top = 278
     Width = 222
