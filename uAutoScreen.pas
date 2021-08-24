@@ -73,6 +73,11 @@ type
     OptionsSubMenu: TMenuItem;
     LanguageSubMenu: TMenuItem;
     UniqueInstance: TUniqueInstance;
+    SeqNumberGroup: TGroupBox;
+    SeqNumberValueLabel: TLabel;
+    SeqNumberValueSpinEdit: TSpinEdit;
+    SeqNumberDigitsCountSpinEdit: TSpinEdit;
+    SeqNumberDigitsCountLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ChooseOutputDirButtonClick(Sender: TObject);
@@ -103,6 +108,8 @@ type
     procedure MonitorComboBoxChange(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
     procedure TrayIconDblClick(Sender: TObject);
+    procedure SeqNumberValueSpinEditChange(Sender: TObject);
+    procedure SeqNumberDigitsCountSpinEditChange(Sender: TObject);
   private
     { Private declarations }
     AvailableLanguages: TLanguagesArray;
@@ -111,6 +118,9 @@ type
     FTrayIconState: TTrayIconState;
 
     TrayIconIdx: 1..7;
+
+    FCounter: Integer;
+    FCounterDigits: Integer {Byte};
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -139,6 +149,9 @@ type
     function GetLangCodeOfLangMenuItem(const LangItem: TMenuItem): TLanguageCode;
     function FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
     procedure RecalculateLabelWidths;
+    function FormatPath(Str: string): string;
+    procedure SetCounter(Val: Integer);
+    procedure SetCounterDigits(Val: Integer);
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -148,6 +161,8 @@ type
     property ColorDepth: TColorDepth read GetColorDepth write SetColorDepth;
     property TrayIconState: TTrayIconState write SetTrayIconState;
     property MonitorId: Integer read GetMonitorId write SetMonitorId;
+    property Counter: Integer read FCounter write SetCounter;
+    property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
   public
     { Public declarations }
   end;
@@ -191,6 +206,9 @@ const
 
   MinCaptureIntervalInSeconds = 1;
   NoMonitorId = -1;
+  MinCounterValue  = 1;
+  MinCounterDigits = 1;
+  MaxCounterDigits = 10;
 
 var
   MainForm: TMainForm;
@@ -227,6 +245,11 @@ begin
 
   // Available languages
   UpdateLanguages;
+
+  // Sequential number
+  SeqNumberValueSpinEdit.MinValue := MinCounterValue;
+  SeqNumberDigitsCountSpinEdit.MinValue := MinCounterDigits;
+  SeqNumberDigitsCountSpinEdit.MaxValue := MaxCounterDigits;
 end;
 
 procedure TMainForm.ReadSettings;
@@ -238,6 +261,8 @@ const
   DefaultLanguage         = 'en';
   DefaultColorDepth       = cd24Bit;
   DefaultMonitorId        = NoMonitorId;
+  DefaultCounterValue     = MinCounterValue;
+  DefaultCounterDigits    = 6;
 var
   DefaultOutputDir: String;
   CfgLang, SysLang, AltLang: TLanguageCode;
@@ -335,7 +360,11 @@ begin
     MonitorComboBox.Enabled := False;
     //MonitorId := NoMonitorId;
     MonitorId := 0;
-  end
+  end;
+
+  // Incremental counter
+  Counter := Ini.ReadInteger(DefaultConfigIniSection, 'Counter', DefaultCounterValue);
+  CounterDigits := Ini.ReadInteger(DefaultConfigIniSection, 'CounterDigits', DefaultCounterDigits);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -557,6 +586,10 @@ begin
   finally
     Bitmap.Free;
   end;
+
+  // Increment counter after successful capture
+  //Inc(Counter);
+  Counter := Counter + 1;
 end;
 
 procedure TMainForm.TakeScreenshotButtonClick(Sender: TObject);
@@ -568,14 +601,11 @@ begin
   AlphaBlendValue := 0;
   AlphaBlend := True;
   try
-    try
-      MakeScreenshot;
-    finally
-      // Restore transparency to initial value
-      AlphaBlendValue := DefaultTransparency;
-      AlphaBlend := False;
-    end;
-  except
+    MakeScreenshot;
+  finally
+    // Restore transparency to initial value
+    AlphaBlendValue := DefaultTransparency;
+    AlphaBlend := False;
   end;
 end;
 
@@ -594,7 +624,7 @@ begin
   BaseDir := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '');
 
   SubDir := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '')} FileNameTemplateComboBox.Text);
-  SubDir := FormatDateTime2(SubDir);
+  SubDir := FormatPath(SubDir);
 
   FullDir := IncludeTrailingPathDelimiter(JoinPath(BaseDir, SubDir));
 
@@ -613,7 +643,7 @@ var
   I: Integer;
 begin
   FileName := ExtractFileName(FileNameTemplateComboBox.Text);
-  FileName := FormatDateTime2(FileName);
+  FileName := FormatPath(FileName);
 
   DirName := IncludeTrailingPathDelimiter(FinalOutputDir);
 
@@ -785,6 +815,9 @@ begin
     AutoRunCheckBox.Caption := Localizer.I18N('AutoRun');
     MonitorLabel.Caption := Localizer.I18N('UsedMonitor') + ':';
     FillMonitorList;
+    SeqNumberGroup.Caption := Localizer.I18N('SequentialNumber');
+    SeqNumberValueLabel.Caption := Localizer.I18N('NextValue') + ':';
+    SeqNumberDigitsCountLabel.Caption := Localizer.I18N('Digits') + ':';
 
     // Tray icon
     RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
@@ -1154,6 +1187,14 @@ begin
 
   OutputDirEdit.Left := MaxWidth + ChildSizing.LeftRightSpacing
       + ChildSizing.HorizontalSpacing;
+
+  // Sequential number group
+  MaxWidth := 0;
+  MaxWidth := max(MaxWidth, SeqNumberValueLabel.Width);
+  MaxWidth := max(MaxWidth, SeqNumberDigitsCountLabel.Width);
+  SeqNumberValueSpinEdit.Left := MaxWidth
+      + SeqNumberGroup.ChildSizing.LeftRightSpacing
+      + SeqNumberGroup.ChildSizing.HorizontalSpacing;
 end;
 
 function TMainForm.GetLangCodeOfLangMenuItem(
@@ -1164,6 +1205,54 @@ begin
   else
     raise Exception.CreateFmt('Can`t get language code from language menu item' +
         ' "%s" (name=%s)', [LangItem.Caption, LangItem.Name]);
+end;
+
+function TMainForm.FormatPath(Str: string): string;
+const
+  TmplVarsChar = '%';
+var
+  CounterStr: String[MaxCounterDigits];
+begin
+  Result := Str;
+
+  CounterStr := Format('%.' + IntToStr(CounterDigits) + 'd', [Counter]); // Add leading zeros to Counter value
+
+  Result := StringReplace(Result, TmplVarsChar + 'COMP', GetLocalComputerName, [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'USER', GetCurrentUserName,   [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'NUM',  CounterStr,           [rfReplaceAll]);
+
+  // Date/time
+  Result := FormatDateTime2(Result);
+end;
+
+procedure TMainForm.SetCounter(Val: Integer);
+begin
+  FCounter := Val;
+  Ini.WriteInteger(DefaultConfigIniSection, 'Counter', FCounter);
+  SeqNumberValueSpinEdit.Value := FCounter;
+end;
+
+procedure TMainForm.SeqNumberValueSpinEditChange(Sender: TObject);
+begin
+  try
+    Counter := SeqNumberValueSpinEdit.Value;
+  finally
+  end;
+end;
+
+procedure TMainForm.SetCounterDigits(Val: Integer);
+begin
+  FCounterDigits := Val;
+  Ini.WriteInteger(DefaultConfigIniSection, 'CounterDigits', FCounterDigits);
+  SeqNumberDigitsCountSpinEdit.Value := FCounterDigits;
+end;
+
+procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
+begin
+  try
+    CounterDigits := SeqNumberDigitsCountSpinEdit.Value;
+  finally
+  end;
 end;
 
 end.

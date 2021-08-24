@@ -5,7 +5,7 @@ unit uLocalization;
 interface
 
 uses
-  {TntIniFiles} IniFiles, SysUtils;
+  {TntIniFiles} IniFiles, SysUtils, Classes;
 
 type
   TLanguageCode = String[2];
@@ -24,18 +24,21 @@ type
 
   TLocalizer = class
   private
-    Ini: {TTntMemIniFile} TMemIniFile;
+    LangInfo: TLanguageInfo;
+    Strings: TStringList;
     LangsDir: String;
+    UseAltsForMissedStrings: Boolean; // Try or not read missed strings from default or alternative languages
 
     function GetLanguageInfo: TLanguageInfo;
     class function GetLanguageInfoFromIni(const AnIni: TMemIniFile): TLanguageInfo;
+    procedure ClearLangInfoAndStrings;
   public
-    constructor Create(ALangsDir: String);
+    constructor Create(ALangsDir: String; AnUseAltsForMissedStrings: Boolean = True);
     destructor Destroy; override;
 
     //procedure LoadByCode(ALang: TLanguageCode);
     procedure LoadFromFile(AFileName: String);
-    function I18N(Str: String): WideString;
+    function I18N(StrID: String): WideString;
     procedure GetLanguages(var LangsArr: TLanguagesArray);
 
     property LanguageInfo: TLanguageInfo read GetLanguageInfo;
@@ -46,26 +49,47 @@ var
 
 implementation
 
-uses uUtils, Classes;
+uses uUtils, {Classes,} StrUtils;
 
 { TLocalizer }
 
-constructor TLocalizer.Create(ALangsDir: String);
+procedure TLocalizer.ClearLangInfoAndStrings;
 begin
-  Ini := nil;
+  with LangInfo do
+  begin
+    Code       := '';
+    Name       := '';
+    NativeName := '';
+    FileName   := '';
+    SetLength(AlternativeFor, 0);
+    Author     := '';
+  end;
+
+  Strings.Clear;
+end;
+
+constructor TLocalizer.Create(ALangsDir: String; AnUseAltsForMissedStrings: Boolean);
+begin
+  Strings := TStringList.Create;
+  Strings.NameValueSeparator := '=';
+  LangInfo.AlternativeFor := nil;
+  ClearLangInfoAndStrings;
   LangsDir := IncludeTrailingBackslash(ALangsDir);
+  UseAltsForMissedStrings := AnUseAltsForMissedStrings;
 end;
 
 destructor TLocalizer.Destroy;
 begin
-  FreeAndNil(Ini);
+  //FreeAndNil(LangInfo.AlternativeFor);
+  LangInfo.AlternativeFor := nil;
+  FreeAndNil(Strings);
 
   inherited;
 end;
 
 function TLocalizer.GetLanguageInfo: TLanguageInfo;
 begin
-  Result := TLocalizer.GetLanguageInfoFromIni(Ini);
+  Result := LangInfo;
 end;
 
 class function TLocalizer.GetLanguageInfoFromIni(
@@ -135,32 +159,100 @@ begin
   end;
 end;
 
-function TLocalizer.I18N(Str: String): WideString;
+function TLocalizer.I18N(StrID: String): WideString;
 begin
-  if not Assigned(Ini) then
+  if LangInfo.Code = '' then
     raise ELocalizerException.Create('No localization loaded');
 
-  //Result := '[' + Lang + ']' + Str + '';
-  Result := Ini.ReadString('translation', Str, {Str}'<unknown>');
+  Result := Strings.Values[StrID];
+  if Result = '' then
+    Result := '<unknown>';
 
   Result := DecodeControlCharacters(Result);
 end;
 
 procedure TLocalizer.LoadFromFile(AFileName: String);
+// ToDo: Optimization needed - reduce the number of file reading operations
+const
+  TranslationIniSection = 'translation';
 var
   FileName: String;
-begin
-  FreeAndNil(Ini);
+  Ini: TMemIniFile;
+  TmpStr: TStringList;
+  AllLangs: TLanguagesArray;
+  AltLang: TLanguageCode;
 
-  // Load ini file with strings for selected language
+  procedure CombineValues(L1: TStrings; const L2: TStrings);
+  var
+    Idx: integer;
+  begin
+    for Idx := 0 to L2.Count - 1 do
+      L1.Values[L2.Names[Idx]] := L2.ValueFromIndex[Idx];
+  end;
+begin
+  ClearLangInfoAndStrings;
+
+  { Check if selected translation file exists }
   if not FileExists(AFileName) then
     raise ELocalizerException.CreateFmt('Can`t open localization file "%s"', [FileName]);
+
+  { Read language info }
   Ini := TMemIniFile.Create(AFileName);
+  try
+    LangInfo := GetLanguageInfoFromIni(Ini);
+  finally
+    FreeAndNil(Ini);
+  end;
+
+  if UseAltsForMissedStrings then
+  begin
+    { Read strings from default (English) translation }
+    if not AnsiEndsStr('en.ini', AFileName) then // Skip for English
+    begin
+      Ini := TMemIniFile.Create(LangsDir + 'en.ini');
+      try
+        Ini.ReadSectionValues(TranslationIniSection, Strings);
+      finally
+        FreeAndNil(Ini);
+      end;
+    end;
+
+    { Read and update strings from alternative of specified translation }
+    GetLanguages(AllLangs);
+    AltLang := GetAlternativeLanguage(AllLangs, LangInfo.Code);
+    if AltLang <> '' then
+    begin
+      Ini := TMemIniFile.Create(LangsDir + AltLang + '.ini');
+      TmpStr := TStringList.Create;
+      try
+        Ini.ReadSectionValues(TranslationIniSection, TmpStr);
+        CombineValues(Strings, TmpStr);
+      finally
+        FreeAndNil(TmpStr);
+      end;
+    end;
+  end;
+
+  { Read and update strings from specified translation }
+  Ini := TMemIniFile.Create(AFileName);
+  try
+    // Combine translation strings with defaults
+    TmpStr := TStringList.Create;
+    try
+      Ini.ReadSectionValues(TranslationIniSection, TmpStr);
+      CombineValues(Strings, TmpStr);
+    finally
+      FreeAndNil(TmpStr);
+    end;
+  finally
+    FreeAndNil(Ini);
+  end;
 end;
 
 initialization
 begin
-  Localizer := TLocalizer.Create(ExtractFilePath(ParamStr(0)) + 'lang' + PathDelim);
+  // ToDo: Use alternatives only in Release build
+  Localizer := TLocalizer.Create(ExtractFilePath(ParamStr(0)) + 'lang' + PathDelim, True);
 end;
 
 finalization

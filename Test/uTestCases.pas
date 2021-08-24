@@ -37,19 +37,17 @@ begin
         DecodeControlCharacters('lorem\tipsum\r\ndolor sit\\amet\r\n'));
   CheckEqualsString('', DecodeControlCharacters(''));
   CheckEqualsString('blablabla', DecodeControlCharacters('blablabla'));
-  //CheckEqualsString('', Encode(''));
-  //CheckEqualsString('', Encode(''));
 end;
 
 procedure TMyTestCase.TestFormatPath;
-var
-  CompName, UserName: String;
+{var
+  CompName, UserName: String;}
 begin
   CheckEqualsString('19-04-2020', GetFormattedPath('%D-%M-%Y'));
   CheckEqualsString('2020_04_19', GetFormattedPath('%Y_%M_%D'));
   CheckEqualsString('12.34.56', GetFormattedPath('%H.%N.%S'));
   CheckNotEqualsString('12.34.56', GetFormattedPath('%H.%M.%S'),
-      'Month and munute mixed up');
+      'Month and minute mixed up');
   CheckEquals('screenshot123', GetFormattedPath('screenshot123'),
       'No format variables');
   CheckEqualsString('2020\04-19\screenshot_20200419_123456.png',
@@ -62,12 +60,12 @@ begin
 
   // ToDo: Test incorect strings
 
-  // Note: On your machine this values may be different
+  {// Note: On your machine this values will be different
   CompName := 'PC';
-  UserName := 'CraZZZy-GameRRR';
+  UserName := 'Artem';
   CheckEqualsString(CompName + '_' + UserName + '_image.tiff',
       GetFormattedPath('%COMP_%USER_image.tiff'),
-      'PC and user name');
+      'PC and user name');}
 end;
 
 procedure TMyTestCase.TestInt2Str;

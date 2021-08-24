@@ -36,7 +36,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="6"/>
+      <MinorVersionNr Value="7"/>
       <RevisionNr Value="2"/>
       <Attributes pvaPrivateBuild="True"/>
       <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.6.2"/>
