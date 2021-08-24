@@ -2,14 +2,15 @@ object FileNameTemplateHelpForm: TFileNameTemplateHelpForm
   Left = 270
   Height = 240
   Top = 140
-  Width = 320
+  Width = 450
   AutoSize = True
   BorderStyle = bsDialog
   ChildSizing.LeftRightSpacing = 15
   ChildSizing.TopBottomSpacing = 15
   ChildSizing.VerticalSpacing = 15
   ClientHeight = 240
-  ClientWidth = 320
+  ClientWidth = 450
+  Constraints.MaxWidth = 450
   OnCreate = FormCreate
   Position = poMainFormCenter
   LCLVersion = '1.6.0.4'
@@ -17,16 +18,17 @@ object FileNameTemplateHelpForm: TFileNameTemplateHelpForm
     Left = 15
     Height = 162
     Top = 15
-    Width = 290
+    Width = 420
     Align = alClient
     Caption = 'Text...'
     ParentColor = False
+    WordWrap = True
   end
   object ButtonPanel: TButtonPanel
     Left = 15
     Height = 33
     Top = 192
-    Width = 290
+    Width = 420
     OKButton.Name = 'OKButton'
     OKButton.DefaultCaption = True
     HelpButton.Name = 'HelpButton'
