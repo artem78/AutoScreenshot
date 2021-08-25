@@ -127,28 +127,18 @@ object MainForm: TMainForm
     Caption = 'Used monitor:'
     ParentColor = False
   end
-  object OutputDirEdit: TEdit
+  object OutputDirEdit: TDirectoryEdit
     AnchorSideTop.Control = Owner
     Left = 191
     Height = 23
     Top = 15
     Width = 265
-    OnChange = OutputDirEditChange
+    ShowHidden = False
+    ButtonWidth = 23
+    NumGlyphs = 1
+    MaxLength = 0
     TabOrder = 0
-  end
-  object ChooseOutputDirButton: TButton
-    AnchorSideLeft.Control = OutputDirEdit
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = OutputDirEdit
-    AnchorSideTop.Side = asrCenter
-    Left = 462
-    Height = 25
-    Top = 14
-    Width = 35
-    AutoSize = True
-    Caption = '...'
-    OnClick = ChooseOutputDirButtonClick
-    TabOrder = 1
+    OnChange = OutputDirEditChange
   end
   object TakeScreenshotButton: TButton
     AnchorSideTop.Control = AutoCaptureControlGroup
@@ -165,7 +155,7 @@ object MainForm: TMainForm
     Caption = 'Take screenshot'
     Constraints.MinWidth = 100
     OnClick = TakeScreenshotButtonClick
-    TabOrder = 16
+    TabOrder = 15
   end
   object JPEGQualitySpinEdit: TSpinEdit
     AnchorSideTop.Control = ImageFormatComboBox
@@ -175,14 +165,14 @@ object MainForm: TMainForm
     Top = 192
     Width = 57
     OnChange = JPEGQualitySpinEditChange
-    TabOrder = 9
+    TabOrder = 8
   end
   object OpenOutputDirButton: TButton
-    AnchorSideLeft.Control = ChooseOutputDirButton
+    AnchorSideLeft.Control = OutputDirEdit
     AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = ChooseOutputDirButton
+    AnchorSideTop.Control = OutputDirEdit
     AnchorSideTop.Side = asrCenter
-    Left = 503
+    Left = 462
     Height = 25
     Top = 14
     Width = 105
@@ -192,7 +182,7 @@ object MainForm: TMainForm
     OnClick = OpenOutputDirButtonClick
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 2
+    TabOrder = 1
   end
   object StopWhenInactiveCheckBox: TCheckBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -206,7 +196,7 @@ object MainForm: TMainForm
     OnClick = StopWhenInactiveCheckBoxClick
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 11
+    TabOrder = 10
   end
   object ImageFormatComboBox: TComboBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -223,7 +213,7 @@ object MainForm: TMainForm
     ItemHeight = 15
     OnChange = ImageFormatComboBoxChange
     Style = csDropDownList
-    TabOrder = 7
+    TabOrder = 6
   end
   object AutoCaptureControlGroup: TGroupBox
     AnchorSideLeft.Control = Owner
@@ -245,7 +235,7 @@ object MainForm: TMainForm
     ChildSizing.ControlsPerLine = 2
     ClientHeight = 37
     ClientWidth = 218
-    TabOrder = 17
+    TabOrder = 16
     object StartAutoCaptureButton: TBitBtn
       Left = 6
       Height = 25
@@ -283,7 +273,7 @@ object MainForm: TMainForm
     Width = 233
     Caption = 'Start auto capture when program starts'
     OnClick = StartCaptureOnStartUpCheckBoxClick
-    TabOrder = 12
+    TabOrder = 11
   end
   object StartMinimizedCheckBox: TCheckBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -295,7 +285,7 @@ object MainForm: TMainForm
     Width = 140
     Caption = 'Start minimized to tray'
     OnClick = StartMinimizedCheckBoxClick
-    TabOrder = 13
+    TabOrder = 12
   end
   object FileNameTemplateComboBox: TComboBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -317,23 +307,22 @@ object MainForm: TMainForm
       'screenshot %NUM'
     )
     OnChange = FileNameTemplateComboBoxChange
-    TabOrder = 3
+    TabOrder = 2
   end
   object FileNameTemplateHelpButton: TButton
-    AnchorSideLeft.Control = ChooseOutputDirButton
+    AnchorSideLeft.Control = FileNameTemplateComboBox
+    AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = FileNameTemplateComboBox
     AnchorSideTop.Side = asrCenter
-    AnchorSideRight.Control = ChooseOutputDirButton
     AnchorSideRight.Side = asrBottom
     Left = 462
     Height = 25
     Top = 43
-    Width = 35
-    Anchors = [akTop, akLeft, akRight]
+    Width = 33
     AutoSize = True
     Caption = '?'
     OnClick = FileNameTemplateHelpButtonClick
-    TabOrder = 4
+    TabOrder = 3
   end
   object GrayscaleCheckBox: TCheckBox
     AnchorSideTop.Control = JPEGQualitySpinEdit
@@ -343,7 +332,7 @@ object MainForm: TMainForm
     Width = 75
     Caption = 'Grayscale'
     OnClick = GrayscaleCheckBoxClick
-    TabOrder = 10
+    TabOrder = 9
   end
   object ColorDepthComboBox: TComboBox
     AnchorSideTop.Control = ImageFormatComboBox
@@ -356,7 +345,7 @@ object MainForm: TMainForm
     ItemHeight = 15
     OnChange = ColorDepthComboBoxChange
     Style = csDropDownList
-    TabOrder = 8
+    TabOrder = 7
   end
   object CaptureInterval: TDateTimePicker
     AnchorSideLeft.Control = OutputDirEdit
@@ -369,7 +358,7 @@ object MainForm: TMainForm
     CenturyFrom = 1941
     MaxDate = 2958465
     MinDate = -53780
-    TabOrder = 6
+    TabOrder = 5
     TrailingSeparator = False
     LeadingZeros = False
     Kind = dtkTime
@@ -393,7 +382,7 @@ object MainForm: TMainForm
     Width = 203
     Caption = 'Run application at system startup'
     OnClick = AutoRunCheckBoxClick
-    TabOrder = 14
+    TabOrder = 13
   end
   object MonitorComboBox: TComboBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -413,7 +402,7 @@ object MainForm: TMainForm
     )
     OnChange = MonitorComboBoxChange
     Style = csDropDownList
-    TabOrder = 15
+    TabOrder = 14
   end
   object SeqNumberGroup: TGroupBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -431,7 +420,7 @@ object MainForm: TMainForm
     ChildSizing.VerticalSpacing = 6
     ClientHeight = 64
     ClientWidth = 120
-    TabOrder = 5
+    TabOrder = 4
     object SeqNumberValueLabel: TLabel
       AnchorSideTop.Control = SeqNumberValueSpinEdit
       AnchorSideTop.Side = asrCenter

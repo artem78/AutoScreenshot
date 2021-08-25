@@ -5,7 +5,8 @@ interface
 uses
   Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,} {pngImage,}
-  {TrayIcon,} {XPMan,} {jpeg,} ShellAPI, Menus, Buttons, UniqueInstance, {TntForms, TntStdCtrls,}
+  {TrayIcon,} {XPMan,} {jpeg,} ShellAPI, Menus, Buttons, EditBtn,
+  UniqueInstance, {TntForms, TntStdCtrls,}
   {TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl,}
   uLocalization, DateTimePicker;
 
@@ -29,8 +30,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
-    OutputDirEdit: TEdit;
-    ChooseOutputDirButton: TButton;
+    OutputDirEdit: TDirectoryEdit;
     Timer: TTimer;
     OutputDirLabel: TLabel;
     CaptureIntervalLabel: TLabel;
@@ -80,7 +80,6 @@ type
     SeqNumberDigitsCountLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure ChooseOutputDirButtonClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalChange(Sender: TObject);
@@ -386,21 +385,6 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   Ini.Free;
-end;
-
-procedure TMainForm.ChooseOutputDirButtonClick(Sender: TObject);
-var
-  Dir: {WideString} String;
-begin
-  Dir := OutputDirEdit.Text;
-
-  //if WideSelectDirectory(Localizer.I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
-  if SelectDirectory(Localizer.I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
-  //if SelectDirectory(dir, [sdAllowCreate, sdPerformCreate], 0) then
-  begin
-    OutputDirEdit.Text := Dir;
-    Ini.WriteString(DefaultConfigIniSection, 'OutputDir', Dir);
-  end;
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
@@ -796,6 +780,7 @@ begin
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
+    OutputDirEdit.DialogTitle := Localizer.I18N('SelectOutputDirectory');
     OpenOutputDirButton.Caption := Localizer.I18N('OpenDirectory');
     OpenOutputDirButton.Hint := Localizer.I18N('OpenDirectoryHint');
     FileNameTemplateLabel.Caption := Localizer.I18N('FileNameTemplate') + ':';
