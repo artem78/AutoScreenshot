@@ -3,7 +3,6 @@ object MainForm: TMainForm
   Height = 400
   Top = 153
   Width = 656
-  ActiveControl = OutputDirEdit
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -64,15 +63,17 @@ object MainForm: TMainForm
     ParentColor = False
   end
   object JPEGQualityLabel: TLabel
+    AnchorSideLeft.Control = ImageFormatComboBox
+    AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = JPEGQualitySpinEdit
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = JPEGQualitySpinEdit
-    Left = 274
+    Left = 292
     Height = 15
     Top = 196
     Width = 79
     Alignment = taRightJustify
-    Anchors = [akTop, akRight]
+    BorderSpacing.Left = 30
     Caption = 'Compression:'
     ParentColor = False
   end
@@ -81,7 +82,7 @@ object MainForm: TMainForm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = JPEGQualitySpinEdit
     AnchorSideTop.Side = asrCenter
-    Left = 422
+    Left = 440
     Height = 15
     Top = 196
     Width = 11
@@ -158,9 +159,11 @@ object MainForm: TMainForm
     TabOrder = 15
   end
   object JPEGQualitySpinEdit: TSpinEdit
+    AnchorSideLeft.Control = JPEGQualityLabel
+    AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = ImageFormatComboBox
     AnchorSideTop.Side = asrCenter
-    Left = 359
+    Left = 377
     Height = 23
     Top = 192
     Width = 57
