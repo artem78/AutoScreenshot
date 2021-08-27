@@ -76,6 +76,9 @@ begin
 
   ProgramNameLabel.Caption := Application.Title;
   VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr(True) + ' (' + Bitness + ')';
+  {$IFOPT D+}
+    VersionLabel.Caption := VersionLabel.Caption + '    [DEBUG BUILD]';
+  {$ENDIF}
   AuthorLabel.Caption := Localizer.I18N('Author') + ': ' + 'Artem Demin (artem78) <megabyte1024@ya.ru>';
   with Localizer.LanguageInfo do
   begin

@@ -227,6 +227,10 @@ procedure TMainForm.InitUI;
 var
   Fmt: TImageFormat;
 begin
+  {$IFOPT D+}
+    MainForm.Caption := MainForm.Caption + '    [DEBUG BUILD]';
+  {$ENDIF}
+
   // Set default tray icon
   TrayIconState := tisDefault;
 
