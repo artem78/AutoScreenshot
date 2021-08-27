@@ -6,8 +6,7 @@ REM *           Batch file for creating ZIP              *
 REM *                                                    *
 REM * Note:                                              *
 REM *    Before run this bat file you need to manually   *
-REM *    compile executable using delphi 7 ide           *
-REM *    (not tested with older versions).               *
+REM *    compile executable using Lazarus ide.           *
 REM *                                                    *
 REM * Note 2:                                            *
 REM *    This tool used 7Zip, so first you need to       *
