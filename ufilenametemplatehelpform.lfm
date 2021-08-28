@@ -13,10 +13,10 @@ object FileNameTemplateHelpForm: TFileNameTemplateHelpForm
   Constraints.MaxWidth = 450
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '2.0.12.0'
   object TextLabel: TLabel
     Left = 15
-    Height = 162
+    Height = 161
     Top = 15
     Width = 420
     Align = alClient
@@ -26,8 +26,8 @@ object FileNameTemplateHelpForm: TFileNameTemplateHelpForm
   end
   object ButtonPanel: TButtonPanel
     Left = 15
-    Height = 33
-    Top = 192
+    Height = 34
+    Top = 191
     Width = 420
     OKButton.Name = 'OKButton'
     OKButton.DefaultCaption = True
