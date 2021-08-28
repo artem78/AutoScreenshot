@@ -39,6 +39,7 @@ begin
   //end;
   //MutexHandle := CreateMutex(nil, false, MutexName);
 
+  Application.Scaled:=True;
   Application.Initialize;
   Application.Title := 'Auto Screenshot';
   Application.HintHidePause := -1; // Do not hide hint
