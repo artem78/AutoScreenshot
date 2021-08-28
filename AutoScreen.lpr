@@ -22,6 +22,12 @@ uses
   MutexName = 'AutoScreenshotMutex';}
 
 begin
+  // heaptrc settings
+  {$if declared(useHeapTrace)}
+    globalSkipIfNoLeaks := true;
+  {$endIf}
+  //setHeapTraceOutput('trace.log');
+
   //// Prevent the launch of more than one instance of process
   ////MutexName := PChar(Application.ExeName);
   //MutexHandle := OpenMutex(MUTEX_ALL_ACCESS, False, MutexName);
