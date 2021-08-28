@@ -151,6 +151,7 @@ type
     function FormatPath(Str: string): string;
     procedure SetCounter(Val: Integer);
     procedure SetCounterDigits(Val: Integer);
+    procedure UpdateSeqNumGroupVisibility;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -368,6 +369,7 @@ begin
   // Incremental counter
   Counter := Ini.ReadInteger(DefaultConfigIniSection, 'Counter', DefaultCounterValue);
   CounterDigits := Ini.ReadInteger(DefaultConfigIniSection, 'CounterDigits', DefaultCounterDigits);
+  UpdateSeqNumGroupVisibility;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -835,6 +837,8 @@ end;
 procedure TMainForm.FileNameTemplateComboBoxChange(Sender: TObject);
 begin
   Ini.WriteString(DefaultConfigIniSection, 'FileNameTemplate', FileNameTemplateComboBox.Text);
+
+  UpdateSeqNumGroupVisibility
 end;
 
 procedure TMainForm.FileNameTemplateHelpButtonClick(Sender: TObject);
@@ -1234,6 +1238,11 @@ begin
   FCounterDigits := Val;
   Ini.WriteInteger(DefaultConfigIniSection, 'CounterDigits', FCounterDigits);
   SeqNumberDigitsCountSpinEdit.Value := FCounterDigits;
+end;
+
+procedure TMainForm.UpdateSeqNumGroupVisibility;
+begin
+  SeqNumberGroup.Visible := Pos('%NUM', FileNameTemplateComboBox.Text) <> 0;
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
