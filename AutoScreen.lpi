@@ -11,10 +11,14 @@
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="AutoScreen"/>
+      <Title Value="Auto Screenshot"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
+      <XPManifest>
+        <TextName Value="Auto Screenshot"/>
+        <TextDesc Value="Automatic screenshot maker"/>
+      </XPManifest>
       <Icon Value="0"/>
       <Resources Count="11">
         <Resource_0 FileName="res\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
