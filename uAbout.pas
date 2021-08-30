@@ -60,15 +60,21 @@ var
   BuildDateTime: TDateTime;
   BuildStr: WideString;
   Png: TPortableNetworkGraphic;
+  ResourceName: String;
 begin
   Caption := Localizer.I18N('About');
 
   //Logo.Picture.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
   //    64, 64, LR_DEFAULTCOLOR);
   //Logo.Picture.LoadFromLazarusResource('_LOGO');
+  if Screen.PixelsPerInch <= 120 then // Scale = 100% or 125%
+    ResourceName := '_LOGO' // Default size with 64px width
+  else // Scale = 150% or 200%
+    ResourceName := '_LOGO_HIGH_DPI'; // High resolution with 128px width
+
   png := TPortableNetworkGraphic.Create;
   try
-     Png.LoadFromResourceName(Hinstance, '_LOGO');
+     Png.LoadFromResourceName(Hinstance, ResourceName);
      Logo.Picture.Graphic := Png;
   finally
      Png.Free;

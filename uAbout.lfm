@@ -83,6 +83,7 @@ object AboutForm: TAboutForm
     Height = 64
     Top = 15
     Width = 64
+    AutoSize = True
   end
   object BuildDateLabel: TLabel
     AnchorSideLeft.Control = VersionLabel
