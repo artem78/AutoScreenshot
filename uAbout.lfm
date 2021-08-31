@@ -27,9 +27,9 @@ object AboutForm: TAboutForm
     Left = 94
     Height = 36
     Top = 15
-    Width = 174
+    Width = 234
     BorderSpacing.Left = 15
-    Caption = 'Auto Screen'
+    Caption = 'Auto Screenshot'
     Font.Color = 8611623
     Font.Height = -32
     Font.Name = 'Arial'
