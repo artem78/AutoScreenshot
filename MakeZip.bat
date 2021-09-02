@@ -39,7 +39,7 @@ REM ***********************
 
 REM Some initial checks
 if not exist %SevenZipPath% call :StopBuild "Make sure you have installed 7-zip and set correct path to your 7z.exe in "SevenZipPath" variable in this batch file"
-if not exist AutoScreen.exe call :StopBuild "You need to manually compile project from Delphi 7 IDE before run this batch"
+if not exist AutoScreenshot.exe call :StopBuild "You need to manually compile project from Delphi 7 IDE before run this batch"
 
 
 REM Create and clear build directory
@@ -51,7 +51,7 @@ echo.
 
 REM Executable
 echo Copy EXE...
-copy AutoScreen.exe %BuildDir%\AutoScreenshot.exe
+copy AutoScreenshot.exe %BuildDir%\AutoScreenshot.exe
 echo Done!
 echo.
 
