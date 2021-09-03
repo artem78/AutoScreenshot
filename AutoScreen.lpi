@@ -43,10 +43,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="7"/>
-      <RevisionNr Value="2"/>
-      <Attributes pvaPrivateBuild="True"/>
-      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.6.2"/>
+      <MinorVersionNr Value="8"/>
+      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.8"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default (32bit)" Default="True"/>
