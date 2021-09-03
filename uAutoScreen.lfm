@@ -103,15 +103,17 @@ object MainForm: TMainForm
     ParentColor = False
   end
   object ColorDepthLabel: TLabel
+    AnchorSideLeft.Control = ImageFormatComboBox
+    AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = ColorDepthComboBox
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = ColorDepthComboBox
-    Left = 359
+    Left = 292
     Height = 15
     Top = 196
     Width = 67
     Alignment = taRightJustify
-    Anchors = [akTop, akRight]
+    BorderSpacing.Left = 30
     Caption = 'Color depth:'
     ParentColor = False
   end
@@ -338,9 +340,11 @@ object MainForm: TMainForm
     TabOrder = 9
   end
   object ColorDepthComboBox: TComboBox
+    AnchorSideLeft.Control = ColorDepthLabel
+    AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = ImageFormatComboBox
     AnchorSideTop.Side = asrCenter
-    Left = 432
+    Left = 365
     Height = 23
     Top = 192
     Width = 65
