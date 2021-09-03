@@ -1,4 +1,7 @@
 unit uUtils;
+
+{$MODE Delphi}
+
 { Various general usefull functions }
 
 
@@ -53,8 +56,8 @@ function DecodeControlCharacters(const Str: WideString): WideString;
 
 function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean = False): string;
 
-// Returns build time from TimeDateStamp PE header
-function GetLinkerTimeStamp: TDateTime{; overload};
+// Returns program build date and time
+function GetBuildDateTime: TDateTime;
 
 { Removes duplicated slashes from given path.
   Example:
@@ -83,7 +86,18 @@ function CheckAutoRun(const AppTitle: String): Boolean;
 implementation
 
 uses
-  SysUtils, DateUtils, TntSysUtils, Registry, uLanguages;
+  SysUtils, DateUtils, {TntSysUtils,} Registry, uLanguages;
+
+type
+  PLASTINPUTINFO = ^LASTINPUTINFO;
+  tagLASTINPUTINFO = record
+    cbSize: UINT;
+    dwTime: DWORD;
+  end;
+  LASTINPUTINFO = tagLASTINPUTINFO;
+  TLastInputInfo = LASTINPUTINFO;
+
+function GetLastInputInfo(var plii: TLastInputInfo): BOOL;stdcall; external 'user32' name 'GetLastInputInfo';
 
 function LastInput: DWord;
 var
@@ -130,10 +144,10 @@ end;
 
 function DecodeControlCharacters(const Str: WideString): WideString;
 begin
-  Result := Tnt_WideStringReplace(Str,    '\r', #13, [rfReplaceAll]);
-  Result := Tnt_WideStringReplace(Result, '\n', #10, [rfReplaceAll]);
-  Result := Tnt_WideStringReplace(Result, '\t', #9,  [rfReplaceAll]);
-  Result := Tnt_WideStringReplace(Result, '\\', '\', [rfReplaceAll]);
+  Result := {Tnt_WideStringReplace} StringReplace(Str,    '\r', #13, [rfReplaceAll]);
+  Result := {Tnt_WideStringReplace} StringReplace(Result, '\n', #10, [rfReplaceAll]);
+  Result := {Tnt_WideStringReplace} StringReplace(Result, '\t', #9,  [rfReplaceAll]);
+  Result := {Tnt_WideStringReplace} StringReplace(Result, '\\', '\', [rfReplaceAll]);
 end;
 
 {function GetProgramVersionStr: string;
@@ -199,19 +213,15 @@ begin
   end;
 end;
 
-{function LinkerTimeStamp(const FileName: string): TDateTime; overload;
+function GetBuildDateTime: TDateTime;
 var
-  LI: TLoadedImage;
+  BuildDate, BuildTime: String;
 begin
-  Win32Check(MapAndLoad(PChar(FileName), nil, @LI, False, True));
-  Result := LI.FileHeader.FileHeader.TimeDateStamp / SecsPerDay + UnixDateDelta;
-  UnMapAndLoad(@LI);
-end;}
+  BuildDate := {$I %DATE%};
+  BuildTime := {$I %TIME%};
+  BuildDate := StringReplace(BuildDate, '/', '-', [rfReplaceAll]);  // For unknown reason doesn`t work with "/" date separator
 
-function GetLinkerTimeStamp: TDateTime{; overload};
-begin
-  Result := PImageNtHeaders(HInstance + Cardinal(PImageDosHeader(HInstance)^
-        ._lfanew))^.FileHeader.TimeDateStamp / SecsPerDay + UnixDateDelta;
+  Result := ScanDateTime('yyyy-mm-dd hh:nn:ss', BuildDate + ' ' + BuildTime);
 end;
 
 function RemoveExtraPathDelimiters(const Path: String): String;

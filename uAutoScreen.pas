@@ -3,14 +3,15 @@ unit uAutoScreen;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ComCtrls, ExtCtrls, StdCtrls, inifiles, Spin, FileCtrl, pngImage,
-  TrayIcon, XPMan, jpeg, ShellAPI, Menus, GifImage, Buttons, TntForms, TntStdCtrls,
-  TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl,
-  uLocalization;
+  Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,} {pngImage,}
+  {TrayIcon,} {XPMan,} {jpeg,} ShellAPI, Menus, Buttons, EditBtn,
+  UniqueInstance, {TntForms, TntStdCtrls,}
+  {TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl,}
+  uLocalization, DateTimePicker;
 
 type
-  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP, fmtGIF);
+  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF});
 
   TColorDepth = (cd8Bit=8, cd16Bit=16, cd24Bit=24, cd32Bit=32);
 
@@ -26,58 +27,60 @@ type
 
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
 
-  TMainForm = class({TTntForm} TForm)
-    OutputDirEdit: TTntEdit;
-    ChooseOutputDirButton: TTntButton;
+  { TMainForm }
+
+  TMainForm = class(TForm)
+    OutputDirEdit: TDirectoryEdit;
     Timer: TTimer;
-    OutputDirLabel: TTntLabel;
-    CaptureIntervalLabel: TTntLabel;
+    OutputDirLabel: TLabel;
+    CaptureIntervalLabel: TLabel;
     TrayIcon: TTrayIcon;
-    XPManifest: TXPManifest;
-    ImageFormatLabel: TTntLabel;
-    TakeScreenshotButton: TTntButton;
-    JPEGQualityLabel: TTntLabel;
+    //XPManifest: TXPManifest;
+    ImageFormatLabel: TLabel;
+    TakeScreenshotButton: TButton;
+    JPEGQualityLabel: TLabel;
     JPEGQualitySpinEdit: TSpinEdit;
-    OpenOutputDirButton: TTntButton;
-    StopWhenInactiveCheckBox: TTntCheckBox;
-    ImageFormatComboBox: TTntComboBox;
-    JPEGQualityPercentLabel: TTntLabel;
-    AutoCaptureControlGroup: TTntGroupBox;
-    StartAutoCaptureButton: TTntBitBtn;
-    StopAutoCaptureButton: TTntBitBtn;
-    TrayIconPopupMenu: TTntPopupMenu;
-    ExitTrayMenuItem: TTntMenuItem;
-    TakeScreenshotTrayMenuItem: TTntMenuItem;
-    RestoreWindowTrayMenuItem: TTntMenuItem;
-    ToggleAutoCaptureTrayMenuItem: TTntMenuItem;
-    Separator2TrayMenuItem: TTntMenuItem;
-    StartCaptureOnStartUpCheckBox: TTntCheckBox;
-    StartMinimizedCheckBox: TTntCheckBox;
-    Separator1TrayMenuItem: TTntMenuItem;
-    FileNameTemplateLabel: TTntLabel;
-    FileNameTemplateComboBox: TTntComboBox;
-    FileNameTemplateHelpButton: TTntButton;
-    GrayscaleCheckBox: TTntCheckBox;
-    ColorDepthLabel: TTntLabel;
-    ColorDepthComboBox: TTntComboBox;
-    CaptureInterval: TTntDateTimePicker;
+    OpenOutputDirButton: TButton;
+    StopWhenInactiveCheckBox: TCheckBox;
+    ImageFormatComboBox: TComboBox;
+    JPEGQualityPercentLabel: TLabel;
+    AutoCaptureControlGroup: TGroupBox;
+    StartAutoCaptureButton: TBitBtn;
+    StopAutoCaptureButton: TBitBtn;
+    TrayIconPopupMenu: TPopupMenu;
+    ExitTrayMenuItem: TMenuItem;
+    TakeScreenshotTrayMenuItem: TMenuItem;
+    RestoreWindowTrayMenuItem: TMenuItem;
+    ToggleAutoCaptureTrayMenuItem: TMenuItem;
+    Separator2TrayMenuItem: TMenuItem;
+    StartCaptureOnStartUpCheckBox: TCheckBox;
+    StartMinimizedCheckBox: TCheckBox;
+    Separator1TrayMenuItem: TMenuItem;
+    FileNameTemplateLabel: TLabel;
+    FileNameTemplateComboBox: TComboBox;
+    FileNameTemplateHelpButton: TButton;
+    GrayscaleCheckBox: TCheckBox;
+    ColorDepthLabel: TLabel;
+    ColorDepthComboBox: TComboBox;
+    CaptureInterval: TDateTimePicker;
     TrayIconAnimationTimer: TTimer;
-    AutoRunCheckBox: TTntCheckBox;
-    MonitorLabel: TTntLabel;
-    MonitorComboBox: TTntComboBox;
-    MainMenu: TTntMainMenu;
-    HelpSubMenu: TTntMenuItem;
-    AboutMenuItem: TTntMenuItem;
-    OptionsSubMenu: TTntMenuItem;
-    LanguageSubMenu: TTntMenuItem;
-    SeqNumberGroup: TTntGroupBox;
-    SeqNumberValueLabel: TTntLabel;
+    AutoRunCheckBox: TCheckBox;
+    MonitorLabel: TLabel;
+    MonitorComboBox: TComboBox;
+    MainMenu: TMainMenu;
+    HelpSubMenu: TMenuItem;
+    AboutMenuItem: TMenuItem;
+    OptionsSubMenu: TMenuItem;
+    LanguageSubMenu: TMenuItem;
+    UniqueInstance: TUniqueInstance;
+    SeqNumberGroup: TGroupBox;
+    SeqNumberValueLabel: TLabel;
     SeqNumberValueSpinEdit: TSpinEdit;
     SeqNumberDigitsCountSpinEdit: TSpinEdit;
-    SeqNumberDigitsCountLabel: TTntLabel;
+    SeqNumberDigitsCountLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure ChooseOutputDirButtonClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
@@ -103,6 +106,7 @@ type
     procedure AutoRunCheckBoxClick(Sender: TObject);
     procedure MonitorComboBoxChange(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
+    procedure TrayIconDblClick(Sender: TObject);
     procedure SeqNumberValueSpinEditChange(Sender: TObject);
     procedure SeqNumberDigitsCountSpinEditChange(Sender: TObject);
   private
@@ -116,6 +120,8 @@ type
 
     FCounter: Integer;
     FCounterDigits: Integer {Byte};
+
+    PrevWndProc: WndProc;
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -136,16 +142,19 @@ type
     procedure InitUI;
     procedure ReadSettings;
     procedure UpdateColorDepthValues;
+    procedure UpdateMonitorList;
     procedure FillMonitorList;
     procedure SetMonitorId(MonitorId: Integer);
     function GetMonitorId: Integer;
     procedure UpdateLanguages;
     procedure LanguageClick(Sender: TObject);
-    function GetLangCodeOfLangMenuItem(const LangItem: TTntMenuItem): TLanguageCode;
-    function FindLangMenuItem(ALangCode: TLanguageCode): TTntMenuItem;
+    function GetLangCodeOfLangMenuItem(const LangItem: TMenuItem): TLanguageCode;
+    function FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
+    procedure RecalculateLabelWidths;
     function FormatPath(Str: string): string;
     procedure SetCounter(Val: Integer);
     procedure SetCounterDigits(Val: Integer);
+    procedure UpdateSeqNumGroupVisibility;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -163,18 +172,21 @@ type
 
 const
   ImageFormatInfoArray: TImageFormatInfoArray = (
+    { FixMe: Unsupported modes by Free Pascal Graphics unit are commented.
+      Think about use any third party graphics library instead
+      (https://wiki.freepascal.org/Graphics_libraries). }
     (
       Name:         'PNG';
       Extension:    'png';
       HasQuality:   False;
       HasGrayscale: False;
-      ColorDepth:   [cd8Bit, cd24Bit]
+      ColorDepth:   [{cd8Bit, cd16Bit, cd24Bit, cd32Bit}] // Only 24bit
     ),
     (
       Name:         'JPG';
       Extension:    'jpg';
       HasQuality:   True;
-      HasGrayscale: True;
+      HasGrayscale: {True} False;
       ColorDepth:   []
     ),
     (
@@ -182,15 +194,15 @@ const
       Extension:    'bmp';
       HasQuality:   False;
       HasGrayscale: False;
-      ColorDepth:   [cd8Bit, cd16Bit, cd24Bit, cd32Bit]
-    ),
+      ColorDepth:   [{cd8Bit, cd16Bit,} cd24Bit, cd32Bit]
+    ){,
     (
       Name:         'GIF';
       Extension:    'gif';
       HasQuality:   False;
       HasGrayscale: False;
       ColorDepth:   []
-    )
+    )}
   );
 
   DefaultConfigIniSection = 'main';
@@ -207,17 +219,38 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uUtils, Math, VistaAltFixUnit;
+uses uAbout, DateUtils, uUtils, Math{, VistaAltFixUnit}, uFileNameTemplateHelpForm;
 
-{$R *.dfm}
+//{$R *.dfm}
+{$R *.lfm}
 
 const
   LanguageSubMenuItemNamePrefix = 'LanguageSubMenuItem_';
+
+function WndCallback(MyHWND: HWND; uMSG: UINT; wParam: WParam; lParam: LParam): LRESULT; StdCall;
+begin
+  case uMSG of
+    WM_DISPLAYCHANGE, // Screen resolution/orientation changed
+    WM_DEVICECHANGE:  // Any hardware configuration changed (including monitors)
+      begin
+        MainForm.UpdateMonitorList;
+      end;
+  end;
+
+  //if WindowInfo^.WinControl is TForm1 then //Eliminate form1 global variable for safer handling.
+  //  Result:= CallWindowProc(TForm1(WindowInfo^.WinControl).PrevWndProc, MyHWND, uMSG, WParam, LParam);
+
+  Result := CallWindowProc(MainForm.PrevWndProc, MyHWND, uMsg, WParam, LParam);
+end;
 
 procedure TMainForm.InitUI;
 var
   Fmt: TImageFormat;
 begin
+  {$IFOPT D+}
+    MainForm.Caption := MainForm.Caption + '    [DEBUG BUILD]';
+  {$ENDIF}
+
   // Set default tray icon
   TrayIconState := tisDefault;
 
@@ -240,6 +273,9 @@ begin
   SeqNumberValueSpinEdit.MinValue := MinCounterValue;
   SeqNumberDigitsCountSpinEdit.MinValue := MinCounterDigits;
   SeqNumberDigitsCountSpinEdit.MaxValue := MaxCounterDigits;
+
+  // Available monitors
+  UpdateMonitorList;
 end;
 
 procedure TMainForm.ReadSettings;
@@ -336,35 +372,31 @@ begin
     RestoreFromTray;
 
   // Multiple monitors
-  if Screen.MonitorCount >= 2 then
-  begin
-    try
-      MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Monitor', DefaultMonitorId);
-    except
-      MonitorId := DefaultMonitorId;
-    end;
-  end
-  else
-  begin // Only one monitor available
-    MonitorLabel.Enabled := False;
-    MonitorComboBox.Enabled := False;
-    //MonitorId := NoMonitorId;
-    MonitorId := 0;
+  try
+    MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Monitor', DefaultMonitorId);
+  except
+    MonitorId := DefaultMonitorId;
   end;
 
   // Incremental counter
   Counter := Ini.ReadInteger(DefaultConfigIniSection, 'Counter', DefaultCounterValue);
   CounterDigits := Ini.ReadInteger(DefaultConfigIniSection, 'CounterDigits', DefaultCounterDigits);
+  UpdateSeqNumGroupVisibility;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+  { Replace default window function with custom one
+    for process messages when screen configuration changed }
+  PrevWndProc := Windows.WNDPROC
+    (SetWindowLongPtr(Self.Handle, GWL_WNDPROC {GWLP_WNDPROC}, PtrUInt(@WndCallback)));
+
   Application.OnMinimize := ApplicationMinimize;
 
   InitUI;
 
-  // Fix components disappearing when ALT key pressed on Windows Vista and later
-  TVistaAltFix.Create(Self);
+  {// Fix components disappearing when ALT key pressed on Windows Vista and later
+  TVistaAltFix.Create(Self);}
 
   Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
   ReadSettings;
@@ -378,18 +410,9 @@ begin
   Ini.Free;
 end;
 
-procedure TMainForm.ChooseOutputDirButtonClick(Sender: TObject);
-var
-  Dir: WideString;
+procedure TMainForm.FormShow(Sender: TObject);
 begin
-  Dir := OutputDirEdit.Text;
-
-  if WideSelectDirectory(Localizer.I18N('SelectOutputDirectory'), '' {savepath.Text}, Dir) then
-  //if SelectDirectory(dir, [sdAllowCreate, sdPerformCreate], 0) then
-  begin
-    OutputDirEdit.Text := Dir;
-    Ini.WriteString(DefaultConfigIniSection, 'OutputDir', Dir);
-  end;
+  RecalculateLabelWidths;
 end;
 
 procedure TMainForm.OutputDirEditChange(Sender: TObject);
@@ -423,6 +446,8 @@ begin
     // or user logged off from the session
     // ToDo: May add comparision of current screenshot with the last one,
     // and if they equal, do not save current
+
+    // ToDo: Use TIdleTimer instead (https://forum.lazarus.freepascal.org/index.php/topic,15811.msg126545.html#msg126545)
     if Timer.Interval > LastInput then
       MakeScreenshot;
   end
@@ -467,9 +492,9 @@ end;
 procedure TMainForm.MakeScreenshot;
 var
   Bitmap: TBitmap;
-  PNG: TPNGObject;
-  JPG: TJPEGImage;
-  GIF: TGIFImage;
+  PNG: {TPNGObject} TPortableNetworkGraphic;
+  JPG: {TJPEGImage} TJPEGImage;
+  GIF: {TGIFImage} TGIFImage;
   ScreenDC: HDC;
   ScreenWidth, ScreenHeight: Integer;
   ScreenX, ScreenY: Integer;
@@ -525,7 +550,7 @@ begin
     case ImageFormat of
       fmtPNG:      // PNG
         begin
-          PNG := TPNGObject.Create;
+          PNG := TPortableNetworkGraphic.Create;
           try
             PNG.Assign(Bitmap);
             PNG.SaveToFile(ImagePath);
@@ -539,9 +564,9 @@ begin
           JPG := TJPEGImage.Create;
           try
             JPG.CompressionQuality := JPEGQualitySpinEdit.Value;
-            JPG.Grayscale := GrayscaleCheckBox.Checked;
+            //JPG.GrayScale := GrayscaleCheckBox.Checked; FixMe: Can not set grayscale
             JPG.Assign(Bitmap);
-            JPG.Compress;
+            //JPG.Compress;
             JPG.SaveToFile(ImagePath);
           finally
             JPG.Free;
@@ -553,17 +578,17 @@ begin
           Bitmap.SaveToFile(ImagePath);
         end;
 
-      fmtGIF:    // GIF
+      {fmtGIF:    // GIF
         begin
           GIF := TGIFImage.Create;
           try
             GIF.Assign(Bitmap);
-            GIF.OptimizeColorMap;
+            //GIF.OptimizeColorMap;
             GIF.SaveToFile(ImagePath);
           finally
             GIF.Free;
           end;
-        end;
+        end;}
     end;
   finally
     Bitmap.Free;
@@ -593,6 +618,9 @@ end;
 
 procedure TMainForm.JPEGQualitySpinEditChange(Sender: TObject);
 begin
+  if Ini = Nil then
+    Exit;
+
   try
     Ini.WriteInteger(DefaultConfigIniSection, 'JPEGQuality', JPEGQualitySpinEdit.Value);
   finally
@@ -701,18 +729,34 @@ end;
 
 procedure TMainForm.MinimizeToTray;
 begin
-  TrayIcon.AppVisible := False;
+  {TrayIcon.AppVisible := False;
   TrayIcon.FormVisible := False;
-  TrayIcon.IconVisible := True;
+  TrayIcon.IconVisible := True; }
+
+  {Application.MainFormOnTaskBar := False;
+  Application.ShowMainForm := False;
+  //Hide;}
+  WindowState := wsMinimized;
+  Hide;
+  TrayIcon.Show;
 end;
 
 procedure TMainForm.RestoreFromTray;
 begin
-  TrayIcon.IconVisible := False;
+  {TrayIcon.IconVisible := False;
   TrayIcon.AppVisible := True;
   TrayIcon.FormVisible := True;
   Application.Restore;
-  Application.BringToFront();
+  Application.BringToFront();}
+
+  TrayIcon.Hide;
+  {Application.MainFormOnTaskBar := True;
+  Application.ShowMainForm := True;
+  //Show;
+  Application.Restore;
+  Application.BringToFront;}
+  WindowState := wsNormal;
+  Show;
 end;
 
 //procedure TMainForm.SetLanguage(Lang: TLanguage);
@@ -751,42 +795,53 @@ end;
 
 procedure TMainForm.TranslateForm;
 begin
-  // Menubar
-  OptionsSubMenu.Caption := Localizer.I18N('Options');
-  LanguageSubMenu.Caption := Localizer.I18N('Language');
-  HelpSubMenu.Caption := Localizer.I18N('Help');
-  AboutMenuItem.Caption := Localizer.I18N('About') + '...';
+  DisableAutoSizing;
 
-  // Main form components
-  OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
-  OpenOutputDirButton.Caption := Localizer.I18N('OpenDirectory');
-  OpenOutputDirButton.Hint := Localizer.I18N('OpenDirectoryHint');
-  FileNameTemplateLabel.Caption := Localizer.I18N('FileNameTemplate') + ':';
-  CaptureIntervalLabel.Caption := Localizer.I18N('CaptureInterval') + ':';
-  StopWhenInactiveCheckBox.Caption := Localizer.I18N('PauseCaptureWhenIdle');
-  StopWhenInactiveCheckBox.Hint := Localizer.I18N('PauseCaptureWhenIdleHint');
-  ImageFormatLabel.Caption := Localizer.I18N('Format') + ':';
-  ColorDepthLabel.Caption := Localizer.I18N('ColorDepth') + ':';
-  JPEGQualityLabel.Caption := Localizer.I18N('Quality') + ':';
-  GrayscaleCheckBox.Caption := Localizer.I18N('Grayscale');
-  AutoCaptureControlGroup.Caption := Localizer.I18N('AutoCapture');
-  StartAutoCaptureButton.Caption := Localizer.I18N('StartCapture');
-  StopAutoCaptureButton.Caption := Localizer.I18N('StopCapture');
-  TakeScreenshotButton.Caption := Localizer.I18N('TakeScreenshot');
-  StartCaptureOnStartUpCheckBox.Caption := Localizer.I18N('StartCaptureOnStartUp');
-  StartMinimizedCheckBox.Caption := Localizer.I18N('StartMinimized');
-  AutoRunCheckBox.Caption := Localizer.I18N('AutoRun');
-  MonitorLabel.Caption := Localizer.I18N('UsedMonitor') + ':';
-  FillMonitorList;
-  SeqNumberGroup.Caption := Localizer.I18N('SequentialNumber');
-  SeqNumberValueLabel.Caption := Localizer.I18N('NextValue') + ':';
-  SeqNumberDigitsCountLabel.Caption := Localizer.I18N('Digits') + ':';
+  try
+    // Menubar
+    OptionsSubMenu.Caption := Localizer.I18N('Options');
+    LanguageSubMenu.Caption := Localizer.I18N('Language');
+    HelpSubMenu.Caption := Localizer.I18N('Help');
+    AboutMenuItem.Caption := Localizer.I18N('About') + '...';
 
-  // Tray icon
-  RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
-  ToggleAutoCaptureTrayMenuItem.Caption := Localizer.I18N('EnableAutoCapture');
-  TakeScreenshotTrayMenuItem.Caption := Localizer.I18N('TakeScreenshot');
-  ExitTrayMenuItem.Caption := Localizer.I18N('Exit');
+    // Main form components
+    OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
+    OutputDirEdit.DialogTitle := Localizer.I18N('SelectOutputDirectory');
+    OpenOutputDirButton.Caption := Localizer.I18N('OpenDirectory');
+    OpenOutputDirButton.Hint := Localizer.I18N('OpenDirectoryHint');
+    FileNameTemplateLabel.Caption := Localizer.I18N('FileNameTemplate') + ':';
+    CaptureIntervalLabel.Caption := Localizer.I18N('CaptureInterval') + ':';
+    StopWhenInactiveCheckBox.Caption := Localizer.I18N('PauseCaptureWhenIdle');
+    StopWhenInactiveCheckBox.Hint := Localizer.I18N('PauseCaptureWhenIdleHint');
+    ImageFormatLabel.Caption := Localizer.I18N('Format') + ':';
+    ColorDepthLabel.Caption := Localizer.I18N('ColorDepth') + ':';
+    JPEGQualityLabel.Caption := Localizer.I18N('Quality') + ':';
+    GrayscaleCheckBox.Caption := Localizer.I18N('Grayscale');
+    AutoCaptureControlGroup.Caption := Localizer.I18N('AutoCapture');
+    StartAutoCaptureButton.Caption := Localizer.I18N('StartCapture');
+    StopAutoCaptureButton.Caption := Localizer.I18N('StopCapture');
+    TakeScreenshotButton.Caption := Localizer.I18N('TakeScreenshot');
+    StartCaptureOnStartUpCheckBox.Caption := Localizer.I18N('StartCaptureOnStartUp');
+    StartMinimizedCheckBox.Caption := Localizer.I18N('StartMinimized');
+    AutoRunCheckBox.Caption := Localizer.I18N('AutoRun');
+    MonitorLabel.Caption := Localizer.I18N('UsedMonitor') + ':';
+    FillMonitorList;
+    SeqNumberGroup.Caption := Localizer.I18N('SequentialNumber');
+    SeqNumberValueLabel.Caption := Localizer.I18N('NextValue') + ':';
+    SeqNumberDigitsCountLabel.Caption := Localizer.I18N('Digits') + ':';
+
+    // Tray icon
+    RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
+    ToggleAutoCaptureTrayMenuItem.Caption := Localizer.I18N('EnableAutoCapture');
+    TakeScreenshotTrayMenuItem.Caption := Localizer.I18N('TakeScreenshot');
+    ExitTrayMenuItem.Caption := Localizer.I18N('Exit');
+
+  finally
+    EnableAutoSizing;
+
+    // Recalculate with of labels area
+    RecalculateLabelWidths;
+  end;
 end;
 
 procedure TMainForm.StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
@@ -802,11 +857,18 @@ end;
 procedure TMainForm.FileNameTemplateComboBoxChange(Sender: TObject);
 begin
   Ini.WriteString(DefaultConfigIniSection, 'FileNameTemplate', FileNameTemplateComboBox.Text);
+
+  UpdateSeqNumGroupVisibility
 end;
 
 procedure TMainForm.FileNameTemplateHelpButtonClick(Sender: TObject);
 begin
-  WideShowMessage(Localizer.I18N('FileNameTemplateHelpText'));
+  //ShowMessage(Localizer.I18N('FileNameTemplateHelpText')); // Can`t show tabs in Windows
+
+  with TFileNameTemplateHelpForm.Create(Application) do
+  begin
+    ShowModal;
+  end;
 end;
 
 function TMainForm.GetImageFormat: TImageFormat;
@@ -895,6 +957,34 @@ begin
   ColorDepthComboBox.OnChange(ColorDepthComboBox);
 end;
 
+procedure TMainForm.UpdateMonitorList;
+begin
+  // Update array in Screen variable first
+  Screen.UpdateMonitors;
+
+  // Disable choosing monitor if only one available
+  if Screen.MonitorCount >= 2 then
+  begin // Multiple monitors
+    MonitorLabel.Enabled := True;
+    MonitorComboBox.Enabled := True;
+
+    // Fix out of bounds
+    if MonitorId >= Screen.MonitorCount then
+      //MonitorId := Screen.MonitorCount - 1; // Last
+      MonitorId := NoMonitorId;
+  end
+  else
+  begin // Only one monitor available
+    MonitorLabel.Enabled := False;
+    MonitorComboBox.Enabled := False;
+    //MonitorId := NoMonitorId;
+    MonitorId := 0;
+  end;
+
+  // Fill combobox
+  FillMonitorList;
+end;
+
 function TMainForm.GetColorDepth: TColorDepth;
 begin
   if ImageFormatInfoArray[ImageFormat].ColorDepth = [] then
@@ -962,9 +1052,9 @@ procedure TMainForm.TrayIconAnimationTimerTimer(Sender: TObject);
 var
   ResName: String;
 begin
-  Inc(TrayIconIdx);
-  if (TrayIconIdx <= High(TrayIconIdx)) then
+  if (TrayIconIdx < High(TrayIconIdx)) then
   begin
+    Inc(TrayIconIdx);
     ResName := Format('_CAMERA_FLASH_%d', [TrayIconIdx]);
     TrayIcon.Icon.Handle := LoadImage(HInstance, PChar(ResName), IMAGE_ICON,
       16, 16, LR_DEFAULTCOLOR);
@@ -997,8 +1087,21 @@ procedure TMainForm.FillMonitorList;
 var
   Idx, SelIdx: Integer;
   Str: WideString;
+  IsLocalizationLoaded: Boolean;
 
 begin
+  IsLocalizationLoaded := True;
+  try
+    Localizer.I18N('test...')
+  except
+    IsLocalizationLoaded := False;
+  end;
+
+  if not IsLocalizationLoaded then
+    Exit;
+
+
+  // Fill combobox with monitor list
   with MonitorComboBox do
   begin
     //SelId := MonitorId;
@@ -1047,7 +1150,8 @@ begin
   else
     raise Exception.CreateFmt('Monitor id=%d not exists', [MonitorId]);
 
-  Ini.WriteInteger(DefaultConfigIniSection, 'Monitor', MonitorId);
+  if Ini <> Nil then
+    Ini.WriteInteger(DefaultConfigIniSection, 'Monitor', MonitorId);
 end;
 
 procedure TMainForm.AboutMenuItemClick(Sender: TObject);
@@ -1058,13 +1162,18 @@ begin
   end;
 end;
 
+procedure TMainForm.TrayIconDblClick(Sender: TObject);
+begin
+  RestoreFromTray;
+end;
+
 procedure TMainForm.UpdateLanguages;
 {const
   GroupIdx = 1;}
 var
   Lang: TLanguageInfo;
   I: integer;
-  MenuItem: TTntMenuItem;
+  MenuItem: TMenuItem;
 begin
   while LanguageSubMenu.Count > 0 do
     LanguageSubMenu.Items[0].Free;
@@ -1077,7 +1186,7 @@ begin
 
     if (Lang.Name <> '') and (Lang.Code <> '') then
     begin
-      MenuItem := TTntMenuItem.Create(LanguageSubMenu);
+      MenuItem := TMenuItem.Create(LanguageSubMenu);
       MenuItem.Caption := Lang.Name;
       if (Lang.NativeName <> '') and (Lang.NativeName <> Lang.Name) then
         MenuItem.Caption := MenuItem.Caption + ' (' + Lang.NativeName + ')';
@@ -1096,19 +1205,19 @@ procedure TMainForm.LanguageClick(Sender: TObject);
 var
   LangCode: TLanguageCode;
 begin
-  LangCode := GetLangCodeOfLangMenuItem(Sender as TTntMenuItem);
+  LangCode := GetLangCodeOfLangMenuItem(Sender as TMenuItem);
   SetLanguageByCode(LangCode);
 end;
 
-function TMainForm.FindLangMenuItem(ALangCode: TLanguageCode): TTntMenuItem;
+function TMainForm.FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
 var
   I: integer;
   LangCode: TLanguageCode;
-  MenuItem: TTntMenuItem;
+  MenuItem: TMenuItem;
 begin
   for I := 0 to LanguageSubMenu.Count - 1 do
   begin
-    MenuItem := (LanguageSubMenu.Items[I] as TTntMenuItem); // Items[] returns TMenuItem instead od TTntMenuItem
+    MenuItem := {(}LanguageSubMenu.Items[I] {as TMenuItem)}; {// Items[] returns TMenuItem instead od TTntMenuItem}
     LangCode := GetLangCodeOfLangMenuItem(MenuItem);
     if LangCode = ALangCode then
     begin
@@ -1120,8 +1229,31 @@ begin
   raise Exception.CreateFmt('Language code "%s" not found', [ALangCode]);
 end;
 
+procedure TMainForm.RecalculateLabelWidths;
+var
+  MaxWidth: Integer;
+begin
+  MaxWidth := 0;
+  MaxWidth := max(MaxWidth, OutputDirLabel.Width);
+  MaxWidth := max(MaxWidth, FileNameTemplateLabel.Width);
+  MaxWidth := max(MaxWidth, CaptureIntervalLabel.Width);
+  MaxWidth := max(MaxWidth, ImageFormatLabel.Width);
+  MaxWidth := max(MaxWidth, MonitorLabel.Width);
+
+  OutputDirEdit.Left := MaxWidth + ChildSizing.LeftRightSpacing
+      + ChildSizing.HorizontalSpacing;
+
+  // Sequential number group
+  MaxWidth := 0;
+  MaxWidth := max(MaxWidth, SeqNumberValueLabel.Width);
+  MaxWidth := max(MaxWidth, SeqNumberDigitsCountLabel.Width);
+  SeqNumberValueSpinEdit.Left := MaxWidth
+      + SeqNumberGroup.ChildSizing.LeftRightSpacing
+      + SeqNumberGroup.ChildSizing.HorizontalSpacing;
+end;
+
 function TMainForm.GetLangCodeOfLangMenuItem(
-  const LangItem: TTntMenuItem): TLanguageCode;
+  const LangItem: TMenuItem): TLanguageCode;
 begin
   if Pos(LanguageSubMenuItemNamePrefix, LangItem.Name) = 1 then
     Result := Copy(LangItem.Name, Length(LanguageSubMenuItemNamePrefix) + 1, 2)
@@ -1157,6 +1289,9 @@ end;
 
 procedure TMainForm.SeqNumberValueSpinEditChange(Sender: TObject);
 begin
+  if Ini = Nil then
+    Exit;
+
   try
     Counter := SeqNumberValueSpinEdit.Value;
   finally
@@ -1170,8 +1305,16 @@ begin
   SeqNumberDigitsCountSpinEdit.Value := FCounterDigits;
 end;
 
+procedure TMainForm.UpdateSeqNumGroupVisibility;
+begin
+  SeqNumberGroup.Visible := Pos('%NUM', FileNameTemplateComboBox.Text) <> 0;
+end;
+
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
 begin
+  if Ini = Nil then
+    Exit;
+
   try
     CounterDigits := SeqNumberDigitsCountSpinEdit.Value;
   finally

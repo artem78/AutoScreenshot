@@ -1,21 +1,26 @@
 unit uAbout;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ShellApi, ExtCtrls, TntForms, TntStdCtrls, TntExtCtrls;
+  {Windows, Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, {ShellApi,} LCLIntf, ExtCtrls{, TntForms, TntStdCtrls, TntExtCtrls};
 
 type
-  TAboutForm = class(TTntForm)
-    ProgramNameLabel: TTntLabel;
-    VersionLabel: TTntLabel;
-    AuthorLabel: TTntLabel;
-    CloseButton: TTntButton;
-    LinkLabel: TTntLabel;
-    Logo: TTntImage;
-    BuildDateLabel: TTntLabel;
-    LocalizationAuthorLabel: TTntLabel;
+
+  { TAboutForm }
+
+  TAboutForm = class(TForm)
+    ProgramNameLabel: TLabel;
+    VersionLabel: TLabel;
+    AuthorLabel: TLabel;
+    CloseButton: TButton;
+    LinkLabel: TLabel;
+    Logo: TImage;
+    BuildDateLabel: TLabel;
+    LocalizationAuthorLabel: TLabel;
     procedure CloseButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LinkLabelClick(Sender: TObject);
@@ -32,7 +37,7 @@ implementation
 
 uses uLocalization, uUtils, DateUtils;
 
-{$R *.dfm}
+{$R *.lfm}
 
 const
   ProjectGitHubURL{: WideString} = 'https://github.com/artem78/AutoScreenshot#readme';
@@ -43,17 +48,43 @@ begin
 end;
 
 procedure TAboutForm.FormCreate(Sender: TObject);
+const
+  Bitness =
+  {$IFDEF WIN64}
+    '64-bit'
+  {$ELSE}
+    '32-bit'
+  {$ENDIF}
+  ;
 var
-  BuildDate: TDateTime;
-  BuildDateStr: WideString;
+  BuildDateTime: TDateTime;
+  BuildStr: WideString;
+  Png: TPortableNetworkGraphic;
+  ResourceName: String;
 begin
   Caption := Localizer.I18N('About');
 
-  Logo.Picture.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
-      64, 64, LR_DEFAULTCOLOR);
+  //Logo.Picture.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
+  //    64, 64, LR_DEFAULTCOLOR);
+  //Logo.Picture.LoadFromLazarusResource('_LOGO');
+  if Screen.PixelsPerInch <= 120 then // Scale = 100% or 125%
+    ResourceName := '_LOGO' // Default size with 64px width
+  else // Scale = 150% or 200%
+    ResourceName := '_LOGO_HIGH_DPI'; // High resolution with 128px width
 
-  ProgramNameLabel.Caption := TntApplication.Title;
-  VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr(True);
+  png := TPortableNetworkGraphic.Create;
+  try
+     Png.LoadFromResourceName(Hinstance, ResourceName);
+     Logo.Picture.Graphic := Png;
+  finally
+     Png.Free;
+  end;
+
+  ProgramNameLabel.Caption := Application.Title;
+  VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr(True) + ' (' + Bitness + ')';
+  {$IFOPT D+}
+    VersionLabel.Caption := VersionLabel.Caption + '    [DEBUG BUILD]';
+  {$ENDIF}
   AuthorLabel.Caption := Localizer.I18N('Author') + ': ' + 'Artem Demin (artem78) <megabyte1024@ya.ru>';
   with Localizer.LanguageInfo do
   begin
@@ -67,22 +98,17 @@ begin
   end;
   LinkLabel.Caption := ProjectGitHubURL;
 
-  BuildDate := GetLinkerTimeStamp;
-  { Check if date is correct
-    (Older versions of Delphi may put incorrect TimeDateStamp in exe
-    without this patch - http://cc.embarcadero.com/Item/19823) }
-  if YearOf(BuildDate) < 2000 then
-    BuildDateStr := 'unknown'
-  else
-    BuildDateStr := FormatDateTime({'dddddd tt'} 'dddddd', BuildDate);
-  BuildDateLabel.Caption := Localizer.I18N('BuildDate') + ': ' + BuildDateStr;
+  BuildDateTime := GetBuildDateTime;
+  BuildStr := FormatDateTime({'dddddd tt'} 'dddddd', BuildDateTime);
+  BuildDateLabel.Caption := Localizer.I18N('BuildDate') + ': ' + BuildStr;
 
   CloseButton.Caption := Localizer.I18N('Close');
 end;
 
 procedure TAboutForm.LinkLabelClick(Sender: TObject);
 begin
-  ShellExecute(handle, 'open', ProjectGitHubURL, nil, nil, SW_SHOW);
+   //OpenDocument(ProjectGitHubURL); { *Преобразовано из ShellExecute* }
+  OpenURL(ProjectGitHubURL);
 end;
 
 end.

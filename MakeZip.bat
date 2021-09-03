@@ -1,3 +1,5 @@
+REM ToDo: Use make file for build process instead
+
 @echo off
 
 REM ******************************************************
@@ -6,8 +8,7 @@ REM *           Batch file for creating ZIP              *
 REM *                                                    *
 REM * Note:                                              *
 REM *    Before run this bat file you need to manually   *
-REM *    compile executable using delphi 7 ide           *
-REM *    (not tested with older versions).               *
+REM *    compile executable using Lazarus ide.           *
 REM *                                                    *
 REM * Note 2:                                            *
 REM *    This tool used 7Zip, so first you need to       *
@@ -27,6 +28,7 @@ set BuildDir="build\files"
 set TargetZipDir="build\zip"
 
 REM Program version
+REM FixMe: Do not work in Lazarus
 set ProgramVersion=
 for /f tokens^=4^ delims^=^"^\ %%a in ('findstr /rc:"VALUE \"ProductVersion\"," "res\VERSIONINFO.rc"') do (
 	set ProgramVersion=%%a
@@ -40,7 +42,7 @@ REM ***********************
 
 REM Some initial checks
 if not exist %SevenZipPath% call :StopBuild "Make sure you have installed 7-zip and set correct path to your 7z.exe in "SevenZipPath" variable in this batch file"
-if not exist AutoScreen.exe call :StopBuild "You need to manually compile project from Delphi 7 IDE before run this batch"
+if not exist AutoScreenshot.exe call :StopBuild "You need to manually compile project from Lazarus IDE before run this batch"
 
 
 REM Create and clear build directory
@@ -52,7 +54,7 @@ echo.
 
 REM Executable
 echo Copy EXE...
-copy AutoScreen.exe %BuildDir%\AutoScreenshot.exe
+copy AutoScreenshot.exe %BuildDir%\AutoScreenshot.exe
 echo Done!
 echo.
 

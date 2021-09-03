@@ -1,0 +1,549 @@
+object MainForm: TMainForm
+  Left = 278
+  Height = 400
+  Top = 153
+  Width = 656
+  AutoSize = True
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = 'Auto Screenshot'
+  ChildSizing.LeftRightSpacing = 15
+  ChildSizing.TopBottomSpacing = 15
+  ChildSizing.HorizontalSpacing = 6
+  ChildSizing.VerticalSpacing = 6
+  ClientHeight = 380
+  ClientWidth = 656
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Arial'
+  Menu = MainMenu
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  Position = poScreenCenter
+  LCLVersion = '2.0.12.0'
+  object OutputDirLabel: TLabel
+    AnchorSideTop.Control = OutputDirEdit
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = OutputDirEdit
+    Left = 96
+    Height = 15
+    Top = 19
+    Width = 89
+    Alignment = taRightJustify
+    Anchors = [akTop, akRight]
+    Caption = 'Saving directory:'
+    ParentColor = False
+  end
+  object CaptureIntervalLabel: TLabel
+    AnchorSideTop.Control = CaptureInterval
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = CaptureInterval
+    Left = 61
+    Height = 15
+    Top = 167
+    Width = 124
+    Alignment = taRightJustify
+    Anchors = [akTop, akRight]
+    Caption = 'Saving interval (h:m:s):'
+    ParentColor = False
+  end
+  object ImageFormatLabel: TLabel
+    AnchorSideTop.Control = ImageFormatComboBox
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = ImageFormatComboBox
+    Left = 143
+    Height = 15
+    Top = 196
+    Width = 42
+    Alignment = taRightJustify
+    Anchors = [akTop, akRight]
+    Caption = 'Format:'
+    ParentColor = False
+  end
+  object JPEGQualityLabel: TLabel
+    AnchorSideLeft.Control = ImageFormatComboBox
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = JPEGQualitySpinEdit
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = JPEGQualitySpinEdit
+    Left = 292
+    Height = 15
+    Top = 196
+    Width = 79
+    Alignment = taRightJustify
+    BorderSpacing.Left = 30
+    Caption = 'Compression:'
+    ParentColor = False
+  end
+  object JPEGQualityPercentLabel: TLabel
+    AnchorSideLeft.Control = JPEGQualitySpinEdit
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = JPEGQualitySpinEdit
+    AnchorSideTop.Side = asrCenter
+    Left = 440
+    Height = 15
+    Top = 196
+    Width = 11
+    Caption = '%'
+    ParentColor = False
+  end
+  object FileNameTemplateLabel: TLabel
+    AnchorSideTop.Control = FileNameTemplateComboBox
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = FileNameTemplateComboBox
+    Left = 79
+    Height = 15
+    Top = 48
+    Width = 106
+    Alignment = taRightJustify
+    Anchors = [akTop, akRight]
+    Caption = 'Filename template:'
+    ParentColor = False
+  end
+  object ColorDepthLabel: TLabel
+    AnchorSideLeft.Control = ImageFormatComboBox
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = ColorDepthComboBox
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = ColorDepthComboBox
+    Left = 292
+    Height = 15
+    Top = 196
+    Width = 67
+    Alignment = taRightJustify
+    BorderSpacing.Left = 30
+    Caption = 'Color depth:'
+    ParentColor = False
+  end
+  object MonitorLabel: TLabel
+    AnchorSideTop.Control = MonitorComboBox
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = MonitorComboBox
+    Left = 107
+    Height = 15
+    Top = 325
+    Width = 78
+    Alignment = taRightJustify
+    Anchors = [akTop, akRight]
+    Caption = 'Used monitor:'
+    ParentColor = False
+  end
+  object OutputDirEdit: TDirectoryEdit
+    AnchorSideTop.Control = Owner
+    Left = 191
+    Height = 23
+    Top = 15
+    Width = 265
+    ShowHidden = False
+    ButtonWidth = 23
+    NumGlyphs = 1
+    MaxLength = 0
+    TabOrder = 0
+    OnChange = OutputDirEditChange
+  end
+  object TakeScreenshotButton: TButton
+    AnchorSideTop.Control = AutoCaptureControlGroup
+    AnchorSideTop.Side = asrCenter
+    AnchorSideBottom.Control = AutoCaptureControlGroup
+    AnchorSideBottom.Side = asrBottom
+    Left = 40
+    Height = 25
+    Top = 392
+    Width = 118
+    Anchors = [akLeft, akBottom]
+    AutoSize = True
+    BorderSpacing.Bottom = 8
+    Caption = 'Take screenshot'
+    Constraints.MinWidth = 100
+    OnClick = TakeScreenshotButtonClick
+    TabOrder = 15
+  end
+  object JPEGQualitySpinEdit: TSpinEdit
+    AnchorSideLeft.Control = JPEGQualityLabel
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = ImageFormatComboBox
+    AnchorSideTop.Side = asrCenter
+    Left = 377
+    Height = 23
+    Top = 192
+    Width = 57
+    OnChange = JPEGQualitySpinEditChange
+    TabOrder = 8
+  end
+  object OpenOutputDirButton: TButton
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = OutputDirEdit
+    AnchorSideTop.Side = asrCenter
+    Left = 462
+    Height = 25
+    Top = 14
+    Width = 105
+    AutoSize = True
+    Caption = 'Open directory'
+    Constraints.MinWidth = 100
+    OnClick = OpenOutputDirButtonClick
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+  end
+  object StopWhenInactiveCheckBox: TCheckBox
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = ImageFormatComboBox
+    AnchorSideTop.Side = asrBottom
+    Left = 191
+    Height = 19
+    Top = 221
+    Width = 219
+    Caption = 'Pause taking screenshots while idle'
+    OnClick = StopWhenInactiveCheckBoxClick
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 10
+  end
+  object ImageFormatComboBox: TComboBox
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = CaptureInterval
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = CaptureInterval
+    AnchorSideRight.Side = asrBottom
+    Left = 191
+    Height = 23
+    Top = 192
+    Width = 71
+    Anchors = [akTop, akLeft, akRight]
+    DropDownCount = 10
+    ItemHeight = 15
+    OnChange = ImageFormatComboBoxChange
+    Style = csDropDownList
+    TabOrder = 6
+  end
+  object AutoCaptureControlGroup: TGroupBox
+    AnchorSideLeft.Control = Owner
+    AnchorSideLeft.Side = asrCenter
+    AnchorSideTop.Control = MonitorComboBox
+    AnchorSideTop.Side = asrBottom
+    Left = 217
+    Height = 57
+    Top = 368
+    Width = 222
+    AutoSize = True
+    BorderSpacing.Top = 24
+    Caption = 'Automatic capture'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.TopBottomSpacing = 6
+    ChildSizing.HorizontalSpacing = 6
+    ChildSizing.VerticalSpacing = 6
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 2
+    ClientHeight = 37
+    ClientWidth = 218
+    TabOrder = 16
+    object StartAutoCaptureButton: TBitBtn
+      Left = 6
+      Height = 25
+      Top = 6
+      Width = 100
+      AutoSize = True
+      Caption = 'Enable'
+      Constraints.MinWidth = 100
+      NumGlyphs = 2
+      OnClick = StartAutoCaptureButtonClick
+      Spacing = 8
+      TabOrder = 0
+    end
+    object StopAutoCaptureButton: TBitBtn
+      Left = 112
+      Height = 25
+      Top = 6
+      Width = 100
+      AutoSize = True
+      Caption = 'Disable'
+      Constraints.MinWidth = 100
+      NumGlyphs = 2
+      OnClick = StopAutoCaptureButtonClick
+      Spacing = 8
+      TabOrder = 1
+    end
+  end
+  object StartCaptureOnStartUpCheckBox: TCheckBox
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = StopWhenInactiveCheckBox
+    AnchorSideTop.Side = asrBottom
+    Left = 191
+    Height = 19
+    Top = 246
+    Width = 233
+    Caption = 'Start auto capture when program starts'
+    OnClick = StartCaptureOnStartUpCheckBoxClick
+    TabOrder = 11
+  end
+  object StartMinimizedCheckBox: TCheckBox
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = StartCaptureOnStartUpCheckBox
+    AnchorSideTop.Side = asrBottom
+    Left = 191
+    Height = 19
+    Top = 271
+    Width = 140
+    Caption = 'Start minimized to tray'
+    OnClick = StartMinimizedCheckBoxClick
+    TabOrder = 12
+  end
+  object FileNameTemplateComboBox: TComboBox
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = OutputDirEdit
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = OutputDirEdit
+    AnchorSideRight.Side = asrBottom
+    Left = 191
+    Height = 23
+    Top = 44
+    Width = 265
+    Anchors = [akTop, akLeft, akRight]
+    ItemHeight = 15
+    Items.Strings = (
+      'screenshot %Y-%M-%D %H-%N-%S'
+      '%Y\%M\%D\screenshot %H-%N-%S'
+      '%Y-%M\%D\screenshot %H-%N-%S'
+      '%COMP\%USER\screenshot %Y-%M-%D %H-%N-%S'
+      'screenshot %NUM'
+    )
+    OnChange = FileNameTemplateComboBoxChange
+    TabOrder = 2
+  end
+  object FileNameTemplateHelpButton: TButton
+    AnchorSideLeft.Control = FileNameTemplateComboBox
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = FileNameTemplateComboBox
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Side = asrBottom
+    Left = 462
+    Height = 25
+    Top = 43
+    Width = 33
+    AutoSize = True
+    Caption = '?'
+    OnClick = FileNameTemplateHelpButtonClick
+    TabOrder = 3
+  end
+  object GrayscaleCheckBox: TCheckBox
+    AnchorSideTop.Control = JPEGQualitySpinEdit
+    Left = 462
+    Height = 19
+    Top = 192
+    Width = 75
+    Caption = 'Grayscale'
+    OnClick = GrayscaleCheckBoxClick
+    TabOrder = 9
+  end
+  object ColorDepthComboBox: TComboBox
+    AnchorSideLeft.Control = ColorDepthLabel
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = ImageFormatComboBox
+    AnchorSideTop.Side = asrCenter
+    Left = 365
+    Height = 23
+    Top = 192
+    Width = 65
+    DropDownCount = 10
+    ItemHeight = 15
+    OnChange = ColorDepthComboBoxChange
+    Style = csDropDownList
+    TabOrder = 7
+  end
+  object CaptureInterval: TDateTimePicker
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = SeqNumberGroup
+    AnchorSideTop.Side = asrBottom
+    Left = 191
+    Height = 23
+    Top = 163
+    Width = 71
+    CenturyFrom = 1941
+    MaxDate = 2958465
+    MinDate = -53780
+    TabOrder = 5
+    TrailingSeparator = False
+    LeadingZeros = False
+    Kind = dtkTime
+    TimeFormat = tf24
+    TimeDisplay = tdHMS
+    DateMode = dmComboBox
+    Date = 44009
+    UseDefaultSeparators = True
+    HideDateTimeParts = []
+    MonthNames = 'Long'
+    OnChange = CaptureIntervalChange
+  end
+  object AutoRunCheckBox: TCheckBox
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = StartMinimizedCheckBox
+    AnchorSideTop.Side = asrBottom
+    Left = 191
+    Height = 19
+    Top = 296
+    Width = 203
+    Caption = 'Run application at system startup'
+    OnClick = AutoRunCheckBoxClick
+    TabOrder = 13
+  end
+  object MonitorComboBox: TComboBox
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = AutoRunCheckBox
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = OutputDirEdit
+    AnchorSideRight.Side = asrBottom
+    Left = 191
+    Height = 23
+    Top = 321
+    Width = 265
+    Anchors = [akTop, akLeft, akRight]
+    ItemHeight = 15
+    Items.Strings = (
+      ''
+      ''
+    )
+    OnChange = MonitorComboBoxChange
+    Style = csDropDownList
+    TabOrder = 14
+  end
+  object SeqNumberGroup: TGroupBox
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = FileNameTemplateComboBox
+    AnchorSideTop.Side = asrBottom
+    Left = 191
+    Height = 84
+    Top = 73
+    Width = 124
+    AutoSize = True
+    Caption = 'Sequential number'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.TopBottomSpacing = 6
+    ChildSizing.HorizontalSpacing = 6
+    ChildSizing.VerticalSpacing = 6
+    ClientHeight = 64
+    ClientWidth = 120
+    TabOrder = 4
+    object SeqNumberValueLabel: TLabel
+      AnchorSideTop.Control = SeqNumberValueSpinEdit
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = SeqNumberValueSpinEdit
+      Left = 35
+      Height = 15
+      Top = 10
+      Width = 59
+      Alignment = taRightJustify
+      Anchors = [akTop, akRight]
+      Caption = 'Next value:'
+      ParentColor = False
+    end
+    object SeqNumberDigitsCountLabel: TLabel
+      AnchorSideTop.Control = SeqNumberDigitsCountSpinEdit
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = SeqNumberDigitsCountSpinEdit
+      Left = 59
+      Height = 15
+      Top = 39
+      Width = 35
+      Alignment = taRightJustify
+      Anchors = [akTop, akRight]
+      Caption = 'Digits:'
+      ParentColor = False
+    end
+    object SeqNumberValueSpinEdit: TSpinEdit
+      AnchorSideTop.Control = SeqNumberGroup
+      Left = 100
+      Height = 23
+      Top = 6
+      Width = 73
+      Anchors = [akTop]
+      MaxValue = 999999
+      OnChange = SeqNumberValueSpinEditChange
+      TabOrder = 0
+    end
+    object SeqNumberDigitsCountSpinEdit: TSpinEdit
+      AnchorSideLeft.Control = SeqNumberValueSpinEdit
+      AnchorSideTop.Control = SeqNumberValueSpinEdit
+      AnchorSideTop.Side = asrBottom
+      Left = 100
+      Height = 23
+      Top = 35
+      Width = 49
+      MaxValue = 0
+      OnChange = SeqNumberDigitsCountSpinEditChange
+      TabOrder = 1
+    end
+  end
+  object Timer: TTimer
+    Enabled = False
+    OnTimer = TimerTimer
+    Left = 16
+    Top = 124
+  end
+  object TrayIcon: TTrayIcon
+    PopUpMenu = TrayIconPopupMenu
+    OnDblClick = TrayIconDblClick
+    Left = 96
+    Top = 124
+  end
+  object TrayIconPopupMenu: TPopupMenu
+    Left = 136
+    Top = 120
+    object RestoreWindowTrayMenuItem: TMenuItem
+      Caption = 'Restore'
+      Default = True
+      OnClick = RestoreWindowTrayMenuItemClick
+    end
+    object Separator1TrayMenuItem: TMenuItem
+      Caption = '-'
+    end
+    object ToggleAutoCaptureTrayMenuItem: TMenuItem
+      Caption = 'Enable automatic capture'
+      OnClick = ToggleAutoCaptureTrayMenuItemClick
+    end
+    object TakeScreenshotTrayMenuItem: TMenuItem
+      Caption = 'Take screenshot'
+      OnClick = TakeScreenshotTrayMenuItemClick
+    end
+    object Separator2TrayMenuItem: TMenuItem
+      Caption = '-'
+    end
+    object ExitTrayMenuItem: TMenuItem
+      Caption = 'Quit'
+      OnClick = ExitTrayMenuItemClick
+    end
+  end
+  object TrayIconAnimationTimer: TTimer
+    Enabled = False
+    Interval = 160
+    OnTimer = TrayIconAnimationTimerTimer
+    Left = 16
+    Top = 168
+  end
+  object MainMenu: TMainMenu
+    Left = 40
+    Top = 40
+    object OptionsSubMenu: TMenuItem
+      Caption = 'Options'
+      object LanguageSubMenu: TMenuItem
+        Caption = 'Language'
+      end
+    end
+    object HelpSubMenu: TMenuItem
+      Caption = 'Help'
+      object AboutMenuItem: TMenuItem
+        Caption = 'About...'
+        OnClick = AboutMenuItemClick
+      end
+    end
+  end
+  object UniqueInstance: TUniqueInstance
+    Enabled = True
+    Identifier = 'AutoScreenshot'
+    Left = 560
+    Top = 248
+  end
+end
