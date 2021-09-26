@@ -977,8 +977,8 @@ begin
   begin // Only one monitor available
     MonitorLabel.Enabled := False;
     MonitorComboBox.Enabled := False;
-    //MonitorId := NoMonitorId;
-    MonitorId := 0;
+    MonitorId := NoMonitorId;
+    //MonitorId := 0;
   end;
 
   // Fill combobox
