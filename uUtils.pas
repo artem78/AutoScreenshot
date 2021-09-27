@@ -86,7 +86,7 @@ function CheckAutoRun(const AppTitle: String): Boolean;
 implementation
 
 uses
-  SysUtils, DateUtils, {TntSysUtils,} Registry, uLanguages;
+  SysUtils, DateUtils, Registry, uLanguages;
 
 type
   PLASTINPUTINFO = ^LASTINPUTINFO;
@@ -144,19 +144,11 @@ end;
 
 function DecodeControlCharacters(const Str: WideString): WideString;
 begin
-  Result := {Tnt_WideStringReplace} StringReplace(Str,    '\r', #13, [rfReplaceAll]);
-  Result := {Tnt_WideStringReplace} StringReplace(Result, '\n', #10, [rfReplaceAll]);
-  Result := {Tnt_WideStringReplace} StringReplace(Result, '\t', #9,  [rfReplaceAll]);
-  Result := {Tnt_WideStringReplace} StringReplace(Result, '\\', '\', [rfReplaceAll]);
+  Result := StringReplace(Str,    '\r', #13, [rfReplaceAll]);
+  Result := StringReplace(Result, '\n', #10, [rfReplaceAll]);
+  Result := StringReplace(Result, '\t', #9,  [rfReplaceAll]);
+  Result := StringReplace(Result, '\\', '\', [rfReplaceAll]);
 end;
-
-{function GetProgramVersionStr: string;
-var
-  Rec: LongRec;
-begin
-  Rec := LongRec(GetFileVersion(ParamStr(0)));
-  Result := Format('%d.%d', [Rec.Hi, Rec.Lo])
-end;}
 
 function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean): String;
 var
