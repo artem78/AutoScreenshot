@@ -641,28 +641,14 @@ end;
 
 function TMainForm.GetImagePath: String;
 var
-  DirName, FileName, Ext, FullFileName: String;
-  I: Integer;
+  DirName, FileName: String;
 begin
   FileName := ExtractFileName(FileNameTemplateComboBox.Text);
   FileName := FormatPath(FileName);
 
   DirName := IncludeTrailingPathDelimiter(FinalOutputDir);
 
-  Ext := ImageFormatInfoArray[ImageFormat].Extension;
-
-  // If image file already exist create new one with index number
-  I := 1;
-  repeat
-    if I = 1 then
-      FullFileName := DirName + FileName + '.' + Ext
-    else
-      FullFileName := DirName + FileName + ' (' + IntToStr(I) + ')' + '.' + Ext;
-
-    Inc(I);
-  until not FileExists(FullFileName);
-
-  Result := FullFileName;
+  Result := DirName + FileName + '.' + ImageFormatInfoArray[ImageFormat].Extension;
 end;
 
 procedure TMainForm.OpenOutputDirButtonClick(Sender: TObject);
