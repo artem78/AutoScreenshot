@@ -147,6 +147,7 @@ type
     function GetLangCodeOfLangMenuItem(const LangItem: TMenuItem): TLanguageCode;
     function FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
     procedure RecalculateLabelWidths;
+    procedure RecalculateLabelWidthsForSeqNumGroup;
     function FormatPath(Str: string): string;
     procedure SetCounter(Val: Integer);
     procedure SetCounterDigits(Val: Integer);
@@ -1222,6 +1223,13 @@ begin
       + ChildSizing.HorizontalSpacing;
 
   // Sequential number group
+  RecalculateLabelWidthsForSeqNumGroup;
+end;
+
+procedure TMainForm.RecalculateLabelWidthsForSeqNumGroup;
+var
+  MaxWidth: Integer;
+begin
   MaxWidth := 0;
   MaxWidth := max(MaxWidth, SeqNumberValueLabel.Width);
   MaxWidth := max(MaxWidth, SeqNumberDigitsCountLabel.Width);
@@ -1286,6 +1294,8 @@ end;
 procedure TMainForm.UpdateSeqNumGroupVisibility;
 begin
   SeqNumberGroup.Visible := Pos('%NUM', FileNameTemplateComboBox.Text) <> 0;
+  if SeqNumberGroup.Visible then
+    RecalculateLabelWidthsForSeqNumGroup;
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
