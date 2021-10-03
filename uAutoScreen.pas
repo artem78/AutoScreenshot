@@ -488,7 +488,7 @@ var
   Bitmap: TBitmap;
   PNG: TPortableNetworkGraphic;
   JPG: TJPEGImage;
-  GIF: TGIFImage;
+  //GIF: TGIFImage;
   ScreenDC: HDC;
   ScreenWidth, ScreenHeight: Integer;
   ScreenX, ScreenY: Integer;

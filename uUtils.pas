@@ -90,7 +90,6 @@ uses
   SysUtils, DateUtils, Registry, uLanguages, FileInfo;
 
 type
-  PLASTINPUTINFO = ^LASTINPUTINFO;
   tagLASTINPUTINFO = record
     cbSize: UINT;
     dwTime: DWORD;
