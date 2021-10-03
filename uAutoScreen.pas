@@ -5,7 +5,8 @@ interface
 uses
   Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
-  ShellAPI, Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker;
+  Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
+  LCLIntf;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF});
@@ -236,7 +237,7 @@ begin
   //if WindowInfo^.WinControl is TForm1 then //Eliminate form1 global variable for safer handling.
   //  Result:= CallWindowProc(TForm1(WindowInfo^.WinControl).PrevWndProc, MyHWND, uMSG, WParam, LParam);
 
-  Result := CallWindowProc(MainForm.PrevWndProc, MyHWND, uMsg, WParam, LParam);
+  Result := Windows.CallWindowProc(MainForm.PrevWndProc, MyHWND, uMsg, WParam, LParam);
 end;
 
 procedure TMainForm.InitUI;
@@ -654,7 +655,7 @@ end;
 
 procedure TMainForm.OpenOutputDirButtonClick(Sender: TObject);
 begin
-  ShellExecute(Handle, 'open', PChar(FinalOutputDir), nil, nil, SW_SHOWNORMAL);
+  OpenDocument(FinalOutputDir);
 end;
 
 procedure TMainForm.StopWhenInactiveCheckBoxClick(Sender: TObject);
