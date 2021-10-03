@@ -4,11 +4,8 @@ interface
 
 uses
   Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,} {pngImage,}
-  {TrayIcon,} {XPMan,} {jpeg,} ShellAPI, Menus, Buttons, EditBtn,
-  UniqueInstance, {TntForms, TntStdCtrls,}
-  {TntMenus, TntComCtrls, TntButtons, TntExtCtrls, TntDialogs, TntFileCtrl,}
-  uLocalization, DateTimePicker;
+  Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
+  ShellAPI, Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF});
@@ -35,7 +32,6 @@ type
     OutputDirLabel: TLabel;
     CaptureIntervalLabel: TLabel;
     TrayIcon: TTrayIcon;
-    //XPManifest: TXPManifest;
     ImageFormatLabel: TLabel;
     TakeScreenshotButton: TButton;
     JPEGQualityLabel: TLabel;
@@ -151,6 +147,7 @@ type
     function GetLangCodeOfLangMenuItem(const LangItem: TMenuItem): TLanguageCode;
     function FindLangMenuItem(ALangCode: TLanguageCode): TMenuItem;
     procedure RecalculateLabelWidths;
+    procedure RecalculateLabelWidthsForSeqNumGroup;
     function FormatPath(Str: string): string;
     procedure SetCounter(Val: Integer);
     procedure SetCounterDigits(Val: Integer);
@@ -219,9 +216,8 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uUtils, Math{, VistaAltFixUnit}, uFileNameTemplateHelpForm;
+uses uAbout, DateUtils, uUtils, Math, uFileNameTemplateHelpForm;
 
-//{$R *.dfm}
 {$R *.lfm}
 
 const
@@ -395,9 +391,6 @@ begin
 
   InitUI;
 
-  {// Fix components disappearing when ALT key pressed on Windows Vista and later
-  TVistaAltFix.Create(Self);}
-
   Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
   ReadSettings;
 
@@ -492,9 +485,9 @@ end;
 procedure TMainForm.MakeScreenshot;
 var
   Bitmap: TBitmap;
-  PNG: {TPNGObject} TPortableNetworkGraphic;
-  JPG: {TJPEGImage} TJPEGImage;
-  GIF: {TGIFImage} TGIFImage;
+  PNG: TPortableNetworkGraphic;
+  JPG: TJPEGImage;
+  GIF: TGIFImage;
   ScreenDC: HDC;
   ScreenWidth, ScreenHeight: Integer;
   ScreenX, ScreenY: Integer;
@@ -649,28 +642,14 @@ end;
 
 function TMainForm.GetImagePath: String;
 var
-  DirName, FileName, Ext, FullFileName: String;
-  I: Integer;
+  DirName, FileName: String;
 begin
   FileName := ExtractFileName(FileNameTemplateComboBox.Text);
   FileName := FormatPath(FileName);
 
   DirName := IncludeTrailingPathDelimiter(FinalOutputDir);
 
-  Ext := ImageFormatInfoArray[ImageFormat].Extension;
-
-  // If image file already exist create new one with index number
-  I := 1;
-  repeat
-    if I = 1 then
-      FullFileName := DirName + FileName + '.' + Ext
-    else
-      FullFileName := DirName + FileName + ' (' + IntToStr(I) + ')' + '.' + Ext;
-
-    Inc(I);
-  until not FileExists(FullFileName);
-
-  Result := FullFileName;
+  Result := DirName + FileName + '.' + ImageFormatInfoArray[ImageFormat].Extension;
 end;
 
 procedure TMainForm.OpenOutputDirButtonClick(Sender: TObject);
@@ -977,8 +956,8 @@ begin
   begin // Only one monitor available
     MonitorLabel.Enabled := False;
     MonitorComboBox.Enabled := False;
-    //MonitorId := NoMonitorId;
-    MonitorId := 0;
+    MonitorId := NoMonitorId;
+    //MonitorId := 0;
   end;
 
   // Fill combobox
@@ -1217,7 +1196,7 @@ var
 begin
   for I := 0 to LanguageSubMenu.Count - 1 do
   begin
-    MenuItem := {(}LanguageSubMenu.Items[I] {as TMenuItem)}; {// Items[] returns TMenuItem instead od TTntMenuItem}
+    MenuItem := LanguageSubMenu.Items[I];
     LangCode := GetLangCodeOfLangMenuItem(MenuItem);
     if LangCode = ALangCode then
     begin
@@ -1244,6 +1223,13 @@ begin
       + ChildSizing.HorizontalSpacing;
 
   // Sequential number group
+  RecalculateLabelWidthsForSeqNumGroup;
+end;
+
+procedure TMainForm.RecalculateLabelWidthsForSeqNumGroup;
+var
+  MaxWidth: Integer;
+begin
   MaxWidth := 0;
   MaxWidth := max(MaxWidth, SeqNumberValueLabel.Width);
   MaxWidth := max(MaxWidth, SeqNumberDigitsCountLabel.Width);
@@ -1308,6 +1294,8 @@ end;
 procedure TMainForm.UpdateSeqNumGroupVisibility;
 begin
   SeqNumberGroup.Visible := Pos('%NUM', FileNameTemplateComboBox.Text) <> 0;
+  if SeqNumberGroup.Visible then
+    RecalculateLabelWidthsForSeqNumGroup;
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);

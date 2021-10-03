@@ -6,7 +6,7 @@ interface
 
 uses
   {Windows, Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, {ShellApi,} LCLIntf, ExtCtrls{, TntForms, TntStdCtrls, TntExtCtrls};
+  Dialogs, StdCtrls, {ShellApi,} LCLIntf, ExtCtrls;
 
 type
 
@@ -107,7 +107,6 @@ end;
 
 procedure TAboutForm.LinkLabelClick(Sender: TObject);
 begin
-   //OpenDocument(ProjectGitHubURL); { *Преобразовано из ShellExecute* }
   OpenURL(ProjectGitHubURL);
 end;
 

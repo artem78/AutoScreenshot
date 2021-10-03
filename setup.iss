@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Auto Screenshot"
-#define MyAppVersion "1.8"
+#define MyAppVersion "1.8.1"
 #define MyAppPublisher "Artem Demin"
 #define MyAppURL "https://github.com/artem78/AutoScreenshot#readme"
 #define MyAppExeName "AutoScreenshot.exe"
@@ -35,8 +35,8 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "build\files\AutoScreenshot.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build\files\lang\*"; DestDir: "{app}\lang"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "AutoScreenshot.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "lang\*"; DestDir: "{app}\lang"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.bak"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 ; ToDo: Remove config.ini when uninstall or make this optional
 
@@ -50,3 +50,6 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 [Registry]
 ; Remove autorun
 Root: "HKCU"; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueName: "Auto Screenshot"; Flags: uninsdeletekey
+
+[UninstallDelete]
+Type: files; Name: "{app}\config.ini"

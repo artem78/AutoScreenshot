@@ -5,7 +5,7 @@ unit uLocalization;
 interface
 
 uses
-  {TntIniFiles} IniFiles, SysUtils, Classes;
+  IniFiles, SysUtils, Classes;
 
 type
   TLanguageCode = String[2];
