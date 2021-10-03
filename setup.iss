@@ -50,3 +50,6 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 [Registry]
 ; Remove autorun
 Root: "HKCU"; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueName: "Auto Screenshot"; Flags: uninsdeletekey
+
+[UninstallDelete]
+Type: files; Name: "{app}\config.ini"
