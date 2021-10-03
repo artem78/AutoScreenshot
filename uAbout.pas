@@ -81,7 +81,7 @@ begin
   end;
 
   ProgramNameLabel.Caption := Application.Title;
-  VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr(True) + ' (' + Bitness + ')';
+  VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr() + ' (' + Bitness + ')';
   {$IFOPT D+}
     VersionLabel.Caption := VersionLabel.Caption + '    [DEBUG BUILD]';
   {$ENDIF}

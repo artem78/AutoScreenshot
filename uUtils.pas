@@ -38,23 +38,24 @@ function Int2Str(Val: Integer; LeadingZeros: Integer = 0): String;
 // Decodes control characters (like \r, \n, \t and etc.) from given string.
 function DecodeControlCharacters(const Str: WideString): WideString;
 
-{ Returns string with program version. If ShortFormat is True prints release
-  and build values only if they are not equal zero.
-
-  Examples:
-      GetProgramVersionStr(True);
-
-      Version   | Result
-      ----------------------
-      2.1.0.0   | '2.1'
-      1.0.0.0   | '1.0'
-      0.0.0.0   | '0.0'
-      3.0.1.0   | '3.0.1'
-      5.6.7.8   | '5.6.7.8'
-      0.0.0.9   | '0.0.0.9'
- }
-
-function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean = False): string;
+//{ Returns string with program version. If ShortFormat is True prints release
+//  and build values only if they are not equal zero.
+//
+//  Examples:
+//      GetProgramVersionStr(True);
+//
+//      Version   | Result
+//      ----------------------
+//      2.1.0.0   | '2.1'
+//      1.0.0.0   | '1.0'
+//      0.0.0.0   | '0.0'
+//      3.0.1.0   | '3.0.1'
+//      5.6.7.8   | '5.6.7.8'
+//      0.0.0.9   | '0.0.0.9'
+// }
+//
+//function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean = False): string;
+function GetProgramVersionStr: string;
 
 // Returns program build date and time
 function GetBuildDateTime: TDateTime;
@@ -86,7 +87,7 @@ function CheckAutoRun(const AppTitle: String): Boolean;
 implementation
 
 uses
-  SysUtils, DateUtils, Registry, uLanguages;
+  SysUtils, DateUtils, Registry, uLanguages, FileInfo;
 
 type
   PLASTINPUTINFO = ^LASTINPUTINFO;
@@ -150,58 +151,71 @@ begin
   Result := StringReplace(Result, '\\', '\', [rfReplaceAll]);
 end;
 
-function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean): String;
+//function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean): String;
+//var
+//  FileName: String;
+//  VerInfoSize: Cardinal;
+//  VerValueSize: Cardinal;
+//  Dummy: Cardinal;
+//  PVerInfo: Pointer;
+//  PVerValue: PVSFixedFileInfo;
+//
+//  Major, Minor, Release, Build: Cardinal;
+//begin
+//  // Note: Also we can get version string from FileVersion
+//  // or ProductVersion section
+//
+//  FileName := ParamStr(0);
+//  Result := '';
+//  VerInfoSize := GetFileVersionInfoSize(PChar(FileName), Dummy);
+//  GetMem(PVerInfo, VerInfoSize);
+//  try
+//    if GetFileVersionInfo(PChar(FileName), 0, VerInfoSize, PVerInfo) then
+//      if VerQueryValue(PVerInfo, '\', Pointer(PVerValue), VerValueSize) then
+//        with PVerValue^ do
+//          {Result := Format('v%d.%d.%d build %d', [
+//            HiWord(dwFileVersionMS), //Major
+//            LoWord(dwFileVersionMS), //Minor
+//            HiWord(dwFileVersionLS), //Release
+//            LoWord(dwFileVersionLS)]); //Build}
+//        begin
+//          Major := HiWord(dwFileVersionMS);
+//          Minor := LoWord(dwFileVersionMS);
+//          Release := HiWord(dwFileVersionLS);
+//          Build := LoWord(dwFileVersionLS);
+//
+//          if not {HideRealeaseAndBuildIfZero} ShortFormat then
+//            Result := Format('%d.%d.%d.%d', [Major, Minor, Release, Build])
+//          else
+//          begin
+//            // Writes minor and major parts in any case
+//            Result := Format('%d.%d', [Major, Minor]);
+//
+//            // Writes realease and build only if they exist
+//            if (Release > 0) or (Build > 0) then
+//            begin
+//              Result := Result + '.' + IntToStr(Release);
+//
+//              if Build > 0 then
+//                Result := Result + '.' + IntToStr(Build);
+//            end;
+//          end;
+//        end;
+//  finally
+//    FreeMem(PVerInfo, VerInfoSize);
+//  end;
+//end;
+
+function GetProgramVersionStr: String;
 var
-  FileName: String;
-  VerInfoSize: Cardinal;
-  VerValueSize: Cardinal;
-  Dummy: Cardinal;
-  PVerInfo: Pointer;
-  PVerValue: PVSFixedFileInfo;
-
-  Major, Minor, Release, Build: Cardinal;
+  FileVerInfo: TFileVersionInfo;
 begin
-  // Note: Also we can get version string from FileVersion
-  // or ProductVersion section
-
-  FileName := ParamStr(0);
-  Result := '';
-  VerInfoSize := GetFileVersionInfoSize(PChar(FileName), Dummy);
-  GetMem(PVerInfo, VerInfoSize);
+  FileVerInfo := TFileVersionInfo.Create(Nil);
   try
-    if GetFileVersionInfo(PChar(FileName), 0, VerInfoSize, PVerInfo) then
-      if VerQueryValue(PVerInfo, '\', Pointer(PVerValue), VerValueSize) then
-        with PVerValue^ do
-          {Result := Format('v%d.%d.%d build %d', [
-            HiWord(dwFileVersionMS), //Major
-            LoWord(dwFileVersionMS), //Minor
-            HiWord(dwFileVersionLS), //Release
-            LoWord(dwFileVersionLS)]); //Build}
-        begin
-          Major := HiWord(dwFileVersionMS);
-          Minor := LoWord(dwFileVersionMS);
-          Release := HiWord(dwFileVersionLS);
-          Build := LoWord(dwFileVersionLS);
-
-          if not {HideRealeaseAndBuildIfZero} ShortFormat then
-            Result := Format('%d.%d.%d.%d', [Major, Minor, Release, Build])
-          else
-          begin
-            // Writes minor and major parts in any case
-            Result := Format('%d.%d', [Major, Minor]);
-
-            // Writes realease and build only if they exist
-            if (Release > 0) or (Build > 0) then
-            begin
-              Result := Result + '.' + IntToStr(Release);
-
-              if Build > 0 then
-                Result := Result + '.' + IntToStr(Build);
-            end;
-          end;
-        end;
+    FileVerInfo.ReadFileInfo;
+    Result := FileVerInfo.VersionStrings.Values[{'FileVersion'} 'ProductVersion'];
   finally
-    FreeMem(PVerInfo, VerInfoSize);
+    FileVerInfo.Free;
   end;
 end;
 
