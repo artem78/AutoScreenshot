@@ -97,6 +97,9 @@ type
   LASTINPUTINFO = tagLASTINPUTINFO;
   TLastInputInfo = LASTINPUTINFO;
 
+const
+  RegistryAutorunKey = 'Software\Microsoft\Windows\CurrentVersion\Run';
+
 function GetLastInputInfo(var plii: TLastInputInfo): BOOL;stdcall; external 'user32' name 'GetLastInputInfo';
 
 function LastInput: DWord;
@@ -326,7 +329,6 @@ end;
 
 procedure SetAutoRun(const FileName: String; const AppTitle: String);
 const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run';
   Args = '-autorun';
 var
   Reg: TRegistry;
@@ -337,7 +339,7 @@ begin
   Reg := TRegistry.Create(KEY_WRITE);
   try
     Reg.RootKey := HKEY_CURRENT_USER;
-    if Reg.OpenKey(Section, True) then
+    if Reg.OpenKey(RegistryAutorunKey, True) then
       Reg.WriteString(AppTitle, Cmd);
   finally
     Reg.Free;
@@ -345,15 +347,13 @@ begin
 end;
 
 procedure RemoveAutoRun(const AppTitle: String);
-const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run';
 var
   Reg: TRegistry;
 begin
   Reg := TRegistry.Create(KEY_WRITE);
   try
     Reg.RootKey := HKEY_CURRENT_USER;
-    if Reg.OpenKey(Section, False) then
+    if Reg.OpenKey(RegistryAutorunKey, False) then
       Reg.DeleteValue(AppTitle);
   finally
     Reg.Free;
@@ -370,8 +370,6 @@ begin
 end;
 
 function CheckAutoRun(const AppTitle: String): Boolean;
-const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run';
 var
   Reg: TRegistry;
 begin
@@ -380,7 +378,7 @@ begin
   Reg := TRegistry.Create(KEY_READ);
   try
     Reg.RootKey := HKEY_CURRENT_USER;
-    if Reg.OpenKeyReadOnly(Section) then
+    if Reg.OpenKeyReadOnly(RegistryAutorunKey) then
       Result := Reg.ReadString(AppTitle) <> '';
   finally
     Reg.Free;
