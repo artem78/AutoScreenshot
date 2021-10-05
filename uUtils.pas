@@ -326,32 +326,37 @@ end;
 
 procedure SetAutoRun(const FileName: String; const AppTitle: String);
 const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
+  Section = 'Software\Microsoft\Windows\CurrentVersion\Run';
   Args = '-autorun';
 var
+  Reg: TRegistry;
   Cmd: String;
 begin
   Cmd := '"' + FileName + '" ' + Args;
 
-  with TRegIniFile.Create('') do
+  Reg := TRegistry.Create(KEY_WRITE);
   try
-    RootKey := HKEY_CURRENT_USER;
-    WriteString(Section, AppTitle, Cmd);
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKey(Section, True) then
+      Reg.WriteString(AppTitle, Cmd);
   finally
-    Free;
+    Reg.Free;
   end;
 end;
 
 procedure RemoveAutoRun(const AppTitle: String);
 const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
+  Section = 'Software\Microsoft\Windows\CurrentVersion\Run';
+var
+  Reg: TRegistry;
 begin
-  with TRegIniFile.Create('') do
+  Reg := TRegistry.Create(KEY_WRITE);
   try
-    RootKey := HKEY_CURRENT_USER;
-    DeleteKey(Section, AppTitle);
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKey(Section, False) then
+      Reg.DeleteValue(AppTitle);
   finally
-    Free;
+    Reg.Free;
   end;
 end;
 
@@ -366,16 +371,19 @@ end;
 
 function CheckAutoRun(const AppTitle: String): Boolean;
 const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
+  Section = 'Software\Microsoft\Windows\CurrentVersion\Run';
+var
+  Reg: TRegistry;
 begin
   Result := False;
 
-  with TRegIniFile.Create('') do
+  Reg := TRegistry.Create(KEY_READ);
   try
-    RootKey := HKEY_CURRENT_USER;
-    Result := ReadString(Section, AppTitle, '') <> '';
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKeyReadOnly(Section) then
+      Result := Reg.ReadString(AppTitle) <> '';
   finally
-    Free;
+    Reg.Free;
   end;
 end;
 
