@@ -94,6 +94,8 @@ type
     procedure SeqNumberDigitsCountSpinEditChange(Sender: TObject);
   private
     { Private declarations }
+
+    { Fields and variables }
     AvailableLanguages: TLanguagesArray;
     FLanguage: TLanguageCode;  { ??? }
     FColorDepth: TColorDepth;
@@ -107,6 +109,7 @@ type
     PrevWndProc: WndProc;
     Grabber: TScreenGrabber;
     
+    { Methods }
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
     function GetFinalOutputDir: String;
@@ -143,6 +146,7 @@ type
     procedure SetJPEGQuality(Val: Integer);
     function GetJPEGQuality: Integer;
 
+    { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
     property ImagePath: String read GetImagePath;
