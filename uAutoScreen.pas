@@ -6,23 +6,9 @@ uses
   Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
-  LCLIntf;
+  LCLIntf, ScreenGrabber;
 
 type
-  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF});
-
-  TColorDepth = (cd8Bit=8, cd16Bit=16, cd24Bit=24, cd32Bit=32);
-
-  TImageFormatInfo = record
-    Name: String[10];
-    Extension: String[3];
-    HasQuality: Boolean;
-    HasGrayscale: Boolean;
-    ColorDepth: Set of TColorDepth;
-  end;
-
-  TImageFormatInfoArray = array [TImageFormat] of TImageFormatInfo;
-
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
 
   { TMainForm }
@@ -119,6 +105,7 @@ type
     FCounterDigits: Integer {Byte};
 
     PrevWndProc: WndProc;
+    Grabber: TScreenGrabber;
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -172,44 +159,10 @@ type
   end;
 
 const
-  ImageFormatInfoArray: TImageFormatInfoArray = (
-    { FixMe: Unsupported modes by Free Pascal Graphics unit are commented.
-      Think about use any third party graphics library instead
-      (https://wiki.freepascal.org/Graphics_libraries). }
-    (
-      Name:         'PNG';
-      Extension:    'png';
-      HasQuality:   False;
-      HasGrayscale: False;
-      ColorDepth:   [{cd8Bit, cd16Bit, cd24Bit, cd32Bit}] // Only 24bit
-    ),
-    (
-      Name:         'JPG';
-      Extension:    'jpg';
-      HasQuality:   True;
-      HasGrayscale: {True} False;
-      ColorDepth:   []
-    ),
-    (
-      Name:         'BMP';
-      Extension:    'bmp';
-      HasQuality:   False;
-      HasGrayscale: False;
-      ColorDepth:   [{cd8Bit, cd16Bit,} cd24Bit, cd32Bit]
-    ){,
-    (
-      Name:         'GIF';
-      Extension:    'gif';
-      HasQuality:   False;
-      HasGrayscale: False;
-      ColorDepth:   []
-    )}
-  );
-
   DefaultConfigIniSection = 'main';
 
   MinCaptureIntervalInSeconds = 1;
-  NoMonitorId = -1;
+  //NoMonitorId = -1;
   MinCounterValue  = 1;
   MinCounterDigits = 1;
   MaxCounterDigits = 10;
@@ -400,10 +353,13 @@ begin
 
   //if FindCmdLineSwitch('autorun') then
   //  OutputDebugString('AutoRun');
+
+  Grabber := TScreenGrabber.Create();
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  Grabber.Free;
   Ini.Free;
 end;
 
@@ -488,108 +444,22 @@ end;
 
 procedure TMainForm.MakeScreenshot;
 var
-  Bitmap: TBitmap;
-  PNG: TPortableNetworkGraphic;
-  JPG: TJPEGImage;
-  //GIF: TGIFImage;
-  ScreenDC: HDC;
-  ScreenWidth, ScreenHeight: Integer;
-  ScreenX, ScreenY: Integer;
-  //Rect: TRect;
-  UsedMonitor: TMonitor;
+  /////////
+  CD: TColorDepth;
+  /////////
 begin
-  Bitmap := TBitmap.Create;
-
-  // Set color depth for bitmap
-  try
-    case Integer(ColorDepth) of
-      1:  Bitmap.PixelFormat := pf1bit;
-      4:  Bitmap.PixelFormat := pf4bit;
-      8:  Bitmap.PixelFormat := pf8bit;
-      16: Bitmap.PixelFormat := pf16bit;
-      24: Bitmap.PixelFormat := pf24bit;
-      32: Bitmap.PixelFormat := pf32bit;
-      //else raise Exception.CreateFmt('Color depth %d bit not supported in TBitmap', [Integer(ColorDepth)]);
-    end;
-  except
-    // Leave bitmap pixel format as default
-  end;
-
-  if MonitorId = NoMonitorId then
-  begin // All displays
-    ScreenWidth  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
-    ScreenHeight := GetSystemMetrics(SM_CYVIRTUALSCREEN);
-    ScreenX := GetSystemMetrics(SM_XVIRTUALSCREEN);
-    ScreenY := GetSystemMetrics(SM_YVIRTUALSCREEN);
-  end
-  else // Only one display
-  begin
-    UsedMonitor := Screen.Monitors[MonitorId];
-    ScreenWidth  := UsedMonitor.Width;
-    ScreenHeight := UsedMonitor.Height;
-    ScreenX := UsedMonitor.Left;
-    ScreenY := UsedMonitor.Top;
-  end;
-  //Rect := GetClientRect(0);
-
-  Bitmap.Width := ScreenWidth;
-  Bitmap.Height := ScreenHeight;
-  Bitmap.Canvas.Brush.Color := clBlack;
-  Bitmap.Canvas.FillRect(Rect(0, 0, ScreenWidth, ScreenHeight));
-  ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
-  BitBlt(Bitmap.Canvas.Handle, 0, 0, ScreenWidth, ScreenHeight,
-           ScreenDC, ScreenX, ScreenY, SRCCOPY);
-  ReleaseDC(0, ScreenDC);
-
   TrayIconState := tisFlashAnimation;
 
+  /////////
   try
-    case ImageFormat of
-      fmtPNG:      // PNG
-        begin
-          PNG := TPortableNetworkGraphic.Create;
-          try
-            PNG.Assign(Bitmap);
-            PNG.SaveToFile(ImagePath);
-          finally
-            PNG.Free;
-          end;
-        end;
-
-      fmtJPG:     // JPEG
-        begin
-          JPG := TJPEGImage.Create;
-          try
-            JPG.CompressionQuality := JPEGQuality;
-            //JPG.GrayScale := GrayscaleCheckBox.Checked; FixMe: Can not set grayscale
-            JPG.Assign(Bitmap);
-            //JPG.Compress;
-            JPG.SaveToFile(ImagePath);
-          finally
-            JPG.Free;
-          end;
-        end;
-
-      fmtBMP:    // Bitmap (BMP)
-        begin
-          Bitmap.SaveToFile(ImagePath);
-        end;
-
-      {fmtGIF:    // GIF
-        begin
-          GIF := TGIFImage.Create;
-          try
-            GIF.Assign(Bitmap);
-            //GIF.OptimizeColorMap;
-            GIF.SaveToFile(ImagePath);
-          finally
-            GIF.Free;
-          end;
-        end;}
-    end;
-  finally
-    Bitmap.Free;
+    CD := ColorDepth;
+  except
+    CD := cd24Bit;
   end;
+  /////////
+
+  Grabber.TakeScreenshot(ImagePath, MonitorId, ImageFormat, {ColorDepth} CD,
+  JPEGQuality, GrayscaleCheckBox.Checked);
 
   // Increment counter after successful capture
   //Inc(Counter);
