@@ -126,6 +126,7 @@ lib/
 *.tmp
 *.bak
 /config.ini
+/config.xml
 dunit.ini
 /backup/
 *.log

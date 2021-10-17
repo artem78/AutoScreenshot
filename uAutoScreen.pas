@@ -4,9 +4,9 @@ interface
 
 uses
   Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
+  Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
-  LCLIntf;
+  LCLIntf, XMLConf;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF});
@@ -203,8 +203,6 @@ const
     )}
   );
 
-  DefaultConfigIniSection = 'main';
-
   MinCaptureIntervalInSeconds = 1;
   NoMonitorId = -1;
   MinCounterValue  = 1;
@@ -213,7 +211,7 @@ const
 
 var
   MainForm: TMainForm;
-  Ini: TIniFile;
+  XmlCfg: TXMLConfig;
 
 implementation
 
@@ -278,7 +276,7 @@ end;
 procedure TMainForm.ReadSettings;
 const
   DefaultFileNameTemplate = '%Y-%M-%D\%Y-%M-%D %H.%N.%S';
-  DefaultCaptureInterval  = 5;
+  DefaultCaptureInterval  = 5 * SecsPerMin;
   DefaultImageFormat      = fmtPNG;
   DefaultJPEGQuality      = 80;
   DefaultLanguage         = 'en';
@@ -293,25 +291,25 @@ var
   Seconds: Integer;
 begin
   DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ExtractFilePath(Application.ExeName), 'screenshots'));
-  OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
+  OutputDirEdit.Text := XmlCfg.GetValue('OutputDir', DefaultOutputDir);
   // ToDo: Check that directory exists or can be created (with subdirs if needed)
   if OutputDirEdit.Text = '' then
     OutputDirEdit.Text := DefaultOutputDir;
 
-  FileNameTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', DefaultFileNameTemplate);
+  FileNameTemplateComboBox.Text := XmlCfg.GetValue('FileNameTemplate', DefaultFileNameTemplate);
 
-  Seconds := Round(Ini.ReadFloat(DefaultConfigIniSection, 'CaptureInterval', DefaultCaptureInterval) * SecsPerMin);
+  Seconds := XmlCfg.GetValue('CaptureInterval', DefaultCaptureInterval);
   Seconds := Max(Seconds, MinCaptureIntervalInSeconds);
   CaptureInterval.Time := EncodeTime(0, 0, 0, 0);
   CaptureInterval.Time := IncSecond(CaptureInterval.Time, Seconds);
 
-  StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
+  StopWhenInactiveCheckBox.Checked := XmlCfg.GetValue('StopWhenInactive', False);
 
   // Image format
   FColorDepth := TColorDepth(0); // Set value as unitialized to prevent
         // reset to max available value in UpdateColorDepthValues() before
         // reading color depth from ini file
-  FmtStr := Ini.ReadString(DefaultConfigIniSection, 'ImageFormat',
+  FmtStr := XmlCfg.GetValue('ImageFormat',
       ImageFormatInfoArray[DefaultImageFormat].Name);
   try
     SetImageFormatByStr(FmtStr);
@@ -319,13 +317,13 @@ begin
     ImageFormat := DefaultImageFormat;
   end;
 
-  JPEGQualitySpinEdit.Value := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', DefaultJPEGQuality);
+  JPEGQualitySpinEdit.Value := XmlCfg.GetValue('JPEGQuality', DefaultJPEGQuality);
 
-  GrayscaleCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'Grayscale', False);
+  GrayscaleCheckBox.Checked := XmlCfg.GetValue('Grayscale', False);
 
   // Color depth
   try
-    ColorDepth := TColorDepth(Ini.ReadInteger(DefaultConfigIniSection,
+    ColorDepth := TColorDepth(XmlCfg.GetValue(
         'ColorDepth', Integer(DefaultColorDepth)));
   except
     FColorDepth := DefaultColorDepth;
@@ -333,7 +331,7 @@ begin
 
   // Language
   try
-    CfgLang := Ini.ReadString(DefaultConfigIniSection, 'Language', '');
+    CfgLang := XmlCfg.GetValue('Language', '');
     SetLanguageByCode(CfgLang);
   except
     try
@@ -352,15 +350,15 @@ begin
   // Start autocapture
   Timer.Interval := SecondOfTheDay(CaptureInterval.Time) * MSecsPerSec;
   StartCaptureOnStartUpCheckBox.Checked :=
-      Ini.ReadBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', {True} False);
+      XmlCfg.GetValue('StartCaptureOnStartUp', {True} False);
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
 
   // Start with Windows
   AutoRunCheckBox.Checked :=
-    ini.ReadBool(DefaultConfigIniSection, 'AutoRun', False);
+    XmlCfg.GetValue('AutoRun', False);
   
   // Start minimized
-  if Ini.ReadBool(DefaultConfigIniSection, 'StartMinimized', False) then
+  if XmlCfg.GetValue('StartMinimized', False) then
   begin
     StartMinimizedCheckBox.Checked := True;
     MinimizeToTray;
@@ -370,14 +368,14 @@ begin
 
   // Multiple monitors
   try
-    MonitorId := Ini.ReadInteger(DefaultConfigIniSection, 'Monitor', DefaultMonitorId);
+    MonitorId := XmlCfg.GetValue('Monitor', DefaultMonitorId);
   except
     MonitorId := DefaultMonitorId;
   end;
 
   // Incremental counter
-  Counter := Ini.ReadInteger(DefaultConfigIniSection, 'Counter', DefaultCounterValue);
-  CounterDigits := Ini.ReadInteger(DefaultConfigIniSection, 'CounterDigits', DefaultCounterDigits);
+  Counter := XmlCfg.GetValue('Counter', DefaultCounterValue);
+  CounterDigits := XmlCfg.GetValue('CounterDigits', DefaultCounterDigits);
   UpdateSeqNumGroupVisibility;
 end;
 
@@ -392,7 +390,9 @@ begin
 
   InitUI;
 
-  Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
+  XmlCfg := TXMLConfig.Create(nil);
+  XmlCfg.Filename := ExtractFilePath(Application.ExeName) + '\config.xml';
+
   ReadSettings;
 
   //if FindCmdLineSwitch('autorun') then
@@ -401,7 +401,7 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-  Ini.Free;
+  XmlCfg.Free;
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
@@ -411,7 +411,7 @@ end;
 
 procedure TMainForm.OutputDirEditChange(Sender: TObject);
 begin
-    Ini.WriteString(DefaultConfigIniSection, 'OutputDir', OutputDirEdit.Text);
+    XmlCfg.SetValue('OutputDir', OutputDirEdit.Text);
 end;
 
 procedure TMainForm.CaptureIntervalChange(Sender: TObject);
@@ -425,7 +425,7 @@ begin
     CaptureInterval.Time := EncodeTime(0, 0, 0, 0);
     CaptureInterval.Time := IncSecond(CaptureInterval.Time, Seconds);
   end;
-  Ini.WriteFloat(DefaultConfigIniSection, 'CaptureInterval', Seconds / SecsPerMin);
+  XmlCfg.SetValue('CaptureInterval', Seconds);
   Timer.Interval := Seconds * MSecsPerSec;
 end;
 
@@ -612,11 +612,11 @@ end;
 
 procedure TMainForm.JPEGQualitySpinEditChange(Sender: TObject);
 begin
-  if Ini = Nil then
+  if XmlCfg = Nil then
     Exit;
 
   try
-    Ini.WriteInteger(DefaultConfigIniSection, 'JPEGQuality', JPEGQualitySpinEdit.Value);
+    XmlCfg.SetValue('JPEGQuality', JPEGQualitySpinEdit.Value);
   finally
   end;
 end;
@@ -625,7 +625,7 @@ function TMainForm.GetFinalOutputDir: String;
 var
   BaseDir, SubDir, FullDir: String;
 begin
-  BaseDir := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', '');
+  BaseDir := XmlCfg.GetValue('OutputDir', '');
 
   SubDir := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '')} FileNameTemplateComboBox.Text);
   SubDir := FormatPath(SubDir);
@@ -660,7 +660,7 @@ end;
 
 procedure TMainForm.StopWhenInactiveCheckBoxClick(Sender: TObject);
 begin
-  Ini.WriteBool(DefaultConfigIniSection, 'StopWhenInactive', StopWhenInactiveCheckBox.Checked);
+  XmlCfg.SetValue('StopWhenInactive', StopWhenInactiveCheckBox.Checked);
 end;
 
 procedure TMainForm.ImageFormatComboBoxChange(Sender: TObject);
@@ -680,7 +680,7 @@ begin
 
   UpdateColorDepthValues;
   
-  Ini.WriteString(DefaultConfigIniSection, 'ImageFormat', ImageFormatInfoArray[Format].Name);
+  XmlCfg.SetValue('ImageFormat', ImageFormatInfoArray[Format].Name);
 end;
 
 procedure TMainForm.ToggleAutoCaptureTrayMenuItemClick(Sender: TObject);
@@ -761,7 +761,7 @@ begin
     begin
       FLanguage := LangCode;
 
-      Ini.WriteString(DefaultConfigIniSection, 'Language', LangCode);
+      XmlCfg.SetValue('Language', LangCode);
       FindLangMenuItem(LangCode).Checked := True;
       Localizer.LoadFromFile(AvailableLanguages[LangIdx].FileName);
       TranslateForm;
@@ -826,17 +826,17 @@ end;
 
 procedure TMainForm.StartCaptureOnStartUpCheckBoxClick(Sender: TObject);
 begin
-  Ini.WriteBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', StartCaptureOnStartUpCheckBox.Checked);
+  XmlCfg.SetValue('StartCaptureOnStartUp', StartCaptureOnStartUpCheckBox.Checked);
 end;
 
 procedure TMainForm.StartMinimizedCheckBoxClick(Sender: TObject);
 begin
-  Ini.WriteBool(DefaultConfigIniSection, 'StartMinimized', StartMinimizedCheckBox.Checked);
+  XmlCfg.SetValue('StartMinimized', StartMinimizedCheckBox.Checked);
 end;
 
 procedure TMainForm.FileNameTemplateComboBoxChange(Sender: TObject);
 begin
-  Ini.WriteString(DefaultConfigIniSection, 'FileNameTemplate', FileNameTemplateComboBox.Text);
+  XmlCfg.SetValue('FileNameTemplate', FileNameTemplateComboBox.Text);
 
   UpdateSeqNumGroupVisibility
 end;
@@ -880,7 +880,7 @@ end;
 
 procedure TMainForm.GrayscaleCheckBoxClick(Sender: TObject);
 begin
-  Ini.WriteBool(DefaultConfigIniSection, 'Grayscale', GrayscaleCheckBox.Checked);
+  XmlCfg.SetValue('Grayscale', GrayscaleCheckBox.Checked);
 end;
 
 procedure TMainForm.ColorDepthComboBoxChange(Sender: TObject);
@@ -998,7 +998,7 @@ begin
     end;
 
     FColorDepth := AColorDepth;
-    Ini.WriteInteger(DefaultConfigIniSection, 'ColorDepth', Integer(AColorDepth));
+    XmlCfg.SetValue('ColorDepth', Integer(AColorDepth));
   end
   else
     raise Exception.CreateFmt('Color depth %d-bit not allowed for %s format',
@@ -1055,7 +1055,7 @@ var
 begin
   AutoRunEnabled := AutoRunCheckBox.Checked;
   AutoRun(Application.ExeName, 'Auto Screenshot', AutoRunEnabled);
-  Ini.WriteBool(DefaultConfigIniSection, 'AutoRun', AutoRunEnabled);
+  XmlCfg.SetValue('AutoRun', AutoRunEnabled);
 end;
 
 procedure TMainForm.MonitorComboBoxChange(Sender: TObject);
@@ -1130,8 +1130,8 @@ begin
   else
     raise Exception.CreateFmt('Monitor id=%d not exists', [MonitorId]);
 
-  if Ini <> Nil then
-    Ini.WriteInteger(DefaultConfigIniSection, 'Monitor', MonitorId);
+  if XmlCfg <> Nil then
+    XmlCfg.SetValue('Monitor', MonitorId);
 end;
 
 procedure TMainForm.AboutMenuItemClick(Sender: TObject);
@@ -1270,13 +1270,13 @@ end;
 procedure TMainForm.SetCounter(Val: Integer);
 begin
   FCounter := Val;
-  Ini.WriteInteger(DefaultConfigIniSection, 'Counter', FCounter);
+  XmlCfg.SetValue('Counter', FCounter);
   SeqNumberValueSpinEdit.Value := FCounter;
 end;
 
 procedure TMainForm.SeqNumberValueSpinEditChange(Sender: TObject);
 begin
-  if Ini = Nil then
+  if XmlCfg = Nil then
     Exit;
 
   try
@@ -1288,7 +1288,7 @@ end;
 procedure TMainForm.SetCounterDigits(Val: Integer);
 begin
   FCounterDigits := Val;
-  Ini.WriteInteger(DefaultConfigIniSection, 'CounterDigits', FCounterDigits);
+  XmlCfg.SetValue('CounterDigits', FCounterDigits);
   SeqNumberDigitsCountSpinEdit.Value := FCounterDigits;
 end;
 
@@ -1301,7 +1301,7 @@ end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
 begin
-  if Ini = Nil then
+  if XmlCfg = Nil then
     Exit;
 
   try
