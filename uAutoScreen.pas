@@ -153,6 +153,8 @@ type
     procedure SetCounter(Val: Integer);
     procedure SetCounterDigits(Val: Integer);
     procedure UpdateSeqNumGroupVisibility;
+    procedure SetJPEGQuality(Val: Integer);
+    function GetJPEGQuality: Integer;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -164,6 +166,7 @@ type
     property MonitorId: Integer read GetMonitorId write SetMonitorId;
     property Counter: Integer read FCounter write SetCounter;
     property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
+    property JPEGQuality: Integer read GetJPEGQuality write SetJPEGQuality;
   public
     { Public declarations }
   end;
@@ -319,7 +322,7 @@ begin
     ImageFormat := DefaultImageFormat;
   end;
 
-  JPEGQualitySpinEdit.Value := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', DefaultJPEGQuality);
+  JPEGQuality := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', DefaultJPEGQuality);
 
   GrayscaleCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'Grayscale', False);
 
@@ -557,7 +560,7 @@ begin
         begin
           JPG := TJPEGImage.Create;
           try
-            JPG.CompressionQuality := JPEGQualitySpinEdit.Value;
+            JPG.CompressionQuality := JPEGQuality;
             //JPG.GrayScale := GrayscaleCheckBox.Checked; FixMe: Can not set grayscale
             JPG.Assign(Bitmap);
             //JPG.Compress;
@@ -616,7 +619,7 @@ begin
     Exit;
 
   try
-    Ini.WriteInteger(DefaultConfigIniSection, 'JPEGQuality', JPEGQualitySpinEdit.Value);
+    Ini.WriteInteger(DefaultConfigIniSection, 'JPEGQuality', JPEGQuality);
   finally
   end;
 end;
@@ -1297,6 +1300,16 @@ begin
   SeqNumberGroup.Visible := Pos('%NUM', FileNameTemplateComboBox.Text) <> 0;
   if SeqNumberGroup.Visible then
     RecalculateLabelWidthsForSeqNumGroup;
+end;
+
+procedure TMainForm.SetJPEGQuality(Val: Integer);
+begin
+  JPEGQualitySpinEdit.Value := Val;
+end;
+
+function TMainForm.GetJPEGQuality: Integer;
+begin
+  Result := JPEGQualitySpinEdit.Value;
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
