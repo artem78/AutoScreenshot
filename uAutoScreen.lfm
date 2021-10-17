@@ -373,6 +373,7 @@ object MainForm: TMainForm
     TimeDisplay = tdHMS
     DateMode = dmComboBox
     Date = 44009
+    Time = 0.00347222221898846
     UseDefaultSeparators = True
     HideDateTimeParts = []
     MonthNames = 'Long'
