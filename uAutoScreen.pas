@@ -166,7 +166,7 @@ const
   DefaultConfigIniSection = 'main';
 
   MinCaptureIntervalInSeconds = 1;
-  //NoMonitorId = -1;
+  NoMonitorId = -1;
   MinCounterValue  = 1;
   MinCounterDigits = 1;
   MaxCounterDigits = 10;
@@ -462,8 +462,13 @@ begin
   end;
   /////////
 
-  Grabber.TakeScreenshot(ImagePath, MonitorId, ImageFormat, {ColorDepth} CD,
-  JPEGQuality, GrayscaleCheckBox.Checked);
+  if MonitorId = NoMonitorId then
+    Grabber.CaptureAllMonitors(ImagePath, ImageFormat, {ColorDepth} CD,
+      JPEGQuality, GrayscaleCheckBox.Checked)
+  else
+    Grabber.CaptureMonitor(ImagePath, MonitorId, ImageFormat, {ColorDepth} CD,
+      JPEGQuality, GrayscaleCheckBox.Checked);
+
 
   // Increment counter after successful capture
   //Inc(Counter);

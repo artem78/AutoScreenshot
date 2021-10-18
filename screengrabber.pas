@@ -26,8 +26,14 @@ type
 
   TScreenGrabber = class
   private
+    procedure CaptureRegion(AFileName: String; ARect: TRect;
+      AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
+      AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
   public
-    procedure TakeScreenshot(AFileName: String; AMonitorId: Integer;
+    procedure CaptureMonitor(AFileName: String; AMonitorId: Integer;
+      AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
+      AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
+    procedure CaptureAllMonitors(AFileName: String;
       AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
       AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
   end;
@@ -67,7 +73,6 @@ const
     )}
   );
 
-  NoMonitorId = -1;
 
 implementation
 
@@ -76,8 +81,38 @@ uses
 
 { TScreenGrabber }
 
-procedure TScreenGrabber.TakeScreenshot(AFileName: String; AMonitorId: Integer;
+procedure TScreenGrabber.CaptureMonitor(AFileName: String; AMonitorId: Integer;
   AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
+  AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
+var
+  Rect: TRect;
+  UsedMonitor: TMonitor;
+begin
+  UsedMonitor := Screen.Monitors[AMonitorId];
+  Rect.Left   := UsedMonitor.Left;
+  Rect.Top    := UsedMonitor.Top;
+  Rect.Width  := UsedMonitor.Width;
+  Rect.Height := UsedMonitor.Height;
+  CaptureRegion(AFileName, Rect, AnImageFormat,
+    AColorDepth, AnJPEGQuality, AnIsGrayscale);
+end;
+
+procedure TScreenGrabber.CaptureAllMonitors(AFileName: String;
+  AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
+  AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
+var
+  Rect: TRect;
+begin
+  Rect.Left   := GetSystemMetrics(SM_XVIRTUALSCREEN);
+  Rect.Top    := GetSystemMetrics(SM_YVIRTUALSCREEN);
+  Rect.Width  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
+  Rect.Height := GetSystemMetrics(SM_CYVIRTUALSCREEN);
+  CaptureRegion(AFileName, Rect, AnImageFormat,
+    AColorDepth, AnJPEGQuality, AnIsGrayscale);
+end;
+
+procedure TScreenGrabber.CaptureRegion(AFileName: String;
+  ARect: TRect; AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
   AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
 var
   Bitmap: TBitmap;
@@ -85,10 +120,6 @@ var
   JPG: TJPEGImage;
   //GIF: TGIFImage;
   ScreenDC: HDC;
-  ScreenWidth, ScreenHeight: Integer;
-  ScreenX, ScreenY: Integer;
-  //Rect: TRect;
-  UsedMonitor: TMonitor;
 begin
   Bitmap := TBitmap.Create;
 
@@ -107,30 +138,13 @@ begin
     // Leave bitmap pixel format as default
   end;
 
-  if AMonitorId = NoMonitorId then
-  begin // All displays
-    ScreenWidth  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
-    ScreenHeight := GetSystemMetrics(SM_CYVIRTUALSCREEN);
-    ScreenX := GetSystemMetrics(SM_XVIRTUALSCREEN);
-    ScreenY := GetSystemMetrics(SM_YVIRTUALSCREEN);
-  end
-  else // Only one display
-  begin
-    UsedMonitor := Screen.Monitors[AMonitorId];
-    ScreenWidth  := UsedMonitor.Width;
-    ScreenHeight := UsedMonitor.Height;
-    ScreenX := UsedMonitor.Left;
-    ScreenY := UsedMonitor.Top;
-  end;
-  //Rect := GetClientRect(0);
-
-  Bitmap.Width := ScreenWidth;
-  Bitmap.Height := ScreenHeight;
+  Bitmap.Width := ARect.Width;
+  Bitmap.Height := ARect.Height;
   Bitmap.Canvas.Brush.Color := clBlack;
-  Bitmap.Canvas.FillRect(Classes.Rect(0, 0, ScreenWidth, ScreenHeight));
+  Bitmap.Canvas.FillRect(Classes.Rect(0, 0, ARect.Width, ARect.Height));
   ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
-  BitBlt(Bitmap.Canvas.Handle, 0, 0, ScreenWidth, ScreenHeight,
-           ScreenDC, ScreenX, ScreenY, SRCCOPY);
+  BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
+           ScreenDC, ARect.Left, ARect.Top, SRCCOPY);
   ReleaseDC(0, ScreenDC);
 
   try
