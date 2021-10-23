@@ -111,6 +111,7 @@ type
 
     FStopWhenInactive: Boolean;
     FStartMinimized: Boolean;
+    FAutoRun: Boolean;
     
     { Methods }
     procedure SetTimerEnabled(IsEnabled: Boolean);
@@ -150,6 +151,7 @@ type
     function GetJPEGQuality: Integer;
     procedure SetStopWhenInactive(const Val: Boolean);
     procedure SetStartMinimized(const Val: Boolean);
+    procedure SetAutoRun(const Val: Boolean);
 
     { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
@@ -165,6 +167,7 @@ type
     property JPEGQuality: Integer read GetJPEGQuality write SetJPEGQuality;
     property StopWhenInactive: Boolean read FStopWhenInactive write SetStopWhenInactive;
     property StartMinimized: Boolean read FStartMinimized write SetStartMinimized;
+    property AutoRun: Boolean read FAutoRun write SetAutoRun;
   public
     { Public declarations }
   end;
@@ -323,8 +326,7 @@ begin
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
 
   // Start with Windows
-  AutoRunCheckBox.Checked :=
-    ini.ReadBool(DefaultConfigIniSection, 'AutoRun', False);
+  AutoRun := Ini.ReadBool(DefaultConfigIniSection, 'AutoRun', False);
   
   // Start minimized
   StartMinimized := Ini.ReadBool(DefaultConfigIniSection, 'StartMinimized', False);
@@ -942,12 +944,8 @@ begin
 end;
 
 procedure TMainForm.AutoRunCheckBoxClick(Sender: TObject);
-var
-  AutoRunEnabled: Boolean;
 begin
-  AutoRunEnabled := AutoRunCheckBox.Checked;
-  AutoRun(Application.ExeName, 'Auto Screenshot', AutoRunEnabled);
-  Ini.WriteBool(DefaultConfigIniSection, 'AutoRun', AutoRunEnabled);
+  AutoRun := AutoRunCheckBox.Checked;
 end;
 
 procedure TMainForm.MonitorComboBoxChange(Sender: TObject);
@@ -1218,6 +1216,17 @@ begin
     FStartMinimized := Val;
     StartMinimizedCheckBox.Checked := Val;
     Ini.WriteBool(DefaultConfigIniSection, 'StartMinimized', Val);
+  end;
+end;
+
+procedure TMainForm.SetAutoRun(const Val: Boolean);
+begin
+  if FAutoRun <> Val then
+  begin
+    FAutoRun := Val;
+    AutoRunCheckBox.Checked := Val;
+    uUtils.AutoRun(Application.ExeName, 'Auto Screenshot', Val);
+    Ini.WriteBool(DefaultConfigIniSection, 'AutoRun', Val);
   end;
 end;
 
