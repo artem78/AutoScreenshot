@@ -110,6 +110,7 @@ type
     Grabber: TScreenGrabber;
 
     FStopWhenInactive: Boolean;
+    FStartMinimized: Boolean;
     
     { Methods }
     procedure SetTimerEnabled(IsEnabled: Boolean);
@@ -148,6 +149,7 @@ type
     procedure SetJPEGQuality(Val: Integer);
     function GetJPEGQuality: Integer;
     procedure SetStopWhenInactive(const Val: Boolean);
+    procedure SetStartMinimized(const Val: Boolean);
 
     { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
@@ -162,6 +164,7 @@ type
     property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
     property JPEGQuality: Integer read GetJPEGQuality write SetJPEGQuality;
     property StopWhenInactive: Boolean read FStopWhenInactive write SetStopWhenInactive;
+    property StartMinimized: Boolean read FStartMinimized write SetStartMinimized;
   public
     { Public declarations }
   end;
@@ -324,11 +327,9 @@ begin
     ini.ReadBool(DefaultConfigIniSection, 'AutoRun', False);
   
   // Start minimized
-  if Ini.ReadBool(DefaultConfigIniSection, 'StartMinimized', False) then
-  begin
-    StartMinimizedCheckBox.Checked := True;
-    MinimizeToTray;
-  end
+  StartMinimized := Ini.ReadBool(DefaultConfigIniSection, 'StartMinimized', False);
+  if StartMinimized then
+    MinimizeToTray
   else
     RestoreFromTray;
 
@@ -720,7 +721,7 @@ end;
 
 procedure TMainForm.StartMinimizedCheckBoxClick(Sender: TObject);
 begin
-  Ini.WriteBool(DefaultConfigIniSection, 'StartMinimized', StartMinimizedCheckBox.Checked);
+  StartMinimized := StartMinimizedCheckBox.Checked;
 end;
 
 procedure TMainForm.FileNameTemplateComboBoxChange(Sender: TObject);
@@ -1208,6 +1209,16 @@ begin
      StopWhenInactiveCheckBox.Checked := Val;
      Ini.WriteBool(DefaultConfigIniSection, 'StopWhenInactive', Val);
    end;
+end;
+
+procedure TMainForm.SetStartMinimized(const Val: Boolean);
+begin
+  if FStartMinimized <> Val then
+  begin
+    FStartMinimized := Val;
+    StartMinimizedCheckBox.Checked := Val;
+    Ini.WriteBool(DefaultConfigIniSection, 'StartMinimized', Val);
+  end;
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
