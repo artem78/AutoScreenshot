@@ -112,6 +112,7 @@ type
     FStopWhenInactive: Boolean;
     FStartMinimized: Boolean;
     FAutoRun: Boolean;
+    FGrayscale: Boolean;
     
     { Methods }
     procedure SetTimerEnabled(IsEnabled: Boolean);
@@ -152,6 +153,7 @@ type
     procedure SetStopWhenInactive(const Val: Boolean);
     procedure SetStartMinimized(const Val: Boolean);
     procedure SetAutoRun(const Val: Boolean);
+    procedure SetGrayscale(const Val: Boolean);
 
     { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
@@ -168,6 +170,7 @@ type
     property StopWhenInactive: Boolean read FStopWhenInactive write SetStopWhenInactive;
     property StartMinimized: Boolean read FStartMinimized write SetStartMinimized;
     property AutoRun: Boolean read FAutoRun write SetAutoRun;
+    property Grayscale: Boolean read FGrayscale write SetGrayscale;
   public
     { Public declarations }
   end;
@@ -291,7 +294,7 @@ begin
 
   JPEGQuality := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', DefaultJPEGQuality);
 
-  GrayscaleCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'Grayscale', False);
+  Grayscale := Ini.ReadBool(DefaultConfigIniSection, 'Grayscale', False);
 
   // Color depth
   try
@@ -377,7 +380,7 @@ begin
   end;
   ///////////////
   Grabber := TScreenGrabber.Create(ImageFormat, {ColorDepth} ColorDepthTmp, JPEGQuality,
-    GrayscaleCheckBox.Checked);
+    Grayscale);
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -772,7 +775,7 @@ end;
 
 procedure TMainForm.GrayscaleCheckBoxClick(Sender: TObject);
 begin
-  Ini.WriteBool(DefaultConfigIniSection, 'Grayscale', GrayscaleCheckBox.Checked);
+  Grayscale := GrayscaleCheckBox.Checked;
 end;
 
 procedure TMainForm.ColorDepthComboBoxChange(Sender: TObject);
@@ -1227,6 +1230,16 @@ begin
     AutoRunCheckBox.Checked := Val;
     uUtils.AutoRun(Application.ExeName, 'Auto Screenshot', Val);
     Ini.WriteBool(DefaultConfigIniSection, 'AutoRun', Val);
+  end;
+end;
+
+procedure TMainForm.SetGrayscale(const Val: Boolean);
+begin
+  if FGrayscale <> Val then
+  begin
+    FGrayscale := Val;
+    GrayscaleCheckBox.Checked := Val;
+    Ini.WriteBool(DefaultConfigIniSection, 'Grayscale', Val);
   end;
 end;
 
