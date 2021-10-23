@@ -37,9 +37,9 @@ object MainForm: TMainForm
     ParentColor = False
   end
   object CaptureIntervalLabel: TLabel
-    AnchorSideTop.Control = CaptureInterval
+    AnchorSideTop.Control = CaptureIntervalDateTimePicker
     AnchorSideTop.Side = asrCenter
-    AnchorSideRight.Control = CaptureInterval
+    AnchorSideRight.Control = CaptureIntervalDateTimePicker
     Left = 61
     Height = 15
     Top = 167
@@ -205,9 +205,9 @@ object MainForm: TMainForm
   end
   object ImageFormatComboBox: TComboBox
     AnchorSideLeft.Control = OutputDirEdit
-    AnchorSideTop.Control = CaptureInterval
+    AnchorSideTop.Control = CaptureIntervalDateTimePicker
     AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = CaptureInterval
+    AnchorSideRight.Control = CaptureIntervalDateTimePicker
     AnchorSideRight.Side = asrBottom
     Left = 191
     Height = 23
@@ -354,7 +354,7 @@ object MainForm: TMainForm
     Style = csDropDownList
     TabOrder = 7
   end
-  object CaptureInterval: TDateTimePicker
+  object CaptureIntervalDateTimePicker: TDateTimePicker
     AnchorSideLeft.Control = OutputDirEdit
     AnchorSideTop.Control = SeqNumberGroup
     AnchorSideTop.Side = asrBottom
@@ -376,7 +376,7 @@ object MainForm: TMainForm
     UseDefaultSeparators = True
     HideDateTimeParts = []
     MonthNames = 'Long'
-    OnChange = CaptureIntervalChange
+    OnChange = CaptureIntervalDateTimePickerChange
   end
   object AutoRunCheckBox: TCheckBox
     AnchorSideLeft.Control = OutputDirEdit

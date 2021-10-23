@@ -45,7 +45,7 @@ type
     GrayscaleCheckBox: TCheckBox;
     ColorDepthLabel: TLabel;
     ColorDepthComboBox: TComboBox;
-    CaptureInterval: TDateTimePicker;
+    CaptureIntervalDateTimePicker: TDateTimePicker;
     TrayIconAnimationTimer: TTimer;
     AutoRunCheckBox: TCheckBox;
     MonitorLabel: TLabel;
@@ -65,7 +65,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
-    procedure CaptureIntervalChange(Sender: TObject);
+    procedure CaptureIntervalDateTimePickerChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure ApplicationMinimize(Sender: TObject);
     procedure StartAutoCaptureButtonClick(Sender: TObject);
@@ -275,8 +275,8 @@ begin
 
   Seconds := Round(Ini.ReadFloat(DefaultConfigIniSection, 'CaptureInterval', DefaultCaptureInterval) * SecsPerMin);
   Seconds := Max(Seconds, MinCaptureIntervalInSeconds);
-  CaptureInterval.Time := EncodeTime(0, 0, 0, 0);
-  CaptureInterval.Time := IncSecond(CaptureInterval.Time, Seconds);
+  CaptureIntervalDateTimePicker.Time := EncodeTime(0, 0, 0, 0);
+  CaptureIntervalDateTimePicker.Time := IncSecond(CaptureIntervalDateTimePicker.Time, Seconds);
 
   StopWhenInactive := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
 
@@ -323,7 +323,7 @@ begin
   end;
 
   // Start autocapture
-  Timer.Interval := SecondOfTheDay(CaptureInterval.Time) * MSecsPerSec;
+  Timer.Interval := SecondOfTheDay(CaptureIntervalDateTimePicker.Time) * MSecsPerSec;
   StartCaptureOnStartUpCheckBox.Checked :=
       Ini.ReadBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', {True} False);
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
@@ -399,16 +399,16 @@ begin
     Ini.WriteString(DefaultConfigIniSection, 'OutputDir', OutputDirEdit.Text);
 end;
 
-procedure TMainForm.CaptureIntervalChange(Sender: TObject);
+procedure TMainForm.CaptureIntervalDateTimePickerChange(Sender: TObject);
 var
   Seconds: Integer;
 begin
-  Seconds := SecondOfTheDay(CaptureInterval.Time);
+  Seconds := SecondOfTheDay(CaptureIntervalDateTimePicker.Time);
   if Seconds < MinCaptureIntervalInSeconds then
   begin
     Seconds := MinCaptureIntervalInSeconds;
-    CaptureInterval.Time := EncodeTime(0, 0, 0, 0);
-    CaptureInterval.Time := IncSecond(CaptureInterval.Time, Seconds);
+    CaptureIntervalDateTimePicker.Time := EncodeTime(0, 0, 0, 0);
+    CaptureIntervalDateTimePicker.Time := IncSecond(CaptureIntervalDateTimePicker.Time, Seconds);
   end;
   Ini.WriteFloat(DefaultConfigIniSection, 'CaptureInterval', Seconds / SecsPerMin);
   Timer.Interval := Seconds * MSecsPerSec;
