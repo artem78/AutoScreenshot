@@ -108,6 +108,8 @@ type
 
     PrevWndProc: WndProc;
     Grabber: TScreenGrabber;
+
+    FStopWhenInactive: Boolean;
     
     { Methods }
     procedure SetTimerEnabled(IsEnabled: Boolean);
@@ -145,6 +147,7 @@ type
     procedure UpdateSeqNumGroupVisibility;
     procedure SetJPEGQuality(Val: Integer);
     function GetJPEGQuality: Integer;
+    procedure SetStopWhenInactive(const Val: Boolean);
 
     { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
@@ -158,6 +161,7 @@ type
     property Counter: Integer read FCounter write SetCounter;
     property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
     property JPEGQuality: Integer read GetJPEGQuality write SetJPEGQuality;
+    property StopWhenInactive: Boolean read FStopWhenInactive write SetStopWhenInactive;
   public
     { Public declarations }
   end;
@@ -265,7 +269,7 @@ begin
   CaptureInterval.Time := EncodeTime(0, 0, 0, 0);
   CaptureInterval.Time := IncSecond(CaptureInterval.Time, Seconds);
 
-  StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
+  StopWhenInactive := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
 
   // Image format
   FColorDepth := TColorDepth(0); // Set value as unitialized to prevent
@@ -406,7 +410,7 @@ end;
 
 procedure TMainForm.TimerTimer(Sender: TObject);
 begin
-  if StopWhenInactiveCheckBox.Checked then
+  if StopWhenInactive then
   begin
     // Skip taking screenshot if there are no user activity
     // for autocapture interval minutes
@@ -542,7 +546,7 @@ end;
 
 procedure TMainForm.StopWhenInactiveCheckBoxClick(Sender: TObject);
 begin
-  Ini.WriteBool(DefaultConfigIniSection, 'StopWhenInactive', StopWhenInactiveCheckBox.Checked);
+  StopWhenInactive := StopWhenInactiveCheckBox.Checked;
 end;
 
 procedure TMainForm.ImageFormatComboBoxChange(Sender: TObject);
@@ -1194,6 +1198,16 @@ end;
 function TMainForm.GetJPEGQuality: Integer;
 begin
   Result := JPEGQualitySpinEdit.Value;
+end;
+
+procedure TMainForm.SetStopWhenInactive(const Val: Boolean);
+begin
+   if FStopWhenInactive <> Val then
+   begin
+     FStopWhenInactive := Val;
+     StopWhenInactiveCheckBox.Checked := Val;
+     Ini.WriteBool(DefaultConfigIniSection, 'StopWhenInactive', Val);
+   end;
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
