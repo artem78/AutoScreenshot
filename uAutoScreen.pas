@@ -342,6 +342,10 @@ begin
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
+var
+  ///////
+  ColorDepthTmp: TColorDepth;
+  ////////
 begin
   { Replace default window function with custom one
     for process messages when screen configuration changed }
@@ -358,7 +362,15 @@ begin
   //if FindCmdLineSwitch('autorun') then
   //  OutputDebugString('AutoRun');
 
-  Grabber := TScreenGrabber.Create();
+  //////////////
+  ColorDepthTmp := cd24Bit; // Any value
+  try
+    ColorDepthTmp := ColorDepth;
+  except
+  end;
+  ///////////////
+  Grabber := TScreenGrabber.Create(ImageFormat, {ColorDepth} ColorDepthTmp, JPEGQuality,
+    GrayscaleCheckBox.Checked);
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -447,27 +459,13 @@ begin
 end;
 
 procedure TMainForm.MakeScreenshot;
-var
-  /////////
-  CD: TColorDepth;
-  /////////
 begin
   TrayIconState := tisFlashAnimation;
 
-  /////////
-  try
-    CD := ColorDepth;
-  except
-    CD := cd24Bit;
-  end;
-  /////////
-
   if MonitorId = NoMonitorId then
-    Grabber.CaptureAllMonitors(ImagePath, ImageFormat, {ColorDepth} CD,
-      JPEGQuality, GrayscaleCheckBox.Checked)
+    Grabber.CaptureAllMonitors(ImagePath)
   else
-    Grabber.CaptureMonitor(ImagePath, MonitorId, ImageFormat, {ColorDepth} CD,
-      JPEGQuality, GrayscaleCheckBox.Checked);
+    Grabber.CaptureMonitor(ImagePath, MonitorId);
 
 
   // Increment counter after successful capture
@@ -499,6 +497,8 @@ begin
 
   try
     Ini.WriteInteger(DefaultConfigIniSection, 'JPEGQuality', JPEGQuality);
+    if Grabber <> nil then
+      Grabber.Quality := JPEGQuality;
   finally
   end;
 end;
@@ -563,6 +563,9 @@ begin
   UpdateColorDepthValues;
   
   Ini.WriteString(DefaultConfigIniSection, 'ImageFormat', ImageFormatInfoArray[Format].Name);
+
+  if Grabber <> nil then
+    Grabber.ImageFormat := Format;
 end;
 
 procedure TMainForm.ToggleAutoCaptureTrayMenuItemClick(Sender: TObject);
@@ -881,6 +884,8 @@ begin
 
     FColorDepth := AColorDepth;
     Ini.WriteInteger(DefaultConfigIniSection, 'ColorDepth', Integer(AColorDepth));
+    if Grabber <> nil then
+      Grabber.ColorDepth := AColorDepth;
   end
   else
     raise Exception.CreateFmt('Color depth %d-bit not allowed for %s format',

@@ -26,16 +26,19 @@ type
 
   TScreenGrabber = class
   private
-    procedure CaptureRegion(AFileName: String; ARect: TRect;
-      AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
-      AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
+    procedure CaptureRegion(AFileName: String; ARect: TRect);
+
   public
-    procedure CaptureMonitor(AFileName: String; AMonitorId: Integer;
-      AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
-      AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
-    procedure CaptureAllMonitors(AFileName: String;
-      AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
-      AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
+    ImageFormat: TImageFormat;
+    ColorDepth: TColorDepth;
+    Quality: Integer;
+    IsGrayscale: Boolean;
+
+    constructor Create(AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
+      AnQuality: Integer; AnIsGrayscale: Boolean);
+
+    procedure CaptureMonitor(AFileName: String; AMonitorId: Integer);
+    procedure CaptureAllMonitors(AFileName: String);
   end;
 
 const
@@ -81,9 +84,7 @@ uses
 
 { TScreenGrabber }
 
-procedure TScreenGrabber.CaptureMonitor(AFileName: String; AMonitorId: Integer;
-  AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
-  AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
+procedure TScreenGrabber.CaptureMonitor(AFileName: String; AMonitorId: Integer);
 var
   Rect: TRect;
   UsedMonitor: TMonitor;
@@ -93,13 +94,10 @@ begin
   Rect.Top    := UsedMonitor.Top;
   Rect.Width  := UsedMonitor.Width;
   Rect.Height := UsedMonitor.Height;
-  CaptureRegion(AFileName, Rect, AnImageFormat,
-    AColorDepth, AnJPEGQuality, AnIsGrayscale);
+  CaptureRegion(AFileName, Rect);
 end;
 
-procedure TScreenGrabber.CaptureAllMonitors(AFileName: String;
-  AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
-  AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
+procedure TScreenGrabber.CaptureAllMonitors(AFileName: String);
 var
   Rect: TRect;
 begin
@@ -107,13 +105,10 @@ begin
   Rect.Top    := GetSystemMetrics(SM_YVIRTUALSCREEN);
   Rect.Width  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
   Rect.Height := GetSystemMetrics(SM_CYVIRTUALSCREEN);
-  CaptureRegion(AFileName, Rect, AnImageFormat,
-    AColorDepth, AnJPEGQuality, AnIsGrayscale);
+  CaptureRegion(AFileName, Rect);
 end;
 
-procedure TScreenGrabber.CaptureRegion(AFileName: String;
-  ARect: TRect; AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
-  AnJPEGQuality: Integer; AnIsGrayscale: Boolean);
+procedure TScreenGrabber.CaptureRegion(AFileName: String; ARect: TRect);
 var
   Bitmap: TBitmap;
   PNG: TPortableNetworkGraphic;
@@ -125,7 +120,7 @@ begin
 
   // Set color depth for bitmap
   try
-    case Integer(AColorDepth) of
+    case Integer(ColorDepth) of
       1:  Bitmap.PixelFormat := pf1bit;
       4:  Bitmap.PixelFormat := pf4bit;
       8:  Bitmap.PixelFormat := pf8bit;
@@ -148,7 +143,7 @@ begin
   ReleaseDC(0, ScreenDC);
 
   try
-    case AnImageFormat of
+    case ImageFormat of
       fmtPNG:      // PNG
         begin
           PNG := TPortableNetworkGraphic.Create;
@@ -164,7 +159,7 @@ begin
         begin
           JPG := TJPEGImage.Create;
           try
-            JPG.CompressionQuality := AnJPEGQuality;
+            JPG.CompressionQuality := Quality;
             //JPG.GrayScale := AnIsGrayscale; FixMe: Can not set grayscale
             JPG.Assign(Bitmap);
             //JPG.Compress;
@@ -194,6 +189,17 @@ begin
   finally
     Bitmap.Free;
   end;
+end;
+
+constructor TScreenGrabber.Create(AnImageFormat: TImageFormat;
+  AColorDepth: TColorDepth; AnQuality: Integer; AnIsGrayscale: Boolean);
+begin
+  inherited Create();
+
+  ImageFormat := AnImageFormat;
+  ColorDepth := AColorDepth;
+  Quality := AnQuality;
+  IsGrayscale := AnIsGrayscale;
 end;
 
 end.
