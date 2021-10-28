@@ -222,14 +222,9 @@ begin
 end;
 
 function GetBuildDateTime: TDateTime;
-var
-  BuildDate, BuildTime: String;
 begin
-  BuildDate := {$I %DATE%};
-  BuildTime := {$I %TIME%};
-  BuildDate := StringReplace(BuildDate, '/', '-', [rfReplaceAll]);  // For unknown reason doesn`t work with "/" date separator
-
-  Result := ScanDateTime('yyyy-mm-dd hh:nn:ss', BuildDate + ' ' + BuildTime);
+  Result := EncodeDateTime({$I %dateYear%}, {$I %dateMonth%}, {$I %dateDay%},
+            {$I %timeHour%}, {$I %timeMinute%}, {$I %timeSecond%}, 0);
 end;
 
 function RemoveExtraPathDelimiters(const Path: String): String;
