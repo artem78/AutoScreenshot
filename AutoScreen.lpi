@@ -158,7 +158,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="9">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -202,6 +202,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="ScreenGrabber"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="languagecodes.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
