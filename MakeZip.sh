@@ -63,6 +63,13 @@ cp -v --preserve AutoScreenshot.exe $BuildDir
 echo "Done!"
 echo ""
 
+# DLLs
+echo "Copy DLLs..."
+cp -v --preserve $LazarusDir/libeay32.dll $BuildDir
+cp -v --preserve $LazarusDir/ssleay32.dll $BuildDir
+echo "Done!"
+echo ""
+
 # # Config
 # echo "Copy config.ini..."
 # cp -v --preserve config.sample.ini $BuildDir/config.ini
