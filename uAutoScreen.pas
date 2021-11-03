@@ -30,6 +30,7 @@ type
   TMainForm = class(TForm)
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
+    CheckForUpdatesMenuItem: TMenuItem;
     OutputDirEdit: TDirectoryEdit;
     Timer: TTimer;
     OutputDirLabel: TLabel;
@@ -77,6 +78,7 @@ type
     SeqNumberValueSpinEdit: TSpinEdit;
     SeqNumberDigitsCountSpinEdit: TSpinEdit;
     SeqNumberDigitsCountLabel: TLabel;
+    procedure CheckForUpdatesMenuItemClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -159,6 +161,7 @@ type
     procedure SetPostCommand(ACmd: String);
     function GetPostCommand: String;
     function GetMonitorWithCursor: Integer;
+    procedure CheckForUpdates();
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -225,7 +228,8 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uUtils, Math, uFileNameTemplateHelpForm;
+uses uAbout, DateUtils, uUtils, Math, uFileNameTemplateHelpForm,
+  fphttpclient, opensslsockets, fpjson, jsonparser;
 
 {$R *.lfm}
 
@@ -408,6 +412,11 @@ begin
 
   //if FindCmdLineSwitch('autorun') then
   //  OutputDebugString('AutoRun');
+end;
+
+procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
+begin
+  CheckForUpdates();
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -1373,6 +1382,67 @@ begin
       Result := MonitorId;
       Break;
     end;
+  end;
+end;
+
+procedure TMainForm.CheckForUpdates();
+const
+  ApiUrl = 'https://api.github.com/repos/artem78/AutoScreenshot/releases/latest';
+var
+  //Response: String;
+  //Response: TStringStream;
+  ResStr: String;
+  Client: TFPHTTPClient;
+  JsonData: TJSONData;
+  NewVerStr, CurrentVerStr, DownloadUrl, ChangeLog: String;
+  Msg: String;
+
+begin
+  //Res := TFPCustomHTTPClient.SimpleGet(Url);
+  //ShowMessage(Res);
+
+  //Response := TStringStream.Create('');
+  Client := TFPHTTPClient.Create(Nil);
+  try
+    try
+      Client.AllowRedirect := True;
+      Client.AddHeader('Accept', 'application/vnd.github.v3+json');
+      Client.AddHeader('User-Agent', 'AutoScreenshot Update Checker');
+      //{ResStr :=} Client.Get(Url, Response);
+      ResStr := Client.Get(ApiUrl);
+
+      //ShowMessage({Response.DataString} ResStr);
+      JsonData := GetJSON(ResStr);
+      try
+        NewVerStr := JsonData.FindPath('tag_name').AsString;
+        DownloadUrl := JsonData.FindPath('html_url').AsString;
+        ChangeLog := JsonData.FindPath('body').AsString;
+
+        if NewVerStr[1] = 'v' then
+          Delete(NewVerStr, 1, 1); // v1.2.3 --> 1.2.3
+
+        CurrentVerStr := GetProgramVersionStr();
+        if NewVerStr <> CurrentVerStr then // ToDo: Check if new version is greater
+        begin
+          Msg := Format('Доступна новая версия %s! (Текущая: %s)' + #13#10#13#10 +
+                 '%s' + #13#10#13#10 + 'Перейти на сайт для загрузки?',
+                 [NewVerStr, CurrentVerStr, ChangeLog]);
+          //if MessageDlg(Msg, mtInformation, mbYesNo, 0) = mrYes then
+          if QuestionDlg('', Msg, {mtCustom} mtInformation, [mrYes, 'Давай!', mrNo, 'Не надо'], '') = mrYes then
+            OpenURL(DownloadUrl);
+        end
+        else
+          ShowMessage('Обновлений не найдено!');
+      finally
+        JsonData.Free;
+      end;
+
+    except on E: EHTTPClient do
+      ShowMessage(E.Message{Response.DataString});
+    end;
+  finally
+    Client.Free;
+    //Response.Free;
   end;
 end;
 
