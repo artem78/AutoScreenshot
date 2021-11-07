@@ -30,8 +30,9 @@ Auto Screenshot
 * Украинский
 * Португальский
 * Испанский
+* Турецкий
 
-[Хотите ещё?](https://github.com/artem78/AutoScreenshot/issues/5)
+[(Помочь с переводом)](https://github.com/artem78/AutoScreenshot/issues/5)
 
 <!-- ToDo: Написать подробно про шаблоны имён -->
 
@@ -43,14 +44,9 @@ Auto Screenshot
 Последнюю версию программы вы можете скачать [отсюда](https://github.com/artem78/AutoScreenshot/releases/latest).  Можно выбрать zip-архив или установщик.
 
 ## Чем я могу помочь проекту?
-* Нашли ошибку?
-https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=
-
-* Хотите предложить новую идею?
-https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=
-
-* Можете помочь с переводом?
-https://github.com/artem78/AutoScreenshot/issues/5
+* [Сообщить об ошибке](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
+* [Предложить новую идею](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)
+* [Помочь с переводом на другие языки](https://github.com/artem78/AutoScreenshot/issues/5)
 
 ## Лицензия
 Вы можете свободно использовать, модифицировать и распространять данное ПО на условиях лицензии [GNU GPL v3.0](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt).
