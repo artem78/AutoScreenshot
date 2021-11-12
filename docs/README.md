@@ -47,9 +47,13 @@ The latest version available [here](https://github.com/artem78/AutoScreenshot/re
 * [Report about found bug](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
 * [Suggest new idea or feature](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)
 * [Make new translation](https://github.com/artem78/AutoScreenshot/issues/5)
+* [Make a donation](#donate)
 
 ## License
 You are free to use, modify or distribute this software under the [GNU GPL v3.0](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt) license.
 
 ## Author
 Artem78 (email: [megabyte1024@ya.ru](mailto:megabyte1024@ya.ru?subject=AutoScreenshot))
+
+## Donate
+You can donate any amount using PayPay to email <u>megabyte1024@yandex.com</u> (in payment note write "AutoScreenshot donation").

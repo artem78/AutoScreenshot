@@ -47,9 +47,13 @@ Auto Screenshot
 * [Сообщить об ошибке](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
 * [Предложить новую идею](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)
 * [Помочь с переводом на другие языки](https://github.com/artem78/AutoScreenshot/issues/5)
+* [Поддержать автора материально](#пожертвования)
 
 ## Лицензия
 Вы можете свободно использовать, модифицировать и распространять данное ПО на условиях лицензии [GNU GPL v3.0](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt).
 
 ## Автор
 Artem78 (электропочта для связи: [megabyte1024@ya.ru](mailto:megabyte1024@ya.ru?subject=AutoScreenshot))
+
+## Пожертвования
+Если вам понравился проект, вы можете вознаградить автора материально отправив любую сумму через платёжную систему PayPal на адрес <u>megabyte1024@yandex.com</u> (в примечании платежа укажите "Пожертвование на AutoScreenshot").
