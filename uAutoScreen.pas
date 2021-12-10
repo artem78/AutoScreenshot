@@ -28,6 +28,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    PostCmdLabel: TLabel;
+    PostCmdEdit: TEdit;
     OutputDirEdit: TDirectoryEdit;
     Timer: TTimer;
     OutputDirLabel: TLabel;
@@ -80,6 +82,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalChange(Sender: TObject);
+    procedure PostCmdEditChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure ApplicationMinimize(Sender: TObject);
     procedure StartAutoCaptureButtonClick(Sender: TObject);
@@ -153,6 +156,8 @@ type
     procedure SetCounter(Val: Integer);
     procedure SetCounterDigits(Val: Integer);
     procedure UpdateSeqNumGroupVisibility;
+    procedure SetPostCommand(ACmd: String);
+    function GetPostCommand: String;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -164,6 +169,7 @@ type
     property MonitorId: Integer read GetMonitorId write SetMonitorId;
     property Counter: Integer read FCounter write SetCounter;
     property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
+    property PostCommand: String read GetPostCommand write SetPostCommand;
   public
     { Public declarations }
   end;
@@ -379,6 +385,9 @@ begin
   Counter := Ini.ReadInteger(DefaultConfigIniSection, 'Counter', DefaultCounterValue);
   CounterDigits := Ini.ReadInteger(DefaultConfigIniSection, 'CounterDigits', DefaultCounterDigits);
   UpdateSeqNumGroupVisibility;
+
+  // User command
+  PostCommand := Ini.ReadString(DefaultConfigIniSection, 'PostCmd', '');
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -427,6 +436,11 @@ begin
   end;
   Ini.WriteFloat(DefaultConfigIniSection, 'CaptureInterval', Seconds / SecsPerMin);
   Timer.Interval := Seconds * MSecsPerSec;
+end;
+
+procedure TMainForm.PostCmdEditChange(Sender: TObject);
+begin
+  Ini.WriteString(DefaultConfigIniSection, 'PostCmd', PostCommand);
 end;
 
 procedure TMainForm.TimerTimer(Sender: TObject);
@@ -494,6 +508,7 @@ var
   ScreenX, ScreenY: Integer;
   //Rect: TRect;
   UsedMonitor: TMonitor;
+  Cmd: String;
 begin
   Bitmap := TBitmap.Create;
 
@@ -586,6 +601,17 @@ begin
     end;
   finally
     Bitmap.Free;
+  end;
+
+  // Run user command
+  try
+    Cmd := PostCommand;
+    if Cmd <> '' then
+    begin
+      Cmd := StringReplace(Cmd, '%FILENAME%', ImagePath, [rfReplaceAll{, rfIgnoreCase}]);
+      RunCmdInbackground(Cmd);
+    end;
+  except
   end;
 
   // Increment counter after successful capture
@@ -809,6 +835,8 @@ begin
     SeqNumberGroup.Caption := Localizer.I18N('SequentialNumber');
     SeqNumberValueLabel.Caption := Localizer.I18N('NextValue') + ':';
     SeqNumberDigitsCountLabel.Caption := Localizer.I18N('Digits') + ':';
+    PostCmdLabel.Caption := Localizer.I18N('RunCommand') + ':';
+    PostCmdEdit.Hint := Localizer.I18N('RunCommandHelpText');
 
     // Tray icon
     RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
@@ -1297,6 +1325,16 @@ begin
   SeqNumberGroup.Visible := Pos('%NUM', FileNameTemplateComboBox.Text) <> 0;
   if SeqNumberGroup.Visible then
     RecalculateLabelWidthsForSeqNumGroup;
+end;
+
+procedure TMainForm.SetPostCommand(ACmd: String);
+begin
+  PostCmdEdit.Text := ACmd;
+end;
+
+function TMainForm.GetPostCommand: String;
+begin
+  Result := PostCmdEdit.Text;
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);

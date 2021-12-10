@@ -1,6 +1,6 @@
 object MainForm: TMainForm
   Left = 278
-  Height = 400
+  Height = 524
   Top = 153
   Width = 656
   AutoSize = True
@@ -11,7 +11,7 @@ object MainForm: TMainForm
   ChildSizing.TopBottomSpacing = 15
   ChildSizing.HorizontalSpacing = 6
   ChildSizing.VerticalSpacing = 6
-  ClientHeight = 380
+  ClientHeight = 504
   ClientWidth = 656
   Color = clBtnFace
   Font.Color = clWindowText
@@ -150,7 +150,7 @@ object MainForm: TMainForm
     AnchorSideBottom.Side = asrBottom
     Left = 40
     Height = 25
-    Top = 392
+    Top = 421
     Width = 118
     Anchors = [akLeft, akBottom]
     AutoSize = True
@@ -223,11 +223,11 @@ object MainForm: TMainForm
   object AutoCaptureControlGroup: TGroupBox
     AnchorSideLeft.Control = Owner
     AnchorSideLeft.Side = asrCenter
-    AnchorSideTop.Control = MonitorComboBox
+    AnchorSideTop.Control = PostCmdEdit
     AnchorSideTop.Side = asrBottom
     Left = 217
     Height = 57
-    Top = 368
+    Top = 397
     Width = 222
     AutoSize = True
     BorderSpacing.Top = 24
@@ -477,6 +477,34 @@ object MainForm: TMainForm
       OnChange = SeqNumberDigitsCountSpinEditChange
       TabOrder = 1
     end
+  end
+  object PostCmdEdit: TEdit
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = MonitorComboBox
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = OutputDirEdit
+    AnchorSideRight.Side = asrBottom
+    Left = 191
+    Height = 23
+    Top = 350
+    Width = 265
+    Anchors = [akTop, akLeft, akRight]
+    OnChange = PostCmdEditChange
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 17
+  end
+  object PostCmdLabel: TLabel
+    AnchorSideTop.Control = PostCmdEdit
+    AnchorSideTop.Side = asrCenter
+    AnchorSideRight.Control = PostCmdEdit
+    Left = 100
+    Height = 15
+    Top = 354
+    Width = 85
+    Anchors = [akTop, akRight]
+    Caption = 'Run command:'
+    ParentColor = False
   end
   object Timer: TTimer
     Enabled = False
