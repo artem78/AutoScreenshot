@@ -158,6 +158,7 @@ type
     procedure UpdateSeqNumGroupVisibility;
     procedure SetPostCommand(ACmd: String);
     function GetPostCommand: String;
+    function GetMonitorWithCursor: Integer;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -213,6 +214,7 @@ const
 
   MinCaptureIntervalInSeconds = 1;
   NoMonitorId = -1;
+  MonitorWithCursor = -2;
   MinCounterValue  = 1;
   MinCounterDigits = 1;
   MaxCounterDigits = 10;
@@ -536,7 +538,10 @@ begin
   end
   else // Only one display
   begin
-    UsedMonitor := Screen.Monitors[MonitorId];
+    if MonitorId = MonitorWithCursor then
+      UsedMonitor := Screen.Monitors[GetMonitorWithCursor]
+    else
+      UsedMonitor := Screen.Monitors[MonitorId];
     ScreenWidth  := UsedMonitor.Width;
     ScreenHeight := UsedMonitor.Height;
     ScreenX := UsedMonitor.Left;
@@ -1121,6 +1126,8 @@ begin
          GetSystemMetrics(SM_CYVIRTUALSCREEN)]
     ));
 
+    Items.Append(Localizer.I18N('MonitorWithCursor'));
+
     for Idx := 0 to Screen.MonitorCount - 1 do
     begin
       Str := WideFormat(Localizer.I18N('MonitorInfo'),
@@ -1146,15 +1153,22 @@ begin
   if MonitorComboBox.ItemIndex <= 0 then
     Result := NoMonitorId
   else
-    Result := MonitorComboBox.ItemIndex - 1;
+  begin
+    if MonitorComboBox.ItemIndex = 1 then
+      Result := MonitorWithCursor
+    else
+      Result := MonitorComboBox.ItemIndex - 2;
+  end;
 end;
 
 procedure TMainForm.SetMonitorId(MonitorId: Integer);
 begin
   if MonitorId = NoMonitorId then
     MonitorComboBox.ItemIndex := 0
+  else if MonitorId = MonitorWithCursor then
+    MonitorComboBox.ItemIndex := 1
   else if (MonitorId >= 0) and (MonitorId < {Screen.MonitorCount} MonitorComboBox.Items.Count) then
-    MonitorComboBox.ItemIndex := MonitorId + 1
+    MonitorComboBox.ItemIndex := MonitorId + 2
   else
     raise Exception.CreateFmt('Monitor id=%d not exists', [MonitorId]);
 
@@ -1335,6 +1349,30 @@ end;
 function TMainForm.GetPostCommand: String;
 begin
   Result := PostCmdEdit.Text;
+end;
+
+function TMainForm.GetMonitorWithCursor: Integer;
+var
+  MonitorId: Integer;
+  MonitorRect: TRect;
+begin
+  Result := NoMonitorId;
+  Screen.UpdateMonitors;
+  for MonitorId := 0 to Screen.MonitorCount - 1 do
+  begin
+    with Screen.Monitors[MonitorId] do
+    begin
+      MonitorRect.SetLocation(Left, Top);
+      MonitorRect.Width:=Width;
+      MonitorRect.Height:=Height;
+    end;
+
+    if MonitorRect.Contains(Mouse.CursorPos) then
+    begin
+      Result := MonitorId;
+      Break;
+    end;
+  end;
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
