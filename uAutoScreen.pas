@@ -1261,6 +1261,7 @@ begin
   MaxWidth := max(MaxWidth, CaptureIntervalLabel.Width);
   MaxWidth := max(MaxWidth, ImageFormatLabel.Width);
   MaxWidth := max(MaxWidth, MonitorLabel.Width);
+  MaxWidth := max(MaxWidth, PostCmdLabel.Width);
 
   OutputDirEdit.Left := MaxWidth + ChildSizing.LeftRightSpacing
       + ChildSizing.HorizontalSpacing;
