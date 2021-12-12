@@ -5,8 +5,8 @@ interface
 uses
   Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
-  Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
-  LCLIntf;
+  Menus, Buttons, EditBtn, UniqueInstance, uLocalization, uCapturedAreaFrame,
+  DateTimePicker, LCLIntf;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF});
@@ -28,6 +28,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    CapturedAreaFrame1: TCapturedAreaFrame;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     OutputDirEdit: TDirectoryEdit;
@@ -64,8 +65,6 @@ type
     CaptureInterval: TDateTimePicker;
     TrayIconAnimationTimer: TTimer;
     AutoRunCheckBox: TCheckBox;
-    MonitorLabel: TLabel;
-    MonitorComboBox: TComboBox;
     MainMenu: TMainMenu;
     HelpSubMenu: TMenuItem;
     AboutMenuItem: TMenuItem;
@@ -142,9 +141,7 @@ type
     procedure InitUI;
     procedure ReadSettings;
     procedure UpdateColorDepthValues;
-    procedure UpdateMonitorList;
-    procedure FillMonitorList;
-    procedure SetMonitorId(MonitorId: Integer);
+    procedure SetMonitorId(AMonitorId: Integer);
     function GetMonitorId: Integer;
     procedure UpdateLanguages;
     procedure LanguageClick(Sender: TObject);
@@ -159,6 +156,7 @@ type
     procedure SetPostCommand(ACmd: String);
     function GetPostCommand: String;
     function GetMonitorWithCursor: Integer;
+    procedure SaveMonitor;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -238,7 +236,7 @@ begin
     WM_DISPLAYCHANGE, // Screen resolution/orientation changed
     WM_DEVICECHANGE:  // Any hardware configuration changed (including monitors)
       begin
-        MainForm.UpdateMonitorList;
+        MainForm.CapturedAreaFrame1.UpdateMonitorList;
       end;
   end;
 
@@ -280,7 +278,8 @@ begin
   SeqNumberDigitsCountSpinEdit.MaxValue := MaxCounterDigits;
 
   // Available monitors
-  UpdateMonitorList;
+  CapturedAreaFrame1.OnChange := @SaveMonitor;
+  CapturedAreaFrame1.UpdateMonitorList;
 end;
 
 procedure TMainForm.ReadSettings;
@@ -804,7 +803,7 @@ begin
   raise Exception.CreateFmt('Unknown language code "%s"', [LangCode]);
 end;
 
-procedure TMainForm.TranslateForm;
+procedure TMainForm.TranslateForm();
 begin
   DisableAutoSizing;
 
@@ -835,8 +834,9 @@ begin
     StartCaptureOnStartUpCheckBox.Caption := Localizer.I18N('StartCaptureOnStartUp');
     StartMinimizedCheckBox.Caption := Localizer.I18N('StartMinimized');
     AutoRunCheckBox.Caption := Localizer.I18N('AutoRun');
-    MonitorLabel.Caption := Localizer.I18N('UsedMonitor') + ':';
-    FillMonitorList;
+    //MonitorLabel.Caption := Localizer.I18N('UsedMonitor') + ':';
+    CapturedAreaFrame1.Translate;
+    CapturedAreaFrame1.FillMonitorList;
     SeqNumberGroup.Caption := Localizer.I18N('SequentialNumber');
     SeqNumberValueLabel.Caption := Localizer.I18N('NextValue') + ':';
     SeqNumberDigitsCountLabel.Caption := Localizer.I18N('Digits') + ':';
@@ -970,34 +970,6 @@ begin
   ColorDepthComboBox.OnChange(ColorDepthComboBox);
 end;
 
-procedure TMainForm.UpdateMonitorList;
-begin
-  // Update array in Screen variable first
-  Screen.UpdateMonitors;
-
-  // Disable choosing monitor if only one available
-  if Screen.MonitorCount >= 2 then
-  begin // Multiple monitors
-    MonitorLabel.Enabled := True;
-    MonitorComboBox.Enabled := True;
-
-    // Fix out of bounds
-    if MonitorId >= Screen.MonitorCount then
-      //MonitorId := Screen.MonitorCount - 1; // Last
-      MonitorId := NoMonitorId;
-  end
-  else
-  begin // Only one monitor available
-    MonitorLabel.Enabled := False;
-    MonitorComboBox.Enabled := False;
-    MonitorId := NoMonitorId;
-    //MonitorId := 0;
-  end;
-
-  // Fill combobox
-  FillMonitorList;
-end;
-
 function TMainForm.GetColorDepth: TColorDepth;
 begin
   if ImageFormatInfoArray[ImageFormat].ColorDepth = [] then
@@ -1096,81 +1068,14 @@ begin
   SetMonitorId(GetMonitorId);
 end;
 
-procedure TMainForm.FillMonitorList;
-var
-  Idx, SelIdx: Integer;
-  Str: WideString;
-  IsLocalizationLoaded: Boolean;
-
-begin
-  IsLocalizationLoaded := True;
-  try
-    Localizer.I18N('test...')
-  except
-    IsLocalizationLoaded := False;
-  end;
-
-  if not IsLocalizationLoaded then
-    Exit;
-
-
-  // Fill combobox with monitor list
-  with MonitorComboBox do
-  begin
-    //SelId := MonitorId;
-    SelIdx := MonitorComboBox.ItemIndex;
-
-    Items.Clear;
-    Items.Append(WideFormat(Localizer.I18N('AllMonitorsInfo'),
-        [GetSystemMetrics(SM_CXVIRTUALSCREEN),
-         GetSystemMetrics(SM_CYVIRTUALSCREEN)]
-    ));
-
-    Items.Append(Localizer.I18N('MonitorWithCursor'));
-
-    for Idx := 0 to Screen.MonitorCount - 1 do
-    begin
-      Str := WideFormat(Localizer.I18N('MonitorInfo'),
-          [Screen.Monitors[Idx].MonitorNum + 1, // Start numeration from 1
-           Screen.Monitors[Idx].Width,
-           Screen.Monitors[Idx].Height]
-      );
-      // ToDo: Also may show screen model, diagonal size
-      if Screen.Monitors[Idx].Primary then
-        Str := Str + ' - ' + Localizer.I18N('Primary');
-
-      Items.Append(Str);
-    end;
-
-    // Restore previous selected item after strings updated
-    //MonitorId := SelId;
-    MonitorComboBox.ItemIndex := SelIdx;
-  end;
-end;
-
 function TMainForm.GetMonitorId: Integer;
 begin
-  if MonitorComboBox.ItemIndex <= 0 then
-    Result := NoMonitorId
-  else
-  begin
-    if MonitorComboBox.ItemIndex = 1 then
-      Result := MonitorWithCursor
-    else
-      Result := MonitorComboBox.ItemIndex - 2;
-  end;
+  Result := CapturedAreaFrame1.MonitorId;
 end;
 
-procedure TMainForm.SetMonitorId(MonitorId: Integer);
+procedure TMainForm.SetMonitorId(AMonitorId: Integer);
 begin
-  if MonitorId = NoMonitorId then
-    MonitorComboBox.ItemIndex := 0
-  else if MonitorId = MonitorWithCursor then
-    MonitorComboBox.ItemIndex := 1
-  else if (MonitorId >= 0) and (MonitorId < {Screen.MonitorCount} MonitorComboBox.Items.Count) then
-    MonitorComboBox.ItemIndex := MonitorId + 2
-  else
-    raise Exception.CreateFmt('Monitor id=%d not exists', [MonitorId]);
+  CapturedAreaFrame1.MonitorId := AMonitorId;
 
   if Ini <> Nil then
     Ini.WriteInteger(DefaultConfigIniSection, 'Monitor', MonitorId);
@@ -1260,7 +1165,7 @@ begin
   MaxWidth := max(MaxWidth, FileNameTemplateLabel.Width);
   MaxWidth := max(MaxWidth, CaptureIntervalLabel.Width);
   MaxWidth := max(MaxWidth, ImageFormatLabel.Width);
-  MaxWidth := max(MaxWidth, MonitorLabel.Width);
+  //MaxWidth := max(MaxWidth, MonitorLabel.Width);
   MaxWidth := max(MaxWidth, PostCmdLabel.Width);
 
   OutputDirEdit.Left := MaxWidth + ChildSizing.LeftRightSpacing
@@ -1374,6 +1279,11 @@ begin
       Break;
     end;
   end;
+end;
+
+procedure TMainForm.SaveMonitor;
+begin
+  Ini.WriteInteger(DefaultConfigIniSection, 'monitor', MonitorId);
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);

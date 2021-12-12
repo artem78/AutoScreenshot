@@ -158,7 +158,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="7">
+    <Units Count="8">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -197,6 +197,14 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uFileNameTemplateHelpForm"/>
       </Unit6>
+      <Unit7>
+        <Filename Value="ucapturedareaframe.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CapturedAreaFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="uCapturedAreaFrame"/>
+      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

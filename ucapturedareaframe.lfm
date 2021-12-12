@@ -1,0 +1,74 @@
+object CapturedAreaFrame: TCapturedAreaFrame
+  Left = 0
+  Height = 240
+  Top = 0
+  Width = 350
+  AutoSize = True
+  ClientHeight = 240
+  ClientWidth = 350
+  Constraints.MinWidth = 150
+  TabOrder = 0
+  DesignLeft = 307
+  DesignTop = 133
+  object CapturedAreaGroupBox: TGroupBox
+    Left = 0
+    Height = 240
+    Top = 0
+    Width = 350
+    Align = alClient
+    AutoSize = True
+    Caption = 'Captured area'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.TopBottomSpacing = 6
+    ChildSizing.VerticalSpacing = 6
+    ClientHeight = 220
+    ClientWidth = 346
+    TabOrder = 0
+    object AllMonitorsRadioButton: TRadioButton
+      AnchorSideLeft.Control = CapturedAreaGroupBox
+      AnchorSideTop.Control = CapturedAreaGroupBox
+      Left = 6
+      Height = 19
+      Top = 6
+      Width = 85
+      Caption = 'All monitors'
+      OnChange = AllMonitorsRadioButtonChange
+      TabOrder = 0
+    end
+    object SelectedMonitorRadioButton: TRadioButton
+      AnchorSideLeft.Control = AllMonitorsRadioButton
+      AnchorSideTop.Control = AllMonitorsRadioButton
+      AnchorSideTop.Side = asrBottom
+      Left = 6
+      Height = 19
+      Top = 31
+      Width = 110
+      Caption = 'Selected monitor'
+      OnChange = SelectedMonitorRadioButtonChange
+      TabOrder = 1
+    end
+    object MonitorComboBox: TComboBox
+      AnchorSideLeft.Control = SelectedMonitorRadioButton
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = SelectedMonitorRadioButton
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = CapturedAreaGroupBox
+      AnchorSideRight.Side = asrBottom
+      Left = 136
+      Height = 23
+      Top = 29
+      Width = 204
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
+      BorderSpacing.Left = 20
+      ItemHeight = 15
+      Items.Strings = (
+        ''
+        ''
+      )
+      OnChange = MonitorComboBoxChange
+      Style = csDropDownList
+      TabOrder = 2
+    end
+  end
+end
