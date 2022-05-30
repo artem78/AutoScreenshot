@@ -9,6 +9,7 @@ Auto Screenshot
 [![GitHub license](https://img.shields.io/github/license/artem78/AutoScreenshot?style=plastic)](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt)
 ![GitHub All Releases](https://img.shields.io/github/downloads/artem78/AutoScreenshot/total?style=plastic)
 ![GitHub last commit](https://img.shields.io/github/last-commit/artem78/AutoScreenshot?style=plastic)
+[![Supports Windows](https://img.shields.io/badge/support-Windows-blue?logo=Windows&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
 
 ## Overview
 **Auto Screenshot** — Windows application for automatic taking screenshots with specified time interval.
