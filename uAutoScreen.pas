@@ -161,7 +161,7 @@ type
     procedure SetPostCommand(ACmd: String);
     function GetPostCommand: String;
     function GetMonitorWithCursor: Integer;
-    procedure CheckForUpdates();
+    procedure CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -221,6 +221,7 @@ const
   MinCounterValue  = 1;
   MinCounterDigits = 1;
   MaxCounterDigits = 10;
+  UpdateCheckIntervalInSeconds = 5 * 24 * 60 * 60; // Every 5 days
 
 var
   MainForm: TMainForm;
@@ -397,6 +398,8 @@ begin
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
+var
+  LastUpdateCheck: TDateTime;
 begin
   { Replace default window function with custom one
     for process messages when screen configuration changed }
@@ -412,11 +415,16 @@ begin
 
   //if FindCmdLineSwitch('autorun') then
   //  OutputDebugString('AutoRun');
+
+  // Check for updates when program starts
+  LastUpdateCheck := Ini.ReadDateTime(DefaultConfigIniSection, 'LastUpdateCheck', 0);
+  if SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds then
+    CheckForUpdates(False);
 end;
 
 procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
 begin
-  CheckForUpdates();
+  CheckForUpdates(True);
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -1386,7 +1394,7 @@ begin
   end;
 end;
 
-procedure TMainForm.CheckForUpdates();
+procedure TMainForm.CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
 const
   ApiUrl =
 {$IFOPT D+}
@@ -1405,6 +1413,8 @@ var
 
 begin
   CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
+
+  Ini.WriteDateTime(DefaultConfigIniSection, 'LastUpdateCheck', Now);
 
   Client := TFPHTTPClient.Create(Nil);
   try
@@ -1439,7 +1449,10 @@ begin
           end;
         end
         else
-          ShowMessage(Localizer.I18N('NoUpdatesFound'));
+        begin
+          if AShowMessageWhenNoUpdates then
+            ShowMessage(Localizer.I18N('NoUpdatesFound'));
+        end;
       finally
         JsonData.Free;
       end;
