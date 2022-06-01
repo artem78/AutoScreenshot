@@ -560,6 +560,10 @@ object MainForm: TMainForm
       object LanguageSubMenu: TMenuItem
         Caption = 'Language'
       end
+      object AutoCheckForUpdatesMenuItem: TMenuItem
+        Caption = 'Auto check for updates'
+        OnClick = AutoCheckForUpdatesMenuItemClick
+      end
     end
     object HelpSubMenu: TMenuItem
       Caption = 'Help'

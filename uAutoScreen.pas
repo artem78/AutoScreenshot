@@ -28,6 +28,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    AutoCheckForUpdatesMenuItem: TMenuItem;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
@@ -79,6 +80,7 @@ type
     SeqNumberDigitsCountSpinEdit: TSpinEdit;
     SeqNumberDigitsCountLabel: TLabel;
     procedure CheckForUpdatesMenuItemClick(Sender: TObject);
+    procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -162,6 +164,8 @@ type
     function GetPostCommand: String;
     function GetMonitorWithCursor: Integer;
     procedure CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
+    function GetAutoCheckForUpdates: Boolean;
+    procedure SetAutoCheckForUpdates(AVal: Boolean);
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -174,6 +178,7 @@ type
     property Counter: Integer read FCounter write SetCounter;
     property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
     property PostCommand: String read GetPostCommand write SetPostCommand;
+    property AutoCheckForUpdates: Boolean read GetAutoCheckForUpdates write SetAutoCheckForUpdates;
   public
     { Public declarations }
   end;
@@ -395,6 +400,9 @@ begin
 
   // User command
   PostCommand := Ini.ReadString(DefaultConfigIniSection, 'PostCmd', '');
+
+  // Auto checking for updates
+  AutoCheckForUpdates := Ini.ReadBool(DefaultConfigIniSection, 'AutoCheckForUpdates', True);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -418,13 +426,18 @@ begin
 
   // Check for updates when program starts
   LastUpdateCheck := Ini.ReadDateTime(DefaultConfigIniSection, 'LastUpdateCheck', 0);
-  if SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds then
+  if AutoCheckForUpdates and (SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds) then
     CheckForUpdates(False);
 end;
 
 procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
 begin
   CheckForUpdates(True);
+end;
+
+procedure TMainForm.AutoCheckForUpdatesMenuItemClick(Sender: TObject);
+begin
+  AutoCheckForUpdates := not AutoCheckForUpdates;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -831,7 +844,7 @@ begin
     LanguageSubMenu.Caption := Localizer.I18N('Language');
     HelpSubMenu.Caption := Localizer.I18N('Help');
     AboutMenuItem.Caption := Localizer.I18N('About') + '...';
-    CheckForUpdatesMenuItem.Caption := Localizer.I18N('CheckForUpdates');
+    AutoCheckForUpdatesMenuItem.Caption := Localizer.I18N('AutoCheckForUpdates');
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
@@ -1464,6 +1477,17 @@ begin
   finally
     Client.Free;
   end;
+end;
+
+function TMainForm.GetAutoCheckForUpdates: Boolean;
+begin
+  Result := AutoCheckForUpdatesMenuItem.Checked;
+end;
+
+procedure TMainForm.SetAutoCheckForUpdates(AVal: Boolean);
+begin
+  Ini.WriteBool(DefaultConfigIniSection, 'AutoCheckForUpdates', AVal);
+  AutoCheckForUpdatesMenuItem.Checked := AVal;
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
