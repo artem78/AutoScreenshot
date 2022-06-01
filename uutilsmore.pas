@@ -2,6 +2,7 @@ unit uUtilsMore;
 
 {$mode objfpc}{$H+}
 {$modeSwitch advancedRecords}
+{$modeswitch TypeHelpers}
 
 interface
 
@@ -18,6 +19,7 @@ type
     class function Create(AMajor: Cardinal = 0; AMinor: Cardinal = 0;
              ARevision: Cardinal = 0; ABuild: Cardinal = 0): TProgramVersion; static; overload;
     class function Create(const AStr: String): TProgramVersion; static; overload;
+    function ToString(ADropTrailingZeros: Boolean = False): String;
   end;
 
 operator = (AVer1, AVer2: TProgramVersion): Boolean;
@@ -29,6 +31,15 @@ implementation
 
 uses
   RegExpr;
+
+type
+  { TJoinInteger }
+
+  { Thanks to Zvoni!
+    https://forum.lazarus.freepascal.org/index.php/topic,59519.msg443738.html#msg443738 }
+  TJoinInteger=Type helper(TStringHelper) for AnsiString
+    class function Join(const Separator: string; const Values: array of Integer): string; overload; static;
+  end;
 
 operator = (AVer1, AVer2: TProgramVersion): Boolean;
 begin
@@ -67,6 +78,19 @@ end;
 operator<(AVer1, AVer2: TProgramVersion): Boolean;
 begin
   Result := (not (AVer1 > AVer2)) and (AVer1 <> AVer2);
+end;
+
+{ TJoinInteger }
+
+class function TJoinInteger.Join(const Separator: string;
+  const Values: array of Integer): string;
+Var
+  SValues:Array Of String;
+  i:SizeInt;
+begin
+  SetLength(SValues,System.Length(Values));
+  For i:=Low(SValues) To High(SValues) Do SValues[i]:=Values[i].ToString;
+  Result:=String.Join(Separator,SValues);
 end;
 
 { TProgramVersion }
@@ -108,6 +132,29 @@ begin
       Result.Build := StrToInt(Re.Match[4]);
   end;
   Re.Free;
+end;
+
+function TProgramVersion.ToString(ADropTrailingZeros: Boolean): String;
+type
+  TVersionNumbers = Array of {Cardinal} Integer;
+var
+  Numbers: TVersionNumbers;
+  I: Integer;
+begin
+  Numbers := TVersionNumbers.Create(Major, Minor, Revision, Build);
+
+  if ADropTrailingZeros then
+  begin
+    for I := High(Numbers) downto Low(Numbers) do
+    begin
+      if (Numbers[I] = 0) then
+        Delete(Numbers, I, 1)
+      else
+        Break;
+    end;
+  end;
+
+  Result := String.Join('.', Numbers);
 end;
 
 end.

@@ -155,6 +155,25 @@ begin
   AssertTrue(V1 > TProgramVersion.Create(5, 12, 101, 54911));
   AssertFalse(V1 > V1);
 
+  // Test to string conversion
+  AssertEquals('12.345.67.8', TProgramVersion.Create(12, 345, 67, 8).ToString(False));
+  AssertEquals('12.345.67.0', TProgramVersion.Create(12, 345, 67, 0).ToString(False));
+  AssertEquals('12.345.0.0',  TProgramVersion.Create(12, 345, 0, 0) .ToString(False));
+  AssertEquals('12.0.0.0',    TProgramVersion.Create(12, 0, 0, 0)   .ToString(False));
+  AssertEquals('12.0.0.8',    TProgramVersion.Create(12, 0, 0, 8)   .ToString(False));
+  AssertEquals('0.0.0.8',     TProgramVersion.Create(0, 0, 0, 8)    .ToString(False));
+  AssertEquals('0.345.0.0',   TProgramVersion.Create(0, 345, 0, 0)  .ToString(False));
+  AssertEquals('0.0.0.0',     TProgramVersion.Create(0, 0, 0, 0)    .ToString(False));
+
+  AssertEquals('12.345.67.8', TProgramVersion.Create(12, 345, 67, 8).ToString(True));
+  AssertEquals('12.345.67',   TProgramVersion.Create(12, 345, 67, 0).ToString(True));
+  AssertEquals('12.345',      TProgramVersion.Create(12, 345, 0, 0) .ToString(True));
+  AssertEquals('12',          TProgramVersion.Create(12, 0, 0, 0)   .ToString(True));
+  AssertEquals('12.0.0.8',    TProgramVersion.Create(12, 0, 0, 8)   .ToString(True));
+  AssertEquals('0.0.0.8',     TProgramVersion.Create(0, 0, 0, 8)    .ToString(True));
+  AssertEquals('0.345',       TProgramVersion.Create(0, 345, 0, 0)  .ToString(True));
+  //AssertEquals({''} '0',           TProgramVersion.Create(0, 0, 0, 0)    .ToString(True));
+
   // ToDo: Check wrong version strings
 end;
 
