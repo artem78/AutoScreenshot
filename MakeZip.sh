@@ -85,7 +85,7 @@ echo ""
 
 # Pack to ZIP archive
 echo "Pack all files to ZIP archive..."
-ZipPath=$TargetZipDir/autoscreenshot_$ProgramVersion.zip
+ZipPath=$TargetZipDir/autoscreenshot_${ProgramVersion}_portable.zip
 rm -f $ZipPath
 cd $BuildDir
 zip -r $ZipPath *
