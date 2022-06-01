@@ -229,7 +229,7 @@ var
 implementation
 
 uses uAbout, DateUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  fphttpclient, opensslsockets, fpjson, jsonparser;
+  fphttpclient, opensslsockets, fpjson, jsonparser, uUtilsMore;
 
 {$R *.lfm}
 
@@ -823,6 +823,7 @@ begin
     LanguageSubMenu.Caption := Localizer.I18N('Language');
     HelpSubMenu.Caption := Localizer.I18N('Help');
     AboutMenuItem.Caption := Localizer.I18N('About') + '...';
+    CheckForUpdatesMenuItem.Caption := Localizer.I18N('CheckForUpdates');
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
@@ -1387,62 +1388,68 @@ end;
 
 procedure TMainForm.CheckForUpdates();
 const
-  ApiUrl = 'https://api.github.com/repos/artem78/AutoScreenshot/releases/latest';
+  ApiUrl =
+{$IFOPT D+}
+    'https://eojiuvjshd8kbzt.m.pipedream.net'
+{$ELSE}
+    'https://api.github.com/repos/artem78/AutoScreenshot/releases/latest'
+{$ENDIF}
+    ;
 var
-  //Response: String;
-  //Response: TStringStream;
-  ResStr: String;
+  ResponseStr: String;
   Client: TFPHTTPClient;
   JsonData: TJSONData;
-  NewVerStr, CurrentVerStr, DownloadUrl, ChangeLog: String;
-  Msg: String;
+  NewVersion, CurrentVersion: TProgramVersion;
+  DownloadUrl, ChangeLog: String;
+  Msg: {TStringBuilder} TAnsiStringBuilder;
 
 begin
-  //Res := TFPCustomHTTPClient.SimpleGet(Url);
-  //ShowMessage(Res);
+  CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
 
-  //Response := TStringStream.Create('');
   Client := TFPHTTPClient.Create(Nil);
   try
     try
       Client.AllowRedirect := True;
       Client.AddHeader('Accept', 'application/vnd.github.v3+json');
-      Client.AddHeader('User-Agent', 'AutoScreenshot Update Checker');
-      //{ResStr :=} Client.Get(Url, Response);
-      ResStr := Client.Get(ApiUrl);
+      Client.AddHeader('User-Agent', 'AutoScreenshot v' + CurrentVersion.ToString() + ' Update Checker');
+      ResponseStr := Client.Get(ApiUrl);
 
-      //ShowMessage({Response.DataString} ResStr);
-      JsonData := GetJSON(ResStr);
+      JsonData := GetJSON(ResponseStr);
       try
-        NewVerStr := JsonData.FindPath('tag_name').AsString;
-        DownloadUrl := JsonData.FindPath('html_url').AsString;
-        ChangeLog := JsonData.FindPath('body').AsString;
+        NewVersion := TProgramVersion.Create(JsonData.GetPath('tag_name').AsString);
+        DownloadUrl := JsonData.GetPath('html_url').AsString;
+        ChangeLog := JsonData.GetPath('body').AsString;
 
-        if NewVerStr[1] = 'v' then
-          Delete(NewVerStr, 1, 1); // v1.2.3 --> 1.2.3
-
-        CurrentVerStr := GetProgramVersionStr();
-        if NewVerStr <> CurrentVerStr then // ToDo: Check if new version is greater
+        if NewVersion > CurrentVersion then
         begin
-          Msg := Format('Доступна новая версия %s! (Текущая: %s)' + #13#10#13#10 +
-                 '%s' + #13#10#13#10 + 'Перейти на сайт для загрузки?',
-                 [NewVerStr, CurrentVerStr, ChangeLog]);
-          //if MessageDlg(Msg, mtInformation, mbYesNo, 0) = mrYes then
-          if QuestionDlg('', Msg, {mtCustom} mtInformation, [mrYes, 'Давай!', mrNo, 'Не надо'], '') = mrYes then
-            OpenURL(DownloadUrl);
+          Msg := TAnsiStringBuilder.Create();
+          try
+            Msg.AppendFormat(Localizer.I18N('UpdateFound'), [NewVersion.ToString(True), CurrentVersion.ToString(True)]);
+            Msg.AppendLine('');
+            Msg.AppendLine('');
+            Msg.AppendLine(ChangeLog);
+            Msg.AppendLine('');
+            Msg.AppendLine(Localizer.I18N('AskDownloadUpdate'));
+            //if MessageDlg(Msg.ToString, mtInformation, mbYesNo, 0) = mrYes then
+            if QuestionDlg('', Msg.ToString, {mtCustom} mtInformation,
+                   [mrYes, Localizer.I18N('Yes'), mrNo, Localizer.I18N('No')], '') = mrYes then
+              OpenURL(DownloadUrl);
+          finally
+            Msg.Free
+          end;
         end
         else
-          ShowMessage('Обновлений не найдено!');
+          ShowMessage(Localizer.I18N('NoUpdatesFound'));
       finally
         JsonData.Free;
       end;
 
-    except on E: EHTTPClient do
-      ShowMessage(E.Message{Response.DataString});
+    except on E: Exception do
+      MessageDlg('', Localizer.I18N('UpdateCheckFailed') + LineEnding
+                 + LineEnding + E.Message, mtError, [mbOK], 0);
     end;
   finally
     Client.Free;
-    //Response.Free;
   end;
 end;
 
