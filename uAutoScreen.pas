@@ -844,6 +844,7 @@ begin
     LanguageSubMenu.Caption := Localizer.I18N('Language');
     HelpSubMenu.Caption := Localizer.I18N('Help');
     AboutMenuItem.Caption := Localizer.I18N('About') + '...';
+    CheckForUpdatesMenuItem.Caption := Localizer.I18N('CheckForUpdates');
     AutoCheckForUpdatesMenuItem.Caption := Localizer.I18N('AutoCheckForUpdates');
 
     // Main form components
