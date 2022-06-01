@@ -4,10 +4,6 @@
 # *                                                    *
 # *          Shell script for creating ZIP             *
 # *                                                    *
-# * Note:                                              *
-# *    Before run this SH file you need to manually    *
-# *    compile executable using Lazarus ide.           *
-# *                                                    *
 # ******************************************************
 
 
@@ -34,6 +30,7 @@ read -n 1 -s -r -p "Press any key to continue..."
 
 
 # ***  Set variables ***
+LazarusDir="/cygdrive/f/Programms/lazarus_2.0.12_32bit"
 
 # Output dirs
 BuildDir=$(realpath -m "build/files")
@@ -46,12 +43,11 @@ echo ""
 
 # ***********************
 
-
-# Some initial checks
-if [ ! -f AutoScreenshot.exe ]; then
-	StopBuild "You need to manually compile project from Lazarus IDE before run this batch"
-fi
-
+# Run compile project
+echo "Starting compile project..."
+"$LazarusDir/lazbuild.exe" --build-mode="Release (32bit)" --verbose AutoScreen.lpi
+echo "Compiling finished!"
+echo ""
 
 # Create and clear build directory
 echo "Clear build directory..."
@@ -64,6 +60,13 @@ echo ""
 # Executable
 echo "Copy EXE..."
 cp -v --preserve AutoScreenshot.exe $BuildDir
+echo "Done!"
+echo ""
+
+# DLLs
+echo "Copy DLLs..."
+cp -v --preserve $LazarusDir/libeay32.dll $BuildDir
+cp -v --preserve $LazarusDir/ssleay32.dll $BuildDir
 echo "Done!"
 echo ""
 

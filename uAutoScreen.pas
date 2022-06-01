@@ -28,6 +28,10 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    AutoCheckForUpdatesMenuItem: TMenuItem;
+    PostCmdLabel: TLabel;
+    PostCmdEdit: TEdit;
+    CheckForUpdatesMenuItem: TMenuItem;
     OutputDirEdit: TDirectoryEdit;
     Timer: TTimer;
     OutputDirLabel: TLabel;
@@ -75,11 +79,14 @@ type
     SeqNumberValueSpinEdit: TSpinEdit;
     SeqNumberDigitsCountSpinEdit: TSpinEdit;
     SeqNumberDigitsCountLabel: TLabel;
+    procedure CheckForUpdatesMenuItemClick(Sender: TObject);
+    procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalChange(Sender: TObject);
+    procedure PostCmdEditChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure ApplicationMinimize(Sender: TObject);
     procedure StartAutoCaptureButtonClick(Sender: TObject);
@@ -153,6 +160,12 @@ type
     procedure SetCounter(Val: Integer);
     procedure SetCounterDigits(Val: Integer);
     procedure UpdateSeqNumGroupVisibility;
+    procedure SetPostCommand(ACmd: String);
+    function GetPostCommand: String;
+    function GetMonitorWithCursor: Integer;
+    procedure CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
+    function GetAutoCheckForUpdates: Boolean;
+    procedure SetAutoCheckForUpdates(AVal: Boolean);
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -164,6 +177,8 @@ type
     property MonitorId: Integer read GetMonitorId write SetMonitorId;
     property Counter: Integer read FCounter write SetCounter;
     property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
+    property PostCommand: String read GetPostCommand write SetPostCommand;
+    property AutoCheckForUpdates: Boolean read GetAutoCheckForUpdates write SetAutoCheckForUpdates;
   public
     { Public declarations }
   end;
@@ -207,9 +222,11 @@ const
 
   MinCaptureIntervalInSeconds = 1;
   NoMonitorId = -1;
+  MonitorWithCursor = -2;
   MinCounterValue  = 1;
   MinCounterDigits = 1;
   MaxCounterDigits = 10;
+  UpdateCheckIntervalInSeconds = 3 * 24 * 60 * 60; // Every 3 days
 
 var
   MainForm: TMainForm;
@@ -217,7 +234,8 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uUtils, Math, uFileNameTemplateHelpForm;
+uses uAbout, DateUtils, uUtils, Math, uFileNameTemplateHelpForm,
+  fphttpclient, opensslsockets, fpjson, jsonparser, uUtilsMore;
 
 {$R *.lfm}
 
@@ -379,9 +397,17 @@ begin
   Counter := Ini.ReadInteger(DefaultConfigIniSection, 'Counter', DefaultCounterValue);
   CounterDigits := Ini.ReadInteger(DefaultConfigIniSection, 'CounterDigits', DefaultCounterDigits);
   UpdateSeqNumGroupVisibility;
+
+  // User command
+  PostCommand := Ini.ReadString(DefaultConfigIniSection, 'PostCmd', '');
+
+  // Auto checking for updates
+  AutoCheckForUpdates := Ini.ReadBool(DefaultConfigIniSection, 'AutoCheckForUpdates', True);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
+var
+  LastUpdateCheck: TDateTime;
 begin
   { Replace default window function with custom one
     for process messages when screen configuration changed }
@@ -397,6 +423,21 @@ begin
 
   //if FindCmdLineSwitch('autorun') then
   //  OutputDebugString('AutoRun');
+
+  // Check for updates when program starts
+  LastUpdateCheck := Ini.ReadDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', 0);
+  if AutoCheckForUpdates and (SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds) then
+    CheckForUpdates(False);
+end;
+
+procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
+begin
+  CheckForUpdates(True);
+end;
+
+procedure TMainForm.AutoCheckForUpdatesMenuItemClick(Sender: TObject);
+begin
+  AutoCheckForUpdates := not AutoCheckForUpdates;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -427,6 +468,11 @@ begin
   end;
   Ini.WriteFloat(DefaultConfigIniSection, 'CaptureInterval', Seconds / SecsPerMin);
   Timer.Interval := Seconds * MSecsPerSec;
+end;
+
+procedure TMainForm.PostCmdEditChange(Sender: TObject);
+begin
+  Ini.WriteString(DefaultConfigIniSection, 'PostCmd', PostCommand);
 end;
 
 procedure TMainForm.TimerTimer(Sender: TObject);
@@ -494,6 +540,7 @@ var
   ScreenX, ScreenY: Integer;
   //Rect: TRect;
   UsedMonitor: TMonitor;
+  Cmd: String;
 begin
   Bitmap := TBitmap.Create;
 
@@ -521,7 +568,10 @@ begin
   end
   else // Only one display
   begin
-    UsedMonitor := Screen.Monitors[MonitorId];
+    if MonitorId = MonitorWithCursor then
+      UsedMonitor := Screen.Monitors[GetMonitorWithCursor]
+    else
+      UsedMonitor := Screen.Monitors[MonitorId];
     ScreenWidth  := UsedMonitor.Width;
     ScreenHeight := UsedMonitor.Height;
     ScreenX := UsedMonitor.Left;
@@ -586,6 +636,17 @@ begin
     end;
   finally
     Bitmap.Free;
+  end;
+
+  // Run user command
+  try
+    Cmd := PostCommand;
+    if Cmd <> '' then
+    begin
+      Cmd := StringReplace(Cmd, '%FILENAME%', ImagePath, [rfReplaceAll{, rfIgnoreCase}]);
+      RunCmdInbackground(Cmd);
+    end;
+  except
   end;
 
   // Increment counter after successful capture
@@ -783,6 +844,8 @@ begin
     LanguageSubMenu.Caption := Localizer.I18N('Language');
     HelpSubMenu.Caption := Localizer.I18N('Help');
     AboutMenuItem.Caption := Localizer.I18N('About') + '...';
+    CheckForUpdatesMenuItem.Caption := Localizer.I18N('CheckForUpdates');
+    AutoCheckForUpdatesMenuItem.Caption := Localizer.I18N('AutoCheckForUpdates');
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
@@ -809,6 +872,8 @@ begin
     SeqNumberGroup.Caption := Localizer.I18N('SequentialNumber');
     SeqNumberValueLabel.Caption := Localizer.I18N('NextValue') + ':';
     SeqNumberDigitsCountLabel.Caption := Localizer.I18N('Digits') + ':';
+    PostCmdLabel.Caption := Localizer.I18N('RunCommand') + ':';
+    PostCmdEdit.Hint := Localizer.I18N('RunCommandHelpText');
 
     // Tray icon
     RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
@@ -1093,6 +1158,8 @@ begin
          GetSystemMetrics(SM_CYVIRTUALSCREEN)]
     ));
 
+    Items.Append(Localizer.I18N('MonitorWithCursor'));
+
     for Idx := 0 to Screen.MonitorCount - 1 do
     begin
       Str := WideFormat(Localizer.I18N('MonitorInfo'),
@@ -1118,15 +1185,22 @@ begin
   if MonitorComboBox.ItemIndex <= 0 then
     Result := NoMonitorId
   else
-    Result := MonitorComboBox.ItemIndex - 1;
+  begin
+    if MonitorComboBox.ItemIndex = 1 then
+      Result := MonitorWithCursor
+    else
+      Result := MonitorComboBox.ItemIndex - 2;
+  end;
 end;
 
 procedure TMainForm.SetMonitorId(MonitorId: Integer);
 begin
   if MonitorId = NoMonitorId then
     MonitorComboBox.ItemIndex := 0
+  else if MonitorId = MonitorWithCursor then
+    MonitorComboBox.ItemIndex := 1
   else if (MonitorId >= 0) and (MonitorId < {Screen.MonitorCount} MonitorComboBox.Items.Count) then
-    MonitorComboBox.ItemIndex := MonitorId + 1
+    MonitorComboBox.ItemIndex := MonitorId + 2
   else
     raise Exception.CreateFmt('Monitor id=%d not exists', [MonitorId]);
 
@@ -1219,6 +1293,7 @@ begin
   MaxWidth := max(MaxWidth, CaptureIntervalLabel.Width);
   MaxWidth := max(MaxWidth, ImageFormatLabel.Width);
   MaxWidth := max(MaxWidth, MonitorLabel.Width);
+  MaxWidth := max(MaxWidth, PostCmdLabel.Width);
 
   OutputDirEdit.Left := MaxWidth + ChildSizing.LeftRightSpacing
       + ChildSizing.HorizontalSpacing;
@@ -1297,6 +1372,123 @@ begin
   SeqNumberGroup.Visible := Pos('%NUM', FileNameTemplateComboBox.Text) <> 0;
   if SeqNumberGroup.Visible then
     RecalculateLabelWidthsForSeqNumGroup;
+end;
+
+procedure TMainForm.SetPostCommand(ACmd: String);
+begin
+  PostCmdEdit.Text := ACmd;
+end;
+
+function TMainForm.GetPostCommand: String;
+begin
+  Result := PostCmdEdit.Text;
+end;
+
+function TMainForm.GetMonitorWithCursor: Integer;
+var
+  MonitorId: Integer;
+  MonitorRect: TRect;
+begin
+  Result := NoMonitorId;
+  Screen.UpdateMonitors;
+  for MonitorId := 0 to Screen.MonitorCount - 1 do
+  begin
+    with Screen.Monitors[MonitorId] do
+    begin
+      MonitorRect.SetLocation(Left, Top);
+      MonitorRect.Width:=Width;
+      MonitorRect.Height:=Height;
+    end;
+
+    if MonitorRect.Contains(Mouse.CursorPos) then
+    begin
+      Result := MonitorId;
+      Break;
+    end;
+  end;
+end;
+
+procedure TMainForm.CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
+const
+  ApiUrl =
+{$IFOPT D+}
+    'https://eojiuvjshd8kbzt.m.pipedream.net'
+{$ELSE}
+    'https://api.github.com/repos/artem78/AutoScreenshot/releases/latest'
+{$ENDIF}
+    ;
+var
+  ResponseStr: String;
+  Client: TFPHTTPClient;
+  JsonData: TJSONData;
+  NewVersion, CurrentVersion: TProgramVersion;
+  DownloadUrl, ChangeLog: String;
+  Msg: {TStringBuilder} TAnsiStringBuilder;
+
+begin
+  CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
+
+  Ini.WriteDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', Now);
+
+  Client := TFPHTTPClient.Create(Nil);
+  try
+    try
+      Client.AllowRedirect := True;
+      Client.AddHeader('Accept', 'application/vnd.github.v3+json');
+      Client.AddHeader('User-Agent', 'AutoScreenshot v' + CurrentVersion.ToString() + ' Update Checker');
+      ResponseStr := Client.Get(ApiUrl);
+
+      JsonData := GetJSON(ResponseStr);
+      try
+        NewVersion := TProgramVersion.Create(JsonData.GetPath('tag_name').AsString);
+        DownloadUrl := JsonData.GetPath('html_url').AsString;
+        ChangeLog := JsonData.GetPath('body').AsString;
+
+        if NewVersion > CurrentVersion then
+        begin
+          Msg := TAnsiStringBuilder.Create();
+          try
+            Msg.AppendFormat(Localizer.I18N('UpdateFound'), [NewVersion.ToString(True), CurrentVersion.ToString(True)]);
+            Msg.AppendLine('');
+            Msg.AppendLine('');
+            Msg.AppendLine(ChangeLog);
+            Msg.AppendLine('');
+            Msg.AppendLine(Localizer.I18N('AskDownloadUpdate'));
+            //if MessageDlg(Msg.ToString, mtInformation, mbYesNo, 0) = mrYes then
+            if QuestionDlg('', Msg.ToString, {mtCustom} mtInformation,
+                   [mrYes, Localizer.I18N('Yes'), mrNo, Localizer.I18N('No')], '') = mrYes then
+              OpenURL(DownloadUrl);
+          finally
+            Msg.Free
+          end;
+        end
+        else
+        begin
+          if AShowMessageWhenNoUpdates then
+            ShowMessage(Localizer.I18N('NoUpdatesFound'));
+        end;
+      finally
+        JsonData.Free;
+      end;
+
+    except on E: Exception do
+      MessageDlg('', Localizer.I18N('UpdateCheckFailed') + LineEnding
+                 + LineEnding + E.Message, mtError, [mbOK], 0);
+    end;
+  finally
+    Client.Free;
+  end;
+end;
+
+function TMainForm.GetAutoCheckForUpdates: Boolean;
+begin
+  Result := AutoCheckForUpdatesMenuItem.Checked;
+end;
+
+procedure TMainForm.SetAutoCheckForUpdates(AVal: Boolean);
+begin
+  Ini.WriteBool(DefaultConfigIniSection, 'AutoCheckForUpdates', AVal);
+  AutoCheckForUpdatesMenuItem.Checked := AVal;
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
