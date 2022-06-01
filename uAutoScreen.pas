@@ -425,7 +425,7 @@ begin
   //  OutputDebugString('AutoRun');
 
   // Check for updates when program starts
-  LastUpdateCheck := Ini.ReadDateTime(DefaultConfigIniSection, 'LastUpdateCheck', 0);
+  LastUpdateCheck := Ini.ReadDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', 0);
   if AutoCheckForUpdates and (SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds) then
     CheckForUpdates(False);
 end;
@@ -1428,7 +1428,7 @@ var
 begin
   CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
 
-  Ini.WriteDateTime(DefaultConfigIniSection, 'LastUpdateCheck', Now);
+  Ini.WriteDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', Now);
 
   Client := TFPHTTPClient.Create(Nil);
   try
