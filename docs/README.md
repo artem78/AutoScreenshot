@@ -5,7 +5,11 @@
 Auto Screenshot
 ===============
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/artem78/AutoScreenshot?style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)&nbsp;&nbsp;&nbsp;[![GitHub license](https://img.shields.io/github/license/artem78/AutoScreenshot?style=plastic)](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt)&nbsp;&nbsp;&nbsp;![GitHub All Releases](https://img.shields.io/github/downloads/artem78/AutoScreenshot/total?style=plastic)&nbsp;&nbsp;&nbsp;![GitHub last commit](https://img.shields.io/github/last-commit/artem78/AutoScreenshot?style=plastic)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/artem78/AutoScreenshot?style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
+[![GitHub license](https://img.shields.io/github/license/artem78/AutoScreenshot?style=plastic)](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt)
+![GitHub All Releases](https://img.shields.io/github/downloads/artem78/AutoScreenshot/total?style=plastic)
+![GitHub last commit](https://img.shields.io/github/last-commit/artem78/AutoScreenshot?style=plastic)
+[![Supports Windows](https://img.shields.io/badge/support-Windows-blue?logo=Windows&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
 
 ## Overview
 **Auto Screenshot** — Windows application for automatic taking screenshots with specified time interval.
@@ -18,6 +22,7 @@ Auto Screenshot
 * Automatic capture can be started on Windows startup
 * Multiple screens support
 * High DPI support
+* Can execute custom command after screenshot was taken
 * Absolutely free and open source
 
 ## Screenshots
@@ -34,7 +39,7 @@ Auto Screenshot
 * Spanish
 * Turkish
 
-[Want to add more?](https://github.com/artem78/AutoScreenshot/issues/5)
+[(Help with new translations)](https://github.com/artem78/AutoScreenshot/issues/5)
 
 ## Supported operation systems
 * Microsoft Windows XP or higher (32/64-bit)
@@ -43,18 +48,17 @@ Auto Screenshot
 ## Download
 The latest version available [here](https://github.com/artem78/AutoScreenshot/releases/latest). You can choose between portable zip or installer.
 
-## How can I help
-* Found bug?
-https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=
-
-* Want to suggest new idea?
-https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=
-
-* Can add localization for new languages?
-https://github.com/artem78/AutoScreenshot/issues/5
+## How can I help?
+* [Report about found bug](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
+* [Suggest new idea or feature](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)
+* [Make new translation](https://github.com/artem78/AutoScreenshot/issues/5)
+* [Make a donation](#donate)
 
 ## License
 You are free to use, modify or distribute this software under the [GNU GPL v3.0](https://github.com/artem78/AutoScreenshot/blob/master/LICENSE.txt) license.
 
 ## Author
 Artem78 (email: [megabyte1024@ya.ru](mailto:megabyte1024@ya.ru?subject=AutoScreenshot))
+
+## Donate
+You can donate any amount using PayPay to email <u>megabyte1024@yandex.com</u> (in payment note write "AutoScreenshot donation").

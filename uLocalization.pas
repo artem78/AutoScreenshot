@@ -176,7 +176,6 @@ procedure TLocalizer.LoadFromFile(AFileName: String);
 const
   TranslationIniSection = 'translation';
 var
-  FileName: String;
   Ini: TMemIniFile;
   TmpStr: TStringList;
   AllLangs: TLanguagesArray;
@@ -194,7 +193,7 @@ begin
 
   { Check if selected translation file exists }
   if not FileExists(AFileName) then
-    raise ELocalizerException.CreateFmt('Can`t open localization file "%s"', [FileName]);
+    raise ELocalizerException.CreateFmt('Can`t open localization file "%s"', [AFileName]);
 
   { Read language info }
   Ini := TMemIniFile.Create(AFileName);

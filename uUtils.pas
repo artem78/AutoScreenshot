@@ -83,11 +83,12 @@ function GetAlternativeLanguage(const ALangs: TLanguagesArray;
 procedure AutoRun(const FileName: String; const AppTitle: String;
     Enabled: Boolean = True);
 function CheckAutoRun(const AppTitle: String): Boolean;
+procedure RunCmdInbackground(ACmd: String);
 
 implementation
 
 uses
-  SysUtils, DateUtils, Registry, uLanguages, FileInfo;
+  SysUtils, DateUtils, Registry, uLanguages, FileInfo, process;
 
 type
   tagLASTINPUTINFO = record
@@ -377,6 +378,20 @@ begin
       Result := Reg.ReadString(AppTitle) <> '';
   finally
     Reg.Free;
+  end;
+end;
+
+procedure RunCmdInbackground(ACmd: String);
+var
+  proc: TProcess;
+begin
+  proc := TProcess.Create(nil);
+  try
+    proc.CommandLine := ACmd;
+    //proc.Options := proc.Options + ...;
+    proc.Execute;
+  finally
+    proc.Free;
   end;
 end;
 

@@ -43,9 +43,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="8"/>
-      <RevisionNr Value="1"/>
-      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.8.1"/>
+      <MinorVersionNr Value="9"/>
+      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.9"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default (32bit)" Default="True"/>
@@ -158,7 +157,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="9">
+    <Units Count="10">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -206,6 +205,11 @@
         <Filename Value="languagecodes.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
+      <Unit9>
+        <Filename Value="uutilsmore.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uUtilsMore"/>
+      </Unit9>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -241,7 +245,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="3">
+    <Exceptions Count="5">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -251,6 +255,12 @@
       <Item3>
         <Name Value="EFOpenError"/>
       </Item3>
+      <Item4>
+        <Name Value="ELocalizerException"/>
+      </Item4>
+      <Item5>
+        <Name Value="Exception"/>
+      </Item5>
     </Exceptions>
   </Debugging>
 </CONFIG>

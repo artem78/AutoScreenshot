@@ -20,11 +20,12 @@ type
     procedure TestDecode;
     procedure TestJoinPath;
     procedure TestRemoveExtraPathDelimiters;
+    procedure TestVersions;
   end;
 
 implementation
 
-uses uUtils, {SysUtils} DateUtils;
+uses uUtils, {SysUtils} DateUtils, uUtilsMore;
 
 { TMyTestCase }
 
@@ -111,6 +112,69 @@ begin
   AssertEquals('\my folder\', RemoveExtraPathDelimiters('\\my folder\\'));
   AssertEquals('Nothing to do', 'd:\dir\file.txt', RemoveExtraPathDelimiters('d:\dir\file.txt'));
   {$ENDIF}
+end;
+
+procedure TMyTestCase.TestVersions;
+var
+  V1, V2: TProgramVersion;
+begin
+  with V1 do
+  begin
+    Major := 5;
+    Minor := 12;
+    Revision := 101;
+    Build := 54912;
+  end;
+
+  with V2 do
+  begin
+    Major := 3;
+    Minor := 0;
+    Revision := 2;
+    Build := 0;
+  end;
+
+  // Test equal / not equal
+  AssertTrue(V1 = TProgramVersion.Create(5, 12, 101, 54912));
+  AssertFalse(V1 = V2);
+  AssertTrue(V1 <> V2);
+  AssertTrue(V2 = TProgramVersion.Create(3, 0, 2));
+  AssertTrue(V1 = TProgramVersion.Create('5.12.101.54912'));
+  AssertTrue(V1 <> TProgramVersion.Create('5.12.101'));
+  AssertTrue(V2 = TProgramVersion.Create('v3.0.2'));
+  AssertTrue(V2 = TProgramVersion.Create('V3.0.2.0'));
+  AssertTrue(V2 <> TProgramVersion.Create('v3.02'));
+
+  // Test more / less
+  AssertTrue(V1 > V2);
+  AssertTrue(V2 < V1);
+  AssertTrue(V2 < TProgramVersion.Create(3, 1));
+  AssertTrue(V2 > TProgramVersion.Create(3, 0, 1));
+  AssertTrue(V2 < TProgramVersion.Create(3, 0, 2, 55));
+  AssertTrue(V1 < TProgramVersion.Create(5, 12, 101, 54913));
+  AssertTrue(V1 > TProgramVersion.Create(5, 12, 101, 54911));
+  AssertFalse(V1 > V1);
+
+  // Test to string conversion
+  AssertEquals('12.345.67.8', TProgramVersion.Create(12, 345, 67, 8).ToString(False));
+  AssertEquals('12.345.67.0', TProgramVersion.Create(12, 345, 67, 0).ToString(False));
+  AssertEquals('12.345.0.0',  TProgramVersion.Create(12, 345, 0, 0) .ToString(False));
+  AssertEquals('12.0.0.0',    TProgramVersion.Create(12, 0, 0, 0)   .ToString(False));
+  AssertEquals('12.0.0.8',    TProgramVersion.Create(12, 0, 0, 8)   .ToString(False));
+  AssertEquals('0.0.0.8',     TProgramVersion.Create(0, 0, 0, 8)    .ToString(False));
+  AssertEquals('0.345.0.0',   TProgramVersion.Create(0, 345, 0, 0)  .ToString(False));
+  AssertEquals('0.0.0.0',     TProgramVersion.Create(0, 0, 0, 0)    .ToString(False));
+
+  AssertEquals('12.345.67.8', TProgramVersion.Create(12, 345, 67, 8).ToString(True));
+  AssertEquals('12.345.67',   TProgramVersion.Create(12, 345, 67, 0).ToString(True));
+  AssertEquals('12.345',      TProgramVersion.Create(12, 345, 0, 0) .ToString(True));
+  AssertEquals('12',          TProgramVersion.Create(12, 0, 0, 0)   .ToString(True));
+  AssertEquals('12.0.0.8',    TProgramVersion.Create(12, 0, 0, 8)   .ToString(True));
+  AssertEquals('0.0.0.8',     TProgramVersion.Create(0, 0, 0, 8)    .ToString(True));
+  AssertEquals('0.345',       TProgramVersion.Create(0, 345, 0, 0)  .ToString(True));
+  //AssertEquals({''} '0',           TProgramVersion.Create(0, 0, 0, 0)    .ToString(True));
+
+  // ToDo: Check wrong version strings
 end;
 
 initialization
