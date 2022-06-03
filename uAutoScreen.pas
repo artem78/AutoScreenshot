@@ -126,6 +126,8 @@ type
     FCounterDigits: Integer {Byte};
 
     PrevWndProc: WndProc;
+
+    HotkeyId: Integer;
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -249,6 +251,11 @@ begin
     WM_DEVICECHANGE:  // Any hardware configuration changed (including monitors)
       begin
         MainForm.UpdateMonitorList;
+      end;
+    WM_HOTKEY:
+      begin
+        //ShowMessage(IntToStr(lParam));
+        MainForm.IsTimerEnabled := not MainForm.IsTimerEnabled;
       end;
   end;
 
@@ -428,6 +435,15 @@ begin
   LastUpdateCheck := Ini.ReadDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', 0);
   if AutoCheckForUpdates and (SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds) then
     CheckForUpdates(False);
+
+  // Enable hotkeys
+  HotkeyId := GlobalAddAtom('AutoScreenshotHotKey');
+  if HotkeyId = 0 then
+    raise Exception.CreateFmt('Failed to register hot key (GlobalAddAtom, error %d)',
+                              [GetLastError]);
+  if not RegisterHotKey(Handle, HotkeyId, MOD_CONTROL, VK_F5) then
+    raise Exception.CreateFmt('Failed to register hot key (RegisterHotKey, error %d)',
+                              [GetLastError]);
 end;
 
 procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
@@ -442,6 +458,8 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  UnregisterHotKey(Handle, HotkeyId);
+  GlobalDeleteAtom(HotkeyId);
   Ini.Free;
 end;
 
