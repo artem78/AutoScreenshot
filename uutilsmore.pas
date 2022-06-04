@@ -27,10 +27,22 @@ operator <> (AVer1, AVer2: TProgramVersion): Boolean;
 operator > (AVer1, AVer2: TProgramVersion): Boolean;
 operator < (AVer1, AVer2: TProgramVersion): Boolean;
 
+type
+
+  { THotKey }
+
+  THotKey = record
+    ShiftState: TShiftState;
+    Key: Word;
+
+    function ToString: String;
+    procedure Parse(const AString: String);
+  end;
+
 implementation
 
 uses
-  RegExpr;
+  RegExpr, StrUtils, Menus {for ShortCutToKey}, LCLProc;
 
 type
   { TJoinInteger }
@@ -78,6 +90,54 @@ end;
 operator<(AVer1, AVer2: TProgramVersion): Boolean;
 begin
   Result := (not (AVer1 > AVer2)) and (AVer1 <> AVer2);
+end;
+
+{ THotKey }
+
+function THotKey.ToString: String;
+begin
+  Result := '';
+
+  if ssAlt in ShiftState then
+    Result := Result + 'Alt+';
+
+  if ssShift in ShiftState then
+    Result := Result + 'Shift+';
+
+  if ssCtrl in ShiftState then
+    Result := Result + 'Ctrl+';
+
+  // Other possible values are not implemented yet
+
+  //Result := Result + IntToStr(Key);
+  Result := Result + KeyAndShiftStateToKeyString(Key, []);
+end;
+
+procedure THotKey.Parse(const AString: String);
+var
+  KeyNumPos: Integer;
+  KeyName: String;
+  ShortCut: TShortCut;
+  UnusedShiftState: TShiftState;
+begin
+  ShiftState := [];
+
+  if ContainsText(AString, 'alt') then
+    Include(ShiftState, ssAlt);
+
+  if ContainsText(AString, 'shift') then
+    Include(ShiftState, ssShift);
+
+  if ContainsText(AString, 'ctrl') then
+    Include(ShiftState, ssCtrl);
+
+  // Other possible values are not implemented yet
+
+  KeyNumPos := RPos('+', AString) + 1;
+  KeyName := Copy(AString, KeyNumPos, Length(AString) - KeyNumPos + 1);
+  //Key := StrToInt(Copy(AString, KeyNumPos, Length(AString) - KeyNumPos + 1));
+  ShortCut := TextToShortCut(KeyName);
+  ShortCutToKey(ShortCut, Key, UnusedShiftState);
 end;
 
 { TJoinInteger }

@@ -6,7 +6,7 @@ uses
   Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
-  LCLIntf;
+  LCLIntf, uHotKeysForm, uUtilsMore;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF});
@@ -29,6 +29,7 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
+    HotKetsSettingsMenuItem: TMenuItem;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
@@ -84,6 +85,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure HotKetsSettingsMenuItemClick(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
@@ -127,7 +129,8 @@ type
 
     PrevWndProc: WndProc;
 
-    HotkeyId: Integer;
+    StartStopAutoCaptureHotKeyId: Integer;
+    FStartStopAutoCaptureHotKey: THotKey;
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -168,6 +171,9 @@ type
     procedure CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
     function GetAutoCheckForUpdates: Boolean;
     procedure SetAutoCheckForUpdates(AVal: Boolean);
+    procedure SetStartStopAutoCaptureHotKey(AHotKey: THotKey);
+    procedure RegisterGlobalHotKey(AHotKeyId: Integer; const AHotKey: THotKey);
+    procedure UnregisterGlobalHotKey(AHotKeyId: Integer);
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -181,6 +187,7 @@ type
     property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
     property PostCommand: String read GetPostCommand write SetPostCommand;
     property AutoCheckForUpdates: Boolean read GetAutoCheckForUpdates write SetAutoCheckForUpdates;
+    property StartStopAutoCaptureHotKey: THotKey read FStartStopAutoCaptureHotKey write SetStartStopAutoCaptureHotKey;
   public
     { Public declarations }
   end;
@@ -221,6 +228,7 @@ const
   );
 
   DefaultConfigIniSection = 'main';
+  HotKeysIniSection = 'hotkeys';
 
   MinCaptureIntervalInSeconds = 1;
   NoMonitorId = -1;
@@ -237,7 +245,7 @@ var
 implementation
 
 uses uAbout, DateUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  fphttpclient, opensslsockets, fpjson, jsonparser, uUtilsMore;
+  fphttpclient, opensslsockets, fpjson, jsonparser, uIniHelper;
 
 {$R *.lfm}
 
@@ -413,6 +421,11 @@ begin
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
+const
+  StartStopAutoCaptureDefaultHotKey: THotKey = (
+    ShiftState: [ssCtrl];
+    Key: VK_F5;
+  );
 var
   LastUpdateCheck: TDateTime;
 begin
@@ -437,13 +450,9 @@ begin
     CheckForUpdates(False);
 
   // Enable hotkeys
-  HotkeyId := GlobalAddAtom('AutoScreenshotHotKey');
-  if HotkeyId = 0 then
-    raise Exception.CreateFmt('Failed to register hot key (GlobalAddAtom, error %d)',
-                              [GetLastError]);
-  if not RegisterHotKey(Handle, HotkeyId, MOD_CONTROL, VK_F5) then
-    raise Exception.CreateFmt('Failed to register hot key (RegisterHotKey, error %d)',
-                              [GetLastError]);
+  StartStopAutoCaptureHotKeyId := GlobalAddAtom('AutoScreenshot_HotKey_StartStopAutoCapture');
+  StartStopAutoCaptureHotKey := Ini.ReadHotKey(HotKeysIniSection, 'StartStopAutoCapture', StartStopAutoCaptureDefaultHotKey);
+  RegisterGlobalHotKey(StartStopAutoCaptureHotKeyId, StartStopAutoCaptureHotKey);
 end;
 
 procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
@@ -458,14 +467,28 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-  UnregisterHotKey(Handle, HotkeyId);
-  GlobalDeleteAtom(HotkeyId);
+  UnregisterGlobalHotKey(StartStopAutoCaptureHotKeyId);
+  GlobalDeleteAtom(StartStopAutoCaptureHotKeyId);
   Ini.Free;
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
 begin
   RecalculateLabelWidths;
+end;
+
+procedure TMainForm.HotKetsSettingsMenuItemClick(Sender: TObject);
+var
+  HotKeysForm: THotKeysForm;
+begin
+  HotKeysForm := THotKeysForm.Create(Nil);
+  HotKeysForm.StartStopAutoCaptureKey := Self.StartStopAutoCaptureHotKey;
+  if HotKeysForm.ShowModal = mrOK then
+  begin
+    Self.StartStopAutoCaptureHotKey := HotKeysForm.StartStopAutoCaptureKey;
+  end;
+
+  HotKeysForm.Free;
 end;
 
 procedure TMainForm.OutputDirEditChange(Sender: TObject);
@@ -1507,6 +1530,49 @@ procedure TMainForm.SetAutoCheckForUpdates(AVal: Boolean);
 begin
   Ini.WriteBool(DefaultConfigIniSection, 'AutoCheckForUpdates', AVal);
   AutoCheckForUpdatesMenuItem.Checked := AVal;
+end;
+
+procedure TMainForm.SetStartStopAutoCaptureHotKey(AHotKey: THotKey);
+begin
+  UnregisterGlobalHotKey(StartStopAutoCaptureHotKeyId);
+  RegisterGlobalHotKey(StartStopAutoCaptureHotKeyId, AHotKey);
+
+  Ini.WriteHotKey(HotKeysIniSection, 'StartStopAutoCapture', AHotKey);
+  FStartStopAutoCaptureHotKey := AHotKey;
+end;
+
+procedure TMainForm.RegisterGlobalHotKey(AHotKeyId: Integer;
+  const AHotKey: THotKey);
+var
+  Modifiers: UINT = 0;
+begin
+  if AHotKeyId = 0 then
+    raise Exception.Create('AHotKeyId must not be zero');
+
+  if ssAlt in AHotKey.ShiftState then
+    Modifiers := Modifiers + MOD_ALT;
+
+  if ssShift in AHotKey.ShiftState then
+    Modifiers := Modifiers + MOD_SHIFT;
+
+  if ssCtrl in AHotKey.ShiftState then
+    Modifiers := Modifiers + MOD_CONTROL;
+
+  // Delete previous hotkey with current ID (if exists)
+  UnregisterGlobalHotKey(AHotKeyId);
+
+  if not RegisterHotKey(Handle, AHotkeyId, Modifiers, AHotKey.Key) then
+    raise Exception.CreateFmt('Failed to register hot key (RegisterHotKey, error %d)',
+                              [GetLastError]);
+end;
+
+procedure TMainForm.UnregisterGlobalHotKey(AHotKeyId: Integer);
+begin
+  if AHotKeyId = 0 then
+    raise Exception.Create('AHotKeyId must not be zero');
+
+  {if not} UnregisterHotKey(Handle, AHotKeyId) {then} ;
+    // ToDo: check result
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);

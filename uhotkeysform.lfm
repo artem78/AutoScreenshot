@@ -1,0 +1,68 @@
+object HotKeysForm: THotKeysForm
+  Left = 315
+  Height = 130
+  Top = 250
+  Width = 491
+  Caption = 'HotKeysForm'
+  ClientHeight = 130
+  ClientWidth = 491
+  OnCreate = FormCreate
+  LCLVersion = '2.0.12.0'
+  object StartStopAutoCaptureLabel: TLabel
+    Left = 16
+    Height = 15
+    Top = 40
+    Width = 122
+    Caption = 'Start/stop auto capture'
+    ParentColor = False
+  end
+  object ButtonPanel: TButtonPanel
+    Left = 6
+    Height = 34
+    Top = 90
+    Width = 479
+    OKButton.Name = 'OKButton'
+    OKButton.DefaultCaption = True
+    HelpButton.Name = 'HelpButton'
+    HelpButton.DefaultCaption = True
+    CloseButton.Name = 'CloseButton'
+    CloseButton.DefaultCaption = True
+    CancelButton.Name = 'CancelButton'
+    CancelButton.DefaultCaption = True
+    TabOrder = 0
+    ShowButtons = [pbOK, pbCancel]
+  end
+  object StartStopAutoCaptureCtrlCheckBox: TCheckBox
+    Left = 168
+    Height = 19
+    Top = 40
+    Width = 39
+    Caption = 'Ctrl'
+    TabOrder = 1
+  end
+  object StartStopAutoCaptureAltCheckBox: TCheckBox
+    Left = 224
+    Height = 19
+    Top = 40
+    Width = 35
+    Caption = 'Alt'
+    TabOrder = 2
+  end
+  object StartStopAutoCaptureShiftCheckBox: TCheckBox
+    Left = 280
+    Height = 19
+    Top = 40
+    Width = 44
+    Caption = 'Shift'
+    TabOrder = 3
+  end
+  object StartStopAutoCaptureKeyComboBox: TComboBox
+    Left = 352
+    Height = 23
+    Top = 40
+    Width = 128
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 4
+  end
+end

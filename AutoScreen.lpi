@@ -157,7 +157,7 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="10">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -201,6 +201,19 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="uUtilsMore"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="uhotkeysform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="HotKeysForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uHotKeysForm"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="uinihelper.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uIniHelper"/>
+      </Unit9>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

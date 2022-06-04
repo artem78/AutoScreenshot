@@ -564,6 +564,10 @@ object MainForm: TMainForm
         Caption = 'Auto check for updates'
         OnClick = AutoCheckForUpdatesMenuItemClick
       end
+      object HotKetsSettingsMenuItem: TMenuItem
+        Caption = 'Edit hotkeys...'
+        OnClick = HotKetsSettingsMenuItemClick
+      end
     end
     object HelpSubMenu: TMenuItem
       Caption = 'Help'
