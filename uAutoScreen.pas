@@ -142,7 +142,7 @@ type
     procedure RestoreFromTray;
     //procedure SetLanguage(Lang: TLanguage);
     procedure SetLanguageByCode(LangCode: TLanguageCode);
-    procedure TranslateForm();
+    procedure TranslateForm;
     procedure InitUI;
     procedure ReadSettings;
     procedure UpdateColorDepthValues;
