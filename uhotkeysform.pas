@@ -38,14 +38,22 @@ type
     ButtonPanel: TButtonPanel;
     procedure FormCreate(Sender: TObject);
   private
-    StartStopAutoCaptureLabel: TLabel;
-    StartStopAutoCaptureHotKeyControl: THotKeyControl;
+    Labels: array [0..2] of TLabel;
+    HotKeyControls: array [0..2] of THotKeyControl;
 
-    procedure SetStartStopAutoCaptureKey(const AHotKey: THotKey);
-    function GetStartStopAutoCaptureKey: THotKey;
+    procedure SetStartAutoCaptureKey(const AHotKey: THotKey);
+    function GetStartAutoCaptureKey: THotKey;
+    procedure SetStopAutoCaptureKey(const AHotKey: THotKey);
+    function GetStopAutoCaptureKey: THotKey;
+    procedure SetSingleCaptureKey(const AHotKey: THotKey);
+    function GetSingleCaptureKey: THotKey;
   public
-    property StartStopAutoCaptureKey: THotKey read GetStartStopAutoCaptureKey
-                         write SetStartStopAutoCaptureKey;
+    property StartAutoCaptureKey: THotKey read GetStartAutoCaptureKey
+                         write SetStartAutoCaptureKey;
+    property StopAutoCaptureKey: THotKey read GetStopAutoCaptureKey
+                         write SetStopAutoCaptureKey;
+    property SingleCaptureKey: THotKey read GetSingleCaptureKey
+                         write SetSingleCaptureKey;
   end;
 
 var
@@ -57,6 +65,11 @@ uses
   LCLType, LCLProc;
 
 {$R *.lfm}
+
+const
+  StartAutoCaptureIdx = 0;
+  StopAutoCaptureIdx  = 1;
+  SingleCaptureIdx    = 2;
 
 { THotKeyControl }
 
@@ -176,29 +189,64 @@ end;
 { THotKeysForm }
 
 procedure THotKeysForm.FormCreate(Sender: TObject);
+var
+  I: Integer;
+  Texts: Array [0..2] of String;
 begin
-  StartStopAutoCaptureLabel := TLabel.Create(Self);
-  with StartStopAutoCaptureLabel do
-  begin
-    Caption := 'Start/stop auto capture:';
-    Parent := Self;
-  end;
+  Texts[StartAutoCaptureIdx] := 'Start auto capture';
+  Texts[StopAutoCaptureIdx]  := 'Stop auto capture';
+  Texts[SingleCaptureIdx]    := 'Single capture';
 
-  StartStopAutoCaptureHotKeyControl := THotKeyControl.Create(Self);
-  with StartStopAutoCaptureHotKeyControl do
+  for I := 0 to 2 do
   begin
-    Parent := Self;
+    // Create label
+    Labels[I] := TLabel.Create(Self);
+    with Labels[I] do
+    begin
+      Caption := Texts[I] + ':';
+      BorderSpacing.CellAlignHorizontal := ccaRightBottom;
+      BorderSpacing.CellAlignVertical := ccaCenter;
+      Parent := Self;
+    end;
+
+    // Create hotkey control
+    HotKeyControls[I] := THotKeyControl.Create(Self);
+    with HotKeyControls[I] do
+    begin
+      BorderSpacing.CellAlignVertical := ccaCenter;
+      Parent := Self;
+    end;
   end;
 end;
 
-procedure THotKeysForm.SetStartStopAutoCaptureKey(const AHotKey: THotKey);
+procedure THotKeysForm.SetStartAutoCaptureKey(const AHotKey: THotKey);
 begin
-  StartStopAutoCaptureHotKeyControl.HotKey := AHotKey;
+  HotKeyControls[StartAutoCaptureIdx].HotKey := AHotKey;
 end;
 
-function THotKeysForm.GetStartStopAutoCaptureKey: THotKey;
+function THotKeysForm.GetStartAutoCaptureKey: THotKey;
 begin
-  Result := StartStopAutoCaptureHotKeyControl.HotKey;
+  Result := HotKeyControls[StartAutoCaptureIdx].HotKey;
+end;
+
+procedure THotKeysForm.SetStopAutoCaptureKey(const AHotKey: THotKey);
+begin
+  HotKeyControls[StopAutoCaptureIdx].HotKey := AHotKey;
+end;
+
+function THotKeysForm.GetStopAutoCaptureKey: THotKey;
+begin
+  Result := HotKeyControls[StopAutoCaptureIdx].HotKey;
+end;
+
+procedure THotKeysForm.SetSingleCaptureKey(const AHotKey: THotKey);
+begin
+  HotKeyControls[SingleCaptureIdx].HotKey := AHotKey;
+end;
+
+function THotKeysForm.GetSingleCaptureKey: THotKey;
+begin
+  Result := HotKeyControls[SingleCaptureIdx].HotKey;
 end;
 
 end.

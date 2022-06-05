@@ -129,8 +129,12 @@ type
 
     PrevWndProc: WndProc;
 
-    StartStopAutoCaptureHotKeyId: Integer;
-    FStartStopAutoCaptureHotKey: THotKey;
+    StartAutoCaptureHotKeyId: Integer;
+    FStartAutoCaptureHotKey: THotKey;
+    StopAutoCaptureHotKeyId: Integer;
+    FStopAutoCaptureHotKey: THotKey;
+    SingleCaptureHotKeyId: Integer;
+    FSingleCaptureHotKey: THotKey;
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -171,7 +175,9 @@ type
     procedure CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
     function GetAutoCheckForUpdates: Boolean;
     procedure SetAutoCheckForUpdates(AVal: Boolean);
-    procedure SetStartStopAutoCaptureHotKey(AHotKey: THotKey);
+    procedure SetStartAutoCaptureHotKey(AHotKey: THotKey);
+    procedure SetStopAutoCaptureHotKey(AHotKey: THotKey);
+    procedure SetSingleCaptureHotKey(AHotKey: THotKey);
     procedure RegisterGlobalHotKey(AHotKeyId: Integer; const AHotKey: THotKey);
     procedure UnregisterGlobalHotKey(AHotKeyId: Integer);
 
@@ -187,7 +193,9 @@ type
     property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
     property PostCommand: String read GetPostCommand write SetPostCommand;
     property AutoCheckForUpdates: Boolean read GetAutoCheckForUpdates write SetAutoCheckForUpdates;
-    property StartStopAutoCaptureHotKey: THotKey read FStartStopAutoCaptureHotKey write SetStartStopAutoCaptureHotKey;
+    property StartAutoCaptureHotKey: THotKey read FStartAutoCaptureHotKey write SetStartAutoCaptureHotKey;
+    property StopAutoCaptureHotKey: THotKey read FStopAutoCaptureHotKey write SetStopAutoCaptureHotKey;
+    property SingleCaptureHotKey: THotKey read FSingleCaptureHotKey write SetSingleCaptureHotKey;
   public
     { Public declarations }
   end;
@@ -263,7 +271,9 @@ begin
     WM_HOTKEY:
       begin
         //ShowMessage(IntToStr(lParam));
-        MainForm.IsTimerEnabled := not MainForm.IsTimerEnabled;
+        if wParam = MainForm.StartAutoCaptureHotKeyId then MainForm.IsTimerEnabled := True
+        else if wParam = MainForm.StopAutoCaptureHotKeyId then MainForm.IsTimerEnabled := False
+        else if wParam = MainForm.SingleCaptureHotKeyId then MainForm.MakeScreenshot;
       end;
   end;
 
@@ -422,9 +432,17 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 const
-  StartStopAutoCaptureDefaultHotKey: THotKey = (
+  StartAutoCaptureDefaultHotKey: THotKey = (
     ShiftState: [ssCtrl];
     Key: VK_F5;
+  );
+  StopAutoCaptureDefaultHotKey: THotKey = (
+    ShiftState: [ssCtrl];
+    Key: VK_F6;
+  );
+  SingleCaptureDefaultHotKey: THotKey = (
+    ShiftState: [ssCtrl];
+    Key: VK_F7;
   );
 var
   LastUpdateCheck: TDateTime;
@@ -450,9 +468,17 @@ begin
     CheckForUpdates(False);
 
   // Enable hotkeys
-  StartStopAutoCaptureHotKeyId := GlobalAddAtom('AutoScreenshot_HotKey_StartStopAutoCapture');
-  StartStopAutoCaptureHotKey := Ini.ReadHotKey(HotKeysIniSection, 'StartStopAutoCapture', StartStopAutoCaptureDefaultHotKey);
-  RegisterGlobalHotKey(StartStopAutoCaptureHotKeyId, StartStopAutoCaptureHotKey);
+  StartAutoCaptureHotKeyId := GlobalAddAtom('AutoScreenshot_HotKey_StartAutoCapture');
+  StartAutoCaptureHotKey := Ini.ReadHotKey(HotKeysIniSection, 'StartAutoCapture', StartAutoCaptureDefaultHotKey);
+  RegisterGlobalHotKey(StartAutoCaptureHotKeyId, StartAutoCaptureHotKey);
+
+  StopAutoCaptureHotKeyId := GlobalAddAtom('AutoScreenshot_HotKey_StopAutoCapture');
+  StopAutoCaptureHotKey := Ini.ReadHotKey(HotKeysIniSection, 'StopAutoCapture', StopAutoCaptureDefaultHotKey);
+  RegisterGlobalHotKey(StopAutoCaptureHotKeyId, StopAutoCaptureHotKey);
+
+  SingleCaptureHotKeyId := GlobalAddAtom('AutoScreenshot_HotKey_SingleCapture');
+  SingleCaptureHotKey := Ini.ReadHotKey(HotKeysIniSection, 'SingleCapture', SingleCaptureDefaultHotKey);
+  RegisterGlobalHotKey(SingleCaptureHotKeyId, SingleCaptureHotKey);
 end;
 
 procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
@@ -467,8 +493,15 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-  UnregisterGlobalHotKey(StartStopAutoCaptureHotKeyId);
-  GlobalDeleteAtom(StartStopAutoCaptureHotKeyId);
+  UnregisterGlobalHotKey(StartAutoCaptureHotKeyId);
+  GlobalDeleteAtom(StartAutoCaptureHotKeyId);
+
+  UnregisterGlobalHotKey(StopAutoCaptureHotKeyId);
+  GlobalDeleteAtom(StopAutoCaptureHotKeyId);
+
+  UnregisterGlobalHotKey(SingleCaptureHotKeyId);
+  GlobalDeleteAtom(SingleCaptureHotKeyId);
+
   Ini.Free;
 end;
 
@@ -482,10 +515,14 @@ var
   HotKeysForm: THotKeysForm;
 begin
   HotKeysForm := THotKeysForm.Create(Nil);
-  HotKeysForm.StartStopAutoCaptureKey := Self.StartStopAutoCaptureHotKey;
+  HotKeysForm.StartAutoCaptureKey := Self.StartAutoCaptureHotKey;
+  HotKeysForm.StopAutoCaptureKey := Self.StopAutoCaptureHotKey;
+  HotKeysForm.SingleCaptureKey := Self.SingleCaptureHotKey;
   if HotKeysForm.ShowModal = mrOK then
   begin
-    Self.StartStopAutoCaptureHotKey := HotKeysForm.StartStopAutoCaptureKey;
+    Self.StartAutoCaptureHotKey := HotKeysForm.StartAutoCaptureKey;
+    Self.StopAutoCaptureHotKey := HotKeysForm.StopAutoCaptureKey;
+    Self.SingleCaptureHotKey := HotKeysForm.SingleCaptureKey;
   end;
 
   HotKeysForm.Free;
@@ -1532,13 +1569,31 @@ begin
   AutoCheckForUpdatesMenuItem.Checked := AVal;
 end;
 
-procedure TMainForm.SetStartStopAutoCaptureHotKey(AHotKey: THotKey);
+procedure TMainForm.SetStartAutoCaptureHotKey(AHotKey: THotKey);
 begin
-  UnregisterGlobalHotKey(StartStopAutoCaptureHotKeyId);
-  RegisterGlobalHotKey(StartStopAutoCaptureHotKeyId, AHotKey);
+  UnregisterGlobalHotKey(StartAutoCaptureHotKeyId);
+  RegisterGlobalHotKey(StartAutoCaptureHotKeyId, AHotKey);
 
-  Ini.WriteHotKey(HotKeysIniSection, 'StartStopAutoCapture', AHotKey);
-  FStartStopAutoCaptureHotKey := AHotKey;
+  Ini.WriteHotKey(HotKeysIniSection, 'StartAutoCapture', AHotKey);
+  FStartAutoCaptureHotKey := AHotKey;
+end;
+
+procedure TMainForm.SetStopAutoCaptureHotKey(AHotKey: THotKey);
+begin
+  UnregisterGlobalHotKey(StopAutoCaptureHotKeyId);
+  RegisterGlobalHotKey(StopAutoCaptureHotKeyId, AHotKey);
+
+  Ini.WriteHotKey(HotKeysIniSection, 'StopAutoCapture', AHotKey);
+  FStopAutoCaptureHotKey := AHotKey;
+end;
+
+procedure TMainForm.SetSingleCaptureHotKey(AHotKey: THotKey);
+begin
+  UnregisterGlobalHotKey(SingleCaptureHotKeyId);
+  RegisterGlobalHotKey(SingleCaptureHotKeyId, AHotKey);
+
+  Ini.WriteHotKey(HotKeysIniSection, 'SingleCapture', AHotKey);
+  FSingleCaptureHotKey := AHotKey;
 end;
 
 procedure TMainForm.RegisterGlobalHotKey(AHotKeyId: Integer;
