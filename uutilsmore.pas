@@ -39,6 +39,9 @@ type
     procedure Parse(const AString: String);
   end;
 
+operator = (HotKey1, Hotkey2: THotKey): Boolean;
+operator <> (HotKey1, Hotkey2: THotKey): Boolean;
+
 implementation
 
 uses
@@ -90,6 +93,17 @@ end;
 operator<(AVer1, AVer2: TProgramVersion): Boolean;
 begin
   Result := (not (AVer1 > AVer2)) and (AVer1 <> AVer2);
+end;
+
+operator=(HotKey1, Hotkey2: THotKey): Boolean;
+begin
+  Result := (HotKey1.ShiftState = Hotkey2.ShiftState)
+       and (HotKey1.Key = Hotkey2.Key);
+end;
+
+operator<>(HotKey1, Hotkey2: THotKey): Boolean;
+begin
+  Result := not (HotKey1 = Hotkey2);
 end;
 
 { THotKey }
