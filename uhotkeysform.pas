@@ -115,7 +115,20 @@ begin
   for Key := VK_BACK to VK_SCROLL do
   // VK_BROWSER_BACK to VK_OEM_CLEAR
   begin
-    KeyName := KeyAndShiftStateToKeyString(Key, []);
+    case Key of
+      VK_BACK: KeyName        := 'Backspace';
+      VK_NUMPAD0..VK_NUMPAD9: KeyName := 'Numpad ' + IntToStr(Key - VK_NUMPAD0);
+      VK_MULTIPLY: KeyName    := 'Numpad *';
+      VK_ADD: KeyName         := 'Numpad +';
+      VK_SEPARATOR: KeyName   := 'Numpad Separator'; // what is this?
+      VK_SUBTRACT: KeyName    := 'Numpad -';
+      VK_DECIMAL: KeyName     := 'Numpad . (Del)';
+      VK_DIVIDE: KeyName      := 'Numpad /';
+      VK_RETURN: KeyName      := 'Numpad Enter'
+
+      else KeyName := KeyAndShiftStateToKeyString(Key, []);
+    end;
+
     if not KeyStringIsIrregular(KeyName) then
       KeyComboBox.Items.AddObject(KeyName, TObject(Integer(Key)));
   end;
