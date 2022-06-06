@@ -90,19 +90,25 @@ function THotKeyControl.GetHotKey: THotKey;
 var
   SelIdx: Integer;
 begin
+  SelIdx := KeyComboBox.ItemIndex;
+  if SelIdx = -1 then
+    Result.Key := VK_UNKNOWN
+  else
+    Result.Key := Integer(KeyComboBox.Items.Objects[SelIdx]);
+
   Result.ShiftState := [];
 
-  if AltCheckBox.Checked then
-    Include(Result.ShiftState, ssAlt);
+  if Result.Key <> VK_UNKNOWN then
+  begin // Not needed to set Alt/Shift/Ctrl state for empty key
+    if AltCheckBox.Checked then
+      Include(Result.ShiftState, ssAlt);
 
-  if CtrlCheckBox.Checked then
-    Include(Result.ShiftState, ssCtrl);
+    if CtrlCheckBox.Checked then
+      Include(Result.ShiftState, ssCtrl);
 
-  if ShiftCheckBox.Checked then
-    Include(Result.ShiftState, ssShift);
-
-  SelIdx := KeyComboBox.ItemIndex;
-  Result.Key := Integer(KeyComboBox.Items.Objects[SelIdx]);
+    if ShiftCheckBox.Checked then
+      Include(Result.ShiftState, ssShift);
+  end;
 end;
 
 procedure THotKeyControl.FillKeyComboBox;
@@ -112,6 +118,8 @@ var
 begin
   KeyComboBox.Clear;
   KeyComboBox.Items.BeginUpdate;
+
+  KeyComboBox.Items.AddObject('(None)', TObject(Integer(VK_UNKNOWN)));
 
   for Key := VK_BACK to VK_SCROLL do
   // VK_BROWSER_BACK to VK_OEM_CLEAR

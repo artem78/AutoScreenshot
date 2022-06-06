@@ -37,6 +37,8 @@ type
 
 implementation
 
+uses LCLType;
+
 {$IFOPT D+}
 procedure DebugMsg(const Msg: String);
 begin
@@ -123,6 +125,12 @@ var
   FullStrId: String;
   Id: Integer;
 begin
+  if AHotKey.Key = VK_UNKNOWN then
+  begin // No key set
+    UnregisterKey(AStringId);
+    Exit;
+  end;
+
   DebugMsg(Format('Start to register hotkey %s for %s',
       [AHotKey.ToString, AStringId]));
 
@@ -147,6 +155,7 @@ begin
 
   DebugMsg(Format('Hot key %s for %s registered with id=%d',
        [AHotKey.ToString, AStringId, id]));
+  DebugMsg(Format('Total registered hot keys: %d', [KeysMap.Count]));
 end;
 
 procedure TGlobalKeyHook.UnregisterKey(const AStringId: String);
@@ -169,11 +178,13 @@ begin
   KeysMap.Remove(AStringId);
 
   DebugMsg(Format('Hot key for %s with id=%d unregistered',  [AStringId, id]));
+  DebugMsg(Format('Total registered hot keys: %d', [KeysMap.Count]));
 end;
 
 function TGlobalKeyHook.FindHotKey(const AStringId: String): THotKey;
 begin
-  Result := KeysMap.KeyData[AStringId];
+  // Returns VK_UNKNOWN if hot key not found
+  KeysMap.TryGetData(AStringId, Result);
 end;
 
 function TGlobalKeyHook.HotKeyId(const AStringId: String): integer;
