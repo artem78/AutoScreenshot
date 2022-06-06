@@ -7,7 +7,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ButtonPanel,
-  uUtilsMore;
+  ExtCtrls, uUtilsMore;
 
 type
 
@@ -36,6 +36,7 @@ type
 
   THotKeysForm = class(TForm)
     ButtonPanel: TButtonPanel;
+    Panel: TPanel;
     procedure FormCreate(Sender: TObject);
   private
     Labels: array [0..2] of TLabel;
@@ -175,16 +176,16 @@ begin
   begin
     Parent := Self;
     //SetSubComponent(true);
-    Constraints.MinWidth := 100;
+    Constraints.MinWidth := 120;
     //Name := '...';
     Style := csDropDownList;
-    //AutoSize := True;
+    //AutoSize := True; // ToDo: Do not work, fix
   end;
-    FillKeyComboBox;
+  FillKeyComboBox;
 
   ChildSizing.Layout := cclLeftToRightThenTopToBottom;
   ChildSizing.ControlsPerLine := 4;
-  ChildSizing.HorizontalSpacing := 8;
+  ChildSizing.HorizontalSpacing := 5;
   AutoSize := True;
 
 end;
@@ -219,7 +220,7 @@ begin
       Caption := Texts[I] + ':';
       BorderSpacing.CellAlignHorizontal := ccaRightBottom;
       BorderSpacing.CellAlignVertical := ccaCenter;
-      Parent := Self;
+      Parent := Self.Panel;
     end;
 
     // Create hotkey control
@@ -227,7 +228,7 @@ begin
     with HotKeyControls[I] do
     begin
       BorderSpacing.CellAlignVertical := ccaCenter;
-      Parent := Self;
+      Parent := Self.Panel;
     end;
   end;
 end;

@@ -3,15 +3,16 @@ object HotKeysForm: THotKeysForm
   Height = 130
   Top = 250
   Width = 491
+  AutoSize = True
+  BorderStyle = bsDialog
   Caption = 'HotKeysForm'
   ChildSizing.LeftRightSpacing = 15
   ChildSizing.TopBottomSpacing = 15
-  ChildSizing.HorizontalSpacing = 15
-  ChildSizing.Layout = cclLeftToRightThenTopToBottom
-  ChildSizing.ControlsPerLine = 2
+  ChildSizing.VerticalSpacing = 15
   ClientHeight = 130
   ClientWidth = 491
   OnCreate = FormCreate
+  Position = poOwnerFormCenter
   LCLVersion = '2.0.12.0'
   object ButtonPanel: TButtonPanel
     Left = 15
@@ -28,5 +29,18 @@ object HotKeysForm: THotKeysForm
     CancelButton.DefaultCaption = True
     TabOrder = 0
     ShowButtons = [pbOK, pbCancel]
+  end
+  object Panel: TPanel
+    Left = 15
+    Height = 51
+    Top = 15
+    Width = 461
+    Align = alClient
+    BevelOuter = bvNone
+    ChildSizing.HorizontalSpacing = 15
+    ChildSizing.VerticalSpacing = 6
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 2
+    TabOrder = 1
   end
 end
