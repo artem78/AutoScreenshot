@@ -32,9 +32,6 @@ function LastInput: DWord;
 function FormatDateTime2(const Str: String; const DateTime: TDateTime): String; overload;
 function FormatDateTime2(const Str: String): String; overload;
 
-// Same as IntToStr(), but adds leading zeros before number
-function Int2Str(Val: Integer; LeadingZeros: Integer = 0): String;
-
 // Decodes control characters (like \r, \n, \t and etc.) from given string.
 function DecodeControlCharacters(const Str: WideString): WideString;
 
@@ -88,7 +85,7 @@ procedure RunCmdInbackground(ACmd: String);
 implementation
 
 uses
-  SysUtils, DateUtils, Registry, uLanguages, FileInfo, process;
+  SysUtils, DateUtils, StrUtils, Registry, uLanguages, FileInfo, process;
 
 type
   tagLASTINPUTINFO = record
@@ -113,37 +110,25 @@ begin
 end;
 
 function FormatDateTime2(const Str: String; const DateTime: TDateTime): String;
+  function DecToNum(N: Longint; Len: byte): string;
+  begin
+    Result := Dec2Numb(N, Len, 10);
+  end;
+
 const
   TmplVarsChar = '%';
 begin
-  Result := StringReplace(Str,    TmplVarsChar + 'D', Int2Str(DayOf(DateTime), 2),    [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'M', Int2Str(MonthOf(DateTime), 2),  [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'Y', Int2Str(YearOf(DateTime), 4),   [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'H', Int2Str(HourOf(DateTime), 2),   [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'N', Int2Str(MinuteOf(DateTime), 2), [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'S', Int2Str(SecondOf(DateTime), 2), [rfReplaceAll]);
+  Result := StringReplace(Str,    TmplVarsChar + 'D', DecToNum(DayOf(DateTime), 2),    [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'M', DecToNum(MonthOf(DateTime), 2),  [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'Y', DecToNum(YearOf(DateTime), 4),   [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'H', DecToNum(HourOf(DateTime), 2),   [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'N', DecToNum(MinuteOf(DateTime), 2), [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'S', DecToNum(SecondOf(DateTime), 2), [rfReplaceAll]);
 end;
 
 function FormatDateTime2(const Str: String): String;
 begin
   Result := FormatDateTime2(Str, Now());
-end;
-
-function Int2Str(Val: Integer; LeadingZeros: Integer): String;
-var
-  Tmp: String;
-begin
-  Result := '';
-
-  Tmp := IntToStr(Abs(Val));
-
-  if Val < 0 then
-    Result := Result + '-';
-
-  if (LeadingZeros > 0) and (LeadingZeros > Length(Tmp)) then
-    Result := Result + StringOfChar('0', LeadingZeros - Length(Tmp));
-
-  Result := Result + Tmp;
 end;
 
 function DecodeControlCharacters(const Str: WideString): WideString;

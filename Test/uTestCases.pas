@@ -16,7 +16,6 @@ type
     function GetFormattedPath(Path: String): String;
   published
     procedure TestFormatPath;
-    procedure TestInt2Str;
     procedure TestDecode;
     procedure TestJoinPath;
     procedure TestRemoveExtraPathDelimiters;
@@ -74,19 +73,6 @@ begin
   AssertEquals('PC and user name',
       CompName + '_' + UserName + '_image.tiff',
       GetFormattedPath('%COMP_%USER_image.tiff'));}
-end;
-
-procedure TMyTestCase.TestInt2Str;
-begin
-  AssertEquals('152', Int2Str(152));
-  AssertEquals('123456789', Int2Str(123456789));
-  AssertEquals('-200300', Int2Str(-200300));
-  AssertEquals('007', Int2Str(7, 3));
-  AssertEquals('-00121', Int2Str(-121, 5));
-  AssertEquals('0', Int2Str(0));
-  AssertEquals('000000', Int2Str(0, 6));
-  AssertEquals('303', Int2Str(303, 3));
-  AssertEquals('-505', Int2Str(-505, 3));
 end;
 
 procedure TMyTestCase.TestJoinPath;
