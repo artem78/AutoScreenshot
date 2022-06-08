@@ -913,6 +913,7 @@ begin
     AboutMenuItem.Caption := Localizer.I18N('About') + '...';
     CheckForUpdatesMenuItem.Caption := Localizer.I18N('CheckForUpdates');
     AutoCheckForUpdatesMenuItem.Caption := Localizer.I18N('AutoCheckForUpdates');
+    HotKetsSettingsMenuItem.Caption := Localizer.I18N('EditHotKeys') + '...';
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';

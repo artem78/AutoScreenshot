@@ -51,6 +51,7 @@ type
     function GetSingleCaptureKey: THotKey;
 
     function Validate(out AErrorMsg: string): Boolean;
+    procedure Translate;
   public
     property StartAutoCaptureKey: THotKey read GetStartAutoCaptureKey
                          write SetStartAutoCaptureKey;
@@ -66,7 +67,7 @@ var
 implementation
 
 uses
-  LCLType, LCLProc;
+  LCLType, LCLProc, uLocalization;
 
 {$R *.lfm}
 
@@ -122,7 +123,7 @@ begin
   KeyComboBox.Clear;
   KeyComboBox.Items.BeginUpdate;
 
-  KeyComboBox.Items.AddObject('(None)', TObject(Integer(VK_UNKNOWN)));
+  KeyComboBox.Items.AddObject(Localizer.I18N('NoHotKey'), TObject(Integer(VK_UNKNOWN)));
 
   for Key := VK_BACK to VK_SCROLL do
   // VK_BROWSER_BACK to VK_OEM_CLEAR
@@ -218,9 +219,11 @@ var
   I: Integer;
   Texts: Array [0..2] of String;
 begin
-  Texts[StartAutoCaptureIdx] := 'Start auto capture';
-  Texts[StopAutoCaptureIdx]  := 'Stop auto capture';
-  Texts[SingleCaptureIdx]    := 'Single capture';
+  Translate;
+
+  Texts[StartAutoCaptureIdx] := Localizer.I18N('StartAutoCapture');
+  Texts[StopAutoCaptureIdx]  := Localizer.I18N('StopAutoCapture');
+  Texts[SingleCaptureIdx]    := Localizer.I18N('SingleCapture');
 
   for I := 0 to 2 do
   begin
@@ -290,7 +293,7 @@ begin
   Result := HotKeyControls[SingleCaptureIdx].HotKey;
 end;
 
-function THotKeysForm.Validate(out AErrorMsg: string): boolean;
+function THotKeysForm.Validate(out AErrorMsg: string): Boolean;
   function HasDuplicates: Boolean;
   var
     I1, I2: Integer;
@@ -313,7 +316,14 @@ begin
   if Result then
     AErrorMsg := ''
   else
-    AErrorMsg := 'Hotkey already in use!';
+    AErrorMsg := Localizer.I18N('HotKeyOccupied');
+end;
+
+procedure THotKeysForm.Translate;
+begin
+  Caption := Localizer.I18N('Hotkeys');
+  ButtonPanel.OKButton.Caption := Localizer.I18N('Save');
+  ButtonPanel.CancelButton.Caption := Localizer.I18N('Cancel');
 end;
 
 end.
