@@ -37,6 +37,7 @@ type
   THotKeysForm = class(TForm)
     ButtonPanel: TButtonPanel;
     Panel: TPanel;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
   private
     Labels: array [0..2] of TLabel;
@@ -48,6 +49,8 @@ type
     function GetStopAutoCaptureKey: THotKey;
     procedure SetSingleCaptureKey(const AHotKey: THotKey);
     function GetSingleCaptureKey: THotKey;
+
+    function Validate(out AErrorMsg: string): Boolean;
   public
     property StartAutoCaptureKey: THotKey read GetStartAutoCaptureKey
                          write SetStartAutoCaptureKey;
@@ -241,6 +244,22 @@ begin
   end;
 end;
 
+procedure THotKeysForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+var
+  ErrorMsg: String;
+begin
+  CanClose := True;
+
+  if ModalResult = mrOK then
+  begin
+    if not Validate(ErrorMsg) then
+    begin
+      CanClose := False;
+      MessageDlg(ErrorMsg, {mtError} mtWarning, [mbOK], 0);
+    end;
+  end;
+end;
+
 procedure THotKeysForm.SetStartAutoCaptureKey(const AHotKey: THotKey);
 begin
   HotKeyControls[StartAutoCaptureIdx].HotKey := AHotKey;
@@ -269,6 +288,32 @@ end;
 function THotKeysForm.GetSingleCaptureKey: THotKey;
 begin
   Result := HotKeyControls[SingleCaptureIdx].HotKey;
+end;
+
+function THotKeysForm.Validate(out AErrorMsg: string): boolean;
+  function HasDuplicates: Boolean;
+  var
+    I1, I2: Integer;
+  begin
+    Result := False;
+
+    for I1 := Low(HotKeyControls) + 1 to High(HotKeyControls) do
+    begin
+      for I2 := Low(HotKeyControls) to I1 - 1 do
+      begin
+        if (HotKeyControls[I1].HotKey = HotKeyControls[I2].HotKey) and not HotKeyControls[I1].HotKey.IsEmpty then
+          Exit(True);
+      end;
+    end;
+  end;
+
+begin
+  Result := not HasDuplicates;
+
+  if Result then
+    AErrorMsg := ''
+  else
+    AErrorMsg := 'Hotkey already in use!';
 end;
 
 end.

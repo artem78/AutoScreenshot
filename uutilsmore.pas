@@ -37,6 +37,7 @@ type
 
     function ToString: String;
     procedure Parse(const AString: String);
+    function IsEmpty: boolean;
   end;
 
 operator = (HotKey1, Hotkey2: THotKey): Boolean;
@@ -45,7 +46,7 @@ operator <> (HotKey1, Hotkey2: THotKey): Boolean;
 implementation
 
 uses
-  RegExpr, StrUtils, Menus {for ShortCutToKey}, LCLProc;
+  RegExpr, StrUtils, Menus {for ShortCutToKey}, LCLProc, LCLType;
 
 type
   { TJoinInteger }
@@ -152,6 +153,11 @@ begin
   //Key := StrToInt(Copy(AString, KeyNumPos, Length(AString) - KeyNumPos + 1));
   ShortCut := TextToShortCut(KeyName);
   ShortCutToKey(ShortCut, Key, UnusedShiftState);
+end;
+
+function THotKey.IsEmpty: boolean;
+begin
+  Result := Key = VK_UNKNOWN;
 end;
 
 { TJoinInteger }
