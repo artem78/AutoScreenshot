@@ -125,7 +125,7 @@ var
   FullStrId: String;
   Id: Integer;
 begin
-  if AHotKey.Key = VK_UNKNOWN then
+  if AHotKey.IsEmpty then
   begin // No key set
     UnregisterKey(AStringId);
     Exit;

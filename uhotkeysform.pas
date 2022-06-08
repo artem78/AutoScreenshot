@@ -101,7 +101,7 @@ begin
 
   Result.ShiftState := [];
 
-  if Result.Key <> VK_UNKNOWN then
+  if not Result.IsEmpty then
   begin // Not needed to set Alt/Shift/Ctrl state for empty key
     if AltCheckBox.Checked then
       Include(Result.ShiftState, ssAlt);
