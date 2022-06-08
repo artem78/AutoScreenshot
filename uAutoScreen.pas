@@ -6,7 +6,7 @@ uses
   Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
-  LCLIntf;
+  LCLIntf, uHotKeysForm, uUtilsMore, GlobalKeyHook;
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF});
@@ -29,6 +29,7 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
+    HotKetsSettingsMenuItem: TMenuItem;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
@@ -84,6 +85,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure HotKetsSettingsMenuItemClick(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
@@ -126,6 +128,8 @@ type
     FCounterDigits: Integer {Byte};
 
     PrevWndProc: WndProc;
+
+    KeyHook: TGlobalKeyHook;
     
     procedure SetTimerEnabled(IsEnabled: Boolean);
     function GetTimerEnabled: Boolean;
@@ -166,6 +170,9 @@ type
     procedure CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
     function GetAutoCheckForUpdates: Boolean;
     procedure SetAutoCheckForUpdates(AVal: Boolean);
+    procedure SetStartAutoCaptureHotKey(AHotKey: THotKey);
+    procedure SetStopAutoCaptureHotKey(AHotKey: THotKey);
+    procedure SetSingleCaptureHotKey(AHotKey: THotKey);
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -219,6 +226,7 @@ const
   );
 
   DefaultConfigIniSection = 'main';
+  HotKeysIniSection = 'hotkeys';
 
   MinCaptureIntervalInSeconds = 1;
   NoMonitorId = -1;
@@ -235,7 +243,7 @@ var
 implementation
 
 uses uAbout, DateUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  fphttpclient, opensslsockets, fpjson, jsonparser, uUtilsMore;
+  fphttpclient, opensslsockets, fpjson, jsonparser, uIniHelper;
 
 {$R *.lfm}
 
@@ -249,6 +257,22 @@ begin
     WM_DEVICECHANGE:  // Any hardware configuration changed (including monitors)
       begin
         MainForm.UpdateMonitorList;
+      end;
+    WM_HOTKEY:
+      begin
+        //ShowMessage(IntToStr(lParam));
+        if wParam = MainForm.KeyHook.HotKeyId('StartAutoCapture') then
+          MainForm.IsTimerEnabled := True
+        else if wParam = MainForm.KeyHook.HotKeyId('StopAutoCapture') then
+          MainForm.IsTimerEnabled := False
+        else if wParam = MainForm.KeyHook.HotKeyId('SingleCapture') then
+          MainForm.MakeScreenshot
+        else
+        begin
+          {$IFOPT D+}
+          ShowMessage(Format('Unknown hotkey event! (wparam=%d, lparam=%d)', [wParam, lParam]));
+          {$ENDIF}
+        end;
       end;
   end;
 
@@ -406,8 +430,22 @@ begin
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
+const
+  StartAutoCaptureDefaultHotKey: THotKey = (
+    ShiftState: [ssCtrl];
+    Key: VK_F5;
+  );
+  StopAutoCaptureDefaultHotKey: THotKey = (
+    ShiftState: [ssCtrl];
+    Key: VK_F6;
+  );
+  SingleCaptureDefaultHotKey: THotKey = (
+    ShiftState: [ssCtrl];
+    Key: VK_F7;
+  );
 var
   LastUpdateCheck: TDateTime;
+  HotKey: THotKey;
 begin
   { Replace default window function with custom one
     for process messages when screen configuration changed }
@@ -428,6 +466,15 @@ begin
   LastUpdateCheck := Ini.ReadDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', 0);
   if AutoCheckForUpdates and (SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds) then
     CheckForUpdates(False);
+
+  // Enable global hotkeys
+  KeyHook := TGlobalKeyHook.Create(Handle, 'AutoScreenshot');
+  HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StartAutoCapture', StartAutoCaptureDefaultHotKey);
+  KeyHook.RegisterKey('StartAutoCapture', HotKey);
+  HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StopAutoCapture', StopAutoCaptureDefaultHotKey);
+  KeyHook.RegisterKey('StopAutoCapture', HotKey);
+  HotKey := Ini.ReadHotKey(HotKeysIniSection, 'SingleCapture', SingleCaptureDefaultHotKey);
+  KeyHook.RegisterKey('SingleCapture', HotKey);
 end;
 
 procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
@@ -442,12 +489,32 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  KeyHook.Free;
+
   Ini.Free;
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
 begin
   RecalculateLabelWidths;
+end;
+
+procedure TMainForm.HotKetsSettingsMenuItemClick(Sender: TObject);
+var
+  HotKeysForm: THotKeysForm;
+begin
+  HotKeysForm := THotKeysForm.Create(Nil);
+  HotKeysForm.StartAutoCaptureKey := Self.KeyHook.FindHotKey('StartAutoCapture');
+  HotKeysForm.StopAutoCaptureKey := Self.KeyHook.FindHotKey('StopAutoCapture');
+  HotKeysForm.SingleCaptureKey := Self.KeyHook.FindHotKey('SingleCapture');
+  if HotKeysForm.ShowModal = mrOK then
+  begin
+    SetStartAutoCaptureHotKey(HotKeysForm.StartAutoCaptureKey);
+    SetStopAutoCaptureHotKey(HotKeysForm.StopAutoCaptureKey);
+    SetSingleCaptureHotKey(HotKeysForm.SingleCaptureKey);
+  end;
+
+  HotKeysForm.Free;
 end;
 
 procedure TMainForm.OutputDirEditChange(Sender: TObject);
@@ -846,6 +913,7 @@ begin
     AboutMenuItem.Caption := Localizer.I18N('About') + '...';
     CheckForUpdatesMenuItem.Caption := Localizer.I18N('CheckForUpdates');
     AutoCheckForUpdatesMenuItem.Caption := Localizer.I18N('AutoCheckForUpdates');
+    HotKetsSettingsMenuItem.Caption := Localizer.I18N('EditHotKeys') + '...';
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
@@ -1489,6 +1557,24 @@ procedure TMainForm.SetAutoCheckForUpdates(AVal: Boolean);
 begin
   Ini.WriteBool(DefaultConfigIniSection, 'AutoCheckForUpdates', AVal);
   AutoCheckForUpdatesMenuItem.Checked := AVal;
+end;
+
+procedure TMainForm.SetStartAutoCaptureHotKey(AHotKey: THotKey);
+begin
+  KeyHook.RegisterKey('StartAutoCapture', AHotKey);
+  Ini.WriteHotKey(HotKeysIniSection, 'StartAutoCapture', AHotKey);
+end;
+
+procedure TMainForm.SetStopAutoCaptureHotKey(AHotKey: THotKey);
+begin
+  KeyHook.RegisterKey('StopAutoCapture', AHotKey);
+  Ini.WriteHotKey(HotKeysIniSection, 'StopAutoCapture', AHotKey);
+end;
+
+procedure TMainForm.SetSingleCaptureHotKey(AHotKey: THotKey);
+begin
+  KeyHook.RegisterKey('SingleCapture', AHotKey);
+  Ini.WriteHotKey(HotKeysIniSection, 'SingleCapture', AHotKey);
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
