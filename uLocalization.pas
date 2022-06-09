@@ -49,7 +49,7 @@ var
 
 implementation
 
-uses uUtils, {Classes,} StrUtils;
+uses uUtils, FileUtil, LazFileUtils, {Classes,} StrUtils;
 
 { TLocalizer }
 
@@ -251,7 +251,7 @@ end;
 initialization
 begin
   // ToDo: Use alternatives only in Release build
-  Localizer := TLocalizer.Create(ExtractFilePath(ParamStr(0)) + 'lang' + PathDelim, True);
+  Localizer := TLocalizer.Create(AppendPathDelim(JoinPath(ProgramDirectory, 'lang')), True);
 end;
 
 finalization

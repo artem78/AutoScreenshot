@@ -208,7 +208,7 @@ var
 implementation
 
 uses uAbout, DateUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  fphttpclient, opensslsockets, fpjson, jsonparser, uUtilsMore;
+  fphttpclient, opensslsockets, fpjson, jsonparser, uUtilsMore, FileUtil;
 
 {$R *.lfm}
 
@@ -283,7 +283,7 @@ var
   FmtStr: String;
   Seconds: Integer;
 begin
-  DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ExtractFilePath(Application.ExeName), 'screenshots'));
+  DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ProgramDirectory, 'screenshots'));
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
   // ToDo: Check that directory exists or can be created (with subdirs if needed)
   if OutputDirEdit.Text = '' then
@@ -391,7 +391,7 @@ begin
 
   InitUI;
 
-  Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
+  Ini := TIniFile.Create(JoinPath(ProgramDirectory, 'config.ini'));
   ReadSettings;
 
   //if FindCmdLineSwitch('autorun') then
