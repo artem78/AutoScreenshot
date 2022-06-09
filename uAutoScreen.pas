@@ -192,21 +192,18 @@ type
 
 const
   ImageFormatInfoArray: TImageFormatInfoArray = (
-    { FixMe: Unsupported modes by Free Pascal Graphics unit are commented.
-      Think about use any third party graphics library instead
-      (https://wiki.freepascal.org/Graphics_libraries). }
     (
       Name:         'PNG';
       Extension:    'png';
       HasQuality:   False;
-      HasGrayscale: False;
-      ColorDepth:   [{cd8Bit, cd16Bit, cd24Bit, cd32Bit}] // Only 24bit
+      HasGrayscale: True;
+      ColorDepth:   [{cd8Bit, cd16Bit, cd24Bit, cd32Bit}]
     ),
     (
       Name:         'JPG';
       Extension:    'jpg';
       HasQuality:   True;
-      HasGrayscale: {True} False;
+      HasGrayscale: True;
       ColorDepth:   []
     ),
     (
@@ -214,7 +211,7 @@ const
       Extension:    'bmp';
       HasQuality:   False;
       HasGrayscale: False;
-      ColorDepth:   [{cd8Bit, cd16Bit,} cd24Bit, cd32Bit]
+      ColorDepth:   [{cd8Bit,} cd16Bit, cd24Bit, cd32Bit]
     ){,
     (
       Name:         'GIF';
@@ -242,8 +239,9 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  fphttpclient, opensslsockets, fpjson, jsonparser, uIniHelper;
+uses uAbout, DateUtils, uUtils, Math, BGRABitmap, BGRABitmapTypes,
+  uFileNameTemplateHelpForm, fphttpclient, opensslsockets, fpjson, jsonparser,
+  FPWriteJPEG, FPWriteBMP, FPWritePNG, uIniHelper;
 
 {$R *.lfm}
 
@@ -598,9 +596,10 @@ end;
 
 procedure TMainForm.MakeScreenshot;
 var
-  Bitmap: TBitmap;
-  PNG: TPortableNetworkGraphic;
-  JPG: TJPEGImage;
+  Bitmap: TBGRABitmap;
+  PngWriter: TFPWriterPNG;
+  JpgWriter: TFPWriterJPEG;
+  BmpWriter: TFPWriterBMP;
   //GIF: TGIFImage;
   ScreenDC: HDC;
   ScreenWidth, ScreenHeight: Integer;
@@ -609,23 +608,6 @@ var
   UsedMonitor: TMonitor;
   Cmd: String;
 begin
-  Bitmap := TBitmap.Create;
-
-  // Set color depth for bitmap
-  try
-    case Integer(ColorDepth) of
-      1:  Bitmap.PixelFormat := pf1bit;
-      4:  Bitmap.PixelFormat := pf4bit;
-      8:  Bitmap.PixelFormat := pf8bit;
-      16: Bitmap.PixelFormat := pf16bit;
-      24: Bitmap.PixelFormat := pf24bit;
-      32: Bitmap.PixelFormat := pf32bit;
-      //else raise Exception.CreateFmt('Color depth %d bit not supported in TBitmap', [Integer(ColorDepth)]);
-    end;
-  except
-    // Leave bitmap pixel format as default
-  end;
-
   if MonitorId = NoMonitorId then
   begin // All displays
     ScreenWidth  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
@@ -646,10 +628,9 @@ begin
   end;
   //Rect := GetClientRect(0);
 
-  Bitmap.Width := ScreenWidth;
-  Bitmap.Height := ScreenHeight;
-  Bitmap.Canvas.Brush.Color := clBlack;
-  Bitmap.Canvas.FillRect(Rect(0, 0, ScreenWidth, ScreenHeight));
+  Bitmap := TBGRABitmap.Create(ScreenWidth, ScreenHeight, BGRABlack);
+
+  //Bitmap.TakeScreenshot(Rect); // Not supports multiply monitors
   ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
   BitBlt(Bitmap.Canvas.Handle, 0, 0, ScreenWidth, ScreenHeight,
            ScreenDC, ScreenX, ScreenY, SRCCOPY);
@@ -661,32 +642,43 @@ begin
     case ImageFormat of
       fmtPNG:      // PNG
         begin
-          PNG := TPortableNetworkGraphic.Create;
+          PngWriter := TFPWriterPNG.create;
           try
-            PNG.Assign(Bitmap);
-            PNG.SaveToFile(ImagePath);
+            PngWriter.GrayScale := GrayscaleCheckBox.Checked;
+            //PngWriter.CompressionLevel := ...; // ToDo: Implement this
+            //PngWriter.Indexed := ...;
+            //PngWriter.UseAlpha := ...;
+
+            Bitmap.SaveToFile(ImagePath, PngWriter);
           finally
-            PNG.Free;
+            PngWriter.Free;
           end;
         end;
 
       fmtJPG:     // JPEG
         begin
-          JPG := TJPEGImage.Create;
+          JpgWriter := TFPWriterJPEG.Create;
           try
-            JPG.CompressionQuality := JPEGQualitySpinEdit.Value;
-            //JPG.GrayScale := GrayscaleCheckBox.Checked; FixMe: Can not set grayscale
-            JPG.Assign(Bitmap);
-            //JPG.Compress;
-            JPG.SaveToFile(ImagePath);
+            JpgWriter.CompressionQuality := JPEGQualitySpinEdit.Value;
+            JpgWriter.GrayScale := GrayscaleCheckBox.Checked;
+
+            Bitmap.SaveToFile(ImagePath, JpgWriter);
           finally
-            JPG.Free;
+            JpgWriter.Free;
           end;
         end;
 
       fmtBMP:    // Bitmap (BMP)
         begin
-          Bitmap.SaveToFile(ImagePath);
+          BmpWriter := TFPWriterBMP.Create;
+          try
+           BmpWriter.BitsPerPixel := Integer(ColorDepth);
+            //BmpWriter.RLECompress := ...;
+
+           Bitmap.SaveToFile(ImagePath, BmpWriter);
+          finally
+            BmpWriter.Free;
+          end;
         end;
 
       {fmtGIF:    // GIF
