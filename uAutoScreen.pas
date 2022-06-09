@@ -9,7 +9,7 @@ uses
   LCLIntf, uHotKeysForm, uUtilsMore, GlobalKeyHook;
 
 type
-  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF});
+  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF}, fmtTIFF);
 
   TColorDepth = (cd8Bit=8, cd16Bit=16, cd24Bit=24, cd32Bit=32);
 
@@ -219,7 +219,14 @@ const
       HasQuality:   False;
       HasGrayscale: False;
       ColorDepth:   []
-    )}
+    )},
+    (
+      Name:         'TIFF';
+      Extension:    'tif';
+      HasQuality:   False;
+      HasGrayscale: False;
+      ColorDepth:   []
+    )
   );
 
   DefaultConfigIniSection = 'main';
@@ -240,8 +247,9 @@ var
 implementation
 
 uses uAbout, DateUtils, uUtils, Math, BGRABitmap, BGRABitmapTypes,
-  uFileNameTemplateHelpForm, fphttpclient, opensslsockets, fpjson, jsonparser,
-  FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, uIniHelper;
+  uFileNameTemplateHelpForm, fphttpclient, opensslsockets,
+  fpjson, jsonparser, FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, FPWriteTiff,
+  uIniHelper;
 
 {$R *.lfm}
 
@@ -683,6 +691,11 @@ begin
           GIF.Free;
         end;
       end;}
+
+      fmtTIFF:
+        begin
+          Writer := TFPWriterTiff.Create;
+        end;
   end;
 
   try
