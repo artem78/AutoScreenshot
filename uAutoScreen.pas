@@ -241,7 +241,7 @@ implementation
 
 uses uAbout, DateUtils, uUtils, Math, BGRABitmap, BGRABitmapTypes,
   uFileNameTemplateHelpForm, fphttpclient, opensslsockets, fpjson, jsonparser,
-  FPWriteJPEG, FPWriteBMP, FPWritePNG, uIniHelper;
+  FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, uIniHelper;
 
 {$R *.lfm}
 
@@ -597,9 +597,7 @@ end;
 procedure TMainForm.MakeScreenshot;
 var
   Bitmap: TBGRABitmap;
-  PngWriter: TFPWriterPNG;
-  JpgWriter: TFPWriterJPEG;
-  BmpWriter: TFPWriterBMP;
+  Writer: TFPCustomImageWriter;
   //GIF: TGIFImage;
   ScreenDC: HDC;
   ScreenWidth, ScreenHeight: Integer;
@@ -638,62 +636,59 @@ begin
 
   TrayIconState := tisFlashAnimation;
 
+  case ImageFormat of
+    fmtPNG:      // PNG
+      begin
+        Writer := TFPWriterPNG.create;
+
+        with Writer as TFPWriterPNG do
+        begin
+          GrayScale := GrayscaleCheckBox.Checked;
+          //CompressionLevel := ...; // ToDo: Implement this
+          //Indexed := ...;
+          //UseAlpha := ...;
+        end;
+      end;
+
+    fmtJPG:     // JPEG
+      begin
+        Writer := TFPWriterJPEG.Create;
+
+        with Writer as TFPWriterJPEG do
+        begin
+          CompressionQuality := JPEGQualitySpinEdit.Value;
+          GrayScale := GrayscaleCheckBox.Checked;
+        end;
+      end;
+
+    fmtBMP:    // Bitmap (BMP)
+      begin
+        Writer := TFPWriterBMP.Create;
+
+        with Writer as TFPWriterBMP do
+        begin
+          BitsPerPixel := Integer(ColorDepth);
+          //RLECompress := ...;
+        end;
+      end;
+
+    {fmtGIF:    // GIF
+      begin
+        GIF := TGIFImage.Create;
+        try
+          GIF.Assign(Bitmap);
+          //GIF.OptimizeColorMap;
+          GIF.SaveToFile(ImagePath);
+        finally
+          GIF.Free;
+        end;
+      end;}
+  end;
+
   try
-    case ImageFormat of
-      fmtPNG:      // PNG
-        begin
-          PngWriter := TFPWriterPNG.create;
-          try
-            PngWriter.GrayScale := GrayscaleCheckBox.Checked;
-            //PngWriter.CompressionLevel := ...; // ToDo: Implement this
-            //PngWriter.Indexed := ...;
-            //PngWriter.UseAlpha := ...;
-
-            Bitmap.SaveToFile(ImagePath, PngWriter);
-          finally
-            PngWriter.Free;
-          end;
-        end;
-
-      fmtJPG:     // JPEG
-        begin
-          JpgWriter := TFPWriterJPEG.Create;
-          try
-            JpgWriter.CompressionQuality := JPEGQualitySpinEdit.Value;
-            JpgWriter.GrayScale := GrayscaleCheckBox.Checked;
-
-            Bitmap.SaveToFile(ImagePath, JpgWriter);
-          finally
-            JpgWriter.Free;
-          end;
-        end;
-
-      fmtBMP:    // Bitmap (BMP)
-        begin
-          BmpWriter := TFPWriterBMP.Create;
-          try
-           BmpWriter.BitsPerPixel := Integer(ColorDepth);
-            //BmpWriter.RLECompress := ...;
-
-           Bitmap.SaveToFile(ImagePath, BmpWriter);
-          finally
-            BmpWriter.Free;
-          end;
-        end;
-
-      {fmtGIF:    // GIF
-        begin
-          GIF := TGIFImage.Create;
-          try
-            GIF.Assign(Bitmap);
-            //GIF.OptimizeColorMap;
-            GIF.SaveToFile(ImagePath);
-          finally
-            GIF.Free;
-          end;
-        end;}
-    end;
+    Bitmap.SaveToFile(ImagePath, Writer);
   finally
+    Writer.Free;
     Bitmap.Free;
   end;
 
