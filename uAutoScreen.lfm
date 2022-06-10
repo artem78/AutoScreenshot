@@ -506,6 +506,38 @@ object MainForm: TMainForm
     Caption = 'Run command:'
     ParentColor = False
   end
+  object CompressionLevelLabel: TLabel
+    AnchorSideLeft.Control = ImageFormatComboBox
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = ImageFormatComboBox
+    AnchorSideTop.Side = asrCenter
+    Left = 292
+    Height = 15
+    Top = 196
+    Width = 107
+    BorderSpacing.Left = 30
+    Caption = 'Compression level:'
+    ParentColor = False
+  end
+  object CompressionLevelComboBox: TComboBox
+    AnchorSideLeft.Control = CompressionLevelLabel
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = CompressionLevelLabel
+    AnchorSideTop.Side = asrCenter
+    Left = 405
+    Height = 23
+    Top = 192
+    Width = 100
+    ItemHeight = 15
+    Items.Strings = (
+      'None'
+      'Fastest'
+      'Default'
+      'Maximum'
+    )
+    Style = csDropDownList
+    TabOrder = 18
+  end
   object Timer: TTimer
     Enabled = False
     OnTimer = TimerTimer

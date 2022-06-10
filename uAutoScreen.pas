@@ -6,7 +6,7 @@ uses
   Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
-  LCLIntf, uHotKeysForm, uUtilsMore, GlobalKeyHook;
+  LCLIntf, uHotKeysForm, uUtilsMore, GlobalKeyHook, ZStream { for Tcompressionlevel };
 
 type
   TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF}, fmtTIFF);
@@ -19,6 +19,7 @@ type
     HasQuality: Boolean;
     HasGrayscale: Boolean;
     ColorDepth: Set of TColorDepth;
+    HasCompressionLevel: Boolean;
   end;
 
   TImageFormatInfoArray = array [TImageFormat] of TImageFormatInfo;
@@ -29,7 +30,9 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
+    CompressionLevelComboBox: TComboBox;
     HotKetsSettingsMenuItem: TMenuItem;
+    CompressionLevelLabel: TLabel;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
@@ -173,6 +176,8 @@ type
     procedure SetStartAutoCaptureHotKey(AHotKey: THotKey);
     procedure SetStopAutoCaptureHotKey(AHotKey: THotKey);
     procedure SetSingleCaptureHotKey(AHotKey: THotKey);
+    procedure SetCompressionLevel(ALevel: Tcompressionlevel);
+    function GetCompressionLevel: Tcompressionlevel;
 
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -186,6 +191,7 @@ type
     property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
     property PostCommand: String read GetPostCommand write SetPostCommand;
     property AutoCheckForUpdates: Boolean read GetAutoCheckForUpdates write SetAutoCheckForUpdates;
+    property CompressionLevel: Tcompressionlevel read GetCompressionLevel write SetCompressionLevel;
   public
     { Public declarations }
   end;
@@ -197,35 +203,40 @@ const
       Extension:    'png';
       HasQuality:   False;
       HasGrayscale: True;
-      ColorDepth:   [{cd8Bit, cd16Bit, cd24Bit, cd32Bit}]
+      ColorDepth:   [{cd8Bit, cd16Bit, cd24Bit, cd32Bit}];
+      HasCompressionLevel: True
     ),
     (
       Name:         'JPG';
       Extension:    'jpg';
       HasQuality:   True;
       HasGrayscale: True;
-      ColorDepth:   []
+      ColorDepth:   [];
+      HasCompressionLevel: False
     ),
     (
       Name:         'BMP';
       Extension:    'bmp';
       HasQuality:   False;
       HasGrayscale: False;
-      ColorDepth:   [{cd8Bit,} cd16Bit, cd24Bit, cd32Bit]
+      ColorDepth:   [{cd8Bit,} cd16Bit, cd24Bit, cd32Bit];
+      HasCompressionLevel: False
     ){,
     (
       Name:         'GIF';
       Extension:    'gif';
       HasQuality:   False;
       HasGrayscale: False;
-      ColorDepth:   []
+      ColorDepth:   [];
+      HasCompressionLevel: False
     )},
     (
       Name:         'TIFF';
       Extension:    'tif';
       HasQuality:   False;
       HasGrayscale: False;
-      ColorDepth:   []
+      ColorDepth:   [];
+      HasCompressionLevel: False
     )
   );
 
@@ -334,6 +345,7 @@ const
   DefaultMonitorId        = NoMonitorId;
   DefaultCounterValue     = MinCounterValue;
   DefaultCounterDigits    = 6;
+  DefaultCompressionLevel = cldefault;
 var
   DefaultOutputDir: String;
   CfgLang, SysLang, AltLang: TLanguageCode;
@@ -433,6 +445,9 @@ begin
 
   // Auto checking for updates
   AutoCheckForUpdates := Ini.ReadBool(DefaultConfigIniSection, 'AutoCheckForUpdates', True);
+
+  // Compression level
+  CompressionLevel := Tcompressionlevel(Ini.ReadInteger(DefaultConfigIniSection, 'Compression', Ord(DefaultCompressionLevel)));
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -652,7 +667,7 @@ begin
         with Writer as TFPWriterPNG do
         begin
           GrayScale := GrayscaleCheckBox.Checked;
-          //CompressionLevel := ...; // ToDo: Implement this
+          CompressionLevel := Self.CompressionLevel;
           //Indexed := ...;
           //UseAlpha := ...;
         end;
@@ -794,7 +809,7 @@ end;
 procedure TMainForm.ImageFormatComboBoxChange(Sender: TObject);
 var
   Format: TImageFormat;
-  IsQualityVisible, IsGrayscaleVisible: Boolean;
+  IsQualityVisible, IsGrayscaleVisible, IsCompressionLevelVisible: Boolean;
 begin
   Format := ImageFormat;
   IsQualityVisible := ImageFormatInfoArray[Format].HasQuality;
@@ -805,6 +820,10 @@ begin
 
   IsGrayscaleVisible := ImageFormatInfoArray[Format].HasGrayscale;
   GrayscaleCheckBox.Visible := IsGrayscaleVisible;
+
+  IsCompressionLevelVisible := ImageFormatInfoArray[Format].HasCompressionLevel;
+  CompressionLevelLabel.Visible := IsCompressionLevelVisible;
+  CompressionLevelComboBox.Visible := IsCompressionLevelVisible;
 
   UpdateColorDepthValues;
   
@@ -942,6 +961,15 @@ begin
     SeqNumberDigitsCountLabel.Caption := Localizer.I18N('Digits') + ':';
     PostCmdLabel.Caption := Localizer.I18N('RunCommand') + ':';
     PostCmdEdit.Hint := Localizer.I18N('RunCommandHelpText');
+
+    CompressionLevelLabel.Caption := Localizer.I18N('CompressionLevel') + ':';
+    with CompressionLevelComboBox do
+    begin
+      Items[0] := Localizer.I18N('CompressionLevelNone');
+      Items[1] := Localizer.I18N('CompressionLevelFastest');
+      Items[2] := Localizer.I18N('CompressionLevelDefault');
+      Items[3] := Localizer.I18N('CompressionLevelMax');
+    end;
 
     // Tray icon
     RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
@@ -1575,6 +1603,17 @@ procedure TMainForm.SetSingleCaptureHotKey(AHotKey: THotKey);
 begin
   KeyHook.RegisterKey('SingleCapture', AHotKey);
   Ini.WriteHotKey(HotKeysIniSection, 'SingleCapture', AHotKey);
+end;
+
+procedure TMainForm.SetCompressionLevel(ALevel: Tcompressionlevel);
+begin
+  CompressionLevelComboBox.ItemIndex := Ord(ALevel);
+  Ini.WriteInteger(DefaultConfigIniSection, 'Compression', Ord(ALevel));
+end;
+
+function TMainForm.GetCompressionLevel: Tcompressionlevel;
+begin
+  Result := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
