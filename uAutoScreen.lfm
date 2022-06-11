@@ -50,9 +50,9 @@ object MainForm: TMainForm
     ParentColor = False
   end
   object ImageFormatLabel: TLabel
-    AnchorSideTop.Control = ImageFormatComboBox
+    AnchorSideTop.Control = ImageFormatOptionsPanel
     AnchorSideTop.Side = asrCenter
-    AnchorSideRight.Control = ImageFormatComboBox
+    AnchorSideRight.Control = ImageFormatOptionsPanel
     Left = 143
     Height = 15
     Top = 196
@@ -60,33 +60,6 @@ object MainForm: TMainForm
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = 'Format:'
-    ParentColor = False
-  end
-  object JPEGQualityLabel: TLabel
-    AnchorSideLeft.Control = ImageFormatComboBox
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = JPEGQualitySpinEdit
-    AnchorSideTop.Side = asrCenter
-    AnchorSideRight.Control = JPEGQualitySpinEdit
-    Left = 292
-    Height = 15
-    Top = 196
-    Width = 79
-    Alignment = taRightJustify
-    BorderSpacing.Left = 30
-    Caption = 'Compression:'
-    ParentColor = False
-  end
-  object JPEGQualityPercentLabel: TLabel
-    AnchorSideLeft.Control = JPEGQualitySpinEdit
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = JPEGQualitySpinEdit
-    AnchorSideTop.Side = asrCenter
-    Left = 440
-    Height = 15
-    Top = 196
-    Width = 11
-    Caption = '%'
     ParentColor = False
   end
   object FileNameTemplateLabel: TLabel
@@ -100,21 +73,6 @@ object MainForm: TMainForm
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = 'Filename template:'
-    ParentColor = False
-  end
-  object ColorDepthLabel: TLabel
-    AnchorSideLeft.Control = ImageFormatComboBox
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = ColorDepthComboBox
-    AnchorSideTop.Side = asrCenter
-    AnchorSideRight.Control = ColorDepthComboBox
-    Left = 292
-    Height = 15
-    Top = 196
-    Width = 67
-    Alignment = taRightJustify
-    BorderSpacing.Left = 30
-    Caption = 'Color depth:'
     ParentColor = False
   end
   object MonitorLabel: TLabel
@@ -158,19 +116,7 @@ object MainForm: TMainForm
     Caption = 'Take screenshot'
     Constraints.MinWidth = 100
     OnClick = TakeScreenshotButtonClick
-    TabOrder = 16
-  end
-  object JPEGQualitySpinEdit: TSpinEdit
-    AnchorSideLeft.Control = JPEGQualityLabel
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = ImageFormatComboBox
-    AnchorSideTop.Side = asrCenter
-    Left = 377
-    Height = 23
-    Top = 192
-    Width = 57
-    OnChange = JPEGQualitySpinEditChange
-    TabOrder = 8
+    TabOrder = 12
   end
   object OpenOutputDirButton: TButton
     AnchorSideLeft.Control = OutputDirEdit
@@ -191,7 +137,7 @@ object MainForm: TMainForm
   end
   object StopWhenInactiveCheckBox: TCheckBox
     AnchorSideLeft.Control = OutputDirEdit
-    AnchorSideTop.Control = ImageFormatComboBox
+    AnchorSideTop.Control = ImageFormatOptionsPanel
     AnchorSideTop.Side = asrBottom
     Left = 191
     Height = 19
@@ -201,23 +147,6 @@ object MainForm: TMainForm
     OnClick = StopWhenInactiveCheckBoxClick
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 10
-  end
-  object ImageFormatComboBox: TComboBox
-    AnchorSideLeft.Control = OutputDirEdit
-    AnchorSideTop.Control = CaptureInterval
-    AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = CaptureInterval
-    AnchorSideRight.Side = asrBottom
-    Left = 191
-    Height = 23
-    Top = 192
-    Width = 71
-    Anchors = [akTop, akLeft, akRight]
-    DropDownCount = 10
-    ItemHeight = 15
-    OnChange = ImageFormatComboBoxChange
-    Style = csDropDownList
     TabOrder = 6
   end
   object AutoCaptureControlGroup: TGroupBox
@@ -240,7 +169,7 @@ object MainForm: TMainForm
     ChildSizing.ControlsPerLine = 2
     ClientHeight = 37
     ClientWidth = 218
-    TabOrder = 17
+    TabOrder = 13
     object StartAutoCaptureButton: TBitBtn
       Left = 6
       Height = 25
@@ -278,7 +207,7 @@ object MainForm: TMainForm
     Width = 233
     Caption = 'Start auto capture when program starts'
     OnClick = StartCaptureOnStartUpCheckBoxClick
-    TabOrder = 11
+    TabOrder = 7
   end
   object StartMinimizedCheckBox: TCheckBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -290,7 +219,7 @@ object MainForm: TMainForm
     Width = 140
     Caption = 'Start minimized to tray'
     OnClick = StartMinimizedCheckBoxClick
-    TabOrder = 12
+    TabOrder = 8
   end
   object FileNameTemplateComboBox: TComboBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -329,31 +258,6 @@ object MainForm: TMainForm
     OnClick = FileNameTemplateHelpButtonClick
     TabOrder = 3
   end
-  object GrayscaleCheckBox: TCheckBox
-    AnchorSideTop.Control = JPEGQualitySpinEdit
-    Left = 462
-    Height = 19
-    Top = 192
-    Width = 75
-    Caption = 'Grayscale'
-    OnClick = GrayscaleCheckBoxClick
-    TabOrder = 9
-  end
-  object ColorDepthComboBox: TComboBox
-    AnchorSideLeft.Control = ColorDepthLabel
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = ImageFormatComboBox
-    AnchorSideTop.Side = asrCenter
-    Left = 365
-    Height = 23
-    Top = 192
-    Width = 65
-    DropDownCount = 10
-    ItemHeight = 15
-    OnChange = ColorDepthComboBoxChange
-    Style = csDropDownList
-    TabOrder = 7
-  end
   object CaptureInterval: TDateTimePicker
     AnchorSideLeft.Control = OutputDirEdit
     AnchorSideTop.Control = SeqNumberGroup
@@ -389,7 +293,7 @@ object MainForm: TMainForm
     Width = 203
     Caption = 'Run application at system startup'
     OnClick = AutoRunCheckBoxClick
-    TabOrder = 13
+    TabOrder = 9
   end
   object MonitorComboBox: TComboBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -409,7 +313,7 @@ object MainForm: TMainForm
     )
     OnChange = MonitorComboBoxChange
     Style = csDropDownList
-    TabOrder = 14
+    TabOrder = 10
   end
   object SeqNumberGroup: TGroupBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -492,7 +396,7 @@ object MainForm: TMainForm
     OnChange = PostCmdEditChange
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 15
+    TabOrder = 11
   end
   object PostCmdLabel: TLabel
     AnchorSideTop.Control = PostCmdEdit
@@ -506,37 +410,122 @@ object MainForm: TMainForm
     Caption = 'Run command:'
     ParentColor = False
   end
-  object CompressionLevelLabel: TLabel
-    AnchorSideLeft.Control = ImageFormatComboBox
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = ImageFormatComboBox
-    AnchorSideTop.Side = asrCenter
-    Left = 292
-    Height = 15
-    Top = 196
-    Width = 107
-    BorderSpacing.Left = 30
-    Caption = 'Compression level:'
-    ParentColor = False
-  end
-  object CompressionLevelComboBox: TComboBox
-    AnchorSideLeft.Control = CompressionLevelLabel
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideTop.Control = CompressionLevelLabel
-    AnchorSideTop.Side = asrCenter
-    Left = 405
+  object ImageFormatOptionsPanel: TPanel
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = CaptureInterval
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Side = asrBottom
+    Left = 191
     Height = 23
     Top = 192
-    Width = 100
-    ItemHeight = 15
-    Items.Strings = (
-      'None'
-      'Fastest'
-      'Default'
-      'Maximum'
-    )
-    Style = csDropDownList
-    TabOrder = 18
+    Width = 833
+    AutoSize = True
+    BevelOuter = bvNone
+    ChildSizing.HorizontalSpacing = 6
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 99
+    ClientHeight = 23
+    ClientWidth = 833
+    TabOrder = 14
+    object ImageFormatComboBox: TComboBox
+      Left = 0
+      Height = 23
+      Top = 0
+      Width = 100
+      BorderSpacing.CellAlignVertical = ccaCenter
+      DropDownCount = 10
+      ItemHeight = 15
+      OnChange = ImageFormatComboBoxChange
+      Style = csDropDownList
+      TabOrder = 1
+    end
+    object CompressionLevelLabel: TLabel
+      Left = 130
+      Height = 15
+      Top = 4
+      Width = 107
+      BorderSpacing.Left = 30
+      BorderSpacing.CellAlignVertical = ccaCenter
+      Caption = 'Compression level:'
+      ParentColor = False
+    end
+    object CompressionLevelComboBox: TComboBox
+      Left = 243
+      Height = 23
+      Top = 0
+      Width = 100
+      BorderSpacing.CellAlignVertical = ccaCenter
+      ItemHeight = 15
+      Items.Strings = (
+        'None'
+        'Fastest'
+        'Default'
+        'Maximum'
+      )
+      Style = csDropDownList
+      TabOrder = 0
+    end
+    object JPEGQualityLabel: TLabel
+      Left = 373
+      Height = 15
+      Top = 4
+      Width = 79
+      BorderSpacing.Left = 30
+      BorderSpacing.CellAlignVertical = ccaCenter
+      Caption = 'Compression:'
+      ParentColor = False
+    end
+    object JPEGQualitySpinEdit: TSpinEdit
+      Left = 458
+      Height = 23
+      Top = 0
+      Width = 50
+      BorderSpacing.CellAlignVertical = ccaCenter
+      OnChange = JPEGQualitySpinEditChange
+      TabOrder = 2
+    end
+    object JPEGQualityPercentLabel: TLabel
+      Left = 514
+      Height = 15
+      Top = 4
+      Width = 11
+      BorderSpacing.CellAlignVertical = ccaCenter
+      Caption = '%'
+      ParentColor = False
+    end
+    object ColorDepthLabel: TLabel
+      Left = 555
+      Height = 15
+      Top = 4
+      Width = 67
+      BorderSpacing.Left = 30
+      BorderSpacing.CellAlignVertical = ccaCenter
+      Caption = 'Color depth:'
+      ParentColor = False
+    end
+    object ColorDepthComboBox: TComboBox
+      Left = 628
+      Height = 23
+      Top = 0
+      Width = 100
+      BorderSpacing.CellAlignVertical = ccaCenter
+      DropDownCount = 10
+      ItemHeight = 15
+      OnChange = ColorDepthComboBoxChange
+      Style = csDropDownList
+      TabOrder = 3
+    end
+    object GrayscaleCheckBox: TCheckBox
+      Left = 758
+      Height = 19
+      Top = 2
+      Width = 75
+      BorderSpacing.Left = 30
+      BorderSpacing.CellAlignVertical = ccaCenter
+      Caption = 'Grayscale'
+      OnClick = GrayscaleCheckBoxClick
+      TabOrder = 4
+    end
   end
   object Timer: TTimer
     Enabled = False

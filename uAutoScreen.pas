@@ -33,6 +33,7 @@ type
     CompressionLevelComboBox: TComboBox;
     HotKetsSettingsMenuItem: TMenuItem;
     CompressionLevelLabel: TLabel;
+    ImageFormatOptionsPanel: TPanel;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
