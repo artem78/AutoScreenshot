@@ -812,23 +812,29 @@ var
   Format: TImageFormat;
   IsQualityVisible, IsGrayscaleVisible, IsCompressionLevelVisible: Boolean;
 begin
-  Format := ImageFormat;
-  IsQualityVisible := ImageFormatInfoArray[Format].HasQuality;
+  DisableAutoSizing;
 
-  JPEGQualitySpinEdit.Visible := IsQualityVisible;
-  JPEGQualityLabel.Visible    := IsQualityVisible;
-  JPEGQualityPercentLabel.Visible := IsQualityVisible;
+  try
+    Format := ImageFormat;
+    IsQualityVisible := ImageFormatInfoArray[Format].HasQuality;
 
-  IsGrayscaleVisible := ImageFormatInfoArray[Format].HasGrayscale;
-  GrayscaleCheckBox.Visible := IsGrayscaleVisible;
+    JPEGQualitySpinEdit.Visible := IsQualityVisible;
+    JPEGQualityLabel.Visible    := IsQualityVisible;
+    JPEGQualityPercentLabel.Visible := IsQualityVisible;
 
-  IsCompressionLevelVisible := ImageFormatInfoArray[Format].HasCompressionLevel;
-  CompressionLevelLabel.Visible := IsCompressionLevelVisible;
-  CompressionLevelComboBox.Visible := IsCompressionLevelVisible;
+    IsGrayscaleVisible := ImageFormatInfoArray[Format].HasGrayscale;
+    GrayscaleCheckBox.Visible := IsGrayscaleVisible;
 
-  UpdateColorDepthValues;
-  
-  Ini.WriteString(DefaultConfigIniSection, 'ImageFormat', ImageFormatInfoArray[Format].Name);
+    IsCompressionLevelVisible := ImageFormatInfoArray[Format].HasCompressionLevel;
+    CompressionLevelLabel.Visible := IsCompressionLevelVisible;
+    CompressionLevelComboBox.Visible := IsCompressionLevelVisible;
+
+    UpdateColorDepthValues;
+
+    Ini.WriteString(DefaultConfigIniSection, 'ImageFormat', ImageFormatInfoArray[Format].Name);
+  finally
+    EnableAutoSizing;
+  end;
 end;
 
 procedure TMainForm.ToggleAutoCaptureTrayMenuItemClick(Sender: TObject);
