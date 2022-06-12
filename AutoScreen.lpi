@@ -43,8 +43,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="9"/>
-      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.9"/>
+      <MinorVersionNr Value="10"/>
+      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.10"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default (32bit)" Default="True"/>
@@ -146,18 +146,21 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="4">
       <Item1>
-        <PackageName Value="uniqueinstance_package"/>
+        <PackageName Value="BGRABitmapPack"/>
       </Item1>
       <Item2>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="uniqueinstance_package"/>
       </Item2>
       <Item3>
-        <PackageName Value="LCL"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item3>
+      <Item4>
+        <PackageName Value="LCL"/>
+      </Item4>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="13">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -210,6 +213,24 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="uUtilsMore"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="uhotkeysform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="HotKeysForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uHotKeysForm"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="uinihelper.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uIniHelper"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="globalkeyhook.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GlobalKeyHook"/>
+      </Unit12>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

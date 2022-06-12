@@ -5,10 +5,10 @@ unit ScreenGrabber;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, ZStream { for Tcompressionlevel };
 
 type
-  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF});
+  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF}, fmtTIFF);
 
   TColorDepth = (cd8Bit=8, cd16Bit=16, cd24Bit=24, cd32Bit=32);
 
@@ -18,6 +18,7 @@ type
     HasQuality: Boolean;
     HasGrayscale: Boolean;
     ColorDepth: Set of TColorDepth;
+    HasCompressionLevel: Boolean;
   end;
 
   TImageFormatInfoArray = array [TImageFormat] of TImageFormatInfo;
@@ -33,9 +34,10 @@ type
     ColorDepth: TColorDepth;
     Quality: Integer;
     IsGrayscale: Boolean;
+    CompressionLevel: Tcompressionlevel;
 
     constructor Create(AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
-      AnQuality: Integer; AnIsGrayscale: Boolean);
+      AnQuality: Integer; AnIsGrayscale: Boolean; ACompressionLevel: Tcompressionlevel);
 
     procedure CaptureMonitor(AFileName: String; AMonitorId: Integer);
     procedure CaptureAllMonitors(AFileName: String);
@@ -43,44 +45,54 @@ type
 
 const
   ImageFormatInfoArray: TImageFormatInfoArray = (
-    { FixMe: Unsupported modes by Free Pascal Graphics unit are commented.
-      Think about use any third party graphics library instead
-      (https://wiki.freepascal.org/Graphics_libraries). }
     (
       Name:         'PNG';
       Extension:    'png';
       HasQuality:   False;
-      HasGrayscale: False;
-      ColorDepth:   [{cd8Bit, cd16Bit, cd24Bit, cd32Bit}] // Only 24bit
+      HasGrayscale: True;
+      ColorDepth:   [{cd8Bit, cd16Bit, cd24Bit, cd32Bit}];
+      HasCompressionLevel: True
     ),
     (
       Name:         'JPG';
       Extension:    'jpg';
       HasQuality:   True;
-      HasGrayscale: {True} False;
-      ColorDepth:   []
+      HasGrayscale: True;
+      ColorDepth:   [];
+      HasCompressionLevel: False
     ),
     (
       Name:         'BMP';
       Extension:    'bmp';
       HasQuality:   False;
       HasGrayscale: False;
-      ColorDepth:   [{cd8Bit, cd16Bit,} cd24Bit, cd32Bit]
+      ColorDepth:   [{cd8Bit,} cd16Bit, cd24Bit, cd32Bit];
+      HasCompressionLevel: False
     ){,
     (
       Name:         'GIF';
       Extension:    'gif';
       HasQuality:   False;
       HasGrayscale: False;
-      ColorDepth:   []
-    )}
+      ColorDepth:   [];
+      HasCompressionLevel: False
+    )},
+    (
+      Name:         'TIFF';
+      Extension:    'tif';
+      HasQuality:   False;
+      HasGrayscale: False;
+      ColorDepth:   [];
+      HasCompressionLevel: False
+    )
   );
 
 
 implementation
 
 uses
-  Windows, Forms {for TMonitor}, Graphics;
+  Windows, Forms {for TMonitor}, {Graphics,} BGRABitmap, BGRABitmapTypes,
+  FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, FPWriteTiff;
 
 { TScreenGrabber }
 
@@ -110,89 +122,84 @@ end;
 
 procedure TScreenGrabber.CaptureRegion(AFileName: String; ARect: TRect);
 var
-  Bitmap: TBitmap;
-  PNG: TPortableNetworkGraphic;
-  JPG: TJPEGImage;
+  Bitmap: TBGRABitmap;
+  Writer: TFPCustomImageWriter;
   //GIF: TGIFImage;
   ScreenDC: HDC;
 begin
-  Bitmap := TBitmap.Create;
+  Bitmap := TBGRABitmap.Create(ARect.Width, ARect.Height, BGRABlack);
 
-  // Set color depth for bitmap
-  try
-    case Integer(ColorDepth) of
-      1:  Bitmap.PixelFormat := pf1bit;
-      4:  Bitmap.PixelFormat := pf4bit;
-      8:  Bitmap.PixelFormat := pf8bit;
-      16: Bitmap.PixelFormat := pf16bit;
-      24: Bitmap.PixelFormat := pf24bit;
-      32: Bitmap.PixelFormat := pf32bit;
-      //else raise Exception.CreateFmt('Color depth %d bit not supported in TBitmap', [Integer(ColorDepth)]);
-    end;
-  except
-    // Leave bitmap pixel format as default
-  end;
-
-  Bitmap.Width := ARect.Width;
-  Bitmap.Height := ARect.Height;
-  Bitmap.Canvas.Brush.Color := clBlack;
-  Bitmap.Canvas.FillRect(Classes.Rect(0, 0, ARect.Width, ARect.Height));
+  //Bitmap.TakeScreenshot(Rect); // Not supports multiply monitors
   ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
   BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
            ScreenDC, ARect.Left, ARect.Top, SRCCOPY);
   ReleaseDC(0, ScreenDC);
 
+  case ImageFormat of
+    fmtPNG:      // PNG
+      begin
+        Writer := TFPWriterPNG.create;
+
+        with Writer as TFPWriterPNG do
+        begin
+          GrayScale := IsGrayscale;
+          CompressionLevel := Self.CompressionLevel;
+          //Indexed := ...;
+          //UseAlpha := ...;
+        end;
+      end;
+
+    fmtJPG:     // JPEG
+      begin
+        Writer := TFPWriterJPEG.Create;
+
+        with Writer as TFPWriterJPEG do
+        begin
+          CompressionQuality := Quality;
+          GrayScale := IsGrayscale;
+        end;
+      end;
+
+    fmtBMP:    // Bitmap (BMP)
+      begin
+        Writer := TFPWriterBMP.Create;
+
+        with Writer as TFPWriterBMP do
+        begin
+          BitsPerPixel := Integer(ColorDepth);
+          //RLECompress := ...;
+        end;
+      end;
+
+    {fmtGIF:    // GIF
+      begin
+        GIF := TGIFImage.Create;
+        try
+          GIF.Assign(Bitmap);
+          //GIF.OptimizeColorMap;
+          GIF.SaveToFile(AFileName);
+        finally
+          GIF.Free;
+        end;
+      end;}
+
+      fmtTIFF:
+        begin
+          Writer := TFPWriterTiff.Create;
+        end;
+  end;
+
   try
-    case ImageFormat of
-      fmtPNG:      // PNG
-        begin
-          PNG := TPortableNetworkGraphic.Create;
-          try
-            PNG.Assign(Bitmap);
-            PNG.SaveToFile(AFileName);
-          finally
-            PNG.Free;
-          end;
-        end;
-
-      fmtJPG:     // JPEG
-        begin
-          JPG := TJPEGImage.Create;
-          try
-            JPG.CompressionQuality := Quality;
-            //JPG.GrayScale := AnIsGrayscale; FixMe: Can not set grayscale
-            JPG.Assign(Bitmap);
-            //JPG.Compress;
-            JPG.SaveToFile(AFileName);
-          finally
-            JPG.Free;
-          end;
-        end;
-
-      fmtBMP:    // Bitmap (BMP)
-        begin
-          Bitmap.SaveToFile(AFileName);
-        end;
-
-      {fmtGIF:    // GIF
-        begin
-          GIF := TGIFImage.Create;
-          try
-            GIF.Assign(Bitmap);
-            //GIF.OptimizeColorMap;
-            GIF.SaveToFile(FileName);
-          finally
-            GIF.Free;
-          end;
-        end;}
-    end;
+    Bitmap.SaveToFile(AFileName, Writer);
   finally
+    Writer.Free;
     Bitmap.Free;
   end;
 end;
 
 constructor TScreenGrabber.Create(AnImageFormat: TImageFormat;
-  AColorDepth: TColorDepth; AnQuality: Integer; AnIsGrayscale: Boolean);
+  AColorDepth: TColorDepth; AnQuality: Integer; AnIsGrayscale: Boolean;
+  ACompressionLevel: Tcompressionlevel);
 begin
   inherited Create();
 
@@ -200,6 +207,7 @@ begin
   ColorDepth := AColorDepth;
   Quality := AnQuality;
   IsGrayscale := AnIsGrayscale;
+  CompressionLevel := ACompressionLevel;
 end;
 
 end.

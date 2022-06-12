@@ -1,0 +1,47 @@
+object HotKeysForm: THotKeysForm
+  Left = 315
+  Height = 130
+  Top = 250
+  Width = 491
+  AutoSize = True
+  BorderStyle = bsDialog
+  Caption = 'HotKeysForm'
+  ChildSizing.LeftRightSpacing = 15
+  ChildSizing.TopBottomSpacing = 15
+  ChildSizing.VerticalSpacing = 15
+  ClientHeight = 130
+  ClientWidth = 491
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '2.0.12.0'
+  object ButtonPanel: TButtonPanel
+    Left = 15
+    Height = 34
+    Top = 81
+    Width = 461
+    OKButton.Name = 'OKButton'
+    OKButton.DefaultCaption = True
+    HelpButton.Name = 'HelpButton'
+    HelpButton.DefaultCaption = True
+    CloseButton.Name = 'CloseButton'
+    CloseButton.DefaultCaption = True
+    CancelButton.Name = 'CancelButton'
+    CancelButton.DefaultCaption = True
+    TabOrder = 0
+    ShowButtons = [pbOK, pbCancel]
+  end
+  object Panel: TPanel
+    Left = 15
+    Height = 51
+    Top = 15
+    Width = 461
+    Align = alClient
+    BevelOuter = bvNone
+    ChildSizing.HorizontalSpacing = 15
+    ChildSizing.VerticalSpacing = 6
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 2
+    TabOrder = 1
+  end
+end
