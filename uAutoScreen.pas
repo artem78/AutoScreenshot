@@ -203,6 +203,9 @@ type
     property PostCommand: String read GetPostCommand write SetPostCommand;
     property AutoCheckForUpdates: Boolean read GetAutoCheckForUpdates write SetAutoCheckForUpdates;
     property CompressionLevel: Tcompressionlevel read GetCompressionLevel write SetCompressionLevel;
+
+    // Messages
+    procedure WMHotKey(var AMsg: TMessage); message WM_HOTKEY;
   public
     { Public declarations }
   end;
@@ -240,22 +243,6 @@ begin
     WM_DEVICECHANGE:  // Any hardware configuration changed (including monitors)
       begin
         MainForm.UpdateMonitorList;
-      end;
-    WM_HOTKEY:
-      begin
-        //ShowMessage(IntToStr(lParam));
-        if wParam = MainForm.KeyHook.HotKeyId('StartAutoCapture') then
-          MainForm.IsTimerEnabled := True
-        else if wParam = MainForm.KeyHook.HotKeyId('StopAutoCapture') then
-          MainForm.IsTimerEnabled := False
-        else if wParam = MainForm.KeyHook.HotKeyId('SingleCapture') then
-          MainForm.MakeScreenshot
-        else
-        begin
-          {$IFOPT D+}
-          ShowMessage(Format('Unknown hotkey event! (wparam=%d, lparam=%d)', [wParam, lParam]));
-          {$ENDIF}
-        end;
       end;
   end;
 
@@ -1571,6 +1558,27 @@ end;
 function TMainForm.GetCompressionLevel: Tcompressionlevel;
 begin
   Result := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
+end;
+
+procedure TMainForm.WMHotKey(var AMsg: TMessage);
+var
+  StrId: String = '';
+begin
+  //ShowMessage(IntToStr(lParam));
+
+  try
+    StrId := KeyHook.IdToStrId(AMsg.wParam);
+  except
+  end;
+
+  case StrId of
+    'StartAutoCapture': IsTimerEnabled := True;
+    'StopAutoCapture':  IsTimerEnabled := False;
+    'SingleCapture':    MakeScreenshot;
+    {$IFOPT D+}
+    else ShowMessage(Format('Unknown hotkey event! (wparam=%d, lparam=%d)', [AMsg.wParam, AMsg.lParam]));
+    {$ENDIF}
+  end;
 end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
