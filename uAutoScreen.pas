@@ -1,5 +1,7 @@
 unit uAutoScreen;
 
+{$mode objfpc}{$H+}
+
 interface
 
 uses
@@ -131,7 +133,7 @@ type
     KeyHook: TGlobalKeyHook;
     
     { Methods }
-    procedure SetTimerEnabled(IsEnabled: Boolean);
+    procedure SetTimerEnabled(AEnabled: Boolean);
     function GetTimerEnabled: Boolean;
     function GetFinalOutputDir: String;
     function GetImagePath: String;
@@ -437,7 +439,7 @@ begin
   PrevWndProc := Windows.WNDPROC
     (SetWindowLongPtr(Self.Handle, GWL_WNDPROC {GWLP_WNDPROC}, PtrUInt(@WndCallback)));
 
-  Application.OnMinimize := ApplicationMinimize;
+  Application.OnMinimize := @ApplicationMinimize;
 
   InitUI;
 
@@ -568,15 +570,15 @@ begin
   Result := Timer.Enabled;
 end;
 
-procedure TMainForm.SetTimerEnabled(IsEnabled: Boolean);
+procedure TMainForm.SetTimerEnabled(AEnabled: Boolean);
 begin
-  Timer.Enabled := IsEnabled;
-  StartAutoCaptureButton.Enabled := not IsEnabled;
-  StopAutoCaptureButton.Enabled := IsEnabled;
+  Timer.Enabled := AEnabled;
+  StartAutoCaptureButton.Enabled := not AEnabled;
+  StopAutoCaptureButton.Enabled := AEnabled;
   // Tray menu
-  ToggleAutoCaptureTrayMenuItem.Checked := IsEnabled;
+  ToggleAutoCaptureTrayMenuItem.Checked := AEnabled;
   // Tray icon
-  if IsEnabled then
+  if AEnabled then
     TrayIconState := tisDefault
   else
     TrayIconState := tisBlackWhite;
@@ -1243,7 +1245,7 @@ begin
       MenuItem.Caption := Lang.Name;
       if (Lang.NativeName <> '') and (Lang.NativeName <> Lang.Name) then
         MenuItem.Caption := MenuItem.Caption + ' (' + Lang.NativeName + ')';
-      MenuItem.OnClick := LanguageClick;
+      MenuItem.OnClick := @LanguageClick;
       MenuItem.RadioItem := True;
       //MenuItem.GroupIndex := GroupIdx;
       MenuItem.Name := LanguageSubMenuItemNamePrefix + Lang.Code;
@@ -1438,12 +1440,10 @@ end;
 
 function TMainForm.GetMonitorWithCursor: Integer;
 var
-  MonitorId: Integer;
   MonitorRect: TRect;
 begin
-  Result := NoMonitorId;
   Screen.UpdateMonitors;
-  for MonitorId := 0 to Screen.MonitorCount - 1 do
+  for Result := 0 to Screen.MonitorCount - 1 do
   begin
     with Screen.Monitors[MonitorId] do
     begin
@@ -1453,11 +1453,10 @@ begin
     end;
 
     if MonitorRect.Contains(Mouse.CursorPos) then
-    begin
-      Result := MonitorId;
-      Break;
-    end;
+      Exit;
   end;
+
+  Exit(NoMonitorId);
 end;
 
 procedure TMainForm.CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
