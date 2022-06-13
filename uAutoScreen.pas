@@ -264,7 +264,7 @@ begin
   TrayIconState := tisDefault;
 
   // Fill combobox with image formats
-  for Fmt := Low(TImageFormat) to High(TImageFormat) do
+  for Fmt in TImageFormat do
     ImageFormatComboBox.Items.Append(ImageFormatInfoArray[Fmt].Name);
 
   // Set min/max values for JPEG quality
@@ -915,7 +915,7 @@ procedure TMainForm.SetImageFormatByStr(FmtStr: String);
 var
   Fmt: TImageFormat;
 begin
-  for Fmt := Low(TImageFormat) to High(TImageFormat) do
+  for Fmt in TImageFormat do
   begin
     if ImageFormatInfoArray[Fmt].Name = FmtStr then
     begin
@@ -964,6 +964,7 @@ begin
   if not IsEmpty then
   begin
     Idx := 0;
+    //for ColorDepthTmp in TColorDepth do
     for ColorDepthTmp := Low(TColorDepth) to High(TColorDepth) do
     begin
       if ColorDepthTmp in ImageFormatInfoArray[ImageFormat].ColorDepth then

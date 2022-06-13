@@ -30,15 +30,12 @@ type
 
 function FindByLcid(ALcid: TLcid): TLangCodesRecord;
 var
-  I: integer;
+  LangInfo: TLangCodesRecord;
 begin
-  for I := Low(CodesArr) to High(CodesArr) do
+  for LangInfo in CodesArr do
   begin
-    if CodesArr[I].Lcid = ALcid then
-    begin
-      Result := CodesArr[I];
-      Exit;
-    end;
+    if LangInfo.Lcid = ALcid then
+      Exit(LangInfo);
   end;
 
   raise Exception.Create('LCID not found');
