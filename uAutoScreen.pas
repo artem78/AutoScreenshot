@@ -228,7 +228,7 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uUtils, Math, uFileNameTemplateHelpForm,
+uses uAbout, DateUtils, StrUtils, uUtils, Math, uFileNameTemplateHelpForm,
 fphttpclient, opensslsockets, fpjson, jsonparser, uIniHelper, FileUtil;
 
 {$R *.lfm}
@@ -1321,7 +1321,7 @@ var
 begin
   Result := Str;
 
-  CounterStr := Format('%.' + IntToStr(CounterDigits) + 'd', [Counter]); // Add leading zeros to Counter value
+  CounterStr := Dec2Numb(Counter, CounterDigits, 10); // Add leading zeros to Counter value
 
   Result := StringReplace(Result, TmplVarsChar + 'COMP', GetLocalComputerName, [rfReplaceAll]);
   Result := StringReplace(Result, TmplVarsChar + 'USER', GetCurrentUserName,   [rfReplaceAll]);
