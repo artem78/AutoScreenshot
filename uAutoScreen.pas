@@ -1433,7 +1433,7 @@ begin
   Screen.UpdateMonitors;
   for Result := 0 to Screen.MonitorCount - 1 do
   begin
-    with Screen.Monitors[MonitorId] do
+    with Screen.Monitors[Result] do
     begin
       MonitorRect.SetLocation(Left, Top);
       MonitorRect.Width:=Width;
