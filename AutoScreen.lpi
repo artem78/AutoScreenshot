@@ -63,7 +63,6 @@
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
-              <SyntaxMode Value="Delphi"/>
               <IncludeAssertionCode Value="True"/>
             </SyntaxOptions>
           </Parsing>
@@ -107,11 +106,6 @@
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
-          <Parsing>
-            <SyntaxOptions>
-              <SyntaxMode Value="Delphi"/>
-            </SyntaxOptions>
-          </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
             <TargetCPU Value="i386"/>
@@ -245,11 +239,6 @@
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       <ObjectPath Value="libs\PNGImage"/>
     </SearchPaths>
-    <Parsing>
-      <SyntaxOptions>
-        <SyntaxMode Value="Delphi"/>
-      </SyntaxOptions>
-    </Parsing>
     <CodeGeneration>
       <TargetCPU Value="i386"/>
       <TargetOS Value="win32"/>
