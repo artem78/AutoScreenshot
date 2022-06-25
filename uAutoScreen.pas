@@ -261,7 +261,7 @@ implementation
 uses uAbout, DateUtils, StrUtils, uUtils, Math, BGRABitmap, BGRABitmapTypes,
   uFileNameTemplateHelpForm, fphttpclient, opensslsockets,
   fpjson, jsonparser, FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, FPWriteTiff,
-  uIniHelper;
+  uIniHelper, Idle;
 
 {$R *.lfm}
 
@@ -576,8 +576,7 @@ begin
     // ToDo: May add comparision of current screenshot with the last one,
     // and if they equal, do not save current
 
-    // ToDo: Use TIdleTimer instead (https://forum.lazarus.freepascal.org/index.php/topic,15811.msg126545.html#msg126545)
-    if Timer.Interval > LastInput then
+    if Timer.Interval > UserIdleTime then
       MakeScreenshot;
   end
   else

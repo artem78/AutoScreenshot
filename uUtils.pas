@@ -10,9 +10,6 @@ interface
 uses
   Windows, uLocalization;
 
-// Retrieves the time (in ms) of the last input event (mouse moved or key pressed).
-// Also works if current application window has no focus (hidden or minimized).
-function LastInput: DWord;
 
 { Formats given string Str. If DateTime not provided, use result of Now().
 
@@ -90,24 +87,6 @@ implementation
 uses
   SysUtils, DateUtils, Registry, uLanguages, FileInfo, process;
 
-type
-  tagLASTINPUTINFO = record
-    cbSize: UINT;
-    dwTime: DWORD;
-  end;
-  LASTINPUTINFO = tagLASTINPUTINFO;
-  TLastInputInfo = LASTINPUTINFO;
-
-function GetLastInputInfo(var plii: TLastInputInfo): BOOL;stdcall; external 'user32' name 'GetLastInputInfo';
-
-function LastInput: DWord;
-var
-  LInput: TLastInputInfo;
-begin
-  LInput.cbSize := SizeOf(TLastInputInfo);
-  GetLastInputInfo(LInput);
-  Result := GetTickCount - LInput.dwTime;
-end;
 
 function FormatDateTime2(const Str: String; const DateTime: TDateTime): String;
 const

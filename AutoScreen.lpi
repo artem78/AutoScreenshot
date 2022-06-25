@@ -160,7 +160,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="12">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -222,6 +222,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="GlobalKeyHook"/>
       </Unit10>
+      <Unit11>
+        <Filename Value="idle.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Idle"/>
+      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
