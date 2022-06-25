@@ -258,7 +258,7 @@ var
 
 implementation
 
-uses uAbout, DateUtils, uUtils, Math, BGRABitmap, BGRABitmapTypes,
+uses uAbout, DateUtils, StrUtils, uUtils, Math, BGRABitmap, BGRABitmapTypes,
   uFileNameTemplateHelpForm, fphttpclient, opensslsockets,
   fpjson, jsonparser, FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, FPWriteTiff,
   uIniHelper;
@@ -1329,32 +1329,46 @@ procedure TMainForm.UpdateLanguages;
   GroupIdx = 1;}
 var
   Lang: TLanguageInfo;
-  I: integer;
   MenuItem: TMenuItem;
+  LangsList: TStringList;
+  Line: String;
 begin
   while LanguageSubMenu.Count > 0 do
     LanguageSubMenu.Items[0].Free;
   LanguageSubMenu.Clear;
 
-  Localizer.GetLanguages(AvailableLanguages);
-  for I := 0 to Length(AvailableLanguages) - 1 do
-  begin
-    Lang := AvailableLanguages[I];
+  LangsList := TStringList.Create;
 
+  Localizer.GetLanguages(AvailableLanguages);
+  for Lang in AvailableLanguages do
+  begin
     if (Lang.Name <> '') and (Lang.Code <> '') then
     begin
-      MenuItem := TMenuItem.Create(LanguageSubMenu);
-      MenuItem.Caption := Lang.Name;
       if (Lang.NativeName <> '') and (Lang.NativeName <> Lang.Name) then
-        MenuItem.Caption := MenuItem.Caption + ' (' + Lang.NativeName + ')';
-      MenuItem.OnClick := LanguageClick;
-      MenuItem.RadioItem := True;
-      //MenuItem.GroupIndex := GroupIdx;
-      MenuItem.Name := LanguageSubMenuItemNamePrefix + Lang.Code;
+        Line := Format('%s (%s)', [Lang.Name, Lang.NativeName])
+      else
+        Line := Lang.Name;
 
-      LanguageSubMenu.Add(MenuItem);
-    end
+      Line := Line + #9 + Lang.Code;
+
+      LangsList.Append(Line);
+    end;
   end;
+  LangsList.Sort;
+
+  for Line in LangsList do
+  begin
+    MenuItem := TMenuItem.Create(LanguageSubMenu);
+    MenuItem.Caption := ExtractDelimited(1, Line, [#9]);
+    MenuItem.OnClick := LanguageClick;
+    MenuItem.RadioItem := True;
+    //MenuItem.GroupIndex := GroupIdx;
+    MenuItem.Name := LanguageSubMenuItemNamePrefix + ExtractDelimited(2, Line, [#9]);
+
+    LanguageSubMenu.Add(MenuItem);
+  end;
+
+  LangsList.Free;
 end;
 
 
