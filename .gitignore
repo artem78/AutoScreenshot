@@ -55,3 +55,4 @@ dunit.ini
 *.log
 /screenshots/
 /ConverterBackup/
+AutoScreenshot

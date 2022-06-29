@@ -22,7 +22,7 @@
         <TextDesc Value="Automatic screenshot maker"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="12">
+      <Resources Count="13">
         <Resource_0 FileName="res\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
         <Resource_1 FileName="res\camera_flash1.ico" Type="ICON" ResourceName="_CAMERA_FLASH_1"/>
         <Resource_2 FileName="res\camera_flash2.ico" Type="ICON" ResourceName="_CAMERA_FLASH_2"/>
@@ -35,6 +35,7 @@
         <Resource_9 FileName="res\stop.bmp" Type="BITMAP" ResourceName="_STOP_ICON"/>
         <Resource_10 FileName="res\logo.png" Type="RCDATA" ResourceName="_LOGO"/>
         <Resource_11 FileName="res\logo_high_dpi.png" Type="RCDATA" ResourceName="_LOGO_HIGH_DPI"/>
+        <Resource_12 FileName="res\camera.ico" Type="ICON" ResourceName="_CAMERA"/>
       </Resources>
     </General>
     <i18n>
@@ -74,8 +75,6 @@
               <OverflowChecks Value="True"/>
               <StackChecks Value="True"/>
             </Checks>
-            <TargetCPU Value="i386"/>
-            <TargetOS Value="win32"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -114,8 +113,6 @@
           </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
-            <TargetCPU Value="i386"/>
-            <TargetOS Value="win32"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -123,6 +120,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
@@ -330,10 +328,6 @@
         <SyntaxMode Value="Delphi"/>
       </SyntaxOptions>
     </Parsing>
-    <CodeGeneration>
-      <TargetCPU Value="i386"/>
-      <TargetOS Value="win32"/>
-    </CodeGeneration>
     <Linking>
       <Options>
         <Win32>

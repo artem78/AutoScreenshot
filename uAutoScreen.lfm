@@ -11,7 +11,7 @@ object MainForm: TMainForm
   ChildSizing.TopBottomSpacing = 15
   ChildSizing.HorizontalSpacing = 6
   ChildSizing.VerticalSpacing = 6
-  ClientHeight = 504
+  ClientHeight = 502
   ClientWidth = 656
   Color = clBtnFace
   Font.Color = clWindowText
@@ -27,10 +27,10 @@ object MainForm: TMainForm
     AnchorSideTop.Control = OutputDirEdit
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = OutputDirEdit
-    Left = 96
-    Height = 15
-    Top = 19
-    Width = 89
+    Left = 95
+    Height = 12
+    Top = 20
+    Width = 91
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = 'Saving directory:'
@@ -40,9 +40,9 @@ object MainForm: TMainForm
     AnchorSideTop.Control = CaptureInterval
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = CaptureInterval
-    Left = 61
-    Height = 15
-    Top = 167
+    Left = 62
+    Height = 12
+    Top = 166
     Width = 124
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
@@ -53,10 +53,10 @@ object MainForm: TMainForm
     AnchorSideTop.Control = ImageFormatOptionsPanel
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = ImageFormatOptionsPanel
-    Left = 143
-    Height = 15
+    Left = 145
+    Height = 12
     Top = 196
-    Width = 42
+    Width = 41
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = 'Format:'
@@ -66,10 +66,10 @@ object MainForm: TMainForm
     AnchorSideTop.Control = FileNameTemplateComboBox
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = FileNameTemplateComboBox
-    Left = 79
-    Height = 15
-    Top = 48
-    Width = 106
+    Left = 82
+    Height = 12
+    Top = 51
+    Width = 104
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = 'Filename template:'
@@ -79,10 +79,10 @@ object MainForm: TMainForm
     AnchorSideTop.Control = MonitorComboBox
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = MonitorComboBox
-    Left = 107
-    Height = 15
-    Top = 325
-    Width = 78
+    Left = 110
+    Height = 12
+    Top = 340
+    Width = 76
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
     Caption = 'Used monitor:'
@@ -90,7 +90,7 @@ object MainForm: TMainForm
   end
   object OutputDirEdit: TDirectoryEdit
     AnchorSideTop.Control = Owner
-    Left = 191
+    Left = 192
     Height = 23
     Top = 15
     Width = 265
@@ -107,9 +107,9 @@ object MainForm: TMainForm
     AnchorSideBottom.Control = AutoCaptureControlGroup
     AnchorSideBottom.Side = asrBottom
     Left = 40
-    Height = 25
-    Top = 421
-    Width = 118
+    Height = 26
+    Top = 431
+    Width = 100
     Anchors = [akLeft, akBottom]
     AutoSize = True
     BorderSpacing.Bottom = 8
@@ -123,10 +123,10 @@ object MainForm: TMainForm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = OutputDirEdit
     AnchorSideTop.Side = asrCenter
-    Left = 462
-    Height = 25
-    Top = 14
-    Width = 105
+    Left = 463
+    Height = 26
+    Top = 13
+    Width = 100
     AutoSize = True
     Caption = 'Open directory'
     Constraints.MinWidth = 100
@@ -139,9 +139,9 @@ object MainForm: TMainForm
     AnchorSideLeft.Control = OutputDirEdit
     AnchorSideTop.Control = ImageFormatOptionsPanel
     AnchorSideTop.Side = asrBottom
-    Left = 191
-    Height = 19
-    Top = 221
+    Left = 192
+    Height = 22
+    Top = 222
     Width = 219
     Caption = 'Pause taking screenshots while idle'
     OnClick = StopWhenInactiveCheckBoxClick
@@ -154,10 +154,10 @@ object MainForm: TMainForm
     AnchorSideLeft.Side = asrCenter
     AnchorSideTop.Control = PostCmdEdit
     AnchorSideTop.Side = asrBottom
-    Left = 217
-    Height = 57
-    Top = 397
-    Width = 222
+    Left = 218
+    Height = 53
+    Top = 412
+    Width = 220
     AutoSize = True
     BorderSpacing.Top = 24
     Caption = 'Automatic capture'
@@ -167,12 +167,12 @@ object MainForm: TMainForm
     ChildSizing.VerticalSpacing = 6
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 2
-    ClientHeight = 37
+    ClientHeight = 38
     ClientWidth = 218
     TabOrder = 13
     object StartAutoCaptureButton: TBitBtn
       Left = 6
-      Height = 25
+      Height = 26
       Top = 6
       Width = 100
       AutoSize = True
@@ -185,7 +185,7 @@ object MainForm: TMainForm
     end
     object StopAutoCaptureButton: TBitBtn
       Left = 112
-      Height = 25
+      Height = 26
       Top = 6
       Width = 100
       AutoSize = True
@@ -201,10 +201,10 @@ object MainForm: TMainForm
     AnchorSideLeft.Control = OutputDirEdit
     AnchorSideTop.Control = StopWhenInactiveCheckBox
     AnchorSideTop.Side = asrBottom
-    Left = 191
-    Height = 19
-    Top = 246
-    Width = 233
+    Left = 192
+    Height = 22
+    Top = 250
+    Width = 234
     Caption = 'Start auto capture when program starts'
     OnClick = StartCaptureOnStartUpCheckBoxClick
     TabOrder = 7
@@ -213,10 +213,10 @@ object MainForm: TMainForm
     AnchorSideLeft.Control = OutputDirEdit
     AnchorSideTop.Control = StartCaptureOnStartUpCheckBox
     AnchorSideTop.Side = asrBottom
-    Left = 191
-    Height = 19
-    Top = 271
-    Width = 140
+    Left = 192
+    Height = 22
+    Top = 278
+    Width = 144
     Caption = 'Start minimized to tray'
     OnClick = StartMinimizedCheckBoxClick
     TabOrder = 8
@@ -227,19 +227,12 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = OutputDirEdit
     AnchorSideRight.Side = asrBottom
-    Left = 191
-    Height = 23
+    Left = 192
+    Height = 27
     Top = 44
     Width = 265
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
-    Items.Strings = (
-      'screenshot %Y-%M-%D %H-%N-%S'
-      '%Y\%M\%D\screenshot %H-%N-%S'
-      '%Y-%M\%D\screenshot %H-%N-%S'
-      '%COMP\%USER\screenshot %Y-%M-%D %H-%N-%S'
-      'screenshot %NUM'
-    )
+    ItemHeight = 0
     OnChange = FileNameTemplateComboBoxChange
     TabOrder = 2
   end
@@ -249,10 +242,10 @@ object MainForm: TMainForm
     AnchorSideTop.Control = FileNameTemplateComboBox
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Side = asrBottom
-    Left = 462
-    Height = 25
-    Top = 43
-    Width = 33
+    Left = 463
+    Height = 26
+    Top = 44
+    Width = 17
     AutoSize = True
     Caption = '?'
     OnClick = FileNameTemplateHelpButtonClick
@@ -262,15 +255,16 @@ object MainForm: TMainForm
     AnchorSideLeft.Control = OutputDirEdit
     AnchorSideTop.Control = SeqNumberGroup
     AnchorSideTop.Side = asrBottom
-    Left = 191
-    Height = 23
-    Top = 163
-    Width = 71
+    Left = 192
+    Height = 20
+    Top = 162
+    Width = 69
     CenturyFrom = 1941
     MaxDate = 2958465
     MinDate = -53780
     TabOrder = 5
     TrailingSeparator = False
+    TextForNullDate = 'NULL'
     LeadingZeros = False
     Kind = dtkTime
     TimeFormat = tf24
@@ -287,10 +281,10 @@ object MainForm: TMainForm
     AnchorSideLeft.Control = OutputDirEdit
     AnchorSideTop.Control = StartMinimizedCheckBox
     AnchorSideTop.Side = asrBottom
-    Left = 191
-    Height = 19
-    Top = 296
-    Width = 203
+    Left = 192
+    Height = 22
+    Top = 306
+    Width = 204
     Caption = 'Run application at system startup'
     OnClick = AutoRunCheckBoxClick
     TabOrder = 9
@@ -301,12 +295,12 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = OutputDirEdit
     AnchorSideRight.Side = asrBottom
-    Left = 191
-    Height = 23
-    Top = 321
+    Left = 192
+    Height = 25
+    Top = 334
     Width = 265
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 0
     Items.Strings = (
       ''
       ''
@@ -319,10 +313,10 @@ object MainForm: TMainForm
     AnchorSideLeft.Control = OutputDirEdit
     AnchorSideTop.Control = FileNameTemplateComboBox
     AnchorSideTop.Side = asrBottom
-    Left = 191
-    Height = 84
-    Top = 73
-    Width = 124
+    Left = 192
+    Height = 79
+    Top = 77
+    Width = 112
     AutoSize = True
     Caption = 'Sequential number'
     ChildSizing.LeftRightSpacing = 6
@@ -330,16 +324,16 @@ object MainForm: TMainForm
     ChildSizing.HorizontalSpacing = 6
     ChildSizing.VerticalSpacing = 6
     ClientHeight = 64
-    ClientWidth = 120
+    ClientWidth = 110
     TabOrder = 4
     object SeqNumberValueLabel: TLabel
       AnchorSideTop.Control = SeqNumberValueSpinEdit
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = SeqNumberValueSpinEdit
-      Left = 35
-      Height = 15
-      Top = 10
-      Width = 59
+      Left = 22
+      Height = 12
+      Top = 11
+      Width = 61
       Alignment = taRightJustify
       Anchors = [akTop, akRight]
       Caption = 'Next value:'
@@ -349,10 +343,10 @@ object MainForm: TMainForm
       AnchorSideTop.Control = SeqNumberDigitsCountSpinEdit
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = SeqNumberDigitsCountSpinEdit
-      Left = 59
-      Height = 15
-      Top = 39
-      Width = 35
+      Left = 49
+      Height = 12
+      Top = 40
+      Width = 34
       Alignment = taRightJustify
       Anchors = [akTop, akRight]
       Caption = 'Digits:'
@@ -360,7 +354,7 @@ object MainForm: TMainForm
     end
     object SeqNumberValueSpinEdit: TSpinEdit
       AnchorSideTop.Control = SeqNumberGroup
-      Left = 100
+      Left = 89
       Height = 23
       Top = 6
       Width = 73
@@ -373,11 +367,10 @@ object MainForm: TMainForm
       AnchorSideLeft.Control = SeqNumberValueSpinEdit
       AnchorSideTop.Control = SeqNumberValueSpinEdit
       AnchorSideTop.Side = asrBottom
-      Left = 100
+      Left = 89
       Height = 23
       Top = 35
       Width = 49
-      MaxValue = 0
       OnChange = SeqNumberDigitsCountSpinEditChange
       TabOrder = 1
     end
@@ -388,9 +381,9 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = OutputDirEdit
     AnchorSideRight.Side = asrBottom
-    Left = 191
+    Left = 192
     Height = 23
-    Top = 350
+    Top = 365
     Width = 265
     Anchors = [akTop, akLeft, akRight]
     OnChange = PostCmdEditChange
@@ -402,10 +395,10 @@ object MainForm: TMainForm
     AnchorSideTop.Control = PostCmdEdit
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = PostCmdEdit
-    Left = 100
-    Height = 15
-    Top = 354
-    Width = 85
+    Left = 103
+    Height = 12
+    Top = 370
+    Width = 83
     Anchors = [akTop, akRight]
     Caption = 'Run command:'
     ParentColor = False
@@ -415,47 +408,47 @@ object MainForm: TMainForm
     AnchorSideTop.Control = CaptureInterval
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
-    Left = 191
-    Height = 23
-    Top = 192
-    Width = 833
+    Left = 192
+    Height = 28
+    Top = 188
+    Width = 832
     AutoSize = True
     BevelOuter = bvNone
     ChildSizing.HorizontalSpacing = 6
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 99
-    ClientHeight = 23
-    ClientWidth = 833
+    ClientHeight = 28
+    ClientWidth = 832
     TabOrder = 14
     object ImageFormatComboBox: TComboBox
       Left = 0
-      Height = 23
+      Height = 28
       Top = 0
       Width = 100
       BorderSpacing.CellAlignVertical = ccaCenter
       DropDownCount = 10
-      ItemHeight = 15
+      ItemHeight = 0
       OnChange = ImageFormatComboBoxChange
       Style = csDropDownList
       TabOrder = 1
     end
     object CompressionLevelLabel: TLabel
       Left = 130
-      Height = 15
-      Top = 4
-      Width = 107
+      Height = 12
+      Top = 8
+      Width = 105
       BorderSpacing.Left = 30
       BorderSpacing.CellAlignVertical = ccaCenter
       Caption = 'Compression level:'
       ParentColor = False
     end
     object CompressionLevelComboBox: TComboBox
-      Left = 243
-      Height = 23
-      Top = 0
+      Left = 241
+      Height = 25
+      Top = 1
       Width = 100
       BorderSpacing.CellAlignVertical = ccaCenter
-      ItemHeight = 15
+      ItemHeight = 0
       Items.Strings = (
         'None'
         'Fastest'
@@ -466,37 +459,37 @@ object MainForm: TMainForm
       TabOrder = 0
     end
     object JPEGQualityLabel: TLabel
-      Left = 373
-      Height = 15
-      Top = 4
-      Width = 79
+      Left = 371
+      Height = 12
+      Top = 8
+      Width = 76
       BorderSpacing.Left = 30
       BorderSpacing.CellAlignVertical = ccaCenter
       Caption = 'Compression:'
       ParentColor = False
     end
     object JPEGQualitySpinEdit: TSpinEdit
-      Left = 458
+      Left = 453
       Height = 23
-      Top = 0
+      Top = 2
       Width = 50
       BorderSpacing.CellAlignVertical = ccaCenter
       OnChange = JPEGQualitySpinEditChange
       TabOrder = 2
     end
     object JPEGQualityPercentLabel: TLabel
-      Left = 514
-      Height = 15
-      Top = 4
+      Left = 509
+      Height = 12
+      Top = 8
       Width = 11
       BorderSpacing.CellAlignVertical = ccaCenter
       Caption = '%'
       ParentColor = False
     end
     object ColorDepthLabel: TLabel
-      Left = 555
-      Height = 15
-      Top = 4
+      Left = 550
+      Height = 12
+      Top = 8
       Width = 67
       BorderSpacing.Left = 30
       BorderSpacing.CellAlignVertical = ccaCenter
@@ -504,22 +497,22 @@ object MainForm: TMainForm
       ParentColor = False
     end
     object ColorDepthComboBox: TComboBox
-      Left = 628
-      Height = 23
+      Left = 623
+      Height = 28
       Top = 0
       Width = 100
       BorderSpacing.CellAlignVertical = ccaCenter
       DropDownCount = 10
-      ItemHeight = 15
+      ItemHeight = 0
       OnChange = ColorDepthComboBoxChange
       Style = csDropDownList
       TabOrder = 3
     end
     object GrayscaleCheckBox: TCheckBox
-      Left = 758
-      Height = 19
-      Top = 2
-      Width = 75
+      Left = 753
+      Height = 22
+      Top = 3
+      Width = 79
       BorderSpacing.Left = 30
       BorderSpacing.CellAlignVertical = ccaCenter
       Caption = 'Grayscale'

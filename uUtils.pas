@@ -8,7 +8,10 @@ unit uUtils;
 interface
 
 uses
-  Windows, uLocalization;
+  {$IfDef windows}
+  Windows,
+  {$EndIf}
+  uLocalization;
 
 
 { Formats given string Str. If DateTime not provided, use result of Now().
@@ -85,7 +88,10 @@ procedure RunCmdInbackground(ACmd: String);
 implementation
 
 uses
-  SysUtils, DateUtils, Registry, uLanguages, FileInfo, process;
+  {$IfDef linux}
+  Unix,
+  {$EndIf}
+  SysUtils, Classes, DateUtils, Registry, uLanguages, FileInfo, process;
 
 
 function FormatDateTime2(const Str: String; const DateTime: TDateTime): String;
@@ -245,6 +251,7 @@ begin
 end;
 
 function GetLocalComputerName: string;
+{$IfDef windows}
 var
   Size: dword;
   Buf: array [0..MAX_COMPUTERNAME_LENGTH + 1] of char;
@@ -257,8 +264,16 @@ begin
   else
     Result := '';
 end;
+{$EndIf}
+{$IfDef linux}
+begin
+  //Result := GetEnvironmentVariable('COMPUTERNAME');
+  Result := GetHostName;
+end;
+{$EndIf}
 
 function GetCurrentUserName: string;
+{$IfDef windows}
 const
   UNLEN = 256; // Not defined in windows.pas
 var
@@ -273,6 +288,35 @@ begin
   else
     Result := '';
 end;
+{$EndIf}
+{$IfDef linux}
+const
+  BufSize = 256;
+var
+  S: TProcess;
+  Count, I: Integer;
+  Buffer: array[1..BufSize] of {byte} char;
+  SL: TStringList;
+begin
+  //Result := GetEnvironmentVariable({'USERNAME'} {'USER'} 'LOGNAME');
+  S:=TProcess.Create(Nil);
+  S.Commandline:='whoami';
+  S.Options:=[poUsePipes,poNoConsole];
+  S.execute;
+  {Repeat
+    Count:=s.output.read(Buffer,BufSize);
+    // reverse print for fun.
+    For I:=1 to count do
+      Result:=Result + Buffer[i];
+  until Count=0;}
+  sl:=TStringList.Create;
+  sl.LoadFromStream(s.Output);
+  Result:=sl[0];
+  sl.Free;
+
+  s.Free;
+end;
+{$EndIf}
 
 {function GetSystemLanguageID: Integer;
 begin
@@ -281,7 +325,12 @@ end;}
 
 function GetSystemLanguageCode: String{[2]};
 begin
+  {$IfDef windows}
   Result := Iso6391FromLcid(GetUserDefaultLCID);
+  {$EndIf}
+  {$IfDef linux}
+  Result := GetEnvironmentVariable('LANGUAGE');
+  {$EndIf}
 end;
 
 function GetAlternativeLanguage(const ALangs: TLanguagesArray;

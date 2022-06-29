@@ -3,7 +3,10 @@ unit uAutoScreen;
 interface
 
 uses
-  Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  {$IfDef windows}
+  Windows,
+  {$EndIf}
+  {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
   LCLIntf, uHotKeysForm, uUtilsMore, GlobalKeyHook, ZStream { for Tcompressionlevel };
@@ -131,7 +134,9 @@ type
     FCounter: Integer;
     FCounterDigits: Integer {Byte};
 
+    {$IfDef windows}
     PrevWndProc: WndProc;
+    {$EndIf}
 
     KeyHook: TGlobalKeyHook;
     
@@ -261,13 +266,15 @@ implementation
 uses uAbout, DateUtils, StrUtils, uUtils, Math, BGRABitmap, BGRABitmapTypes,
   uFileNameTemplateHelpForm, fphttpclient, opensslsockets,
   fpjson, jsonparser, FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, FPWriteTiff,
-  uIniHelper, Idle;
+  uIniHelper, Idle, LCLType;
 
 {$R *.lfm}
 
 const
   LanguageSubMenuItemNamePrefix = 'LanguageSubMenuItem_';
 
+// ToDo: Implement for Linux
+{$IfDef windows}
 function WndCallback(MyHWND: HWND; uMSG: UINT; wParam: WParam; lParam: LParam): LRESULT; StdCall;
 begin
   case uMSG of
@@ -299,6 +306,7 @@ begin
 
   Result := Windows.CallWindowProc(MainForm.PrevWndProc, MyHWND, uMsg, WParam, LParam);
 end;
+{$EndIf}
 
 procedure TMainForm.InitUI;
 var
@@ -333,6 +341,18 @@ begin
 
   // Available monitors
   UpdateMonitorList;
+
+  // Predefined filename templates
+  with FileNameTemplateComboBox.Items do
+  begin
+    Clear;
+    Append('screenshot %Y-%M-%D %H-%N-%S');
+    Append('%Y' + PathDelim + '%M' + PathDelim + '%D' + PathDelim + 'screenshot %H-%N-%S');
+    Append('%Y-%M' + PathDelim + '%D' + PathDelim + 'screenshot %H-%N-%S ');
+    Append('%COMP' + PathDelim + '%USER' + PathDelim + 'screenshot %Y-%M-%D %H-%N-%S ');
+    Append('screenshot %NUM');
+  end;
+
 end;
 
 procedure TMainForm.ReadSettings;
@@ -469,16 +489,18 @@ var
   LastUpdateCheck: TDateTime;
   HotKey: THotKey;
 begin
+  {$IfDef windows}
   { Replace default window function with custom one
     for process messages when screen configuration changed }
   PrevWndProc := Windows.WNDPROC
     (SetWindowLongPtr(Self.Handle, GWL_WNDPROC {GWLP_WNDPROC}, PtrUInt(@WndCallback)));
+  {$EndIf}
 
   Application.OnMinimize := ApplicationMinimize;
 
   InitUI;
 
-  Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
+  Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + PathDelim + 'config.ini');
   ReadSettings;
 
   //if FindCmdLineSwitch('autorun') then
@@ -618,6 +640,10 @@ begin
 end;
 
 procedure TMainForm.MakeScreenshot;
+{$IfDef linux}
+const
+  HWND_DESKTOP = 0;
+{$EndIf}
 var
   Bitmap: TBGRABitmap;
   Writer: TFPCustomImageWriter;
@@ -653,8 +679,9 @@ begin
 
   //Bitmap.TakeScreenshot(Rect); // Not supports multiply monitors
   ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
-  BitBlt(Bitmap.Canvas.Handle, 0, 0, ScreenWidth, ScreenHeight,
-           ScreenDC, ScreenX, ScreenY, SRCCOPY);
+  {BitBlt(Bitmap.Canvas.Handle, 0, 0, ScreenWidth, ScreenHeight,
+           ScreenDC, ScreenX, ScreenY, SRCCOPY);}
+  Bitmap.LoadFromDevice(ScreenDC);
   ReleaseDC(0, ScreenDC);
 
   TrayIconState := tisFlashAnimation;
@@ -1188,11 +1215,10 @@ begin
         ResName := Format('_CAMERA_FLASH_%d', [TrayIconIdx]);
       end
     //tisDefault:
-    else ResName := 'MAINICON';
+    else ResName := '_CAMERA';
   end;
 
-  TrayIcon.Icon.Handle := LoadImage(HInstance, PChar(ResName), IMAGE_ICON,
-    16, 16, LR_DEFAULTCOLOR);
+  TrayIcon.Icon.LoadFromResourceName(HInstance, ResName);
 end;
 
 procedure TMainForm.TrayIconAnimationTimerTimer(Sender: TObject);
@@ -1203,8 +1229,7 @@ begin
   begin
     Inc(TrayIconIdx);
     ResName := Format('_CAMERA_FLASH_%d', [TrayIconIdx]);
-    TrayIcon.Icon.Handle := LoadImage(HInstance, PChar(ResName), IMAGE_ICON,
-      16, 16, LR_DEFAULTCOLOR);
+    TrayIcon.Icon.LoadFromResourceName(HInstance, ResName);
   end
   else
   begin
