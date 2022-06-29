@@ -50,10 +50,12 @@ end;
 procedure TAboutForm.FormCreate(Sender: TObject);
 const
   Bitness =
-  {$IFDEF WIN64}
+  {$IF defined(CPU64)}
     '64-bit'
-  {$ELSE}
+  {$ElseIf defined(CPU32)}
     '32-bit'
+  {$Else}
+    '' // Unknown
   {$ENDIF}
   ;
 var
