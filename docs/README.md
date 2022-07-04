@@ -38,6 +38,7 @@ Auto Screenshot
 * Portuguese
 * Spanish
 * Turkish
+* German
 
 [(Help with new translations)](https://github.com/artem78/AutoScreenshot/issues/5)
 

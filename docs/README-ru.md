@@ -36,6 +36,7 @@ Auto Screenshot
 * Португальский
 * Испанский
 * Турецкий
+* Немецкий
 
 [(Помочь с переводом)](https://github.com/artem78/AutoScreenshot/issues/5)
 
