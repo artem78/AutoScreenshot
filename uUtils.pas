@@ -80,9 +80,11 @@ function GetSystemLanguageCode: String{[2]};
 function GetAlternativeLanguage(const ALangs: TLanguagesArray;
     ALangCode: TLanguageCode): TLanguageCode;
 
+{$IfDef Windows}
 procedure AutoRun(const FileName: String; const AppTitle: String;
     Enabled: Boolean = True);
 function CheckAutoRun(const AppTitle: String): Boolean;
+{$EndIf}
 procedure RunCmdInbackground(ACmd: String);
 
 implementation
@@ -353,6 +355,7 @@ begin
   Result := ''; // Not found
 end;
 
+{$IfDef Windows}
 procedure SetAutoRun(const FileName: String; const AppTitle: String);
 const
   Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
@@ -407,6 +410,7 @@ begin
     Free;
   end;
 end;
+{$EndIf}
 
 procedure RunCmdInbackground(ACmd: String);
 var
