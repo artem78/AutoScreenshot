@@ -596,6 +596,10 @@ object MainForm: TMainForm
         Caption = 'Check for updates'
         OnClick = CheckForUpdatesMenuItemClick
       end
+      object DonateMenuItem: TMenuItem
+        Caption = 'Donate'
+        OnClick = DonateMenuItemClick
+      end
       object AboutMenuItem: TMenuItem
         Caption = 'About...'
         OnClick = AboutMenuItemClick

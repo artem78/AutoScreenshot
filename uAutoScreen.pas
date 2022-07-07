@@ -34,6 +34,7 @@ type
     HotKetsSettingsMenuItem: TMenuItem;
     CompressionLevelLabel: TLabel;
     ImageFormatOptionsPanel: TPanel;
+    DonateMenuItem: TMenuItem;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
@@ -90,6 +91,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure HotKetsSettingsMenuItemClick(Sender: TObject);
+    procedure DonateMenuItemClick(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
@@ -539,6 +541,11 @@ begin
   HotKeysForm.Free;
 end;
 
+procedure TMainForm.DonateMenuItemClick(Sender: TObject);
+begin
+  ShowMessage('PayPal: megabyte1024@yandex.com');
+end;
+
 procedure TMainForm.OutputDirEditChange(Sender: TObject);
 begin
     Ini.WriteString(DefaultConfigIniSection, 'OutputDir', OutputDirEdit.Text);
@@ -940,6 +947,7 @@ begin
     CheckForUpdatesMenuItem.Caption := Localizer.I18N('CheckForUpdates');
     AutoCheckForUpdatesMenuItem.Caption := Localizer.I18N('AutoCheckForUpdates');
     HotKetsSettingsMenuItem.Caption := Localizer.I18N('EditHotKeys') + '...';
+    DonateMenuItem.Caption := Localizer.I18N('Donate');
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
