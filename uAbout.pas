@@ -41,7 +41,8 @@ uses uLocalization, uUtils, DateUtils;
 {$R *.lfm}
 
 const
-  ProjectGitHubURL{: WideString} = 'https://github.com/artem78/AutoScreenshot#readme';
+  ProjectURLTitle = 'https://github.com/artem78/AutoScreenshot';
+  ProjectURL = ProjectURLTitle + '#readme';
 
 procedure TAboutForm.FormCreate(Sender: TObject);
 const
@@ -95,7 +96,7 @@ begin
     else
       LocalizationAuthorLabel.Hide;
   end;
-  LinkLabel.Caption := ProjectGitHubURL;
+  LinkLabel.Caption := ProjectURLTitle;
 
   BuildDateTime := GetBuildDateTime;
   BuildStr := FormatDateTime({'dddddd tt'} 'dddddd', BuildDateTime);
@@ -110,7 +111,7 @@ end;
 
 procedure TAboutForm.LinkLabelClick(Sender: TObject);
 begin
-  OpenURL(ProjectGitHubURL);
+  OpenURL(ProjectURL);
 end;
 
 end.
