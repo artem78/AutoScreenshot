@@ -14,17 +14,23 @@ type
 
   TAboutForm = class(TForm)
     ButtonPanel: TButtonPanel;
-    LicenseLabel: TLabel;
+    BuildDateValueLabel: TLabel;
+    AuthorValueLabel: TLabel;
+    LinkTitleLabel: TLabel;
+    LicenseValueLabel: TLabel;
+    LocalizationAuthorValueLabel: TLabel;
+    VersionValueLabel: TLabel;
+    LicenseTitleLabel: TLabel;
     Panel: TPanel;
     ProgramNameLabel: TLabel;
-    VersionLabel: TLabel;
-    AuthorLabel: TLabel;
-    LinkLabel: TLabel;
+    VersionTitleLabel: TLabel;
+    AuthorTitleLabel: TLabel;
+    LinkValueLabel: TLabel;
     Logo: TImage;
-    BuildDateLabel: TLabel;
-    LocalizationAuthorLabel: TLabel;
+    BuildDateTitleLabel: TLabel;
+    LocalizationAuthorTitleLabel: TLabel;
     procedure FormCreate(Sender: TObject);
-    procedure LinkLabelClick(Sender: TObject);
+    procedure LinkValueLabelClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -57,8 +63,6 @@ const
   ;
   License = {'GNU General Public License v3.0'} 'GNU GPLv3';
 var
-  BuildDateTime: TDateTime;
-  BuildStr: WideString;
   Png: TPortableNetworkGraphic;
   ResourceName: String;
 begin
@@ -81,35 +85,47 @@ begin
   end;
 
   ProgramNameLabel.Caption := Application.Title;
-  VersionLabel.Caption := Localizer.I18N('Version') + ': ' + GetProgramVersionStr() + ' (' + Bitness + ')';
+
+  VersionTitleLabel.Caption := Localizer.I18N('Version') + ':';
+  VersionValueLabel.Caption := GetProgramVersionStr() + ' (' + Bitness + ')';
   {$IFOPT D+}
-    VersionLabel.Caption := VersionLabel.Caption + '    [DEBUG BUILD]';
+    VersionValueLabel.Caption := VersionValueLabel.Caption + '    [DEBUG BUILD]';
   {$ENDIF}
-  AuthorLabel.Caption := Localizer.I18N('Author') + ': ' + 'Artem Demin (artem78) <megabyte1024@ya.ru>';
+
+  AuthorTitleLabel.Caption := Localizer.I18N('Author') + ':';
+  AuthorValueLabel.Caption := 'Artem Demin (artem78) <megabyte1024@ya.ru>';
   with Localizer.LanguageInfo do
   begin
     if (Code <> 'en') and (Author <> '') then
     begin
-      LocalizationAuthorLabel.Caption := Localizer.I18N('LocalizationAuthor') + ': ' + Author;
-      LocalizationAuthorLabel.Show;
+      LocalizationAuthorTitleLabel.Caption := Localizer.I18N('LocalizationAuthor') + ':';
+      LocalizationAuthorTitleLabel.Show;
+
+      LocalizationAuthorValueLabel.Caption := Author;
+      LocalizationAuthorValueLabel.Show;
     end
     else
-      LocalizationAuthorLabel.Hide;
+    begin
+      LocalizationAuthorTitleLabel.Hide;
+      LocalizationAuthorValueLabel.Hide;
+    end;
   end;
-  LinkLabel.Caption := ProjectURLTitle;
 
-  BuildDateTime := GetBuildDateTime;
-  BuildStr := FormatDateTime({'dddddd tt'} 'dddddd', BuildDateTime);
-  BuildDateLabel.Caption := Localizer.I18N('BuildDate') + ': ' + BuildStr;
+  LinkTitleLabel.Caption := Localizer.I18N('HomePage') + ':';
+  LinkValueLabel.Caption := ProjectURLTitle;
+
+  BuildDateTitleLabel.Caption := Localizer.I18N('BuildDate') + ':';
+  BuildDateValueLabel.Caption := FormatDateTime('dddddd', GetBuildDateTime);
+
+  LicenseTitleLabel.Caption := Localizer.I18N('License') + ':';
+  LicenseValueLabel.Caption := License;
 
   ButtonPanel.CloseButton.Caption := Localizer.I18N('Close');
 
   // FixMe: Close button icon not hidden
-
-  LicenseLabel.Caption := Localizer.I18N('License') + ': ' + License;
 end;
 
-procedure TAboutForm.LinkLabelClick(Sender: TObject);
+procedure TAboutForm.LinkValueLabelClick(Sender: TObject);
 begin
   OpenURL(ProjectURL);
 end;
