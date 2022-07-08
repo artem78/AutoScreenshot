@@ -6,22 +6,22 @@ interface
 
 uses
   {Windows, Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, {ShellApi,} LCLIntf, ExtCtrls;
+  Dialogs, StdCtrls, {ShellApi,} LCLIntf, ExtCtrls, ButtonPanel;
 
 type
 
   { TAboutForm }
 
   TAboutForm = class(TForm)
+    ButtonPanel: TButtonPanel;
+    Panel: TPanel;
     ProgramNameLabel: TLabel;
     VersionLabel: TLabel;
     AuthorLabel: TLabel;
-    CloseButton: TButton;
     LinkLabel: TLabel;
     Logo: TImage;
     BuildDateLabel: TLabel;
     LocalizationAuthorLabel: TLabel;
-    procedure CloseButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LinkLabelClick(Sender: TObject);
   private
@@ -41,11 +41,6 @@ uses uLocalization, uUtils, DateUtils;
 
 const
   ProjectGitHubURL{: WideString} = 'https://github.com/artem78/AutoScreenshot#readme';
-
-procedure TAboutForm.CloseButtonClick(Sender: TObject);
-begin
-  Close;
-end;
 
 procedure TAboutForm.FormCreate(Sender: TObject);
 const
@@ -104,7 +99,9 @@ begin
   BuildStr := FormatDateTime({'dddddd tt'} 'dddddd', BuildDateTime);
   BuildDateLabel.Caption := Localizer.I18N('BuildDate') + ': ' + BuildStr;
 
-  CloseButton.Caption := Localizer.I18N('Close');
+  ButtonPanel.CloseButton.Caption := Localizer.I18N('Close');
+
+  // FixMe: Close button icon not hidden
 end;
 
 procedure TAboutForm.LinkLabelClick(Sender: TObject);
