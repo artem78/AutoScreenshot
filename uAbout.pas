@@ -14,6 +14,7 @@ type
 
   TAboutForm = class(TForm)
     ButtonPanel: TButtonPanel;
+    LicenseLabel: TLabel;
     Panel: TPanel;
     ProgramNameLabel: TLabel;
     VersionLabel: TLabel;
@@ -53,6 +54,7 @@ const
     '' // Unknown
   {$ENDIF}
   ;
+  License = {'GNU General Public License v3.0'} 'GNU GPLv3';
 var
   BuildDateTime: TDateTime;
   BuildStr: WideString;
@@ -102,6 +104,8 @@ begin
   ButtonPanel.CloseButton.Caption := Localizer.I18N('Close');
 
   // FixMe: Close button icon not hidden
+
+  LicenseLabel.Caption := Localizer.I18N('License') + ': ' + License;
 end;
 
 procedure TAboutForm.LinkLabelClick(Sender: TObject);

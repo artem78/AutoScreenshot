@@ -1,6 +1,6 @@
 object AboutForm: TAboutForm
   Left = 277
-  Height = 215
+  Height = 255
   Top = 184
   Width = 358
   AutoSize = True
@@ -9,7 +9,7 @@ object AboutForm: TAboutForm
   ChildSizing.LeftRightSpacing = 15
   ChildSizing.TopBottomSpacing = 15
   ChildSizing.HorizontalSpacing = 15
-  ClientHeight = 215
+  ClientHeight = 255
   ClientWidth = 358
   Color = clBtnFace
   Font.Color = clWindowText
@@ -32,7 +32,7 @@ object AboutForm: TAboutForm
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Logo
     Left = 94
-    Height = 141
+    Height = 162
     Top = 15
     Width = 234
     AutoSize = True
@@ -41,7 +41,7 @@ object AboutForm: TAboutForm
     ChildSizing.VerticalSpacing = 6
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 141
+    ClientHeight = 162
     ClientWidth = 234
     TabOrder = 0
     object ProgramNameLabel: TLabel
@@ -94,12 +94,20 @@ object AboutForm: TAboutForm
       Caption = 'Localization: ...'
       ParentColor = False
     end
+    object LicenseLabel: TLabel
+      Left = 0
+      Height = 15
+      Top = 126
+      Width = 234
+      Caption = 'License: ...'
+      ParentColor = False
+    end
     object LinkLabel: TLabel
       AnchorSideTop.Side = asrBottom
       Cursor = crHandPoint
       Left = 0
       Height = 15
-      Top = 126
+      Top = 147
       Width = 234
       Caption = 'Url...'
       Font.Color = clBlue
@@ -115,8 +123,8 @@ object AboutForm: TAboutForm
     AnchorSideTop.Control = Panel
     AnchorSideTop.Side = asrBottom
     Left = 15
-    Height = 23
-    Top = 177
+    Height = 42
+    Top = 198
     Width = 328
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Top = 15
