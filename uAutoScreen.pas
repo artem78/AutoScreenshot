@@ -302,6 +302,11 @@ begin
   Result := Windows.CallWindowProc(MainForm.PrevWndProc, MyHWND, uMsg, WParam, LParam);
 end;
 
+function MyGetApplicationName: String;
+begin
+  Result := 'AutoScreenshot';
+end;
+
 procedure TMainForm.InitUI;
 var
   Fmt: TImageFormat;
@@ -470,6 +475,7 @@ const
 var
   LastUpdateCheck: TDateTime;
   HotKey: THotKey;
+  IniFileName: String;
 begin
   { Replace default window function with custom one
     for process messages when screen configuration changed }
@@ -480,7 +486,12 @@ begin
 
   InitUI;
 
-  Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\config.ini');
+  OnGetApplicationName := @MyGetApplicationName;
+  if IsPortable then
+    IniFileName := ExtractFilePath(Application.ExeName) + 'config.ini'
+  else
+    IniFileName := GetAppConfigDir(False) + 'config.ini';
+  Ini := TIniFile.Create(IniFileName);
   ReadSettings;
 
   //if FindCmdLineSwitch('autorun') then

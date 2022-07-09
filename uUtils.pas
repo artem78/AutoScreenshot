@@ -84,11 +84,12 @@ procedure AutoRun(const FileName: String; const AppTitle: String;
     Enabled: Boolean = True);
 function CheckAutoRun(const AppTitle: String): Boolean;
 procedure RunCmdInbackground(ACmd: String);
+function IsPortable: Boolean;
 
 implementation
 
 uses
-  SysUtils, DateUtils, Registry, uLanguages, FileInfo, process;
+  SysUtils, DateUtils, Registry, uLanguages, Forms, FileInfo, process;
 
 type
   tagLASTINPUTINFO = record
@@ -392,6 +393,14 @@ begin
   finally
     proc.Free;
   end;
+end;
+
+function IsPortable: Boolean;
+var
+  UninstallerFileName: String;
+begin
+  UninstallerFileName := ExtractFilePath(Application.ExeName) + 'unins000.exe';
+  Result := not FileExists(UninstallerFileName);
 end;
 
 end.
