@@ -1,4 +1,5 @@
-[![Russian](images/russian_icon.png) RU](README-ru.md "Russian")
+[![Russian](images/icon_ru.png) RU](README-ru.md "Russian")
+[![German](images/icon_de.png) DE](README-de.md "German")
 
 -------------------------  
 
@@ -38,7 +39,7 @@ Auto Screenshot
 * Portuguese
 * Spanish
 * Turkish
-* German
+* [German](README-de.md)
 
 [(Help with new translations)](https://github.com/artem78/AutoScreenshot/issues/5)
 
@@ -62,4 +63,4 @@ You are free to use, modify or distribute this software under the [GNU GPL v3.0]
 Artem78 (email: [megabyte1024@ya.ru](mailto:megabyte1024@ya.ru?subject=AutoScreenshot))
 
 ## Donate
-You can donate any amount using PayPay to email <u>megabyte1024@yandex.com</u> (in payment note write "AutoScreenshot donation").
+You can donate any amount using PayPal to email <u>megabyte1024@yandex.com</u> (in payment note write "AutoScreenshot donation").
