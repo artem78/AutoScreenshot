@@ -42,7 +42,7 @@ var
 
 implementation
 
-uses uLocalization, uUtils, DateUtils;
+uses uLocalization, uUtils, DateUtils, StrUtils;
 
 {$R *.lfm}
 
@@ -87,7 +87,10 @@ begin
   ProgramNameLabel.Caption := Application.Title;
 
   VersionTitleLabel.Caption := Localizer.I18N('Version') + ':';
-  VersionValueLabel.Caption := GetProgramVersionStr() + ' (' + Bitness + ')';
+  VersionValueLabel.Caption := Format('%s (%s) %s', [
+          GetProgramVersionStr(), Bitness,
+          IfThen(IsPortable, Localizer.I18N('Portable'))
+  ]);
   {$IFOPT D+}
     VersionValueLabel.Caption := VersionValueLabel.Caption + '    [DEBUG BUILD]';
   {$ENDIF}
