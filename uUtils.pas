@@ -85,11 +85,12 @@ procedure AutoRun(const FileName: String; const AppTitle: String;
 function CheckAutoRun(const AppTitle: String): Boolean;
 procedure RunCmdInbackground(ACmd: String);
 function IsPortable: Boolean;
+function GetUserPicturesDir: WideString;
 
 implementation
 
 uses
-  SysUtils, DateUtils, Registry, uLanguages, Forms, FileInfo, process;
+  SysUtils, WinDirs, DateUtils, Registry, uLanguages, Forms, FileInfo, process;
 
 type
   tagLASTINPUTINFO = record
@@ -401,6 +402,17 @@ var
 begin
   UninstallerFileName := ExtractFilePath(Application.ExeName) + 'unins000.exe';
   Result := not FileExists(UninstallerFileName);
+end;
+
+function GetUserPicturesDir: WideString;
+begin
+  {$IfDef Windows}
+  //Result := GetUserDir + 'Pictures';
+  Result := GetWindowsSpecialDirUnicode(CSIDL_MYPICTURES);
+  {$EndIf}
+  {$IfDef Linux}
+  Result := '~/Pictures'; // Not 100% guarantee, but most likely
+  {$EndIf}
 end;
 
 end.

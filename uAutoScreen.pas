@@ -355,12 +355,16 @@ const
   DefaultCounterDigits    = 6;
   DefaultCompressionLevel = cldefault;
 var
-  DefaultOutputDir: String;
+  DefaultOutputDir, BaseDir: String;
   CfgLang, SysLang, AltLang: TLanguageCode;
   FmtStr: String;
   Seconds: Integer;
 begin
-  DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ExtractFilePath(Application.ExeName), 'screenshots'));
+  if IsPortable then
+    BaseDir := ExtractFilePath(Application.ExeName)
+  else
+    BaseDir := GetUserPicturesDir();
+  DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(BaseDir, 'screenshots'));
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
   // ToDo: Check that directory exists or can be created (with subdirs if needed)
   if OutputDirEdit.Text = '' then
