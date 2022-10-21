@@ -27,5 +27,8 @@ If applicable, add screenshots to help explain your problem.
 Which version of program do you use?
 *If it\`s not latest, it\`s possible that bug already has been fixed in newer release.*
 
+**OS**
+Your operation system with version. For example: Windows 7 64bit
+
 **Additional context**
 Add any other context about the problem here.
