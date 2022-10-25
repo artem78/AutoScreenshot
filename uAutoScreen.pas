@@ -583,7 +583,10 @@ begin
 
     // ToDo: Use TIdleTimer instead (https://forum.lazarus.freepascal.org/index.php/topic,15811.msg126545.html#msg126545)
     if Timer.Interval > LastInput then
-      MakeScreenshot;
+      MakeScreenshot
+    else
+      DebugLn('Automatic capture skipped (Timer.Interval=%d, LastInput=%d)',
+          [Timer.Interval, LastInput]);
   end
   else
     MakeScreenshot;
@@ -606,6 +609,11 @@ begin
     TrayIconState := tisDefault
   else
     TrayIconState := tisBlackWhite;
+
+  if IsEnabled then
+    DebugLn('Automatic capture started')
+  else
+    DebugLn('Automatic capture stopped');
 end;
 
 procedure TMainForm.StartAutoCaptureButtonClick(Sender: TObject);
