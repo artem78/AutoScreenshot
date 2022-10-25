@@ -230,7 +230,14 @@ var
 implementation
 
 uses uAbout, DateUtils, StrUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  uIniHelper, UpdateChecker, FileUtil;
+  uIniHelper, UpdateChecker, FileUtil,
+  //{$IfDef DEBUG}
+  {$IFOPT D+}
+  ,LazLogger
+  {$Else}
+  ,LazLoggerDummy
+  {$EndIf}
+  ;
 
 {$R *.lfm}
 
@@ -433,6 +440,10 @@ var
   HotKey: THotKey;
   IniFileName: String;
 begin
+  DebugLn('Program started');
+  DebugLn('Version: ', GetProgramVersionStr);
+  DebugLn('Initializing...');
+
   { Replace default window function with custom one
     for process messages when screen configuration changed }
   PrevWndProc := Windows.WNDPROC
@@ -476,6 +487,8 @@ begin
   KeyHook.RegisterKey('StopAutoCapture', HotKey);
   HotKey := Ini.ReadHotKey(HotKeysIniSection, 'SingleCapture', SingleCaptureDefaultHotKey);
   KeyHook.RegisterKey('SingleCapture', HotKey);
+
+  DebugLn('Initializing finished');
 end;
 
 procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
@@ -499,6 +512,8 @@ begin
   KeyHook.Free;
 
   Ini.Free;
+
+  DebugLn('Program ended');
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
@@ -1019,6 +1034,8 @@ begin
 end;
 
 procedure TMainForm.UpdateMonitorList;
+var
+  Idx: Integer;
 begin
   // Update array in Screen variable first
   Screen.UpdateMonitors;
@@ -1044,6 +1061,27 @@ begin
 
   // Fill combobox
   FillMonitorList;
+
+  DebugLn('Monitor configuration changed');
+  DebugLn(['Monitors count: ', Screen.MonitorCount]);
+  for Idx := 0 to Screen.MonitorCount - 1 do
+  begin
+    DebugLnEnter('Monitor id=%d (%d)%s %dx%d dpi=%d',
+          [Screen.Monitors[Idx].MonitorNum,
+           Screen.Monitors[Idx].MonitorNum + 1,
+           IfThen(Screen.Monitors[Idx].Primary, ' primary'),
+           Screen.Monitors[Idx].Width,
+           Screen.Monitors[Idx].Height,
+           Screen.Monitors[Idx].PixelsPerInch]
+    );
+    DebugLnEnter('BoundsRect: ', DbgS(Screen.Monitors[Idx].BoundsRect));
+    DebugLnExit('WorkareaRect" ', DbgS(Screen.Monitors[Idx].WorkareaRect));
+    DebugLnExit();
+  end;
+  DebugLn(['SM_CXVIRTUALSCREEN=', GetSystemMetrics(SM_CXVIRTUALSCREEN)]);
+  DebugLn(['SM_CYVIRTUALSCREEN=', GetSystemMetrics(SM_CYVIRTUALSCREEN)]);
+  DebugLn(['SM_XVIRTUALSCREEN=', GetSystemMetrics(SM_XVIRTUALSCREEN)]);
+  DebugLn(['SM_YVIRTUALSCREEN=', GetSystemMetrics(SM_YVIRTUALSCREEN)]);
 end;
 
 function TMainForm.GetColorDepth: TColorDepth;

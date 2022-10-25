@@ -92,7 +92,7 @@ implementation
 
 uses
   Windows, Forms {for TMonitor}, {Graphics,} BGRABitmap, BGRABitmapTypes,
-  FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, FPWriteTiff;
+  FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, FPWriteTiff, LazLoggerBase;
 
 { TScreenGrabber }
 
@@ -101,6 +101,8 @@ var
   Rect: TRect;
   UsedMonitor: TMonitor;
 begin
+  DebugLn(['Monitor id=', AMonitorId]);
+
   UsedMonitor := Screen.Monitors[AMonitorId];
   Rect.Left   := UsedMonitor.Left;
   Rect.Top    := UsedMonitor.Top;
@@ -127,10 +129,14 @@ var
   //GIF: TGIFImage;
   ScreenDC: HDC;
 begin
+  DebugLn('Start taking screenshot...');
+  DebugLn('Region: ', DbgS(ARect));
+
   Bitmap := TBGRABitmap.Create(ARect.Width, ARect.Height, BGRABlack);
 
   //Bitmap.TakeScreenshot(Rect); // Not supports multiply monitors
   ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
+  DebugLn(['ScreenDC=', ScreenDC]);
   BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
            ScreenDC, ARect.Left, ARect.Top, SRCCOPY);
   ReleaseDC(0, ScreenDC);
@@ -190,11 +196,21 @@ begin
   end;
 
   try
-    Bitmap.SaveToFile(AFileName, Writer);
+    try
+      Bitmap.SaveToFile(AFileName, Writer);
+    except
+      on E : Exception do
+      begin
+        DebugLn('Failed to take screenshot: ', E.ToString);
+        raise e;
+      end;
+    end;
   finally
     Writer.Free;
     Bitmap.Free;
   end;
+
+  DebugLn('Screenshot saved to ', AFileName);
 end;
 
 constructor TScreenGrabber.Create(AnImageFormat: TImageFormat;
