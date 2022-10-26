@@ -32,3 +32,6 @@ Your operation system with version. For example: Windows 7 64bit
 
 **Additional context**
 Add any other context about the problem here.
+
+**Log file**
+To enable logging add to your `config.ini` file line `Logging=1` to `[main]` section and attach log file here.
