@@ -17,7 +17,7 @@
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
-        <DpiAware Value="True"/>
+        <DpiAware Value="True/PM"/>
         <TextName Value="Auto Screenshot"/>
         <TextDesc Value="Automatic screenshot maker"/>
       </XPManifest>
