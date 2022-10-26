@@ -323,7 +323,10 @@ begin
   // Logging
   if Ini.ReadBool(DefaultConfigIniSection, 'Logging', False) then
   begin
-    LogFileName := ConcatPaths([ProgramDirectory, 'debug_log.txt']);
+    if IsPortable then
+      LogFileName := ConcatPaths([ProgramDirectory, 'debug_log.txt'])
+    else
+      LogFileName := ConcatPaths([GetAppConfigDir(False), 'debug_log.txt']);
     DeleteFile(LogFileName); // Overwrite log file
     DebugLogger.LogName := LogFileName;
   end;
