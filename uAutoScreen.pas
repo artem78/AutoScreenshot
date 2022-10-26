@@ -233,9 +233,9 @@ uses uAbout, DateUtils, StrUtils, uUtils, Math, uFileNameTemplateHelpForm,
   uIniHelper, UpdateChecker, FileUtil,
   //{$IfDef DEBUG}
   {$IFOPT D+}
-  ,LazLogger
+  LazLogger
   {$Else}
-  ,LazLoggerDummy
+  LazLoggerDummy
   {$EndIf}
   ;
 
@@ -319,6 +319,10 @@ var
   FmtStr: String;
   Seconds: Integer;
 begin
+  // Logging
+  if Ini.ReadBool(DefaultConfigIniSection, 'Logging', False) then
+    DebugLogger.LogName := ConcatPaths([ProgramDirectory, 'debug_log.txt']);
+
   if IsPortable then
     BaseDir := ExtractFilePath(Application.ExeName)
   else
@@ -440,9 +444,9 @@ var
   HotKey: THotKey;
   IniFileName: String;
 begin
-  DebugLn('Program started');
+  {DebugLn('Program started');
   DebugLn('Version: ', GetProgramVersionStr);
-  DebugLn('Initializing...');
+  DebugLn('Initializing...');}
 
   { Replace default window function with custom one
     for process messages when screen configuration changed }
@@ -460,6 +464,10 @@ begin
     IniFileName := ConcatPaths([GetAppConfigDir(False), 'config.ini']);
   Ini := TIniFile.Create(IniFileName);
   ReadSettings;
+
+  DebugLn('Program started');
+  DebugLn('Version: ', GetProgramVersionStr);
+  DebugLn('Initializing...');
 
   //if FindCmdLineSwitch('autorun') then
   //  OutputDebugString('AutoRun');
