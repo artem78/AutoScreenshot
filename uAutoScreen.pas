@@ -318,10 +318,15 @@ var
   CfgLang, SysLang, AltLang: TLanguageCode;
   FmtStr: String;
   Seconds: Integer;
+  LogFileName: String;
 begin
   // Logging
   if Ini.ReadBool(DefaultConfigIniSection, 'Logging', False) then
-    DebugLogger.LogName := ConcatPaths([ProgramDirectory, 'debug_log.txt']);
+  begin
+    LogFileName := ConcatPaths([ProgramDirectory, 'debug_log.txt']);
+    DeleteFile(LogFileName); // Overwrite log file
+    DebugLogger.LogName := LogFileName;
+  end;
 
   if IsPortable then
     BaseDir := ExtractFilePath(Application.ExeName)
