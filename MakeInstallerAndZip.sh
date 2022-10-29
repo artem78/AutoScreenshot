@@ -87,6 +87,8 @@ function MakeInstaller(){
 
 # ***********************
 
+set -e
+
 # ***  Set variables ***
 LazarusDir="/cygdrive/f/Programms/lazarus_2.0.12_32bit"
 
