@@ -57,15 +57,6 @@ function GetProgramVersionStr: string;
 // Returns program build date and time
 function GetBuildDateTime: TDateTime;
 
-{ Removes duplicated slashes from given path.
-  Example:
-      RemoveExtraPathDelimiters('c:\dir1\\dir2\\\file.txt');
-      Result: c:\dir1\dir2\file.txt
-}
-function RemoveExtraPathDelimiters(const Path: String): String;
-
-function JoinPath(const Base: String; const Path: String): String;
-
 function GetLocalComputerName: string;
 
 function GetCurrentUserName: string;
@@ -211,41 +202,6 @@ function GetBuildDateTime: TDateTime;
 begin
   Result := EncodeDateTime({$I %dateYear%}, {$I %dateMonth%}, {$I %dateDay%},
             {$I %timeHour%}, {$I %timeMinute%}, {$I %timeSecond%}, 0);
-end;
-
-function RemoveExtraPathDelimiters(const Path: String): String;
-var
-  I: Integer;
-  Ch: Char;
-  IsPrevDelim: Boolean;
-begin
-  // Result := StringReplace(Path, PathDelim + PathDelim, PathDelim, [rfReplaceAll]);
-
-  Result := '';
-  IsPrevDelim := False;
-  for I := 1 to Length(Path) do
-  begin
-     Ch := Path[I];
-     if Ch = PathDelim then
-     begin
-       if not IsPrevDelim then
-       begin
-         Result := Result + Ch;
-         IsPrevDelim := True;
-       end;
-     end
-     else
-     begin
-       Result := Result + Ch;
-       IsPrevDelim := False;
-     end;
-  end;
-end;
-
-function JoinPath(const Base: String; const Path: String): String;
-begin
-  Result := IncludeTrailingPathDelimiter(Base) + Path;
-  Result := RemoveExtraPathDelimiters(Result);
 end;
 
 function GetLocalComputerName: string;

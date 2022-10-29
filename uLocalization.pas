@@ -251,7 +251,7 @@ end;
 initialization
 begin
   // ToDo: Use alternatives only in Release build
-  Localizer := TLocalizer.Create(AppendPathDelim(JoinPath(ProgramDirectory, 'lang')), True);
+  Localizer := TLocalizer.Create(AppendPathDelim(ConcatPaths([ProgramDirectory, 'lang'])), True);
 end;
 
 finalization

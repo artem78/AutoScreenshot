@@ -18,7 +18,6 @@ type
     procedure TestFormatPath;
     procedure TestDecode;
     procedure TestJoinPath;
-    procedure TestRemoveExtraPathDelimiters;
     procedure TestVersions;
   end;
 
@@ -76,6 +75,11 @@ begin
 end;
 
 procedure TMyTestCase.TestJoinPath;
+  function JoinPath(const Base: String; const Path: String): String;
+  begin
+    Result := ConcatPaths([Base, Path]);
+  end;
+
 begin
   //CheckEqualsString('', JoinPath('', ''));
   {$IFDEF MSWINDOWS}
@@ -86,17 +90,6 @@ begin
   AssertEquals('Empty path', 'a:\DisketDir\', JoinPath('a:\DisketDir', ''));
   AssertEquals('Relative path',
       'mydir\picture.jpeg', JoinPath('mydir', 'picture.jpeg'));
-  {$ENDIF}
-end;
-
-procedure TMyTestCase.TestRemoveExtraPathDelimiters;
-begin
-  //CheckEqualsString('', RemoveExtraPathDelimiters(''));
-  {$IFDEF MSWINDOWS}
-  AssertEquals('c:\dir1\dir2\dir3\file.txt', RemoveExtraPathDelimiters('c:\dir1\\dir2\\\dir3\\\\file.txt'));
-  AssertEquals('folder\', RemoveExtraPathDelimiters('folder\\'));
-  AssertEquals('\my folder\', RemoveExtraPathDelimiters('\\my folder\\'));
-  AssertEquals('Nothing to do', 'd:\dir\file.txt', RemoveExtraPathDelimiters('d:\dir\file.txt'));
   {$ENDIF}
 end;
 

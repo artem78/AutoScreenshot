@@ -305,7 +305,7 @@ var
   FmtStr: String;
   Seconds: Integer;
 begin
-  DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ProgramDirectory, 'screenshots'));
+  DefaultOutputDir := IncludeTrailingPathDelimiter(ConcatPaths([ProgramDirectory, 'screenshots']));
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
   // ToDo: Check that directory exists or can be created (with subdirs if needed)
   if OutputDirEdit.Text = '' then
@@ -430,7 +430,7 @@ begin
 
   InitUI;
 
-  Ini := TIniFile.Create(JoinPath(ProgramDirectory, 'config.ini'));
+  Ini := TIniFile.Create(ConcatPaths([ProgramDirectory, 'config.ini']));
   ReadSettings;
 
   //if FindCmdLineSwitch('autorun') then
@@ -658,7 +658,7 @@ begin
   SubDir := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '')} FileNameTemplateComboBox.Text);
   SubDir := FormatPath(SubDir);
 
-  FullDir := IncludeTrailingPathDelimiter(JoinPath(BaseDir, SubDir));
+  FullDir := IncludeTrailingPathDelimiter(ConcatPaths([BaseDir, SubDir]));
 
   if not DirectoryExists(FullDir) then
   begin
