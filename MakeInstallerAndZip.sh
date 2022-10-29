@@ -29,6 +29,7 @@ function Compile(){
 
 function MakeZip(){
 	Compile
+	RunTests
 	
 	# Create and clear build directory
 	echo "Clear build directory..."
@@ -77,13 +78,31 @@ function MakeZip(){
 }
 
 function MakeInstaller(){
-	Compile;
+	Compile
+	RunTests
 
 	# Make installation file
 	echo "Make installation file..."
 	"$InnoSetupDir/iscc.exe" "setup.iss"
 	echo "Done!"
 	echo ""
+}
+
+function RunTests(){
+	cd Test
+	
+	echo "Compile tests..."
+#	"$LazarusDir/lazbuild.exe" --verbose AutoScreenshotTest.lpi
+	"$LazarusDir/lazbuild.exe" AutoScreenshotTest.lpi
+	echo "Tests compiled!"
+	echo ""
+	
+	echo "Run tests..."
+	./AutoScreenshotTest.exe --all --format=plain
+	echo "Tests finished!"
+	echo ""
+	
+	cd ..
 }
 
 # ***********************
