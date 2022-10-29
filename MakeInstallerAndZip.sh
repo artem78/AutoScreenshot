@@ -40,31 +40,32 @@ function MakeZip(){
 
 	# Executable
 	echo "Copy EXE..."
-	cp -v --preserve AutoScreenshot.exe $BuildDir
+	cp -v --preserve=timestamps AutoScreenshot.exe $BuildDir
 	echo "Done!"
 	echo ""
 
 	# DLLs
 	echo "Copy DLLs..."
-	cp -v --preserve $LazarusDir/libeay32.dll $BuildDir
-	cp -v --preserve $LazarusDir/ssleay32.dll $BuildDir
+	cp -v --preserve=timestamps $LazarusDir/libeay32.dll $BuildDir
+	cp -v --preserve=timestamps $LazarusDir/ssleay32.dll $BuildDir
 	echo "Done!"
 	echo ""
 
 	# # Config
 	# echo "Copy config.ini..."
-	# cp -v --preserve config.sample.ini $BuildDir/config.ini
+	# cp -v --preserve=timestamps config.sample.ini $BuildDir/config.ini
 	# echo "Done!"
 	# echo ""
 
 	# Translations
 	echo "Copy translation files..."
 	mkdir -p $BuildDir/lang
-	cp -v --preserve lang/*.ini $BuildDir/lang/
+	cp -v --preserve=timestamps lang/*.ini $BuildDir/lang/
 	echo "Done!"
 	echo ""
 
 	# Pack to ZIP archive
+	### Note! For MinGW (Git Bash) see https://stackoverflow.com/a/55749636 ###
 	echo "Pack all files to ZIP archive..."
 	ZipPath=$TargetZipDir/autoscreenshot_${ProgramVersion}_portable.zip
 	rm -f $ZipPath
@@ -90,13 +91,22 @@ function MakeInstaller(){
 set -e
 
 # ***  Set variables ***
-LazarusDir="/cygdrive/f/Programms/lazarus_2.0.12_32bit"
+LazarusDir="/f/Programms/lazarus_2.0.12_32bit"
+if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
+	LazarusDir="/cygdrive${LazarusDir}"
+fi
+echo "LazarusDir=${LazarusDir}"
+
 
 # Output dirs
 BuildDir=$(realpath -m "build/files")
 TargetZipDir=$(realpath -m "build/zip")
 
-InnoSetupDir="/cygdrive/d/Программы/Inno Setup 5"
+InnoSetupDir="/d/Программы/Inno Setup 5"
+if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
+	InnoSetupDir="/cygdrive${InnoSetupDir}"
+fi
+echo "InnoSetupDir=${InnoSetupDir}"
 
 # Program version
 ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreen.lpi)
