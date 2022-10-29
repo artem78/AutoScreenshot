@@ -317,6 +317,7 @@ begin
 
   // Set default tray icon
   TrayIconState := tisDefault;
+  TrayIcon.Hint := Application.Title;
 
   // Fill combobox with image formats
   for Fmt := Low(TImageFormat) to High(TImageFormat) do
@@ -1575,7 +1576,7 @@ begin
     try
       Client.AllowRedirect := True;
       Client.AddHeader('Accept', 'application/vnd.github.v3+json');
-      Client.AddHeader('User-Agent', 'AutoScreenshot v' + CurrentVersion.ToString() + ' Update Checker');
+      Client.AddHeader('User-Agent', Application.Title + ' v' + CurrentVersion.ToString() + ' Update Checker');
       ResponseStr := Client.Get(ApiUrl);
 
       JsonData := GetJSON(ResponseStr);
