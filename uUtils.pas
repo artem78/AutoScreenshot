@@ -32,9 +32,6 @@ function LastInput: DWord;
 function FormatDateTime2(const Str: String; const DateTime: TDateTime): String; overload;
 function FormatDateTime2(const Str: String): String; overload;
 
-// Same as IntToStr(), but adds leading zeros before number
-function Int2Str(Val: Integer; LeadingZeros: Integer = 0): String;
-
 // Decodes control characters (like \r, \n, \t and etc.) from given string.
 function DecodeControlCharacters(const Str: WideString): WideString;
 
@@ -60,15 +57,6 @@ function GetProgramVersionStr: string;
 // Returns program build date and time
 function GetBuildDateTime: TDateTime;
 
-{ Removes duplicated slashes from given path.
-  Example:
-      RemoveExtraPathDelimiters('c:\dir1\\dir2\\\file.txt');
-      Result: c:\dir1\dir2\file.txt
-}
-function RemoveExtraPathDelimiters(const Path: String): String;
-
-function JoinPath(const Base: String; const Path: String): String;
-
 function GetLocalComputerName: string;
 
 function GetCurrentUserName: string;
@@ -90,7 +78,7 @@ function GetUserPicturesDir: WideString;
 implementation
 
 uses
-  SysUtils, WinDirs, DateUtils, Registry, uLanguages, Forms, FileInfo, process;
+  SysUtils, WinDirs {???}, DateUtils, StrUtils, Registry, uLanguages, Forms {???}, FileInfo, process;
 
 type
   tagLASTINPUTINFO = record
@@ -99,6 +87,9 @@ type
   end;
   LASTINPUTINFO = tagLASTINPUTINFO;
   TLastInputInfo = LASTINPUTINFO;
+
+const
+  RegistryAutorunKey = 'Software\Microsoft\Windows\CurrentVersion\Run';
 
 function GetLastInputInfo(var plii: TLastInputInfo): BOOL;stdcall; external 'user32' name 'GetLastInputInfo';
 
@@ -112,37 +103,25 @@ begin
 end;
 
 function FormatDateTime2(const Str: String; const DateTime: TDateTime): String;
+  function DecToNum(N: Longint; Len: byte): string;
+  begin
+    Result := Dec2Numb(N, Len, 10);
+  end;
+
 const
   TmplVarsChar = '%';
 begin
-  Result := StringReplace(Str,    TmplVarsChar + 'D', Int2Str(DayOf(DateTime), 2),    [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'M', Int2Str(MonthOf(DateTime), 2),  [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'Y', Int2Str(YearOf(DateTime), 4),   [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'H', Int2Str(HourOf(DateTime), 2),   [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'N', Int2Str(MinuteOf(DateTime), 2), [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'S', Int2Str(SecondOf(DateTime), 2), [rfReplaceAll]);
+  Result := StringReplace(Str,    TmplVarsChar + 'D', DecToNum(DayOf(DateTime), 2),    [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'M', DecToNum(MonthOf(DateTime), 2),  [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'Y', DecToNum(YearOf(DateTime), 4),   [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'H', DecToNum(HourOf(DateTime), 2),   [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'N', DecToNum(MinuteOf(DateTime), 2), [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'S', DecToNum(SecondOf(DateTime), 2), [rfReplaceAll]);
 end;
 
 function FormatDateTime2(const Str: String): String;
 begin
   Result := FormatDateTime2(Str, Now());
-end;
-
-function Int2Str(Val: Integer; LeadingZeros: Integer): String;
-var
-  Tmp: String;
-begin
-  Result := '';
-
-  Tmp := IntToStr(Abs(Val));
-
-  if Val < 0 then
-    Result := Result + '-';
-
-  if (LeadingZeros > 0) and (LeadingZeros > Length(Tmp)) then
-    Result := Result + StringOfChar('0', LeadingZeros - Length(Tmp));
-
-  Result := Result + Tmp;
 end;
 
 function DecodeControlCharacters(const Str: WideString): WideString;
@@ -222,49 +201,9 @@ begin
 end;
 
 function GetBuildDateTime: TDateTime;
-var
-  BuildDate, BuildTime: String;
 begin
-  BuildDate := {$I %DATE%};
-  BuildTime := {$I %TIME%};
-  BuildDate := StringReplace(BuildDate, '/', '-', [rfReplaceAll]);  // For unknown reason doesn`t work with "/" date separator
-
-  Result := ScanDateTime('yyyy-mm-dd hh:nn:ss', BuildDate + ' ' + BuildTime);
-end;
-
-function RemoveExtraPathDelimiters(const Path: String): String;
-var
-  I: Integer;
-  Ch: Char;
-  IsPrevDelim: Boolean;
-begin
-  // Result := StringReplace(Path, PathDelim + PathDelim, PathDelim, [rfReplaceAll]);
-
-  Result := '';
-  IsPrevDelim := False;
-  for I := 1 to Length(Path) do
-  begin
-     Ch := Path[I];
-     if Ch = PathDelim then
-     begin
-       if not IsPrevDelim then
-       begin
-         Result := Result + Ch;
-         IsPrevDelim := True;
-       end;
-     end
-     else
-     begin
-       Result := Result + Ch;
-       IsPrevDelim := False;
-     end;
-  end;
-end;
-
-function JoinPath(const Base: String; const Path: String): String;
-begin
-  Result := IncludeTrailingPathDelimiter(Base) + Path;
-  Result := RemoveExtraPathDelimiters(Result);
+  Result := EncodeDateTime({$I %dateYear%}, {$I %dateMonth%}, {$I %dateDay%},
+            {$I %timeHour%}, {$I %timeMinute%}, {$I %timeSecond%}, 0);
 end;
 
 function GetLocalComputerName: string;
@@ -329,32 +268,34 @@ end;
 
 procedure SetAutoRun(const FileName: String; const AppTitle: String);
 const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
   Args = '-autorun';
 var
+  Reg: TRegistry;
   Cmd: String;
 begin
   Cmd := '"' + FileName + '" ' + Args;
 
-  with TRegIniFile.Create('') do
+  Reg := TRegistry.Create(KEY_WRITE);
   try
-    RootKey := HKEY_CURRENT_USER;
-    WriteString(Section, AppTitle, Cmd);
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKey(RegistryAutorunKey, True) then
+      Reg.WriteString(AppTitle, Cmd);
   finally
-    Free;
+    Reg.Free;
   end;
 end;
 
 procedure RemoveAutoRun(const AppTitle: String);
-const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
+var
+  Reg: TRegistry;
 begin
-  with TRegIniFile.Create('') do
+  Reg := TRegistry.Create(KEY_WRITE);
   try
-    RootKey := HKEY_CURRENT_USER;
-    DeleteKey(Section, AppTitle);
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKey(RegistryAutorunKey, False) then
+      Reg.DeleteValue(AppTitle);
   finally
-    Free;
+    Reg.Free;
   end;
 end;
 
@@ -368,17 +309,18 @@ begin
 end;
 
 function CheckAutoRun(const AppTitle: String): Boolean;
-const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
+var
+  Reg: TRegistry;
 begin
   Result := False;
 
-  with TRegIniFile.Create('') do
+  Reg := TRegistry.Create(KEY_READ);
   try
-    RootKey := HKEY_CURRENT_USER;
-    Result := ReadString(Section, AppTitle, '') <> '';
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKeyReadOnly(RegistryAutorunKey) then
+      Result := Reg.ReadString(AppTitle) <> '';
   finally
-    Free;
+    Reg.Free;
   end;
 end;
 

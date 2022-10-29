@@ -25,6 +25,7 @@ type
     procedure UnregisterKey(AHotKeyId: Integer); overload;
     procedure UnregisterAllKeys;
     function GetFullStringId(AStringId: string): String;
+    function GetShortStringId(AFullStrId: String): String;
   public
     constructor Create(AWndHandle: HWND; const AUniqueIdentifier: string);
     destructor Destroy; override;
@@ -33,11 +34,12 @@ type
     procedure UnregisterKey(const AStringId: String); overload;
     function FindHotKey(const AStringId: String): THotKey;
     function HotKeyId(const AStringId: String): integer;
+    function IdToStrId(AnId: Integer): String;
   end;
 
 implementation
 
-uses LCLType;
+uses LCLType, StrUtils;
 
 {$IFOPT D+}
 procedure DebugMsg(const Msg: String);
@@ -100,6 +102,14 @@ end;
 function TGlobalKeyHook.GetFullStringId(AStringId: string): String;
 begin
   Result := UniqueIdentifier + '_' + AStringId;
+end;
+
+function TGlobalKeyHook.GetShortStringId(AFullStrId: String): String;
+begin
+  Result := AFullStrId;
+  if StartsStr(UniqueIdentifier + '_', Result) then
+    Delete(Result, 1, Length(UniqueIdentifier + '_'));
+  {else raise ...}
 end;
 
 constructor TGlobalKeyHook.Create(AWndHandle: HWND;
@@ -195,6 +205,22 @@ begin
   Result := GlobalFindAtom(PChar(FullStrId));
 
   DebugMsg(Format('%s => id %d', [AStringId, Result]));
+end;
+
+function TGlobalKeyHook.IdToStrId(AnId: Integer): String;
+const
+  MaxLength = 255;
+var
+  Buffer: array[0..MaxLength-1] of char;
+  Len: UINT;
+begin
+  Len := GlobalGetAtomName(AnId, Buffer, MaxLength);
+
+  if (Len = 0) then
+    raise EGlobalKeyHookException.CreateFmt('Not found string id for id=%d', [AnId]);
+
+  Result := Buffer;
+  Result := GetShortStringId(Result);
 end;
 
 

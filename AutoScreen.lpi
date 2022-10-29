@@ -64,7 +64,6 @@
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
-              <SyntaxMode Value="Delphi"/>
               <IncludeAssertionCode Value="True"/>
             </SyntaxOptions>
           </Parsing>
@@ -108,11 +107,6 @@
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
-          <Parsing>
-            <SyntaxOptions>
-              <SyntaxMode Value="Delphi"/>
-            </SyntaxOptions>
-          </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
             <TargetCPU Value="i386"/>
@@ -161,7 +155,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="13">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -201,28 +195,37 @@
         <UnitName Value="uFileNameTemplateHelpForm"/>
       </Unit6>
       <Unit7>
+        <Filename Value="screengrabber.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ScreenGrabber"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="languagecodes.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
         <Filename Value="uutilsmore.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uUtilsMore"/>
-      </Unit7>
-      <Unit8>
+      </Unit9>
+      <Unit10>
         <Filename Value="uhotkeysform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="HotKeysForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uHotKeysForm"/>
-      </Unit8>
-      <Unit9>
+      </Unit10>
+      <Unit11>
         <Filename Value="uinihelper.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uIniHelper"/>
-      </Unit9>
-      <Unit10>
+      </Unit11>
+      <Unit12>
         <Filename Value="globalkeyhook.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GlobalKeyHook"/>
-      </Unit10>
+      </Unit12>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -237,11 +240,6 @@
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       <ObjectPath Value="libs\PNGImage"/>
     </SearchPaths>
-    <Parsing>
-      <SyntaxOptions>
-        <SyntaxMode Value="Delphi"/>
-      </SyntaxOptions>
-    </Parsing>
     <CodeGeneration>
       <TargetCPU Value="i386"/>
       <TargetOS Value="win32"/>
