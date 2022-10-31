@@ -83,7 +83,7 @@ function MakeInstaller(){
 
 	# Make installation file
 	echo "Make installation file..."
-	"$InnoSetupDir/iscc.exe" "setup.iss"
+	"$InnoSetupDir/iscc.exe" //F"autoscreenshot_${ProgramVersion}_setup" "setup.iss"
 	echo "Done!"
 	echo ""
 }
@@ -128,8 +128,9 @@ fi
 echo "InnoSetupDir=${InnoSetupDir}"
 
 # Program version
-ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreen.lpi)
-#echo "Current program version: $ProgramVersion"
+#ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreen.lpi)
+ProgramVersion=$(git describe --dirty)
+echo "Current program version: $ProgramVersion"
 #echo ""
 
 usage="$(basename "$0") [-z] [-i]
