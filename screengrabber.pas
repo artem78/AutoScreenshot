@@ -127,7 +127,7 @@ var
   Bitmap: TBGRABitmap;
   Writer: TFPCustomImageWriter;
   //GIF: TGIFImage;
-  ScreenDC: HDC;
+  ScreenDC: Windows.HDC;
 begin
   DebugLn('Start taking screenshot...');
   DebugLn('Region: ', DbgS(ARect));
@@ -136,7 +136,7 @@ begin
 
   //Bitmap.TakeScreenshot(Rect); // Not supports multiply monitors
   ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
-  DebugLn(['ScreenDC=', ScreenDC]);
+  DebugLn('ScreenDC=', DbgS(ScreenDC));
   BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
            ScreenDC, ARect.Left, ARect.Top, SRCCOPY);
   ReleaseDC(0, ScreenDC);
