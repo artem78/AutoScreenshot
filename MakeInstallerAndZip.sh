@@ -131,7 +131,7 @@ echo "InnoSetupDir=${InnoSetupDir}"
 #ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreen.lpi)
 ProgramVersion=$(git describe --dirty)
 echo "Current program version: $ProgramVersion"
-#echo ""
+echo ""
 
 usage="$(basename "$0") [-z] [-i]
 
