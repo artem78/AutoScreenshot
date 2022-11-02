@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Script for building project from Cygwin or MinGW
+
+
 # ***  Functions  ***
 
 function StopBuild(){
