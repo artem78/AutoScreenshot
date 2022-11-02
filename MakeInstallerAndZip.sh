@@ -33,46 +33,46 @@ function MakeZip(){
 	
 	# Create and clear build directory
 	echo "Clear build directory..."
-	rm -f -r $BuildDir
-	mkdir -p $BuildDir
-	mkdir -p $TargetZipDir
+	rm -f -r "$BuildDir"
+	mkdir -p "$BuildDir"
+	mkdir -p "$TargetZipDir"
 	echo "Done!"
 	echo ""
 
 	# Executable
 	echo "Copy EXE..."
-	cp -v --preserve=timestamps AutoScreenshot.exe $BuildDir
+	cp -v --preserve=timestamps AutoScreenshot.exe "$BuildDir"
 	echo "Done!"
 	echo ""
 
 	# DLLs
 	echo "Copy DLLs..."
-	cp -v --preserve=timestamps $LazarusDir/libeay32.dll $BuildDir
-	cp -v --preserve=timestamps $LazarusDir/ssleay32.dll $BuildDir
+	cp -v --preserve=timestamps "$LazarusDir/libeay32.dll" "$BuildDir"
+	cp -v --preserve=timestamps "$LazarusDir/ssleay32.dll" "$BuildDir"
 	echo "Done!"
 	echo ""
 
 	# # Config
 	# echo "Copy config.ini..."
-	# cp -v --preserve=timestamps config.sample.ini $BuildDir/config.ini
+	# cp -v --preserve=timestamps config.sample.ini "$BuildDir/config.ini"
 	# echo "Done!"
 	# echo ""
 
 	# Translations
 	echo "Copy translation files..."
-	mkdir -p $BuildDir/lang
-	cp -v --preserve=timestamps lang/*.ini $BuildDir/lang/
+	mkdir -p "$BuildDir/lang"
+	cp -v --preserve=timestamps lang/*.ini "$BuildDir/lang/"
 	echo "Done!"
 	echo ""
 
 	# Pack to ZIP archive
 	### Note! For MinGW (Git Bash) see https://stackoverflow.com/a/55749636 ###
 	echo "Pack all files to ZIP archive..."
-	ZipPath=$TargetZipDir/autoscreenshot_${ProgramVersion}_portable.zip
-	rm -f $ZipPath
-	cd $BuildDir
-	zip -r $ZipPath *
-	#tar -C $BuildDir -cvf $ZipPath $BuildDir/*
+	ZipPath="$TargetZipDir/autoscreenshot_${ProgramVersion}_portable.zip"
+	rm -f "$ZipPath"
+	cd "$BuildDir"
+	zip -r "$ZipPath" *
+	#tar -C "$BuildDir" -cvf "$ZipPath" "$BuildDir/*"
 	echo "Done!"
 	echo ""
 }
