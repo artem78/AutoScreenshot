@@ -110,10 +110,10 @@ function RunTests(){
 set -e
 
 # ***  Set variables ***
-LazarusDir="/f/Programms/lazarus_2.0.12_32bit"
-if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
-	LazarusDir="/cygdrive${LazarusDir}"
-fi
+LazarusDir=${LazarusDir:="/c/lazarus"}
+#if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
+#	LazarusDir="/cygdrive${LazarusDir}"
+#fi
 echo "LazarusDir=${LazarusDir}"
 
 
@@ -121,10 +121,10 @@ echo "LazarusDir=${LazarusDir}"
 BuildDir=$(realpath -m "build/files")
 TargetZipDir=$(realpath -m "build/zip")
 
-InnoSetupDir="/d/Программы/Inno Setup 5"
-if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
-	InnoSetupDir="/cygdrive${InnoSetupDir}"
-fi
+InnoSetupDir=${InnoSetupDir:="/c/Program Files/Inno Setup 5"}
+#if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
+#	InnoSetupDir="/cygdrive${InnoSetupDir}"
+#fi
 echo "InnoSetupDir=${InnoSetupDir}"
 
 # Program version
