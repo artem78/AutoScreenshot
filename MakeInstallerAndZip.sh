@@ -1,6 +1,13 @@
 #!/bin/bash
 
-# Script for building project from Cygwin or MinGW
+# Script for building project on Windows from Cygwin or MinGW
+#
+# Note!
+#    Do not forget to define variables LazarusDir and InnoSetupDir first,
+#    for example in your ~/.bashrc:
+#        export LazarusDir="/path/to/lazarus"
+#        export InnoSetupDir="/path/to/inno setup"
+#
 
 
 # ***  Functions  ***
