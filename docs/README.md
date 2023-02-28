@@ -1,4 +1,5 @@
-[![Russian](images/russian_icon.png) RU](README-ru.md "Russian")
+[![Russian](images/icon_ru.png) RU](README-ru.md "Russian")
+[![German](images/icon_de.png) DE](README-de.md "German")
 
 -------------------------  
 
@@ -38,7 +39,7 @@ Auto Screenshot
 * Portuguese
 * Spanish
 * Turkish
-* German
+* [German](README-de.md)
 
 [(Help with new translations)](https://github.com/artem78/AutoScreenshot/issues/5)
 
