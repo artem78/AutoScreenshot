@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Auto Screenshot"
-#define MyAppVersion "1.10.3"
+#define MyAppVersion "1.10.4"
 #define MyAppPublisher "Artem Demin"
 #define MyAppURL "https://github.com/artem78/AutoScreenshot#readme"
 #define MyAppExeName "AutoScreenshot.exe"
