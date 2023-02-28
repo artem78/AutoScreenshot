@@ -16,6 +16,8 @@ type
     ButtonPanel: TButtonPanel;
     BuildDateValueLabel: TLabel;
     AuthorValueLabel: TLabel;
+    CompillerTitleLabel: TLabel;
+    CompillerValueLabel: TLabel;
     LinkTitleLabel: TLabel;
     LicenseValueLabel: TLabel;
     LocalizationAuthorValueLabel: TLabel;
@@ -42,7 +44,7 @@ var
 
 implementation
 
-uses uLocalization, uUtils, DateUtils, StrUtils;
+uses uLocalization, uUtils, LazVersion, DateUtils, StrUtils;
 
 {$R *.lfm}
 
@@ -124,6 +126,10 @@ begin
   LicenseValueLabel.Caption := License;
 
   ButtonPanel.CloseButton.Caption := Localizer.I18N('Close');
+
+  CompillerTitleLabel.Caption := Localizer.I18N('Compiller') + ':';
+  CompillerValueLabel.Caption := Format('FPC %s / Lazarus %s',
+                                 [{$I %FPCVersion%}, laz_version]);
 
   // FixMe: Close button icon not hidden
 end;

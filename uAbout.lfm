@@ -50,9 +50,9 @@ object AboutForm: TAboutForm
     AnchorSideTop.Control = Logo
     AnchorSideTop.Side = asrBottom
     Left = 15
-    Height = 120
+    Height = 141
     Top = 94
-    Width = 136
+    Width = 150
     AutoSize = True
     BorderSpacing.Top = 15
     BevelOuter = bvNone
@@ -60,20 +60,20 @@ object AboutForm: TAboutForm
     ChildSizing.VerticalSpacing = 6
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 2
-    ClientHeight = 120
-    ClientWidth = 136
+    ClientHeight = 141
+    ClientWidth = 150
     TabOrder = 0
     object VersionTitleLabel: TLabel
       AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 15
       Top = 0
-      Width = 68
+      Width = 82
       Caption = 'Version:'
       ParentColor = False
     end
     object VersionValueLabel: TLabel
-      Left = 74
+      Left = 88
       Height = 15
       Top = 0
       Width = 62
@@ -86,31 +86,47 @@ object AboutForm: TAboutForm
       Left = 0
       Height = 15
       Top = 21
-      Width = 68
+      Width = 82
       Caption = 'Build date:'
       ParentColor = False
     end
     object BuildDateValueLabel: TLabel
-      Left = 74
+      Left = 88
       Height = 15
       Top = 21
       Width = 62
       Caption = 'XX.XX.XXXX'
       ParentColor = False
     end
+    object CompillerTitleLabel: TLabel
+      Left = 0
+      Height = 15
+      Top = 42
+      Width = 82
+      Caption = 'Compiled with:'
+      ParentColor = False
+    end
+    object CompillerValueLabel: TLabel
+      Left = 88
+      Height = 15
+      Top = 42
+      Width = 62
+      Caption = 'Xxxxx'
+      ParentColor = False
+    end
     object AuthorTitleLabel: TLabel
       AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 15
-      Top = 42
-      Width = 68
+      Top = 63
+      Width = 82
       Caption = 'Author:'
       ParentColor = False
     end
     object AuthorValueLabel: TLabel
-      Left = 74
+      Left = 88
       Height = 15
-      Top = 42
+      Top = 63
       Width = 62
       Caption = 'Xxx Xxxxxx'
       ParentColor = False
@@ -119,15 +135,15 @@ object AboutForm: TAboutForm
       AnchorSideTop.Side = asrBottom
       Left = 0
       Height = 15
-      Top = 63
-      Width = 68
+      Top = 84
+      Width = 82
       Caption = 'Localization:'
       ParentColor = False
     end
     object LocalizationAuthorValueLabel: TLabel
-      Left = 74
+      Left = 88
       Height = 15
-      Top = 63
+      Top = 84
       Width = 62
       Caption = 'Xxx Xxxxx'
       ParentColor = False
@@ -135,15 +151,15 @@ object AboutForm: TAboutForm
     object LicenseTitleLabel: TLabel
       Left = 0
       Height = 15
-      Top = 84
-      Width = 68
+      Top = 105
+      Width = 82
       Caption = 'License:'
       ParentColor = False
     end
     object LicenseValueLabel: TLabel
-      Left = 74
+      Left = 88
       Height = 15
-      Top = 84
+      Top = 105
       Width = 62
       Caption = 'XXX'
       ParentColor = False
@@ -151,17 +167,17 @@ object AboutForm: TAboutForm
     object LinkTitleLabel: TLabel
       Left = 0
       Height = 15
-      Top = 105
-      Width = 68
+      Top = 126
+      Width = 82
       Caption = 'Link:'
       ParentColor = False
     end
     object LinkValueLabel: TLabel
       AnchorSideTop.Side = asrBottom
       Cursor = crHandPoint
-      Left = 74
+      Left = 88
       Height = 15
-      Top = 105
+      Top = 126
       Width = 62
       Caption = 'http://...'
       Font.Color = clBlue
@@ -177,8 +193,8 @@ object AboutForm: TAboutForm
     AnchorSideTop.Control = Panel
     AnchorSideTop.Side = asrBottom
     Left = 15
-    Height = 47
-    Top = 235
+    Height = 26
+    Top = 256
     Width = 328
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Top = 15
