@@ -62,4 +62,4 @@ You are free to use, modify or distribute this software under the [GNU GPL v3.0]
 Artem78 (email: [megabyte1024@ya.ru](mailto:megabyte1024@ya.ru?subject=AutoScreenshot))
 
 ## Donate
-You can donate any amount using PayPay to email <u>megabyte1024@yandex.com</u> (in payment note write "AutoScreenshot donation").
+You can donate any amount using PayPal to email <u>megabyte1024@yandex.com</u> (in payment note write "AutoScreenshot donation").
