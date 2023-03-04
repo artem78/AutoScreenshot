@@ -1,5 +1,7 @@
 unit uAutoScreen;
 
+{$mode objfpc}{$H+}
+
 interface
 
 uses
@@ -9,24 +11,10 @@ uses
   {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
-  LCLIntf, uHotKeysForm, uUtilsMore, GlobalKeyHook, ZStream { for Tcompressionlevel };
+  LCLIntf, ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook,
+  ZStream { for Tcompressionlevel };
 
 type
-  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF}, fmtTIFF);
-
-  TColorDepth = (cd8Bit=8, cd16Bit=16, cd24Bit=24, cd32Bit=32);
-
-  TImageFormatInfo = record
-    Name: String[10];
-    Extension: String[3];
-    HasQuality: Boolean;
-    HasGrayscale: Boolean;
-    ColorDepth: Set of TColorDepth;
-    HasCompressionLevel: Boolean;
-  end;
-
-  TImageFormatInfoArray = array [TImageFormat] of TImageFormatInfo;
-
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
 
   { TMainForm }
@@ -37,6 +25,7 @@ type
     HotKetsSettingsMenuItem: TMenuItem;
     CompressionLevelLabel: TLabel;
     ImageFormatOptionsPanel: TPanel;
+    DonateMenuItem: TMenuItem;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
@@ -71,7 +60,7 @@ type
     GrayscaleCheckBox: TCheckBox;
     ColorDepthLabel: TLabel;
     ColorDepthComboBox: TComboBox;
-    CaptureInterval: TDateTimePicker;
+    CaptureIntervalDateTimePicker: TDateTimePicker;
     TrayIconAnimationTimer: TTimer;
     AutoRunCheckBox: TCheckBox;
     MonitorLabel: TLabel;
@@ -89,12 +78,14 @@ type
     SeqNumberDigitsCountLabel: TLabel;
     procedure CheckForUpdatesMenuItemClick(Sender: TObject);
     procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
+    procedure CompressionLevelComboBoxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure HotKetsSettingsMenuItemClick(Sender: TObject);
+    procedure DonateMenuItemClick(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
-    procedure CaptureIntervalChange(Sender: TObject);
+    procedure CaptureIntervalDateTimePickerChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure ApplicationMinimize(Sender: TObject);
@@ -124,6 +115,8 @@ type
     procedure SeqNumberDigitsCountSpinEditChange(Sender: TObject);
   private
     { Private declarations }
+
+    { Fields and variables }
     AvailableLanguages: TLanguagesArray;
     FLanguage: TLanguageCode;  { ??? }
     FColorDepth: TColorDepth;
@@ -137,10 +130,17 @@ type
     {$IfDef windows}
     PrevWndProc: WndProc;
     {$EndIf}
+    Grabber: TScreenGrabber;
+
+    FStopWhenInactive: Boolean;
+    FStartMinimized: Boolean;
+    FAutoRun: Boolean;
+    FGrayscale: Boolean;
 
     KeyHook: TGlobalKeyHook;
     
-    procedure SetTimerEnabled(IsEnabled: Boolean);
+    { Methods }
+    procedure SetTimerEnabled(AEnabled: Boolean);
     function GetTimerEnabled: Boolean;
     function GetFinalOutputDir: String;
     function GetImagePath: String;
@@ -173,6 +173,12 @@ type
     procedure SetCounter(Val: Integer);
     procedure SetCounterDigits(Val: Integer);
     procedure UpdateSeqNumGroupVisibility;
+    procedure SetJPEGQuality(Val: Integer);
+    function GetJPEGQuality: Integer;
+    procedure SetStopWhenInactive(const Val: Boolean);
+    procedure SetStartMinimized(const Val: Boolean);
+    procedure SetAutoRun(const Val: Boolean);
+    procedure SetGrayscale(const Val: Boolean);
     procedure SetPostCommand(ACmd: String);
     function GetPostCommand: String;
     function GetMonitorWithCursor: Integer;
@@ -185,6 +191,7 @@ type
     procedure SetCompressionLevel(ALevel: Tcompressionlevel);
     function GetCompressionLevel: Tcompressionlevel;
 
+    { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
     property ImagePath: String read GetImagePath;
@@ -195,57 +202,24 @@ type
     property MonitorId: Integer read GetMonitorId write SetMonitorId;
     property Counter: Integer read FCounter write SetCounter;
     property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
+    property JPEGQuality: Integer read GetJPEGQuality write SetJPEGQuality;
+    property StopWhenInactive: Boolean read FStopWhenInactive write SetStopWhenInactive;
+    property StartMinimized: Boolean read FStartMinimized write SetStartMinimized;
+    property AutoRun: Boolean read FAutoRun write SetAutoRun;
+    property Grayscale: Boolean read FGrayscale write SetGrayscale;
     property PostCommand: String read GetPostCommand write SetPostCommand;
     property AutoCheckForUpdates: Boolean read GetAutoCheckForUpdates write SetAutoCheckForUpdates;
     property CompressionLevel: Tcompressionlevel read GetCompressionLevel write SetCompressionLevel;
+
+    // Messages
+    {$IfDef Windows}
+    procedure WMHotKey(var AMsg: TMessage); message WM_HOTKEY;
+    {$EndIf}
   public
     { Public declarations }
   end;
 
 const
-  ImageFormatInfoArray: TImageFormatInfoArray = (
-    (
-      Name:         'PNG';
-      Extension:    'png';
-      HasQuality:   False;
-      HasGrayscale: True;
-      ColorDepth:   [{cd8Bit, cd16Bit, cd24Bit, cd32Bit}];
-      HasCompressionLevel: True
-    ),
-    (
-      Name:         'JPG';
-      Extension:    'jpg';
-      HasQuality:   True;
-      HasGrayscale: True;
-      ColorDepth:   [];
-      HasCompressionLevel: False
-    ),
-    (
-      Name:         'BMP';
-      Extension:    'bmp';
-      HasQuality:   False;
-      HasGrayscale: False;
-      ColorDepth:   [{cd8Bit,} cd16Bit, cd24Bit, cd32Bit];
-      HasCompressionLevel: False
-    ){,
-    (
-      Name:         'GIF';
-      Extension:    'gif';
-      HasQuality:   False;
-      HasGrayscale: False;
-      ColorDepth:   [];
-      HasCompressionLevel: False
-    )},
-    (
-      Name:         'TIFF';
-      Extension:    'tif';
-      HasQuality:   False;
-      HasGrayscale: False;
-      ColorDepth:   [];
-      HasCompressionLevel: False
-    )
-  );
-
   DefaultConfigIniSection = 'main';
   HotKeysIniSection = 'hotkeys';
 
@@ -263,10 +237,9 @@ var
 
 implementation
 
-uses uAbout, DateUtils, StrUtils, uUtils, Math, BGRABitmap, BGRABitmapTypes,
-  uFileNameTemplateHelpForm, fphttpclient, opensslsockets,
-  fpjson, jsonparser, FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, FPWriteTiff,
-  uIniHelper, Idle, LCLType;
+uses uAbout, DateUtils, StrUtils, uUtils, Math, uFileNameTemplateHelpForm,
+fphttpclient, opensslsockets, fpjson, jsonparser, uIniHelper, FileUtil,
+Idle, LCLType;
 
 {$R *.lfm}
 
@@ -283,22 +256,6 @@ begin
       begin
         MainForm.UpdateMonitorList;
       end;
-    WM_HOTKEY:
-      begin
-        //ShowMessage(IntToStr(lParam));
-        if wParam = MainForm.KeyHook.HotKeyId('StartAutoCapture') then
-          MainForm.IsTimerEnabled := True
-        else if wParam = MainForm.KeyHook.HotKeyId('StopAutoCapture') then
-          MainForm.IsTimerEnabled := False
-        else if wParam = MainForm.KeyHook.HotKeyId('SingleCapture') then
-          MainForm.MakeScreenshot
-        else
-        begin
-          {$IFOPT D+}
-          ShowMessage(Format('Unknown hotkey event! (wparam=%d, lparam=%d)', [wParam, lParam]));
-          {$ENDIF}
-        end;
-      end;
   end;
 
   //if WindowInfo^.WinControl is TForm1 then //Eliminate form1 global variable for safer handling.
@@ -307,6 +264,11 @@ begin
   Result := Windows.CallWindowProc(MainForm.PrevWndProc, MyHWND, uMsg, WParam, LParam);
 end;
 {$EndIf}
+
+function MyGetApplicationName: String;
+begin
+  Result := 'AutoScreenshot';
+end;
 
 procedure TMainForm.InitUI;
 var
@@ -318,9 +280,10 @@ begin
 
   // Set default tray icon
   TrayIconState := tisDefault;
+  TrayIcon.Hint := Application.Title;
 
   // Fill combobox with image formats
-  for Fmt := Low(TImageFormat) to High(TImageFormat) do
+  for Fmt in TImageFormat do
     ImageFormatComboBox.Items.Append(ImageFormatInfoArray[Fmt].Name);
 
   // Set min/max values for JPEG quality
@@ -373,12 +336,16 @@ const
   DefaultCounterDigits    = 6;
   DefaultCompressionLevel = cldefault;
 var
-  DefaultOutputDir: String;
+  DefaultOutputDir, BaseDir: String;
   CfgLang, SysLang, AltLang: TLanguageCode;
   FmtStr: String;
   Seconds: Integer;
 begin
-  DefaultOutputDir := IncludeTrailingPathDelimiter(JoinPath(ExtractFilePath(Application.ExeName), 'screenshots'));
+  if IsPortable then
+    BaseDir := ExtractFilePath(Application.ExeName)
+  else
+    BaseDir := GetUserPicturesDir();
+  DefaultOutputDir := IncludeTrailingPathDelimiter(ConcatPaths([BaseDir, 'screenshots']));
   OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
   // ToDo: Check that directory exists or can be created (with subdirs if needed)
   if OutputDirEdit.Text = '' then
@@ -388,10 +355,10 @@ begin
 
   Seconds := Round(Ini.ReadFloat(DefaultConfigIniSection, 'CaptureInterval', DefaultCaptureInterval) * SecsPerMin);
   Seconds := Max(Seconds, MinCaptureIntervalInSeconds);
-  CaptureInterval.Time := EncodeTime(0, 0, 0, 0);
-  CaptureInterval.Time := IncSecond(CaptureInterval.Time, Seconds);
+  CaptureIntervalDateTimePicker.Time := EncodeTime(0, 0, 0, 0);
+  CaptureIntervalDateTimePicker.Time := IncSecond(CaptureIntervalDateTimePicker.Time, Seconds);
 
-  StopWhenInactiveCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
+  StopWhenInactive := Ini.ReadBool(DefaultConfigIniSection, 'StopWhenInactive', False);
 
   // Image format
   FColorDepth := TColorDepth(0); // Set value as unitialized to prevent
@@ -405,9 +372,9 @@ begin
     ImageFormat := DefaultImageFormat;
   end;
 
-  JPEGQualitySpinEdit.Value := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', DefaultJPEGQuality);
+  JPEGQuality := Ini.ReadInteger(DefaultConfigIniSection, 'JPEGQuality', DefaultJPEGQuality);
 
-  GrayscaleCheckBox.Checked := Ini.ReadBool(DefaultConfigIniSection, 'Grayscale', False);
+  Grayscale := Ini.ReadBool(DefaultConfigIniSection, 'Grayscale', False);
 
   // Color depth
   try
@@ -436,23 +403,20 @@ begin
   end;
 
   // Start autocapture
-  Timer.Interval := SecondOfTheDay(CaptureInterval.Time) * MSecsPerSec;
+  Timer.Interval := SecondOfTheDay(CaptureIntervalDateTimePicker.Time) * MSecsPerSec;
   StartCaptureOnStartUpCheckBox.Checked :=
       Ini.ReadBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', {True} False);
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
 
   {$IfDef Windows}
   // Start with Windows
-  AutoRunCheckBox.Checked :=
-    ini.ReadBool(DefaultConfigIniSection, 'AutoRun', False);
+  AutoRun := Ini.ReadBool(DefaultConfigIniSection, 'AutoRun', False);
   {$EndIf}
   
   // Start minimized
-  if Ini.ReadBool(DefaultConfigIniSection, 'StartMinimized', False) then
-  begin
-    StartMinimizedCheckBox.Checked := True;
-    MinimizeToTray;
-  end
+  StartMinimized := Ini.ReadBool(DefaultConfigIniSection, 'StartMinimized', False);
+  if StartMinimized then
+    MinimizeToTray
   else
     RestoreFromTray;
 
@@ -493,8 +457,12 @@ const
     Key: VK_F7;
   );
 var
+  ///////
+  ColorDepthTmp: TColorDepth;
+  ////////
   LastUpdateCheck: TDateTime;
   HotKey: THotKey;
+  IniFileName: String;
 begin
   {$IfDef windows}
   { Replace default window function with custom one
@@ -503,16 +471,31 @@ begin
     (SetWindowLongPtr(Self.Handle, GWL_WNDPROC {GWLP_WNDPROC}, PtrUInt(@WndCallback)));
   {$EndIf}
 
-  Application.OnMinimize := ApplicationMinimize;
+  Application.OnMinimize := @ApplicationMinimize;
 
   InitUI;
 
-  Ini := TIniFile.Create(ExtractFilePath(Application.ExeName) + PathDelim + 'config.ini');
+  OnGetApplicationName := @MyGetApplicationName;
+  if IsPortable then
+    IniFileName := ConcatPaths([ProgramDirectory, 'config.ini'])
+  else
+    IniFileName := ConcatPaths([GetAppConfigDir(False), 'config.ini']);
+  Ini := TIniFile.Create(IniFileName);
   ReadSettings;
 
   //if FindCmdLineSwitch('autorun') then
   //  OutputDebugString('AutoRun');
 
+  //////////////
+  ColorDepthTmp := cd24Bit; // Any value
+  try
+    ColorDepthTmp := ColorDepth;
+  except
+  end;
+  ///////////////
+  Grabber := TScreenGrabber.Create(ImageFormat, {ColorDepth} ColorDepthTmp, JPEGQuality,
+    Grayscale, CompressionLevel);
+  
   // Check for updates when program starts
   LastUpdateCheck := Ini.ReadDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', 0);
   if AutoCheckForUpdates and (SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds) then
@@ -538,8 +521,14 @@ begin
   AutoCheckForUpdates := not AutoCheckForUpdates;
 end;
 
+procedure TMainForm.CompressionLevelComboBoxChange(Sender: TObject);
+begin
+  CompressionLevel := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
+end;
+
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  Grabber.Free;
   KeyHook.Free;
 
   Ini.Free;
@@ -568,21 +557,26 @@ begin
   HotKeysForm.Free;
 end;
 
+procedure TMainForm.DonateMenuItemClick(Sender: TObject);
+begin
+  ShowMessage('PayPal: megabyte1024@yandex.com');
+end;
+
 procedure TMainForm.OutputDirEditChange(Sender: TObject);
 begin
     Ini.WriteString(DefaultConfigIniSection, 'OutputDir', OutputDirEdit.Text);
 end;
 
-procedure TMainForm.CaptureIntervalChange(Sender: TObject);
+procedure TMainForm.CaptureIntervalDateTimePickerChange(Sender: TObject);
 var
   Seconds: Integer;
 begin
-  Seconds := SecondOfTheDay(CaptureInterval.Time);
+  Seconds := SecondOfTheDay(CaptureIntervalDateTimePicker.Time);
   if Seconds < MinCaptureIntervalInSeconds then
   begin
     Seconds := MinCaptureIntervalInSeconds;
-    CaptureInterval.Time := EncodeTime(0, 0, 0, 0);
-    CaptureInterval.Time := IncSecond(CaptureInterval.Time, Seconds);
+    CaptureIntervalDateTimePicker.Time := EncodeTime(0, 0, 0, 0);
+    CaptureIntervalDateTimePicker.Time := IncSecond(CaptureIntervalDateTimePicker.Time, Seconds);
   end;
   Ini.WriteFloat(DefaultConfigIniSection, 'CaptureInterval', Seconds / SecsPerMin);
   Timer.Interval := Seconds * MSecsPerSec;
@@ -595,7 +589,7 @@ end;
 
 procedure TMainForm.TimerTimer(Sender: TObject);
 begin
-  if StopWhenInactiveCheckBox.Checked then
+  if StopWhenInactive then
   begin
     // Skip taking screenshot if there are no user activity
     // for autocapture interval minutes
@@ -617,15 +611,15 @@ begin
   Result := Timer.Enabled;
 end;
 
-procedure TMainForm.SetTimerEnabled(IsEnabled: Boolean);
+procedure TMainForm.SetTimerEnabled(AEnabled: Boolean);
 begin
-  Timer.Enabled := IsEnabled;
-  StartAutoCaptureButton.Enabled := not IsEnabled;
-  StopAutoCaptureButton.Enabled := IsEnabled;
+  Timer.Enabled := AEnabled;
+  StartAutoCaptureButton.Enabled := not AEnabled;
+  StopAutoCaptureButton.Enabled := AEnabled;
   // Tray menu
-  ToggleAutoCaptureTrayMenuItem.Checked := IsEnabled;
+  ToggleAutoCaptureTrayMenuItem.Checked := AEnabled;
   // Tray icon
-  if IsEnabled then
+  if AEnabled then
     TrayIconState := tisDefault
   else
     TrayIconState := tisBlackWhite;
@@ -647,112 +641,21 @@ begin
 end;
 
 procedure TMainForm.MakeScreenshot;
-{$IfDef linux}
-const
-  HWND_DESKTOP = 0;
-{$EndIf}
 var
-  Bitmap: TBGRABitmap;
-  Writer: TFPCustomImageWriter;
-  //GIF: TGIFImage;
-  ScreenDC: HDC;
-  ScreenWidth, ScreenHeight: Integer;
-  ScreenX, ScreenY: Integer;
-  //Rect: TRect;
-  UsedMonitor: TMonitor;
   Cmd: String;
 begin
-  if MonitorId = NoMonitorId then
-  begin // All displays
-    ScreenWidth  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
-    ScreenHeight := GetSystemMetrics(SM_CYVIRTUALSCREEN);
-    ScreenX := GetSystemMetrics(SM_XVIRTUALSCREEN);
-    ScreenY := GetSystemMetrics(SM_YVIRTUALSCREEN);
-  end
-  else // Only one display
-  begin
-    if MonitorId = MonitorWithCursor then
-      UsedMonitor := Screen.Monitors[GetMonitorWithCursor]
-    else
-      UsedMonitor := Screen.Monitors[MonitorId];
-    ScreenWidth  := UsedMonitor.Width;
-    ScreenHeight := UsedMonitor.Height;
-    ScreenX := UsedMonitor.Left;
-    ScreenY := UsedMonitor.Top;
-  end;
-  //Rect := GetClientRect(0);
-
-  Bitmap := TBGRABitmap.Create(ScreenWidth, ScreenHeight, BGRABlack);
-
-  //Bitmap.TakeScreenshot(Rect); // Not supports multiply monitors
-  ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
-  {BitBlt(Bitmap.Canvas.Handle, 0, 0, ScreenWidth, ScreenHeight,
-           ScreenDC, ScreenX, ScreenY, SRCCOPY);}
-  Bitmap.LoadFromDevice(ScreenDC);
-  ReleaseDC(0, ScreenDC);
-
   TrayIconState := tisFlashAnimation;
 
-  case ImageFormat of
-    fmtPNG:      // PNG
-      begin
-        Writer := TFPWriterPNG.create;
-
-        with Writer as TFPWriterPNG do
-        begin
-          GrayScale := GrayscaleCheckBox.Checked;
-          CompressionLevel := Self.CompressionLevel;
-          //Indexed := ...;
-          //UseAlpha := ...;
-        end;
-      end;
-
-    fmtJPG:     // JPEG
-      begin
-        Writer := TFPWriterJPEG.Create;
-
-        with Writer as TFPWriterJPEG do
-        begin
-          CompressionQuality := JPEGQualitySpinEdit.Value;
-          GrayScale := GrayscaleCheckBox.Checked;
-        end;
-      end;
-
-    fmtBMP:    // Bitmap (BMP)
-      begin
-        Writer := TFPWriterBMP.Create;
-
-        with Writer as TFPWriterBMP do
-        begin
-          BitsPerPixel := Integer(ColorDepth);
-          //RLECompress := ...;
-        end;
-      end;
-
-    {fmtGIF:    // GIF
-      begin
-        GIF := TGIFImage.Create;
-        try
-          GIF.Assign(Bitmap);
-          //GIF.OptimizeColorMap;
-          GIF.SaveToFile(ImagePath);
-        finally
-          GIF.Free;
-        end;
-      end;}
-
-      fmtTIFF:
-        begin
-          Writer := TFPWriterTiff.Create;
-        end;
+  if MonitorId = NoMonitorId then
+    Grabber.CaptureAllMonitors(ImagePath)
+  else
+  begin
+    if MonitorId = MonitorWithCursor then
+      Grabber.CaptureMonitor(ImagePath, GetMonitorWithCursor)
+    else
+      Grabber.CaptureMonitor(ImagePath, MonitorId);
   end;
 
-  try
-    Bitmap.SaveToFile(ImagePath, Writer);
-  finally
-    Writer.Free;
-    Bitmap.Free;
-  end;
 
   // Run user command
   try
@@ -793,7 +696,9 @@ begin
     Exit;
 
   try
-    Ini.WriteInteger(DefaultConfigIniSection, 'JPEGQuality', JPEGQualitySpinEdit.Value);
+    Ini.WriteInteger(DefaultConfigIniSection, 'JPEGQuality', JPEGQuality);
+    if Grabber <> nil then
+      Grabber.Quality := JPEGQuality;
   finally
   end;
 end;
@@ -807,7 +712,7 @@ begin
   SubDir := ExtractFileDir({Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', '')} FileNameTemplateComboBox.Text);
   SubDir := FormatPath(SubDir);
 
-  FullDir := IncludeTrailingPathDelimiter(JoinPath(BaseDir, SubDir));
+  FullDir := IncludeTrailingPathDelimiter(ConcatPaths([BaseDir, SubDir]));
 
   if not DirectoryExists(FullDir) then
   begin
@@ -837,7 +742,7 @@ end;
 
 procedure TMainForm.StopWhenInactiveCheckBoxClick(Sender: TObject);
 begin
-  Ini.WriteBool(DefaultConfigIniSection, 'StopWhenInactive', StopWhenInactiveCheckBox.Checked);
+  StopWhenInactive := StopWhenInactiveCheckBox.Checked;
 end;
 
 procedure TMainForm.ImageFormatComboBoxChange(Sender: TObject);
@@ -863,8 +768,11 @@ begin
     CompressionLevelComboBox.Visible := IsCompressionLevelVisible;
 
     UpdateColorDepthValues;
-
+  
     Ini.WriteString(DefaultConfigIniSection, 'ImageFormat', ImageFormatInfoArray[Format].Name);
+
+    if Grabber <> nil then
+      Grabber.ImageFormat := Format;
   finally
     EnableAutoSizing;
   end;
@@ -973,6 +881,7 @@ begin
     CheckForUpdatesMenuItem.Caption := Localizer.I18N('CheckForUpdates');
     AutoCheckForUpdatesMenuItem.Caption := Localizer.I18N('AutoCheckForUpdates');
     HotKetsSettingsMenuItem.Caption := Localizer.I18N('EditHotKeys') + '...';
+    DonateMenuItem.Caption := Localizer.I18N('Donate');
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
@@ -1032,7 +941,7 @@ end;
 
 procedure TMainForm.StartMinimizedCheckBoxClick(Sender: TObject);
 begin
-  Ini.WriteBool(DefaultConfigIniSection, 'StartMinimized', StartMinimizedCheckBox.Checked);
+  StartMinimized := StartMinimizedCheckBox.Checked;
 end;
 
 procedure TMainForm.FileNameTemplateComboBoxChange(Sender: TObject);
@@ -1061,7 +970,7 @@ procedure TMainForm.SetImageFormatByStr(FmtStr: String);
 var
   Fmt: TImageFormat;
 begin
-  for Fmt := Low(TImageFormat) to High(TImageFormat) do
+  for Fmt in TImageFormat do
   begin
     if ImageFormatInfoArray[Fmt].Name = FmtStr then
     begin
@@ -1081,7 +990,7 @@ end;
 
 procedure TMainForm.GrayscaleCheckBoxClick(Sender: TObject);
 begin
-  Ini.WriteBool(DefaultConfigIniSection, 'Grayscale', GrayscaleCheckBox.Checked);
+  Grayscale := GrayscaleCheckBox.Checked;
 end;
 
 procedure TMainForm.ColorDepthComboBoxChange(Sender: TObject);
@@ -1090,7 +999,7 @@ var
 begin
   Idx := ColorDepthComboBox.ItemIndex;
   if Idx <> -1 then
-    ColorDepth := TColorDepth(ColorDepthComboBox.Items.Objects[Idx]);
+    ColorDepth := TColorDepth(PtrUint(ColorDepthComboBox.Items.Objects[Idx]));
 end;
 
 procedure TMainForm.UpdateColorDepthValues;
@@ -1110,15 +1019,16 @@ begin
   if not IsEmpty then
   begin
     Idx := 0;
+    //for ColorDepthTmp in TColorDepth do
     for ColorDepthTmp := Low(TColorDepth) to High(TColorDepth) do
     begin
       if ColorDepthTmp in ImageFormatInfoArray[ImageFormat].ColorDepth then
       begin
-        ColorDepthComboBox.Items.AddObject(Format('%d bit', [Integer(ColorDepthTmp)]), TObject(Integer(ColorDepthTmp)));
+        ColorDepthComboBox.Items.AddObject(Format('%d bit', [Integer(ColorDepthTmp)]), TObject({Integer}PtrUint(ColorDepthTmp)));
         if ColorDepthTmp = FColorDepth then
         begin
           // Select last saved color depth if available
-          ColorDepth := TColorDepth(ColorDepthComboBox.Items.Objects[Idx]);
+          ColorDepth := TColorDepth(PtrUint(ColorDepthComboBox.Items.Objects[Idx]));
         end;
         Inc(Idx);
       end;
@@ -1128,7 +1038,7 @@ begin
     begin
       // Select best color depth (last one in the list)
       Idx := ColorDepthComboBox.Items.Count - 1;
-      ColorDepth := TColorDepth(ColorDepthComboBox.Items.Objects[Idx]);
+      ColorDepth := TColorDepth(PtrUint(ColorDepthComboBox.Items.Objects[Idx]));
     end;
   end;
 
@@ -1191,7 +1101,7 @@ begin
     // Choose new value in combobox
     for Idx := 0 to ColorDepthComboBox.Items.Count - 1 do
     begin
-      if TColorDepth(ColorDepthComboBox.Items.Objects[Idx]) = AColorDepth then
+      if TColorDepth(PtrUint(ColorDepthComboBox.Items.Objects[Idx])) = AColorDepth then
       begin
         ColorDepthComboBox.ItemIndex := Idx;
         Break;
@@ -1200,6 +1110,8 @@ begin
 
     FColorDepth := AColorDepth;
     Ini.WriteInteger(DefaultConfigIniSection, 'ColorDepth', Integer(AColorDepth));
+    if Grabber <> nil then
+      Grabber.ColorDepth := AColorDepth;
   end
   else
     raise Exception.CreateFmt('Color depth %d-bit not allowed for %s format',
@@ -1249,15 +1161,9 @@ begin
 end;
 
 procedure TMainForm.AutoRunCheckBoxClick(Sender: TObject);
-{$IfDef Windows}
-var
-  AutoRunEnabled: Boolean;
-{$EndIf}
 begin
   {$IfDef Windows}
-  AutoRunEnabled := AutoRunCheckBox.Checked;
-  AutoRun(Application.ExeName, 'Auto Screenshot', AutoRunEnabled);
-  Ini.WriteBool(DefaultConfigIniSection, 'AutoRun', AutoRunEnabled);
+  AutoRun := AutoRunCheckBox.Checked;
   {$EndIf}
 end;
 
@@ -1395,7 +1301,7 @@ begin
   begin
     MenuItem := TMenuItem.Create(LanguageSubMenu);
     MenuItem.Caption := ExtractDelimited(1, Line, [#9]);
-    MenuItem.OnClick := LanguageClick;
+    MenuItem.OnClick := @LanguageClick;
     MenuItem.RadioItem := True;
     //MenuItem.GroupIndex := GroupIdx;
     MenuItem.Name := LanguageSubMenuItemNamePrefix + ExtractDelimited(2, Line, [#9]);
@@ -1484,7 +1390,7 @@ var
 begin
   Result := Str;
 
-  CounterStr := Format('%.' + IntToStr(CounterDigits) + 'd', [Counter]); // Add leading zeros to Counter value
+  CounterStr := Dec2Numb(Counter, CounterDigits, 10); // Add leading zeros to Counter value
 
   Result := StringReplace(Result, TmplVarsChar + 'COMP', GetLocalComputerName, [rfReplaceAll]);
   Result := StringReplace(Result, TmplVarsChar + 'USER', GetCurrentUserName,   [rfReplaceAll]);
@@ -1526,6 +1432,61 @@ begin
     RecalculateLabelWidthsForSeqNumGroup;
 end;
 
+procedure TMainForm.SetJPEGQuality(Val: Integer);
+begin
+  JPEGQualitySpinEdit.Value := Val;
+end;
+
+function TMainForm.GetJPEGQuality: Integer;
+begin
+  Result := JPEGQualitySpinEdit.Value;
+end;
+
+procedure TMainForm.SetStopWhenInactive(const Val: Boolean);
+begin
+   if FStopWhenInactive <> Val then
+   begin
+     FStopWhenInactive := Val;
+     StopWhenInactiveCheckBox.Checked := Val;
+     Ini.WriteBool(DefaultConfigIniSection, 'StopWhenInactive', Val);
+   end;
+end;
+
+procedure TMainForm.SetStartMinimized(const Val: Boolean);
+begin
+  if FStartMinimized <> Val then
+  begin
+    FStartMinimized := Val;
+    StartMinimizedCheckBox.Checked := Val;
+    Ini.WriteBool(DefaultConfigIniSection, 'StartMinimized', Val);
+  end;
+end;
+
+procedure TMainForm.SetAutoRun(const Val: Boolean);
+begin
+  {$IfDef Windows}
+  if FAutoRun <> Val then
+  begin
+    FAutoRun := Val;
+    AutoRunCheckBox.Checked := Val;
+    uUtils.AutoRun(Application.ExeName, 'Auto Screenshot', Val);
+    Ini.WriteBool(DefaultConfigIniSection, 'AutoRun', Val);
+  end;
+  {$EndIf}
+end;
+
+procedure TMainForm.SetGrayscale(const Val: Boolean);
+begin
+  if FGrayscale <> Val then
+  begin
+    FGrayscale := Val;
+    GrayscaleCheckBox.Checked := Val;
+    Ini.WriteBool(DefaultConfigIniSection, 'Grayscale', Val);
+    if Grabber <> nil then
+      Grabber.IsGrayscale := Val;
+  end;
+end;
+
 procedure TMainForm.SetPostCommand(ACmd: String);
 begin
   PostCmdEdit.Text := ACmd;
@@ -1538,14 +1499,12 @@ end;
 
 function TMainForm.GetMonitorWithCursor: Integer;
 var
-  MonitorId: Integer;
   MonitorRect: TRect;
 begin
-  Result := NoMonitorId;
   Screen.UpdateMonitors;
-  for MonitorId := 0 to Screen.MonitorCount - 1 do
+  for Result := 0 to Screen.MonitorCount - 1 do
   begin
-    with Screen.Monitors[MonitorId] do
+    with Screen.Monitors[Result] do
     begin
       MonitorRect.SetLocation(Left, Top);
       MonitorRect.Width:=Width;
@@ -1553,11 +1512,10 @@ begin
     end;
 
     if MonitorRect.Contains(Mouse.CursorPos) then
-    begin
-      Result := MonitorId;
-      Break;
-    end;
+      Exit;
   end;
+
+  Exit(NoMonitorId);
 end;
 
 procedure TMainForm.CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
@@ -1587,7 +1545,7 @@ begin
     try
       Client.AllowRedirect := True;
       Client.AddHeader('Accept', 'application/vnd.github.v3+json');
-      Client.AddHeader('User-Agent', 'AutoScreenshot v' + CurrentVersion.ToString() + ' Update Checker');
+      Client.AddHeader('User-Agent', Application.Title + ' v' + CurrentVersion.ToString() + ' Update Checker');
       ResponseStr := Client.Get(ApiUrl);
 
       JsonData := GetJSON(ResponseStr);
@@ -1665,12 +1623,37 @@ procedure TMainForm.SetCompressionLevel(ALevel: Tcompressionlevel);
 begin
   CompressionLevelComboBox.ItemIndex := Ord(ALevel);
   Ini.WriteInteger(DefaultConfigIniSection, 'Compression', Ord(ALevel));
+  if Grabber <> nil then
+    Grabber.CompressionLevel := CompressionLevel;
 end;
 
 function TMainForm.GetCompressionLevel: Tcompressionlevel;
 begin
   Result := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
 end;
+
+{$IfDef Windows}
+procedure TMainForm.WMHotKey(var AMsg: TMessage);
+var
+  StrId: String = '';
+begin
+  //ShowMessage(IntToStr(lParam));
+
+  try
+    StrId := KeyHook.IdToStrId(AMsg.wParam);
+  except
+  end;
+
+  case StrId of
+    'StartAutoCapture': IsTimerEnabled := True;
+    'StopAutoCapture':  IsTimerEnabled := False;
+    'SingleCapture':    MakeScreenshot;
+    {$IFOPT D+}
+    else ShowMessage(Format('Unknown hotkey event! (wparam=%d, lparam=%d)', [AMsg.wParam, AMsg.lParam]));
+    {$ENDIF}
+  end;
+end;
+{$EndIf}
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
 begin

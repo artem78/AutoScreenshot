@@ -37,9 +37,9 @@ object MainForm: TMainForm
     ParentColor = False
   end
   object CaptureIntervalLabel: TLabel
-    AnchorSideTop.Control = CaptureInterval
+    AnchorSideTop.Control = CaptureIntervalDateTimePicker
     AnchorSideTop.Side = asrCenter
-    AnchorSideRight.Control = CaptureInterval
+    AnchorSideRight.Control = CaptureIntervalDateTimePicker
     Left = 62
     Height = 12
     Top = 166
@@ -251,7 +251,7 @@ object MainForm: TMainForm
     OnClick = FileNameTemplateHelpButtonClick
     TabOrder = 3
   end
-  object CaptureInterval: TDateTimePicker
+  object CaptureIntervalDateTimePicker: TDateTimePicker
     AnchorSideLeft.Control = OutputDirEdit
     AnchorSideTop.Control = SeqNumberGroup
     AnchorSideTop.Side = asrBottom
@@ -275,7 +275,7 @@ object MainForm: TMainForm
     UseDefaultSeparators = True
     HideDateTimeParts = []
     MonthNames = 'Long'
-    OnChange = CaptureIntervalChange
+    OnChange = CaptureIntervalDateTimePickerChange
   end
   object AutoRunCheckBox: TCheckBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -405,7 +405,7 @@ object MainForm: TMainForm
   end
   object ImageFormatOptionsPanel: TPanel
     AnchorSideLeft.Control = OutputDirEdit
-    AnchorSideTop.Control = CaptureInterval
+    AnchorSideTop.Control = CaptureIntervalDateTimePicker
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     Left = 192
@@ -455,6 +455,7 @@ object MainForm: TMainForm
         'Default'
         'Maximum'
       )
+      OnChange = CompressionLevelComboBoxChange
       Style = csDropDownList
       TabOrder = 0
     end
@@ -580,6 +581,7 @@ object MainForm: TMainForm
       end
       object HotKetsSettingsMenuItem: TMenuItem
         Caption = 'Edit hotkeys...'
+        Visible = False
         OnClick = HotKetsSettingsMenuItemClick
       end
     end
@@ -588,6 +590,10 @@ object MainForm: TMainForm
       object CheckForUpdatesMenuItem: TMenuItem
         Caption = 'Check for updates'
         OnClick = CheckForUpdatesMenuItemClick
+      end
+      object DonateMenuItem: TMenuItem
+        Caption = 'Donate'
+        OnClick = DonateMenuItemClick
       end
       object AboutMenuItem: TMenuItem
         Caption = 'About...'

@@ -1,4 +1,4 @@
-program AutoScreenTest;
+program AutoScreenshotTestGUI;
 
 {$mode objfpc}{$H+}
 

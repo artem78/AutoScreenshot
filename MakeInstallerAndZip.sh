@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Script for building project on Windows from Cygwin or MinGW
+#
+# Note!
+#    Do not forget to define variables LazarusDir and InnoSetupDir first,
+#    for example in your ~/.bashrc:
+#        export LazarusDir="/path/to/lazarus"
+#        export InnoSetupDir="/path/to/inno setup"
+#
+
+
 # ***  Functions  ***
 
 function StopBuild(){
@@ -29,77 +39,109 @@ function Compile(){
 
 function MakeZip(){
 	Compile
+	RunTests
 	
 	# Create and clear build directory
 	echo "Clear build directory..."
-	rm -f -r $BuildDir
-	mkdir -p $BuildDir
-	mkdir -p $TargetZipDir
+	rm -f -r "$BuildDir"
+	mkdir -p "$BuildDir"
+	mkdir -p "$TargetZipDir"
 	echo "Done!"
 	echo ""
 
 	# Executable
 	echo "Copy EXE..."
-	cp -v --preserve AutoScreenshot.exe $BuildDir
+	cp -v --preserve=timestamps AutoScreenshot.exe "$BuildDir"
 	echo "Done!"
 	echo ""
 
 	# DLLs
 	echo "Copy DLLs..."
-	cp -v --preserve $LazarusDir/libeay32.dll $BuildDir
-	cp -v --preserve $LazarusDir/ssleay32.dll $BuildDir
+	cp -v --preserve=timestamps "$LazarusDir/libeay32.dll" "$BuildDir"
+	cp -v --preserve=timestamps "$LazarusDir/ssleay32.dll" "$BuildDir"
 	echo "Done!"
 	echo ""
 
 	# # Config
 	# echo "Copy config.ini..."
-	# cp -v --preserve config.sample.ini $BuildDir/config.ini
+	# cp -v --preserve=timestamps config.sample.ini "$BuildDir/config.ini"
 	# echo "Done!"
 	# echo ""
 
 	# Translations
 	echo "Copy translation files..."
-	mkdir -p $BuildDir/lang
-	cp -v --preserve lang/*.ini $BuildDir/lang/
+	mkdir -p "$BuildDir/lang"
+	cp -v --preserve=timestamps lang/*.ini "$BuildDir/lang/"
 	echo "Done!"
 	echo ""
 
 	# Pack to ZIP archive
+	### Note! For MinGW (Git Bash) see https://stackoverflow.com/a/55749636 ###
 	echo "Pack all files to ZIP archive..."
-	ZipPath=$TargetZipDir/autoscreenshot_${ProgramVersion}_portable.zip
-	rm -f $ZipPath
-	cd $BuildDir
-	zip -r $ZipPath *
-	#tar -C $BuildDir -cvf $ZipPath $BuildDir/*
+	ZipPath="$TargetZipDir/autoscreenshot_${ProgramVersion}_portable.zip"
+	rm -f "$ZipPath"
+	cd "$BuildDir"
+	zip -r "$ZipPath" *
+	#tar -C "$BuildDir" -cvf "$ZipPath" "$BuildDir/*"
 	echo "Done!"
 	echo ""
 }
 
 function MakeInstaller(){
-	Compile;
+	Compile
+	RunTests
 
 	# Make installation file
 	echo "Make installation file..."
-	"$InnoSetupDir/iscc.exe" "setup.iss"
+	"$InnoSetupDir/iscc.exe" //F"autoscreenshot_${ProgramVersion}_setup" "setup.iss"
 	echo "Done!"
 	echo ""
 }
 
+function RunTests(){
+	cd Test
+	
+	echo "Compile tests..."
+#	"$LazarusDir/lazbuild.exe" --verbose AutoScreenshotTest.lpi
+	"$LazarusDir/lazbuild.exe" AutoScreenshotTest.lpi
+	echo "Tests compiled!"
+	echo ""
+	
+	echo "Run tests..."
+	./AutoScreenshotTest.exe --all --format=plain
+	echo "Tests finished!"
+	echo ""
+	
+	cd ..
+}
+
 # ***********************
 
+set -e
+
 # ***  Set variables ***
-LazarusDir="/cygdrive/f/Programms/lazarus_2.0.12_32bit"
+LazarusDir=${LazarusDir:="/c/lazarus"}
+#if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
+#	LazarusDir="/cygdrive${LazarusDir}"
+#fi
+echo "LazarusDir=${LazarusDir}"
+
 
 # Output dirs
 BuildDir=$(realpath -m "build/files")
 TargetZipDir=$(realpath -m "build/zip")
 
-InnoSetupDir="/cygdrive/d/Программы/Inno Setup 5"
+InnoSetupDir=${InnoSetupDir:="/c/Program Files/Inno Setup 5"}
+#if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
+#	InnoSetupDir="/cygdrive${InnoSetupDir}"
+#fi
+echo "InnoSetupDir=${InnoSetupDir}"
 
 # Program version
-ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreen.lpi)
-#echo "Current program version: $ProgramVersion"
-#echo ""
+#ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreen.lpi)
+ProgramVersion=$(git describe --dirty)
+echo "Current program version: $ProgramVersion"
+echo ""
 
 usage="$(basename "$0") [-z] [-i]
 
