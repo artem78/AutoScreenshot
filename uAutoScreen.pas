@@ -315,12 +315,6 @@ begin
     Append('%COMP' + PathDelim + '%USER' + PathDelim + 'screenshot %Y-%M-%D %H-%N-%S ');
     Append('screenshot %NUM');
   end;
-
-  // Disable autorun in Linux
-  {$IfNDef Windows}
-  AutoRunCheckBox.Hide;
-  {$EndIf}
-
 end;
 
 procedure TMainForm.ReadSettings;
@@ -408,10 +402,8 @@ begin
       Ini.ReadBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', {True} False);
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
 
-  {$IfDef Windows}
-  // Start with Windows
+  // Start with OS
   AutoRun := Ini.ReadBool(DefaultConfigIniSection, 'AutoRun', False);
-  {$EndIf}
   
   // Start minimized
   StartMinimized := Ini.ReadBool(DefaultConfigIniSection, 'StartMinimized', False);
@@ -1162,9 +1154,7 @@ end;
 
 procedure TMainForm.AutoRunCheckBoxClick(Sender: TObject);
 begin
-  {$IfDef Windows}
   AutoRun := AutoRunCheckBox.Checked;
-  {$EndIf}
 end;
 
 procedure TMainForm.MonitorComboBoxChange(Sender: TObject);
@@ -1464,7 +1454,6 @@ end;
 
 procedure TMainForm.SetAutoRun(const Val: Boolean);
 begin
-  {$IfDef Windows}
   if FAutoRun <> Val then
   begin
     FAutoRun := Val;
@@ -1472,7 +1461,6 @@ begin
     uUtils.AutoRun(Application.ExeName, 'Auto Screenshot', Val);
     Ini.WriteBool(DefaultConfigIniSection, 'AutoRun', Val);
   end;
-  {$EndIf}
 end;
 
 procedure TMainForm.SetGrayscale(const Val: Boolean);

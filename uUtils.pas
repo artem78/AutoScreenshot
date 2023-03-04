@@ -68,11 +68,9 @@ function GetSystemLanguageCode: String{[2]};
 function GetAlternativeLanguage(const ALangs: TLanguagesArray;
     ALangCode: TLanguageCode): TLanguageCode;
 
-{$IfDef Windows}
 procedure AutoRun(const FileName: String; const AppTitle: String;
     Enabled: Boolean = True);
 function CheckAutoRun(const AppTitle: String): Boolean;
-{$EndIf}
 procedure RunCmdInbackground(ACmd: String);
 function IsPortable: Boolean;
 function GetUserPicturesDir: WideString;
@@ -84,7 +82,7 @@ uses
   WinDirs {???}, Registry,
   {$EndIf}
   {$IfDef linux}
-  Unix,
+  Unix, LazUTF8, LazFileUtils,
   {$EndIf}
   SysUtils, Classes, DateUtils, StrUtils, uLanguages, Forms {???}, FileInfo, process;
 
@@ -300,16 +298,30 @@ begin
   Result := ''; // Not found
 end;
 
-{$IfDef Windows}
+{$IfDef Linux}
+function GetAutostartFileName(const AFileName: String): String;
+begin
+  Result := ConcatPaths([GetEnvironmentVariableUTF8('HOME'), '.config',
+            'autostart', DelSpace(ExtractFileNameOnly(AFileName)) + '.desktop']);
+end;
+{$EndIf}
+
 procedure SetAutoRun(const FileName: String; const AppTitle: String);
 const
   Args = '-autorun';
 var
+  {$IfDef Windows}
   Reg: TRegistry;
+  {$EndIf}
+  {$IfDef Linux}
+  AutostartFile: String;
+  AutostartFileContent: TStringList;
+  {$EndIf}
   Cmd: String;
 begin
   Cmd := '"' + FileName + '" ' + Args;
 
+  {$IfDef Windows}
   Reg := TRegistry.Create(KEY_WRITE);
   try
     Reg.RootKey := HKEY_CURRENT_USER;
@@ -318,12 +330,34 @@ begin
   finally
     Reg.Free;
   end;
+  {$EndIf}
+
+  {$IfDef Linux}
+  AutostartFile := GetAutostartFileName(FileName);
+  AutostartFileContent := TStringList.Create;
+  try
+    with AutostartFileContent do
+    begin
+      Add('[Desktop Entry]');
+      Add('Type=Application');
+      Add('Exec=' + Cmd);
+      Add('Hidden=false');
+      Add('Name=' + AppTitle);
+      SaveToFile(AutostartFile);
+    end;
+  finally
+    AutostartFileContent.Free;
+  end;
+  {$EndIf}
 end;
 
 procedure RemoveAutoRun(const AppTitle: String);
+{$IfDef Windows}
 var
   Reg: TRegistry;
+{$EndIf}
 begin
+  {$IfDef Windows}
   Reg := TRegistry.Create(KEY_WRITE);
   try
     Reg.RootKey := HKEY_CURRENT_USER;
@@ -332,6 +366,11 @@ begin
   finally
     Reg.Free;
   end;
+  {$EndIf}
+
+  {$IfDef Linux}
+  DeleteFile(GetAutostartFileName(AppTitle {???}));
+  {$EndIf}
 end;
 
 procedure AutoRun(const FileName: String; const AppTitle: String;
@@ -344,11 +383,13 @@ begin
 end;
 
 function CheckAutoRun(const AppTitle: String): Boolean;
+{$IfDef Windows}
 var
   Reg: TRegistry;
+{$EndIf}
 begin
+  {$IfDef Windows}
   Result := False;
-
   Reg := TRegistry.Create(KEY_READ);
   try
     Reg.RootKey := HKEY_CURRENT_USER;
@@ -357,8 +398,12 @@ begin
   finally
     Reg.Free;
   end;
+  {$EndIf}
+
+  {$IfDef Linux}
+  Result := FileExists(GetAutostartFileName(AppTitle {???}));
+  {$EndIf}
 end;
-{$EndIf}
 
 procedure RunCmdInbackground(ACmd: String);
 var
