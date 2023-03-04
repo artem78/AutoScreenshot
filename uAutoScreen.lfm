@@ -22,7 +22,7 @@ object MainForm: TMainForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.4.0'
   object OutputDirLabel: TLabel
     AnchorSideTop.Control = OutputDirEdit
     AnchorSideTop.Side = asrCenter
@@ -271,6 +271,7 @@ object MainForm: TMainForm
     MinDate = -53780
     TabOrder = 5
     TrailingSeparator = False
+    TextForNullDate = 'NULL'
     LeadingZeros = False
     Kind = dtkTime
     TimeFormat = tf24
@@ -377,7 +378,6 @@ object MainForm: TMainForm
       Height = 23
       Top = 35
       Width = 49
-      MaxValue = 0
       OnChange = SeqNumberDigitsCountSpinEditChange
       TabOrder = 1
     end
