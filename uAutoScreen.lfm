@@ -22,7 +22,7 @@ object MainForm: TMainForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.4.0'
   object OutputDirLabel: TLabel
     AnchorSideTop.Control = OutputDirEdit
     AnchorSideTop.Side = asrCenter

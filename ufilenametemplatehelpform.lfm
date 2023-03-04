@@ -13,7 +13,7 @@ object FileNameTemplateHelpForm: TFileNameTemplateHelpForm
   Constraints.MaxWidth = 450
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.4.0'
   object TextLabel: TLabel
     Left = 15
     Height = 161
