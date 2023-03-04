@@ -55,4 +55,8 @@ dunit.ini
 *.log
 /screenshots/
 /ConverterBackup/
-AutoScreenshot
+
+# Linux executables:
+/AutoScreenshot
+/Test/AutoScreenshotTest
+/Test/AutoScreenshotTestGUI
