@@ -19,11 +19,12 @@ type
     procedure TestDecode;
     procedure TestJoinPath;
     procedure TestVersions;
+    procedure TestAutoRun;
   end;
 
 implementation
 
-uses uUtils, {SysUtils} DateUtils, uUtilsMore;
+uses uUtils, {SysUtils} DateUtils, uUtilsMore, Forms;
 
 { TMyTestCase }
 
@@ -154,6 +155,23 @@ begin
   //AssertEquals({''} '0',           TProgramVersion.Create(0, 0, 0, 0)    .ToString(True));
 
   // ToDo: Check wrong version strings
+end;
+
+procedure TMyTestCase.TestAutoRun;
+var
+  ExeFileName, AppTitle: String;
+begin
+  ExeFileName := Application.ExeName;
+  AppTitle := 'AutoRun test';
+
+  AssertFalse(CheckAutoRun(AppTitle));
+  AutoRun(ExeFileName, AppTitle, True); // Turn on autorun
+  AssertTrue(CheckAutoRun(AppTitle));
+  AssertFalse(CheckAutoRun('abcdefg'));
+  AutoRun(ExeFileName, AppTitle, False); // Turn off autorun
+  AssertFalse(CheckAutoRun(AppTitle));
+
+
 end;
 
 initialization
