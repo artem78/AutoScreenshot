@@ -70,7 +70,7 @@ function GetAlternativeLanguage(const ALangs: TLanguagesArray;
 
 procedure AutoRun(const FileName: String; const AppTitle: String;
     Enabled: Boolean = True);
-function CheckAutoRun(const AppTitle: String): Boolean;
+function CheckAutoRun(const FileName: String; const AppTitle: String): Boolean;
 procedure RunCmdInbackground(ACmd: String);
 function IsPortable: Boolean;
 function GetUserPicturesDir: WideString;
@@ -314,7 +314,6 @@ var
   Reg: TRegistry;
   {$EndIf}
   {$IfDef Linux}
-  AutostartFile: String;
   AutostartFileContent: TStringList;
   {$EndIf}
   Cmd: String;
@@ -333,7 +332,6 @@ begin
   {$EndIf}
 
   {$IfDef Linux}
-  AutostartFile := GetAutostartFileName(FileName);
   AutostartFileContent := TStringList.Create;
   try
     with AutostartFileContent do
@@ -343,7 +341,7 @@ begin
       Add('Exec=' + Cmd);
       Add('Hidden=false');
       Add('Name=' + AppTitle);
-      SaveToFile(AutostartFile);
+      SaveToFile(GetAutostartFileName(FileName));
     end;
   finally
     AutostartFileContent.Free;
@@ -351,7 +349,7 @@ begin
   {$EndIf}
 end;
 
-procedure RemoveAutoRun(const AppTitle: String);
+procedure RemoveAutoRun(const FileName: String; const AppTitle: String);
 {$IfDef Windows}
 var
   Reg: TRegistry;
@@ -369,7 +367,7 @@ begin
   {$EndIf}
 
   {$IfDef Linux}
-  DeleteFile(GetAutostartFileName(AppTitle {???}));
+  DeleteFile(GetAutostartFileName(FileName));
   {$EndIf}
 end;
 
@@ -379,10 +377,10 @@ begin
   if Enabled then
     SetAutoRun(FileName, AppTitle)
   else
-    RemoveAutoRun(AppTitle);
+    RemoveAutoRun(FileName, AppTitle);
 end;
 
-function CheckAutoRun(const AppTitle: String): Boolean;
+function CheckAutoRun(const FileName: String; const AppTitle: String): Boolean;
 {$IfDef Windows}
 var
   Reg: TRegistry;
@@ -401,7 +399,7 @@ begin
   {$EndIf}
 
   {$IfDef Linux}
-  Result := FileExists(GetAutostartFileName(AppTitle {???}));
+  Result := FileExists(GetAutostartFileName(FileName));
   {$EndIf}
 end;
 
