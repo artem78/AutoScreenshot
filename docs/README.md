@@ -10,6 +10,7 @@ Auto Screenshot
 ![GitHub All Releases](https://img.shields.io/github/downloads/artem78/AutoScreenshot/total?style=plastic)
 ![GitHub last commit](https://img.shields.io/github/last-commit/artem78/AutoScreenshot?style=plastic)
 [![Supports Windows](https://img.shields.io/badge/support-Windows-blue?logo=Windows&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
+[![Supports Linux](https://img.shields.io/badge/support-Linux-white?logo=Linux&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
 
 ## Overview
 **Auto Screenshot** — Windows application for automatic taking screenshots with specified time interval.
@@ -30,6 +31,8 @@ Auto Screenshot
 
 ![Tray icon](images/tray_icon_animation.gif "Tray icon")
 
+![Runinng on Linux Mint](images/main_window_in_linux_mint.png)
+
 ## Languages
 * English
 * [Russian](README-ru.md)
@@ -44,7 +47,7 @@ Auto Screenshot
 
 ## Supported operation systems
 * Microsoft Windows XP or higher (32/64-bit)
-* Linux (using [Wine](https://www.winehq.org/))
+* Linux
 
 ## Download
 The latest version available [here](https://github.com/artem78/AutoScreenshot/releases/latest). You can choose between portable zip or installer.

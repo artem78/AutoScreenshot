@@ -6,6 +6,7 @@ Auto Screenshot
 ![GitHub All Releases](https://img.shields.io/github/downloads/artem78/AutoScreenshot/total?style=plastic)
 ![GitHub last commit](https://img.shields.io/github/last-commit/artem78/AutoScreenshot?style=plastic)
 [![Supports Windows](https://img.shields.io/badge/support-Windows-blue?logo=Windows&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
+[![Supports Linux](https://img.shields.io/badge/support-Linux-white?logo=Linux&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
 
 ## Обзор
 **Auto Screenshot** — программа для Windows, которая автоматически сохраняет снимки рабочего стола через заданный интервал времени.
@@ -28,6 +29,8 @@ Auto Screenshot
 
 ![Значок в трее](images/tray_icon_animation.gif "Значок в трее")
 
+![Запуск на Linux Mint](images/main_window_in_linux_mint.png)
+
 ## Языки интерфейса
 * Английский
 * Русский
@@ -44,7 +47,7 @@ Auto Screenshot
 
 ## Операционная система
 * Microsoft Windows XP или выше (32/64-битная)
-* Linux (используя [Wine](https://www.winehq.org/))
+* Linux
 
 ## Скачать
 Последнюю версию программы вы можете скачать [отсюда](https://github.com/artem78/AutoScreenshot/releases/latest).  Можно выбрать zip-архив или установщик.
