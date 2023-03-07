@@ -1,6 +1,6 @@
 program AutoScreen;
 
-{$MODE Delphi}
+{$MODE objfpc}
 
 {$R *.res}
 

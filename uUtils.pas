@@ -1,6 +1,6 @@
 unit uUtils;
 
-{$MODE Delphi}
+{$MODE objfpc}
 
 { Various general usefull functions }
 
@@ -231,7 +231,8 @@ begin
   Size := UNLEN + 1;
   Res := GetUserName(@Buf, Size);
   if Res and (Size > 0) then
-    Result := Buf
+    //Result := Buf
+    SetString(Result, {Buf} PChar(@Buf[0]), {Length(Buf)} Size - 1)
   else
     Result := '';
 end;

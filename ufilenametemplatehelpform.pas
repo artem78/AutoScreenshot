@@ -6,7 +6,7 @@ unit uFileNameTemplateHelpForm;
     http://www.freepascal.ru/forum/viewtopic.php?f=13&t=43290&p=162762#p162762
 }
 
-{$mode delphi}
+{$mode objfpc}
 
 interface
 

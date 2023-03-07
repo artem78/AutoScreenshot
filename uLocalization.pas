@@ -1,6 +1,6 @@
 unit uLocalization;
 
-{$MODE Delphi}
+{$MODE objfpc}
 
 interface
 
