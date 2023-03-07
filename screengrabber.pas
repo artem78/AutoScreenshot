@@ -140,7 +140,7 @@ begin
   ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
   {BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
            ScreenDC, ARect.Left, ARect.Top, SRCCOPY);}
-  Bitmap.LoadFromDevice(ScreenDC);
+  Bitmap.LoadFromDevice(ScreenDC, ARect);
   ReleaseDC(0, ScreenDC);
 
   case ImageFormat of
