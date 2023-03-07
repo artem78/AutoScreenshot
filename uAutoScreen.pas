@@ -190,6 +190,7 @@ type
     procedure SetSingleCaptureHotKey(AHotKey: THotKey);
     procedure SetCompressionLevel(ALevel: Tcompressionlevel);
     function GetCompressionLevel: Tcompressionlevel;
+    procedure UpdateFormAutoSize;
 
     { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
@@ -767,6 +768,8 @@ begin
       Grabber.ImageFormat := Format;
   finally
     EnableAutoSizing;
+
+    UpdateFormAutoSize;
   end;
 end;
 
@@ -923,6 +926,8 @@ begin
 
     // Recalculate with of labels area
     RecalculateLabelWidths;
+
+    UpdateFormAutoSize;
   end;
 end;
 
@@ -1420,6 +1425,8 @@ begin
   SeqNumberGroup.Visible := Pos('%NUM', FileNameTemplateComboBox.Text) <> 0;
   if SeqNumberGroup.Visible then
     RecalculateLabelWidthsForSeqNumGroup;
+
+  UpdateFormAutoSize;
 end;
 
 procedure TMainForm.SetJPEGQuality(Val: Integer);
@@ -1618,6 +1625,17 @@ end;
 function TMainForm.GetCompressionLevel: Tcompressionlevel;
 begin
   Result := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
+end;
+
+procedure TMainForm.UpdateFormAutoSize;
+begin
+  {$IfDef Linux}
+  // Bugfix for Linux only
+  // https://forum.lazarus.freepascal.org/index.php/topic,62600.0.html
+  // ToDo: Try to find better solution
+  AutoSize := not AutoSize;
+  AutoSize := not AutoSize;
+  {$EndIf}
 end;
 
 {$IfDef Windows}
