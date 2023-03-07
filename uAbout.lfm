@@ -12,10 +12,6 @@ object AboutForm: TAboutForm
   ChildSizing.VerticalSpacing = 6
   ClientHeight = 297
   ClientWidth = 358
-  Color = clBtnFace
-  Font.Color = clWindowText
-  Font.Height = -12
-  Font.Name = 'Arial'
   OnCreate = FormCreate
   Position = poOwnerFormCenter
   LCLVersion = '2.2.4.0'
@@ -41,7 +37,6 @@ object AboutForm: TAboutForm
     Caption = 'Auto Screenshot'
     Font.Color = 8611623
     Font.Height = -32
-    Font.Name = 'Arial'
     ParentColor = False
     ParentFont = False
   end
@@ -62,6 +57,7 @@ object AboutForm: TAboutForm
     ChildSizing.ControlsPerLine = 2
     ClientHeight = 141
     ClientWidth = 150
+    ParentFont = False
     TabOrder = 0
     object VersionTitleLabel: TLabel
       AnchorSideTop.Side = asrBottom
@@ -181,8 +177,6 @@ object AboutForm: TAboutForm
       Width = 62
       Caption = 'http://...'
       Font.Color = clBlue
-      Font.Height = -12
-      Font.Name = 'Arial'
       Font.Style = [fsUnderline]
       ParentColor = False
       ParentFont = False
