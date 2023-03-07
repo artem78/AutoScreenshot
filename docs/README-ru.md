@@ -25,11 +25,11 @@ Auto Screenshot
 * Полностью бесплатное ПО с окрытым исходным кодом
 
 ## Снимки экрана
-![Основное окно программы в Windows 7](images/main_window_ru.png "Основное окно программы")
+![Основное окно программы в Windows 7](images/main_window_ru.png "Основное окно программы в Windows 7")
 
 ![Значок в трее](images/tray_icon_animation.gif "Значок в трее")
 
-![Запуск на Linux Mint](images/main_window_in_linux_mint.png)
+![Запуск на Linux Mint](images/main_window_in_linux_mint.png "Запуск на Linux Mint")
 
 ## Языки интерфейса
 * Английский

@@ -27,11 +27,11 @@ Auto Screenshot
 * Absolutely free and open source
 
 ## Screenshots
-![Main program window in Windows 7](images/main_window.png "Main program window")
+![Main program window in Windows 7](images/main_window.png "Main program window in Windows 7")
 
 ![Tray icon](images/tray_icon_animation.gif "Tray icon")
 
-![Runinng on Linux Mint](images/main_window_in_linux_mint.png)
+![Runinng on Linux Mint](images/main_window_in_linux_mint.png "Runinng on Linux Mint")
 
 ## Languages
 * English
