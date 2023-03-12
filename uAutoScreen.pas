@@ -1609,8 +1609,8 @@ begin
   if Assigned(CheckForUpdatesForm) then
     FreeAndNil(CheckForUpdatesForm);
 
-  MessageDlg('', Localizer.I18N('UpdateCheckFailed') + LineEnding
-           + LineEnding + AErr.Message, mtError, [mbOK], 0);
+  MessageDlg(Localizer.I18N('UpdateCheckFailed'), AErr{.Message}.ToString,
+             mtError, [mbOK], 0);
 end;
 
 procedure TMainForm.WMHotKey(var AMsg: TMessage);
