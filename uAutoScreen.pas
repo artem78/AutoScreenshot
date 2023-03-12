@@ -134,7 +134,7 @@ type
 
     KeyHook: TGlobalKeyHook;
 
-    ShowMessageWhenNoUpdates: Boolean;
+    SilentUpdateChecking: Boolean;
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -179,7 +179,7 @@ type
     procedure SetPostCommand(ACmd: String);
     function GetPostCommand: String;
     function GetMonitorWithCursor: Integer;
-    procedure CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
+    procedure CheckForUpdates(ASilent: Boolean);
     function GetAutoCheckForUpdates: Boolean;
     procedure SetAutoCheckForUpdates(AVal: Boolean);
     procedure SetStartAutoCaptureHotKey(AHotKey: THotKey);
@@ -237,7 +237,7 @@ var
 implementation
 
 uses uAbout, DateUtils, StrUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  uIniHelper, UpdateChecker, FileUtil;
+  uIniHelper, UpdateChecker, CheckForUpdatesFrm, FileUtil;
 
 {$R *.lfm}
 
@@ -473,7 +473,7 @@ begin
   // Check for updates when program starts
   LastUpdateCheck := Ini.ReadDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', 0);
   if AutoCheckForUpdates and (SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds) then
-    CheckForUpdates(False);
+    CheckForUpdates(True);
 
   // Enable global hotkeys
   KeyHook := TGlobalKeyHook.Create(Handle, 'AutoScreenshot');
@@ -487,7 +487,7 @@ end;
 
 procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
 begin
-  CheckForUpdates(True);
+  CheckForUpdates(False);
 end;
 
 procedure TMainForm.AutoCheckForUpdatesMenuItemClick(Sender: TObject);
@@ -1491,14 +1491,14 @@ begin
   Exit(NoMonitorId);
 end;
 
-procedure TMainForm.CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
+procedure TMainForm.CheckForUpdates(ASilent: Boolean);
 var
   UserAgent: String;
   CurrentVersion: TProgramVersion;
   UpdateCheckerThread: TUpdateCheckerThread;
 
 begin
-  ShowMessageWhenNoUpdates := AShowMessageWhenNoUpdates;
+  SilentUpdateChecking := ASilent;
 
   CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
 
@@ -1509,6 +1509,14 @@ begin
   UpdateCheckerThread := TUpdateCheckerThread.Create(@OnCheckForUpdatesFinished,
           @OnCheckForUpdatesFailed, UserAgent);
   UpdateCheckerThread.Start;
+
+  if not ASilent then
+  begin
+    if not Assigned(CheckForUpdatesForm) then
+      CheckForUpdatesForm := TCheckForUpdatesForm.Create(Self);
+
+    CheckForUpdatesForm.Show;
+  end;
 
   //UpdateCheckerThread.Free;
 end;
@@ -1563,6 +1571,9 @@ var
 begin
   //ShowMessage(AVer.ToString()+LineEnding+AUrl+LineEnding+AChangelog);
 
+  if Assigned(CheckForUpdatesForm) then
+    FreeAndNil(CheckForUpdatesForm);
+
   CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
 
   if ANewVersion > CurrentVersion then
@@ -1586,13 +1597,16 @@ begin
   end
   else
   begin
-    if ShowMessageWhenNoUpdates then
+    if not SilentUpdateChecking then
       ShowMessage(Localizer.I18N('NoUpdatesFound'));
   end;
 end;
 
 procedure TMainForm.OnCheckForUpdatesFailed(AErr: Exception);
 begin
+  if Assigned(CheckForUpdatesForm) then
+    FreeAndNil(CheckForUpdatesForm);
+
   MessageDlg('', Localizer.I18N('UpdateCheckFailed') + LineEnding
            + LineEnding + AErr.Message, mtError, [mbOK], 0);
 end;

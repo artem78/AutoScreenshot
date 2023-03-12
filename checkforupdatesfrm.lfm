@@ -1,0 +1,37 @@
+object CheckForUpdatesForm: TCheckForUpdatesForm
+  Left = 347
+  Height = 119
+  Top = 250
+  Width = 306
+  AutoSize = True
+  BorderIcons = []
+  BorderStyle = bsDialog
+  ChildSizing.LeftRightSpacing = 15
+  ChildSizing.TopBottomSpacing = 15
+  ChildSizing.HorizontalSpacing = 6
+  ChildSizing.VerticalSpacing = 6
+  ChildSizing.Layout = cclLeftToRightThenTopToBottom
+  ChildSizing.ControlsPerLine = 1
+  ClientHeight = 119
+  ClientWidth = 306
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '2.2.4.0'
+  object StatusLabel: TLabel
+    Left = 15
+    Height = 15
+    Top = 15
+    Width = 250
+    Caption = 'Checking for updates...'
+    ParentColor = False
+  end
+  object ProgressBar: TProgressBar
+    Left = 15
+    Height = 20
+    Top = 36
+    Width = 250
+    Constraints.MinWidth = 250
+    Style = pbstMarquee
+    TabOrder = 0
+  end
+end
