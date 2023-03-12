@@ -851,6 +851,8 @@ begin
     // Menubar
     OptionsSubMenu.Caption := Localizer.I18N('Options');
     LanguageSubMenu.Caption := Localizer.I18N('Language');
+    if LanguageSubMenu.Caption <> 'Language' then
+      LanguageSubMenu.Caption := LanguageSubMenu.Caption + ' (Language)';
     HelpSubMenu.Caption := Localizer.I18N('Help');
     AboutMenuItem.Caption := Localizer.I18N('About') + '...';
     CheckForUpdatesMenuItem.Caption := Localizer.I18N('CheckForUpdates');
