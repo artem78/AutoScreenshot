@@ -133,6 +133,8 @@ type
     FGrayscale: Boolean;
 
     KeyHook: TGlobalKeyHook;
+
+    ShowMessageWhenNoUpdates: Boolean;
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -186,6 +188,10 @@ type
     procedure SetCompressionLevel(ALevel: Tcompressionlevel);
     function GetCompressionLevel: Tcompressionlevel;
 
+    procedure OnCheckForUpdatesFinished(ANewVersion: TProgramVersion;
+            ADownloadUrl: String; AChangeLog: String);
+    procedure OnCheckForUpdatesFailed(AErr: Exception);
+
     { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -231,7 +237,7 @@ var
 implementation
 
 uses uAbout, DateUtils, StrUtils, uUtils, Math, uFileNameTemplateHelpForm,
-fphttpclient, opensslsockets, fpjson, jsonparser, uIniHelper, FileUtil;
+  uIniHelper, UpdateChecker, FileUtil;
 
 {$R *.lfm}
 
@@ -1486,75 +1492,25 @@ begin
 end;
 
 procedure TMainForm.CheckForUpdates(AShowMessageWhenNoUpdates: Boolean);
-const
-  ApiUrl =
-{$IFOPT D+}
-    'https://eojiuvjshd8kbzt.m.pipedream.net'
-{$ELSE}
-    'https://api.github.com/repos/artem78/AutoScreenshot/releases/latest'
-{$ENDIF}
-    ;
 var
-  ResponseStr: String;
-  Client: TFPHTTPClient;
-  JsonData: TJSONData;
-  NewVersion, CurrentVersion: TProgramVersion;
-  DownloadUrl, ChangeLog: String;
-  Msg: {TStringBuilder} TAnsiStringBuilder;
+  UserAgent: String;
+  CurrentVersion: TProgramVersion;
+  UpdateCheckerThread: TUpdateCheckerThread;
 
 begin
+  ShowMessageWhenNoUpdates := AShowMessageWhenNoUpdates;
+
   CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
 
   Ini.WriteDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', Now);
 
-  Client := TFPHTTPClient.Create(Nil);
-  try
-    try
-      Client.AllowRedirect := True;
-      Client.AddHeader('Accept', 'application/vnd.github.v3+json');
-      Client.AddHeader('User-Agent', Application.Title + ' v' + CurrentVersion.ToString() + ' Update Checker');
-      ResponseStr := Client.Get(ApiUrl);
+  UserAgent := Format('%s v%s Update Checker',
+          [Application.Title, CurrentVersion.ToString()]);
+  UpdateCheckerThread := TUpdateCheckerThread.Create(@OnCheckForUpdatesFinished,
+          @OnCheckForUpdatesFailed, UserAgent);
+  UpdateCheckerThread.Start;
 
-      JsonData := GetJSON(ResponseStr);
-      try
-        NewVersion := TProgramVersion.Create(JsonData.GetPath('tag_name').AsString);
-        DownloadUrl := JsonData.GetPath('html_url').AsString;
-        ChangeLog := JsonData.GetPath('body').AsString;
-
-        if NewVersion > CurrentVersion then
-        begin
-          Msg := TAnsiStringBuilder.Create();
-          try
-            Msg.AppendFormat(Localizer.I18N('UpdateFound'), [NewVersion.ToString(True), CurrentVersion.ToString(True)]);
-            Msg.AppendLine('');
-            Msg.AppendLine('');
-            Msg.AppendLine(ChangeLog);
-            Msg.AppendLine('');
-            Msg.AppendLine(Localizer.I18N('AskDownloadUpdate'));
-            //if MessageDlg(Msg.ToString, mtInformation, mbYesNo, 0) = mrYes then
-            if QuestionDlg('', Msg.ToString, {mtCustom} mtInformation,
-                   [mrYes, Localizer.I18N('Yes'), mrNo, Localizer.I18N('No')], '') = mrYes then
-              OpenURL(DownloadUrl);
-          finally
-            Msg.Free
-          end;
-        end
-        else
-        begin
-          if AShowMessageWhenNoUpdates then
-            ShowMessage(Localizer.I18N('NoUpdatesFound'));
-        end;
-      finally
-        JsonData.Free;
-      end;
-
-    except on E: Exception do
-      MessageDlg('', Localizer.I18N('UpdateCheckFailed') + LineEnding
-                 + LineEnding + E.Message, mtError, [mbOK], 0);
-    end;
-  finally
-    Client.Free;
-  end;
+  //UpdateCheckerThread.Free;
 end;
 
 function TMainForm.GetAutoCheckForUpdates: Boolean;
@@ -1597,6 +1553,48 @@ end;
 function TMainForm.GetCompressionLevel: Tcompressionlevel;
 begin
   Result := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
+end;
+
+procedure TMainForm.OnCheckForUpdatesFinished(ANewVersion: TProgramVersion;
+        ADownloadUrl: String; AChangeLog: String);
+var
+  CurrentVersion: TProgramVersion;
+  Msg: {TStringBuilder} TAnsiStringBuilder;
+begin
+  //ShowMessage(AVer.ToString()+LineEnding+AUrl+LineEnding+AChangelog);
+
+  CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
+
+  if ANewVersion > CurrentVersion then
+  begin
+    Msg := TAnsiStringBuilder.Create();
+    try
+      Msg.AppendFormat(Localizer.I18N('UpdateFound'),
+               [ANewVersion.ToString(True), CurrentVersion.ToString(True)]);
+      Msg.AppendLine('');
+      Msg.AppendLine('');
+      Msg.AppendLine(AChangeLog);
+      Msg.AppendLine('');
+      Msg.AppendLine(Localizer.I18N('AskDownloadUpdate'));
+      //if MessageDlg(Msg.ToString, mtInformation, mbYesNo, 0) = mrYes then
+      if QuestionDlg('', Msg.ToString, {mtCustom} mtInformation,
+             [mrYes, Localizer.I18N('Yes'), mrNo, Localizer.I18N('No')], '') = mrYes then
+        OpenURL(ADownloadUrl);
+    finally
+      Msg.Free
+    end;
+  end
+  else
+  begin
+    if ShowMessageWhenNoUpdates then
+      ShowMessage(Localizer.I18N('NoUpdatesFound'));
+  end;
+end;
+
+procedure TMainForm.OnCheckForUpdatesFailed(AErr: Exception);
+begin
+  MessageDlg('', Localizer.I18N('UpdateCheckFailed') + LineEnding
+           + LineEnding + AErr.Message, mtError, [mbOK], 0);
 end;
 
 procedure TMainForm.WMHotKey(var AMsg: TMessage);

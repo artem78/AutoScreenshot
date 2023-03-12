@@ -155,7 +155,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="13">
+    <Units Count="14">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -226,6 +226,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="GlobalKeyHook"/>
       </Unit12>
+      <Unit13>
+        <Filename Value="updatechecker.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UpdateChecker"/>
+      </Unit13>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
