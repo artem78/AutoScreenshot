@@ -155,7 +155,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="15">
+    <Units Count="14">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -227,17 +227,13 @@
         <UnitName Value="GlobalKeyHook"/>
       </Unit12>
       <Unit13>
-        <Filename Value="checkforupdatesfrm.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="CheckForUpdatesForm"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="CheckForUpdatesFrm"/>
-      </Unit13>
-      <Unit14>
         <Filename Value="updatechecker.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="UpdateCheckerForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <UnitName Value="UpdateChecker"/>
-      </Unit14>
+      </Unit13>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

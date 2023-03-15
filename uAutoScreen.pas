@@ -133,8 +133,6 @@ type
     FGrayscale: Boolean;
 
     KeyHook: TGlobalKeyHook;
-
-    SilentUpdateChecking: Boolean;
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -179,7 +177,6 @@ type
     procedure SetPostCommand(ACmd: String);
     function GetPostCommand: String;
     function GetMonitorWithCursor: Integer;
-    procedure CheckForUpdates(ASilent: Boolean);
     function GetAutoCheckForUpdates: Boolean;
     procedure SetAutoCheckForUpdates(AVal: Boolean);
     procedure SetStartAutoCaptureHotKey(AHotKey: THotKey);
@@ -187,10 +184,6 @@ type
     procedure SetSingleCaptureHotKey(AHotKey: THotKey);
     procedure SetCompressionLevel(ALevel: Tcompressionlevel);
     function GetCompressionLevel: Tcompressionlevel;
-
-    procedure OnCheckForUpdatesFinished(ANewVersion: TProgramVersion;
-            ADownloadUrl: String; AChangeLog: String);
-    procedure OnCheckForUpdatesFailed(AErr: Exception);
 
     { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
@@ -237,7 +230,7 @@ var
 implementation
 
 uses uAbout, DateUtils, StrUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  uIniHelper, UpdateChecker, CheckForUpdatesFrm, FileUtil;
+  uIniHelper, UpdateChecker, FileUtil;
 
 {$R *.lfm}
 
@@ -1493,36 +1486,6 @@ begin
   Exit(NoMonitorId);
 end;
 
-procedure TMainForm.CheckForUpdates(ASilent: Boolean);
-var
-  UserAgent: String;
-  CurrentVersion: TProgramVersion;
-  UpdateCheckerThread: TUpdateCheckerThread;
-
-begin
-  SilentUpdateChecking := ASilent;
-
-  CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
-
-  Ini.WriteDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', Now);
-
-  UserAgent := Format('%s v%s Update Checker',
-          [Application.Title, CurrentVersion.ToString()]);
-  UpdateCheckerThread := TUpdateCheckerThread.Create(@OnCheckForUpdatesFinished,
-          @OnCheckForUpdatesFailed, UserAgent);
-  UpdateCheckerThread.Start;
-
-  if not ASilent then
-  begin
-    if not Assigned(CheckForUpdatesForm) then
-      CheckForUpdatesForm := TCheckForUpdatesForm.Create(Self);
-
-    CheckForUpdatesForm.Show;
-  end;
-
-  //UpdateCheckerThread.Free;
-end;
-
 function TMainForm.GetAutoCheckForUpdates: Boolean;
 begin
   Result := AutoCheckForUpdatesMenuItem.Checked;
@@ -1563,54 +1526,6 @@ end;
 function TMainForm.GetCompressionLevel: Tcompressionlevel;
 begin
   Result := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
-end;
-
-procedure TMainForm.OnCheckForUpdatesFinished(ANewVersion: TProgramVersion;
-        ADownloadUrl: String; AChangeLog: String);
-var
-  CurrentVersion: TProgramVersion;
-  Msg: {TStringBuilder} TAnsiStringBuilder;
-begin
-  //ShowMessage(AVer.ToString()+LineEnding+AUrl+LineEnding+AChangelog);
-
-  if Assigned(CheckForUpdatesForm) then
-    FreeAndNil(CheckForUpdatesForm);
-
-  CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
-
-  if ANewVersion > CurrentVersion then
-  begin
-    Msg := TAnsiStringBuilder.Create();
-    try
-      Msg.AppendFormat(Localizer.I18N('UpdateFound'),
-               [ANewVersion.ToString(True), CurrentVersion.ToString(True)]);
-      Msg.AppendLine('');
-      Msg.AppendLine('');
-      Msg.AppendLine(AChangeLog);
-      Msg.AppendLine('');
-      Msg.AppendLine(Localizer.I18N('AskDownloadUpdate'));
-      //if MessageDlg(Msg.ToString, mtInformation, mbYesNo, 0) = mrYes then
-      if QuestionDlg('', Msg.ToString, {mtCustom} mtInformation,
-             [mrYes, Localizer.I18N('Yes'), mrNo, Localizer.I18N('No')], '') = mrYes then
-        OpenURL(ADownloadUrl);
-    finally
-      Msg.Free
-    end;
-  end
-  else
-  begin
-    if not SilentUpdateChecking then
-      ShowMessage(Localizer.I18N('NoUpdatesFound'));
-  end;
-end;
-
-procedure TMainForm.OnCheckForUpdatesFailed(AErr: Exception);
-begin
-  if Assigned(CheckForUpdatesForm) then
-    FreeAndNil(CheckForUpdatesForm);
-
-  MessageDlg(Localizer.I18N('UpdateCheckFailed'), AErr{.Message}.ToString,
-             mtError, [mbOK], 0);
 end;
 
 procedure TMainForm.WMHotKey(var AMsg: TMessage);

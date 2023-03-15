@@ -1,4 +1,4 @@
-object CheckForUpdatesForm: TCheckForUpdatesForm
+object UpdateCheckerForm: TUpdateCheckerForm
   Left = 347
   Height = 119
   Top = 250
