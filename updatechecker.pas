@@ -5,7 +5,7 @@ unit UpdateChecker;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, ButtonPanel;
 
 procedure CheckForUpdates(ASilent: Boolean = False);
 
@@ -21,16 +21,27 @@ uses
 
 type
 
+  TUpdateFormState = (ufsHidden, ufsFetchingData, ufsHasUpdates,
+                      ufsNoUpdates, ufsError);
+
   { TUpdateCheckerForm }
 
   TUpdateCheckerForm = class(TForm)
-    StatusLabel: TLabel;
+    MsgLabel: TLabel;
     ProgressBar: TProgressBar;
+    ButtonPanel1: TButtonPanel;
     procedure FormCreate(Sender: TObject);
+    procedure CancelButtonClick(Sender: TObject);
+    procedure OKButtonClick(Sender: TObject);
   private
+    FState: TUpdateFormState;
 
+    procedure SetState(AState: TUpdateFormState);
   public
+    LatestVersion: TProgramVersion;
+    DownloadUrl, ChangeLog, ErrorMsg: String;
 
+    property State: TUpdateFormState write SetState;
   end;
 
 
@@ -78,38 +89,22 @@ procedure OnCheckForUpdatesFinished(ANewVersion: TProgramVersion;
         ADownloadUrl: String; AChangeLog: String);
 var
   CurrentVersion: TProgramVersion;
-  Msg: {TStringBuilder} TAnsiStringBuilder;
 begin
-  //ShowMessage(AVer.ToString()+LineEnding+AUrl+LineEnding+AChangelog);
-
-  if Assigned(UpdateCheckerForm) then
-    FreeAndNil(UpdateCheckerForm);
-
   CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
 
   if ANewVersion > CurrentVersion then
   begin
-    Msg := TAnsiStringBuilder.Create();
-    try
-      Msg.AppendFormat(Localizer.I18N('UpdateFound'),
-               [ANewVersion.ToString(True), CurrentVersion.ToString(True)]);
-      Msg.AppendLine('');
-      Msg.AppendLine('');
-      Msg.AppendLine(AChangeLog);
-      Msg.AppendLine('');
-      Msg.AppendLine(Localizer.I18N('AskDownloadUpdate'));
-      //if MessageDlg(Msg.ToString, mtInformation, mbYesNo, 0) = mrYes then
-      if QuestionDlg('', Msg.ToString, {mtCustom} mtInformation,
-             [mrYes, Localizer.I18N('Yes'), mrNo, Localizer.I18N('No')], '') = mrYes then
-        OpenURL(ADownloadUrl);
-    finally
-      Msg.Free
-    end;
+    UpdateCheckerForm.LatestVersion := ANewVersion;
+    UpdateCheckerForm.DownloadUrl   := ADownloadUrl;
+    UpdateCheckerForm.ChangeLog     := AChangeLog;
+    UpdateCheckerForm.State         := ufsHasUpdates;
   end
   else
   begin
     if not SilentUpdateChecking then
-      ShowMessage(Localizer.I18N('NoUpdatesFound'));
+    begin
+      UpdateCheckerForm.State := ufsNoUpdates;
+    end;
   end;
 
   UpdateCheckerThread := Nil;
@@ -117,11 +112,8 @@ end;
 
 procedure OnCheckForUpdatesFailed(AErr: Exception);
 begin
-  if Assigned(UpdateCheckerForm) then
-    FreeAndNil(UpdateCheckerForm);
-
-  MessageDlg(Localizer.I18N('UpdateCheckFailed'), AErr{.Message}.ToString,
-             mtError, [mbOK], 0);
+  UpdateCheckerForm.ErrorMsg := AErr{.Message}.ToString;
+  UpdateCheckerForm.State := ufsError;
 
   UpdateCheckerThread := Nil;
 end;
@@ -145,12 +137,12 @@ begin
           @OnCheckForUpdatesFailed, UserAgent);
   UpdateCheckerThread.Start;
 
+  //if not Assigned(UpdateCheckerForm) then
+    UpdateCheckerForm := TUpdateCheckerForm.Create(MainForm);
+
   if not ASilent then
   begin
-    if not Assigned(UpdateCheckerForm) then
-      UpdateCheckerForm := TUpdateCheckerForm.Create({Self}MainForm);
-
-    UpdateCheckerForm.Show;
+    UpdateCheckerForm.State := ufsFetchingData;
   end;
 
   //UpdateCheckerThread.Free;
@@ -228,7 +220,99 @@ end;
 
 procedure TUpdateCheckerForm.FormCreate(Sender: TObject);
 begin
-  StatusLabel.Caption := Localizer.I18N('CheckingForUpdates');
+  Caption := Localizer.I18N('CheckForUpdates');
+  with ButtonPanel1 do
+  begin
+    CloseButton.Caption  := Localizer.I18N('Close');
+    OKButton.Caption     := Localizer.I18N('Yes');
+    CancelButton.Caption := Localizer.I18N('No');
+  end;
+  State := ufsHidden;
+end;
+
+procedure TUpdateCheckerForm.CancelButtonClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TUpdateCheckerForm.OKButtonClick(Sender: TObject);
+begin
+  OpenURL(DownloadUrl);
+  Close;
+end;
+
+procedure TUpdateCheckerForm.SetState(AState: TUpdateFormState);
+var
+  CurrentVersion: TProgramVersion;
+  Msg: {TStringBuilder} TAnsiStringBuilder;
+begin
+  FState := AState;
+
+  if FState = ufsHidden then
+  begin
+    Hide;
+    Exit;
+  end;
+
+  Msg := TAnsiStringBuilder.Create();
+  try
+    case FState of
+      ufsFetchingData:
+        begin
+          Msg.Append(Localizer.I18N('CheckingForUpdates'));
+
+          ButtonPanel1.Hide;
+        end;
+
+      ufsNoUpdates:
+        begin
+          Msg.Append(Localizer.I18N('NoUpdatesFound'));
+
+          ButtonPanel1.ShowButtons := [pbClose];
+          ButtonPanel1.Show;
+        end;
+
+      ufsHasUpdates:
+        begin
+          CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
+          Msg.AppendFormat(Localizer.I18N('UpdateFound'),
+                   [LatestVersion.ToString(True), CurrentVersion.ToString(True)])
+             .AppendLine
+             .AppendLine
+             .AppendLine(ChangeLog.Trim)
+             //.AppendLine
+             .AppendLine
+             .Append(Localizer.I18N('AskDownloadUpdate'));
+
+          ButtonPanel1.ShowButtons := [pbOK, pbCancel];
+          ButtonPanel1.Show;
+        end;
+
+      ufsError:
+        begin
+          Msg.AppendLine(Localizer.I18N('UpdateCheckFailed'));
+          if not ErrorMsg.IsEmpty then
+          begin
+             Msg.AppendLine
+                .Append(ErrorMsg);
+          end;
+
+          ButtonPanel1.ShowButtons := [pbClose];
+          ButtonPanel1.Show;
+        end;
+    end;
+
+    MsgLabel.Caption := Msg.ToString;
+
+    ProgressBar.Visible := FState = ufsFetchingData;
+
+    MoveToDefaultPosition;
+    if not Visible then
+      Show;
+
+  finally
+    Msg.Free;
+  end;
 end;
 
 initialization

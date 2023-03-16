@@ -1,6 +1,6 @@
 object UpdateCheckerForm: TUpdateCheckerForm
   Left = 347
-  Height = 119
+  Height = 150
   Top = 250
   Width = 306
   AutoSize = True
@@ -12,26 +12,51 @@ object UpdateCheckerForm: TUpdateCheckerForm
   ChildSizing.VerticalSpacing = 6
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 1
-  ClientHeight = 119
+  ClientHeight = 150
   ClientWidth = 306
+  Constraints.MaxWidth = 500
   OnCreate = FormCreate
   Position = poOwnerFormCenter
   LCLVersion = '2.2.4.0'
-  object StatusLabel: TLabel
+  object MsgLabel: TLabel
     Left = 15
     Height = 15
     Top = 15
-    Width = 250
+    Width = 300
     Caption = 'Checking for updates...'
+    Constraints.MinWidth = 300
     ParentColor = False
+    WordWrap = True
   end
   object ProgressBar: TProgressBar
     Left = 15
     Height = 20
     Top = 36
-    Width = 250
-    Constraints.MinWidth = 250
+    Width = 300
     Style = pbstMarquee
     TabOrder = 0
+  end
+  object ButtonPanel1: TButtonPanel
+    AnchorSideTop.Control = MsgLabel
+    AnchorSideTop.Side = asrBottom
+    Left = 15
+    Height = 84
+    Top = 51
+    Width = 276
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Top = 15
+    OKButton.Name = 'OKButton'
+    OKButton.DefaultCaption = True
+    OKButton.OnClick = OKButtonClick
+    HelpButton.Name = 'HelpButton'
+    HelpButton.DefaultCaption = True
+    CloseButton.Name = 'CloseButton'
+    CloseButton.DefaultCaption = True
+    CancelButton.Name = 'CancelButton'
+    CancelButton.DefaultCaption = True
+    CancelButton.OnClick = CancelButtonClick
+    TabOrder = 1
+    ShowButtons = [pbOK, pbCancel, pbClose]
+    ShowGlyphs = [pbOK, pbCancel]
   end
 end
