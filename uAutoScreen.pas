@@ -1629,7 +1629,8 @@ end;
 
 procedure TMainForm.UpdateFormAutoSize;
 begin
-  {$IfDef Linux}
+  //{$IfDef Linux}
+  {$IfDef LCLGTK2}
   // Bugfix for Linux only
   // https://forum.lazarus.freepascal.org/index.php/topic,62600.0.html
   // ToDo: Try to find better solution
