@@ -49,6 +49,7 @@ lib/
 /build
 *.tmp
 *.bak
+*.backup
 /config.ini
 dunit.ini
 /backup/
