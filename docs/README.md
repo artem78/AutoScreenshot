@@ -50,7 +50,13 @@ Auto Screenshot
 * Linux
 
 ## Download
-The latest version available [here](https://github.com/artem78/AutoScreenshot/releases/latest). You can choose between portable zip or installer.
+### Windows build
+The latest version for Windows available [here](https://github.com/artem78/AutoScreenshot/releases/latest). You can choose between portable zip or installer.
+
+### Linux build
+[Download](https://github.com/artem78/AutoScreenshot/releases/tag/v1.10.4-linux.alpha.1)
+
+Note that it is **Alpha** release and some features from Windows build is not implemented yet.
 
 ## How can I help?
 * [Report about found bug](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)

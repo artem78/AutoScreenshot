@@ -50,7 +50,13 @@ Auto Screenshot
 * Linux
 
 ## Скачать
-Последнюю версию программы вы можете скачать [отсюда](https://github.com/artem78/AutoScreenshot/releases/latest).  Можно выбрать zip-архив или установщик.
+### Для Windows
+Последнюю версию программы для Windows вы можете скачать [отсюда](https://github.com/artem78/AutoScreenshot/releases/latest).  Можно выбрать zip-архив или установщик.
+
+### Для Linux
+[Ссылка на скачивание](https://github.com/artem78/AutoScreenshot/releases/tag/v1.10.4-linux.alpha.1)
+
+Обратите внимание, что это пока **Альфа**-версия. Поэтому не весь функционал из версии для Windows реализован и имеются некоторые ошибки.
 
 ## Чем я могу помочь проекту?
 * [Сообщить об ошибке](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
