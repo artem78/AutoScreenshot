@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Script for building project on Windows from Cygwin or MinGW
+# Script for building project on Linux or Windows (using Cygwin or MinGW)
 #
-# Note!
+# Note for Winows only!
 #    Do not forget to define variables LazarusDir and InnoSetupDir first,
 #    for example in your ~/.bashrc:
 #        export LazarusDir="/path/to/lazarus"
@@ -32,7 +32,11 @@ function Pause(){
 function Compile(){
 	# Run compile project
 	echo "Starting compile project..."
-	"$LazarusDir/lazbuild.exe" --build-mode="Release (32bit)" --verbose AutoScreen.lpi
+	if IsWindows; then
+		"$LazarusDir/lazbuild.exe" --build-mode="Release (32bit)" --verbose AutoScreen.lpi
+	elif IsLinux; then
+		"lazbuild" --build-mode="Release" --verbose AutoScreen.lpi
+	fi
 	echo "Compiling finished!"
 	echo ""
 }
@@ -51,16 +55,23 @@ function MakeZip(){
 
 	# Executable
 	echo "Copy EXE..."
-	cp -v --preserve=timestamps AutoScreenshot.exe "$BuildDir"
+	if IsWindows; then
+		local ExecutableFileName="AutoScreenshot.exe"
+	elif IsLinux; then
+		local ExecutableFileName="AutoScreenshot"
+	fi
+	cp -v --preserve=timestamps "$ExecutableFileName" "$BuildDir"
 	echo "Done!"
 	echo ""
 
 	# DLLs
-	echo "Copy DLLs..."
-	cp -v --preserve=timestamps "$LazarusDir/libeay32.dll" "$BuildDir"
-	cp -v --preserve=timestamps "$LazarusDir/ssleay32.dll" "$BuildDir"
-	echo "Done!"
-	echo ""
+	if IsWindows; then
+		echo "Copy DLLs..."
+		cp -v --preserve=timestamps "$LazarusDir/libeay32.dll" "$BuildDir"
+		cp -v --preserve=timestamps "$LazarusDir/ssleay32.dll" "$BuildDir"
+		echo "Done!"
+		echo ""
+	fi
 
 	# # Config
 	# echo "Copy config.ini..."
@@ -78,7 +89,12 @@ function MakeZip(){
 	# Pack to ZIP archive
 	### Note! For MinGW (Git Bash) see https://stackoverflow.com/a/55749636 ###
 	echo "Pack all files to ZIP archive..."
-	ZipPath="$TargetZipDir/autoscreenshot_${ProgramVersion}_portable.zip"
+	if IsWindows; then
+		local OsTypeName="windows"
+	elif IsLinux; then
+		local OsTypeName="linux"
+	fi
+	ZipPath="$TargetZipDir/autoscreenshot_${ProgramVersion}_${OsTypeName}_portable.zip"
 	rm -f "$ZipPath"
 	cd "$BuildDir"
 	zip -r "$ZipPath" *
@@ -102,40 +118,74 @@ function RunTests(){
 	cd Test
 	
 	echo "Compile tests..."
-#	"$LazarusDir/lazbuild.exe" --verbose AutoScreenshotTest.lpi
-	"$LazarusDir/lazbuild.exe" AutoScreenshotTest.lpi
+	if IsWindows; then
+		local LazBuildPath="$LazarusDir/lazbuild.exe"
+	elif IsLinux; then
+		local LazBuildPath="lazbuild"
+	fi
+#	"$LazBuildPath" --verbose AutoScreenshotTest.lpi
+	"$LazBuildPath" AutoScreenshotTest.lpi
 	echo "Tests compiled!"
 	echo ""
 	
 	echo "Run tests..."
-	./AutoScreenshotTest.exe --all --format=plain
+	if IsWindows; then
+		local TestExecutableFileName="./AutoScreenshotTest.exe"
+	elif IsLinux; then
+		local TestExecutableFileName="./AutoScreenshotTest"
+	fi
+	"$TestExecutableFileName" --all --format=plain
 	echo "Tests finished!"
 	echo ""
 	
 	cd ..
 }
 
+function IsWindows {
+	if [[ "$OSTYPE" == "cygwin" ]]; then
+		return 0
+	elif [[ "$OSTYPE" == "msys" ]]; then
+		return 0
+	elif [[ "$OSTYPE" == "win32" ]]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+function IsLinux {
+	if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        return 0
+	else
+		return 1
+	fi
+}
+
 # ***********************
 
 set -e
 
-# ***  Set variables ***
-LazarusDir=${LazarusDir:="/c/lazarus"}
-#if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
-#	LazarusDir="/cygdrive${LazarusDir}"
-#fi
-echo "LazarusDir=${LazarusDir}"
+if IsWindows; then
+	# ***  Set variables ***
+	LazarusDir=${LazarusDir:="/c/lazarus"}
+	#if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
+	#	LazarusDir="/cygdrive${LazarusDir}"
+	#fi
+	echo "LazarusDir=${LazarusDir}"
+fi
 
 
 # Output dirs
 BuildDir=$(realpath -m "build/files")
 TargetZipDir=$(realpath -m "build/zip")
 
-InnoSetupDir=${InnoSetupDir:="/c/Program Files/Inno Setup 5"}
-#if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
-#	InnoSetupDir="/cygdrive${InnoSetupDir}"
-#fi
-echo "InnoSetupDir=${InnoSetupDir}"
+if IsWindows; then
+	InnoSetupDir=${InnoSetupDir:="/c/Program Files/Inno Setup 5"}
+	#if [[ $(uname -s | tr '[:upper:]' '[:lower:]') == *"cygwin"* ]]; then
+	#	InnoSetupDir="/cygdrive${InnoSetupDir}"
+	#fi
+	echo "InnoSetupDir=${InnoSetupDir}"
+fi
 
 # Program version
 #ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreen.lpi)
@@ -147,7 +197,7 @@ usage="$(basename "$0") [-z] [-i]
 
 where:
     -z  make zip arhive
-    -l  make installer"
+    -l  make installer (not available for Linux)"
 
 # ***********************
 
@@ -159,17 +209,33 @@ then
 	exit 1
 fi
 
-while getopts "zih" opt
-do
-	case $opt in
-		z) MakeZip;;
-		i) MakeInstaller;;
-		h) echo "$usage"
-			exit 0;;
-		*) echo "$usage">&2
-			exit 1;;
-	esac
-done
+if IsWindows; then
+	while getopts "zih" opt
+	do
+		case $opt in
+			z) MakeZip;;
+			i) MakeInstaller;;
+			h) echo "$usage"
+				exit 0;;
+			*) echo "$usage">&2
+				exit 1;;
+		esac
+	done
+elif IsLinux; then
+	while getopts "zh" opt
+	do
+		case $opt in
+			z) MakeZip;;
+			h) echo "$usage"
+				exit 0;;
+			*) echo "$usage">&2
+				exit 1;;
+		esac
+	done
+else
+	echo "This OS not supported!">&2
+	exit 1
+fi
 
 Pause
 exit 0
