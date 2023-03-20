@@ -8,11 +8,11 @@ unit uUtils;
 interface
 
 uses
-  Windows, uLocalization;
+  {$IfDef windows}
+  Windows,
+  {$EndIf}
+  uLocalization;
 
-// Retrieves the time (in ms) of the last input event (mouse moved or key pressed).
-// Also works if current application window has no focus (hidden or minimized).
-function LastInput: DWord;
 
 { Formats given string Str. If DateTime not provided, use result of Now().
 
@@ -31,9 +31,6 @@ function LastInput: DWord;
 
 function FormatDateTime2(const Str: String; const DateTime: TDateTime): String; overload;
 function FormatDateTime2(const Str: String): String; overload;
-
-// Same as IntToStr(), but adds leading zeros before number
-function Int2Str(Val: Integer; LeadingZeros: Integer = 0): String;
 
 // Decodes control characters (like \r, \n, \t and etc.) from given string.
 function DecodeControlCharacters(const Str: WideString): WideString;
@@ -60,15 +57,6 @@ function GetProgramVersionStr: string;
 // Returns program build date and time
 function GetBuildDateTime: TDateTime;
 
-{ Removes duplicated slashes from given path.
-  Example:
-      RemoveExtraPathDelimiters('c:\dir1\\dir2\\\file.txt');
-      Result: c:\dir1\dir2\file.txt
-}
-function RemoveExtraPathDelimiters(const Path: String): String;
-
-function JoinPath(const Base: String; const Path: String): String;
-
 function GetLocalComputerName: string;
 
 function GetCurrentUserName: string;
@@ -82,7 +70,7 @@ function GetAlternativeLanguage(const ALangs: TLanguagesArray;
 
 procedure AutoRun(const FileName: String; const AppTitle: String;
     Enabled: Boolean = True);
-function CheckAutoRun(const AppTitle: String): Boolean;
+function CheckAutoRun(const FileName: String; const AppTitle: String): Boolean;
 procedure RunCmdInbackground(ACmd: String);
 function IsPortable: Boolean;
 function GetUserPicturesDir: WideString;
@@ -90,59 +78,39 @@ function GetUserPicturesDir: WideString;
 implementation
 
 uses
-  SysUtils, WinDirs, DateUtils, Registry, uLanguages, Forms, FileInfo, process;
+  {$IfDef Windows}
+  WinDirs {???}, Registry,
+  {$EndIf}
+  {$IfDef linux}
+  Unix, LazUTF8, LazFileUtils,
+  {$EndIf}
+  SysUtils, Classes, DateUtils, StrUtils, uLanguages, Forms {???}, FileInfo, process;
 
-type
-  tagLASTINPUTINFO = record
-    cbSize: UINT;
-    dwTime: DWORD;
-  end;
-  LASTINPUTINFO = tagLASTINPUTINFO;
-  TLastInputInfo = LASTINPUTINFO;
-
-function GetLastInputInfo(var plii: TLastInputInfo): BOOL;stdcall; external 'user32' name 'GetLastInputInfo';
-
-function LastInput: DWord;
-var
-  LInput: TLastInputInfo;
-begin
-  LInput.cbSize := SizeOf(TLastInputInfo);
-  GetLastInputInfo(LInput);
-  Result := GetTickCount - LInput.dwTime;
-end;
+{$IfDef Windows}
+const
+  RegistryAutorunKey = 'Software\Microsoft\Windows\CurrentVersion\Run';
+{$EndIf}
 
 function FormatDateTime2(const Str: String; const DateTime: TDateTime): String;
+  function DecToNum(N: Longint; Len: byte): string;
+  begin
+    Result := Dec2Numb(N, Len, 10);
+  end;
+
 const
   TmplVarsChar = '%';
 begin
-  Result := StringReplace(Str,    TmplVarsChar + 'D', Int2Str(DayOf(DateTime), 2),    [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'M', Int2Str(MonthOf(DateTime), 2),  [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'Y', Int2Str(YearOf(DateTime), 4),   [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'H', Int2Str(HourOf(DateTime), 2),   [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'N', Int2Str(MinuteOf(DateTime), 2), [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'S', Int2Str(SecondOf(DateTime), 2), [rfReplaceAll]);
+  Result := StringReplace(Str,    TmplVarsChar + 'D', DecToNum(DayOf(DateTime), 2),    [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'M', DecToNum(MonthOf(DateTime), 2),  [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'Y', DecToNum(YearOf(DateTime), 4),   [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'H', DecToNum(HourOf(DateTime), 2),   [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'N', DecToNum(MinuteOf(DateTime), 2), [rfReplaceAll]);
+  Result := StringReplace(Result, TmplVarsChar + 'S', DecToNum(SecondOf(DateTime), 2), [rfReplaceAll]);
 end;
 
 function FormatDateTime2(const Str: String): String;
 begin
   Result := FormatDateTime2(Str, Now());
-end;
-
-function Int2Str(Val: Integer; LeadingZeros: Integer): String;
-var
-  Tmp: String;
-begin
-  Result := '';
-
-  Tmp := IntToStr(Abs(Val));
-
-  if Val < 0 then
-    Result := Result + '-';
-
-  if (LeadingZeros > 0) and (LeadingZeros > Length(Tmp)) then
-    Result := Result + StringOfChar('0', LeadingZeros - Length(Tmp));
-
-  Result := Result + Tmp;
 end;
 
 function DecodeControlCharacters(const Str: WideString): WideString;
@@ -222,52 +190,13 @@ begin
 end;
 
 function GetBuildDateTime: TDateTime;
-var
-  BuildDate, BuildTime: String;
 begin
-  BuildDate := {$I %DATE%};
-  BuildTime := {$I %TIME%};
-  BuildDate := StringReplace(BuildDate, '/', '-', [rfReplaceAll]);  // For unknown reason doesn`t work with "/" date separator
-
-  Result := ScanDateTime('yyyy-mm-dd hh:nn:ss', BuildDate + ' ' + BuildTime);
-end;
-
-function RemoveExtraPathDelimiters(const Path: String): String;
-var
-  I: Integer;
-  Ch: Char;
-  IsPrevDelim: Boolean;
-begin
-  // Result := StringReplace(Path, PathDelim + PathDelim, PathDelim, [rfReplaceAll]);
-
-  Result := '';
-  IsPrevDelim := False;
-  for I := 1 to Length(Path) do
-  begin
-     Ch := Path[I];
-     if Ch = PathDelim then
-     begin
-       if not IsPrevDelim then
-       begin
-         Result := Result + Ch;
-         IsPrevDelim := True;
-       end;
-     end
-     else
-     begin
-       Result := Result + Ch;
-       IsPrevDelim := False;
-     end;
-  end;
-end;
-
-function JoinPath(const Base: String; const Path: String): String;
-begin
-  Result := IncludeTrailingPathDelimiter(Base) + Path;
-  Result := RemoveExtraPathDelimiters(Result);
+  Result := EncodeDateTime({$I %dateYear%}, {$I %dateMonth%}, {$I %dateDay%},
+            {$I %timeHour%}, {$I %timeMinute%}, {$I %timeSecond%}, 0);
 end;
 
 function GetLocalComputerName: string;
+{$IfDef windows}
 var
   Size: dword;
   Buf: array [0..MAX_COMPUTERNAME_LENGTH + 1] of char;
@@ -280,8 +209,16 @@ begin
   else
     Result := '';
 end;
+{$EndIf}
+{$IfDef linux}
+begin
+  //Result := GetEnvironmentVariable('COMPUTERNAME');
+  Result := GetHostName;
+end;
+{$EndIf}
 
 function GetCurrentUserName: string;
+{$IfDef windows}
 const
   UNLEN = 256; // Not defined in windows.pas
 var
@@ -296,6 +233,35 @@ begin
   else
     Result := '';
 end;
+{$EndIf}
+{$IfDef linux}
+const
+  BufSize = 256;
+var
+  S: TProcess;
+  Count, I: Integer;
+  Buffer: array[1..BufSize] of {byte} char;
+  SL: TStringList;
+begin
+  //Result := GetEnvironmentVariable({'USERNAME'} {'USER'} 'LOGNAME');
+  S:=TProcess.Create(Nil);
+  S.Commandline:='whoami';
+  S.Options:=[poUsePipes,poNoConsole];
+  S.execute;
+  {Repeat
+    Count:=s.output.read(Buffer,BufSize);
+    // reverse print for fun.
+    For I:=1 to count do
+      Result:=Result + Buffer[i];
+  until Count=0;}
+  sl:=TStringList.Create;
+  sl.LoadFromStream(s.Output);
+  Result:=sl[0];
+  sl.Free;
+
+  s.Free;
+end;
+{$EndIf}
 
 {function GetSystemLanguageID: Integer;
 begin
@@ -304,7 +270,12 @@ end;}
 
 function GetSystemLanguageCode: String{[2]};
 begin
+  {$IfDef windows}
   Result := Iso6391FromLcid(GetUserDefaultLCID);
+  {$EndIf}
+  {$IfDef linux}
+  Result := GetEnvironmentVariable('LANGUAGE');
+  {$EndIf}
 end;
 
 function GetAlternativeLanguage(const ALangs: TLanguagesArray;
@@ -327,35 +298,77 @@ begin
   Result := ''; // Not found
 end;
 
+{$IfDef Linux}
+function GetAutostartFileName(const AFileName: String): String;
+begin
+  Result := ConcatPaths([GetEnvironmentVariableUTF8('HOME'), '.config',
+            'autostart', DelSpace(ExtractFileNameOnly(AFileName)) + '.desktop']);
+end;
+{$EndIf}
+
 procedure SetAutoRun(const FileName: String; const AppTitle: String);
 const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
   Args = '-autorun';
 var
+  {$IfDef Windows}
+  Reg: TRegistry;
+  {$EndIf}
+  {$IfDef Linux}
+  AutostartFileContent: TStringList;
+  {$EndIf}
   Cmd: String;
 begin
   Cmd := '"' + FileName + '" ' + Args;
 
-  with TRegIniFile.Create('') do
+  {$IfDef Windows}
+  Reg := TRegistry.Create(KEY_WRITE);
   try
-    RootKey := HKEY_CURRENT_USER;
-    WriteString(Section, AppTitle, Cmd);
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKey(RegistryAutorunKey, True) then
+      Reg.WriteString(AppTitle, Cmd);
   finally
-    Free;
+    Reg.Free;
   end;
+  {$EndIf}
+
+  {$IfDef Linux}
+  AutostartFileContent := TStringList.Create;
+  try
+    with AutostartFileContent do
+    begin
+      Add('[Desktop Entry]');
+      Add('Type=Application');
+      Add('Exec=' + Cmd);
+      Add('Hidden=false');
+      Add('Name=' + AppTitle);
+      SaveToFile(GetAutostartFileName(FileName));
+    end;
+  finally
+    AutostartFileContent.Free;
+  end;
+  {$EndIf}
 end;
 
-procedure RemoveAutoRun(const AppTitle: String);
-const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
+procedure RemoveAutoRun(const FileName: String; const AppTitle: String);
+{$IfDef Windows}
+var
+  Reg: TRegistry;
+{$EndIf}
 begin
-  with TRegIniFile.Create('') do
+  {$IfDef Windows}
+  Reg := TRegistry.Create(KEY_WRITE);
   try
-    RootKey := HKEY_CURRENT_USER;
-    DeleteKey(Section, AppTitle);
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKey(RegistryAutorunKey, False) then
+      Reg.DeleteValue(AppTitle);
   finally
-    Free;
+    Reg.Free;
   end;
+  {$EndIf}
+
+  {$IfDef Linux}
+  DeleteFile(GetAutostartFileName(FileName));
+  {$EndIf}
 end;
 
 procedure AutoRun(const FileName: String; const AppTitle: String;
@@ -364,22 +377,30 @@ begin
   if Enabled then
     SetAutoRun(FileName, AppTitle)
   else
-    RemoveAutoRun(AppTitle);
+    RemoveAutoRun(FileName, AppTitle);
 end;
 
-function CheckAutoRun(const AppTitle: String): Boolean;
-const
-  Section = 'Software\Microsoft\Windows\CurrentVersion\Run' + #0;
+function CheckAutoRun(const FileName: String; const AppTitle: String): Boolean;
+{$IfDef Windows}
+var
+  Reg: TRegistry;
+{$EndIf}
 begin
+  {$IfDef Windows}
   Result := False;
-
-  with TRegIniFile.Create('') do
+  Reg := TRegistry.Create(KEY_READ);
   try
-    RootKey := HKEY_CURRENT_USER;
-    Result := ReadString(Section, AppTitle, '') <> '';
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKeyReadOnly(RegistryAutorunKey) then
+      Result := Reg.ReadString(AppTitle) <> '';
   finally
-    Free;
+    Reg.Free;
   end;
+  {$EndIf}
+
+  {$IfDef Linux}
+  Result := FileExists(GetAutostartFileName(FileName));
+  {$EndIf}
 end;
 
 procedure RunCmdInbackground(ACmd: String);

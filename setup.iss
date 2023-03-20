@@ -6,7 +6,6 @@
 #define MyAppPublisher "Artem Demin"
 #define MyAppURL "https://github.com/artem78/AutoScreenshot#readme"
 #define MyAppExeName "AutoScreenshot.exe"
-#define LazarusDir "F:\Programms\lazarus_2.0.12_32bit"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -40,8 +39,8 @@ Source: "AutoScreenshot.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "lang\*"; DestDir: "{app}\lang"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.bak"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 ; ToDo: Remove config.ini when uninstall or make this optional
-Source: "{#LazarusDir}\ssleay32.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#LazarusDir}\libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("LazarusDir")}\ssleay32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#GetEnv("LazarusDir")}\libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

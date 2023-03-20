@@ -16,16 +16,15 @@ type
     function GetFormattedPath(Path: String): String;
   published
     procedure TestFormatPath;
-    procedure TestInt2Str;
     procedure TestDecode;
     procedure TestJoinPath;
-    procedure TestRemoveExtraPathDelimiters;
     procedure TestVersions;
+    procedure TestAutoRun;
   end;
 
 implementation
 
-uses uUtils, {SysUtils} DateUtils, uUtilsMore;
+uses uUtils, {SysUtils} DateUtils, uUtilsMore, Forms;
 
 { TMyTestCase }
 
@@ -76,20 +75,12 @@ begin
       GetFormattedPath('%COMP_%USER_image.tiff'));}
 end;
 
-procedure TMyTestCase.TestInt2Str;
-begin
-  AssertEquals('152', Int2Str(152));
-  AssertEquals('123456789', Int2Str(123456789));
-  AssertEquals('-200300', Int2Str(-200300));
-  AssertEquals('007', Int2Str(7, 3));
-  AssertEquals('-00121', Int2Str(-121, 5));
-  AssertEquals('0', Int2Str(0));
-  AssertEquals('000000', Int2Str(0, 6));
-  AssertEquals('303', Int2Str(303, 3));
-  AssertEquals('-505', Int2Str(-505, 3));
-end;
-
 procedure TMyTestCase.TestJoinPath;
+  function JoinPath(const Base: String; const Path: String): String;
+  begin
+    Result := ConcatPaths([Base, Path]);
+  end;
+
 begin
   //CheckEqualsString('', JoinPath('', ''));
   {$IFDEF MSWINDOWS}
@@ -100,17 +91,6 @@ begin
   AssertEquals('Empty path', 'a:\DisketDir\', JoinPath('a:\DisketDir', ''));
   AssertEquals('Relative path',
       'mydir\picture.jpeg', JoinPath('mydir', 'picture.jpeg'));
-  {$ENDIF}
-end;
-
-procedure TMyTestCase.TestRemoveExtraPathDelimiters;
-begin
-  //CheckEqualsString('', RemoveExtraPathDelimiters(''));
-  {$IFDEF MSWINDOWS}
-  AssertEquals('c:\dir1\dir2\dir3\file.txt', RemoveExtraPathDelimiters('c:\dir1\\dir2\\\dir3\\\\file.txt'));
-  AssertEquals('folder\', RemoveExtraPathDelimiters('folder\\'));
-  AssertEquals('\my folder\', RemoveExtraPathDelimiters('\\my folder\\'));
-  AssertEquals('Nothing to do', 'd:\dir\file.txt', RemoveExtraPathDelimiters('d:\dir\file.txt'));
   {$ENDIF}
 end;
 
@@ -175,6 +155,23 @@ begin
   //AssertEquals({''} '0',           TProgramVersion.Create(0, 0, 0, 0)    .ToString(True));
 
   // ToDo: Check wrong version strings
+end;
+
+procedure TMyTestCase.TestAutoRun;
+var
+  ExeFileName, AppTitle: String;
+begin
+  ExeFileName := Application.ExeName;
+  AppTitle := 'AutoRun test';
+
+  AssertFalse(CheckAutoRun(ExeFileName, AppTitle));
+  AutoRun(ExeFileName, AppTitle, True); // Turn on autorun
+  AssertTrue(CheckAutoRun(ExeFileName, AppTitle));
+  AssertFalse(CheckAutoRun('xyz', 'abcdefg'));
+  AutoRun(ExeFileName, AppTitle, False); // Turn off autorun
+  AssertFalse(CheckAutoRun(ExeFileName, AppTitle));
+
+
 end;
 
 initialization

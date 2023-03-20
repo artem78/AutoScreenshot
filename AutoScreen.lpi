@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
         <MainUnitHasUsesSectionForAllUnits Value="False"/>
         <MainUnitHasCreateFormStatements Value="False"/>
         <MainUnitHasTitleStatement Value="False"/>
+        <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <Title Value="Auto Screenshot"/>
       <Scaled Value="True"/>
       <UseAppBundle Value="False"/>
@@ -22,7 +22,7 @@
         <TextDesc Value="Automatic screenshot maker"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="12">
+      <Resources Count="13">
         <Resource_0 FileName="res\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
         <Resource_1 FileName="res\camera_flash1.ico" Type="ICON" ResourceName="_CAMERA_FLASH_1"/>
         <Resource_2 FileName="res\camera_flash2.ico" Type="ICON" ResourceName="_CAMERA_FLASH_2"/>
@@ -35,6 +35,7 @@
         <Resource_9 FileName="res\stop.bmp" Type="BITMAP" ResourceName="_STOP_ICON"/>
         <Resource_10 FileName="res\logo.png" Type="RCDATA" ResourceName="_LOGO"/>
         <Resource_11 FileName="res\logo_high_dpi.png" Type="RCDATA" ResourceName="_LOGO_HIGH_DPI"/>
+        <Resource_12 FileName="res\camera.ico" Type="ICON" ResourceName="_CAMERA"/>
       </Resources>
     </General>
     <i18n>
@@ -47,9 +48,9 @@
       <RevisionNr Value="4"/>
       <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.10.4"/>
     </VersionInfo>
-    <BuildModes Count="3">
-      <Item1 Name="Default (32bit)" Default="True"/>
-      <Item2 Name="Debug (32bit)">
+    <BuildModes Count="5">
+      <Item1 Name="Default" Default="True"/>
+      <Item2 Name="Debug">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -64,7 +65,6 @@
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
-              <SyntaxMode Value="Delphi"/>
               <IncludeAssertionCode Value="True"/>
             </SyntaxOptions>
           </Parsing>
@@ -75,8 +75,6 @@
               <OverflowChecks Value="True"/>
               <StackChecks Value="True"/>
             </Checks>
-            <TargetCPU Value="i386"/>
-            <TargetOS Value="win32"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -95,7 +93,7 @@
           </Other>
         </CompilerOptions>
       </Item2>
-      <Item3 Name="Release (32bit)">
+      <Item3 Name="Release">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -108,15 +106,8 @@
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
-          <Parsing>
-            <SyntaxOptions>
-              <SyntaxMode Value="Delphi"/>
-            </SyntaxOptions>
-          </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
-            <TargetCPU Value="i386"/>
-            <TargetOS Value="win32"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -124,6 +115,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
@@ -137,6 +129,80 @@
           </Other>
         </CompilerOptions>
       </Item3>
+      <Item4 Name="Release (32bit)">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="AutoScreenshot"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="libs;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="libs"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <ObjectPath Value="libs\PNGImage"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="i386"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+          </Other>
+        </CompilerOptions>
+      </Item4>
+      <Item5 Name="Release (64bit)">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="AutoScreenshot"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="libs;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="libs"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <ObjectPath Value="libs\PNGImage"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+          </Other>
+        </CompilerOptions>
+      </Item5>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -161,7 +227,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="14">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -201,28 +267,42 @@
         <UnitName Value="uFileNameTemplateHelpForm"/>
       </Unit6>
       <Unit7>
+        <Filename Value="screengrabber.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ScreenGrabber"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="languagecodes.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
         <Filename Value="uutilsmore.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uUtilsMore"/>
-      </Unit7>
-      <Unit8>
+      </Unit9>
+      <Unit10>
         <Filename Value="uhotkeysform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="HotKeysForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uHotKeysForm"/>
-      </Unit8>
-      <Unit9>
+      </Unit10>
+      <Unit11>
         <Filename Value="uinihelper.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uIniHelper"/>
-      </Unit9>
-      <Unit10>
+      </Unit11>
+      <Unit12>
         <Filename Value="globalkeyhook.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GlobalKeyHook"/>
-      </Unit10>
+      </Unit12>
+      <Unit13>
+        <Filename Value="idle.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Idle"/>
+      </Unit13>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -237,15 +317,6 @@
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       <ObjectPath Value="libs\PNGImage"/>
     </SearchPaths>
-    <Parsing>
-      <SyntaxOptions>
-        <SyntaxMode Value="Delphi"/>
-      </SyntaxOptions>
-    </Parsing>
-    <CodeGeneration>
-      <TargetCPU Value="i386"/>
-      <TargetOS Value="win32"/>
-    </CodeGeneration>
     <Linking>
       <Options>
         <Win32>
