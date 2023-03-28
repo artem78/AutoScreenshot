@@ -28,6 +28,8 @@ type
 
 implementation
 
+uses LazLoggerBase;
+
 { TXRandREventWatcherThread }
 
 procedure TXRandREventWatcherThread.Notify;
@@ -42,6 +44,8 @@ var
   Display: PDisplay;
   RootWnd: TWindow;
 begin
+  DebugLn(ClassName, '::Execute() started');
+
   //DisplayName := GetEnvironmentVariable('DISPLAY');
   Display := XOpenDisplay({PChar(DisplayName)} Nil);
   RootWnd := RootWindow(Display, DefaultScreen(Display));
@@ -53,6 +57,7 @@ begin
     if XPending(Display) > 0 then
     begin
       XNextEvent(Display, @FLastEvent);
+      DebugLn(['Recieved event with type ', FLastEvent._type]);
       Synchronize(@Notify);
     end;
 
@@ -63,6 +68,8 @@ begin
   end;
 
   XCloseDisplay(Display);
+
+  DebugLn(ClassName, '::Execute() ended');
 end;
 
 constructor TXRandREventWatcherThread.Create(AEventMask: cint;
@@ -73,13 +80,20 @@ begin
   FreeOnTerminate := {True} False;
 
   inherited Create(False);
+
+  NameThreadForDebugging(ClassName, ThreadID);
+  DebugLn('Thread ', ClassName ,' started');
 end;
 
 destructor TXRandREventWatcherThread.Destroy;
 begin
+  DebugLn('Prepare to destroy thread ', ClassName);
+
   Terminate;
   WaitFor;
   inherited Destroy;
+
+  DebugLn('Thread ', ClassName, 'destroyed');
 end;
 
 end.
