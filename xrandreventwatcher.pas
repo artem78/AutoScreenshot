@@ -23,6 +23,7 @@ type
   public
     Constructor Create({ACreateSuspended: boolean;} AEventMask: cint;
         ANotifier: TNotifyProc);
+    destructor Destroy; override;
   end;
 
 implementation
@@ -49,14 +50,16 @@ begin
 
   while True do
   begin
+    if XPending(Display) > 0 then
+    begin
+      XNextEvent(Display, @FLastEvent);
+      Synchronize(@Notify);
+    end;
+
     if Terminated then
       Break;
 
-    XNextEvent(Display, @FLastEvent);
-
-    Synchronize(@Notify);
-
-    // FixMe: Freezes when no events and impossible to terminate
+    Sleep(200);
   end;
 
   XCloseDisplay(Display);
@@ -70,6 +73,13 @@ begin
   FreeOnTerminate := {True} False;
 
   inherited Create(False);
+end;
+
+destructor TXRandREventWatcherThread.Destroy;
+begin
+  Terminate;
+  WaitFor;
+  inherited Destroy;
 end;
 
 end.

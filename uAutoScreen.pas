@@ -536,7 +536,8 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-  XWatcher.Terminate;
+  //XWatcher.Terminate;
+  //XWatcher.WaitFor;
   XWatcher.Free;
   Grabber.Free;
   KeyHook.Free;
