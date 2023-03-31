@@ -8,6 +8,9 @@ uses
   {$IfDef windows}
   Windows,
   {$EndIf}
+  {$IfDef Linux}
+  xlib, xrandr, XRandREventWatcher,
+  {$EndIf}
   {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
@@ -130,6 +133,9 @@ type
     {$IfDef windows}
     PrevWndProc: WndProc;
     {$EndIf}
+    {$IfDef Linux}
+    XWatcher: TXRandREventWatcherThread;
+    {$EndIf}
     Grabber: TScreenGrabber;
 
     FStopWhenInactive: Boolean;
@@ -192,6 +198,11 @@ type
     function GetCompressionLevel: Tcompressionlevel;
     procedure UpdateFormAutoSize;
 
+    {$IfDef Linux}
+    procedure OnScreenConfigurationChanged(const AEvent: TXEvent);
+    {$EndIf}
+
+
     { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
     property FinalOutputDir: String read GetFinalOutputDir;
@@ -247,7 +258,6 @@ Idle, LCLType;
 const
   LanguageSubMenuItemNamePrefix = 'LanguageSubMenuItem_';
 
-// ToDo: Implement for Linux
 {$IfDef windows}
 function WndCallback(MyHWND: HWND; uMSG: UINT; wParam: WParam; lParam: LParam): LRESULT; StdCall;
 begin
@@ -502,6 +512,11 @@ begin
   KeyHook.RegisterKey('StopAutoCapture', HotKey);
   HotKey := Ini.ReadHotKey(HotKeysIniSection, 'SingleCapture', SingleCaptureDefaultHotKey);
   KeyHook.RegisterKey('SingleCapture', HotKey);
+
+  {$IfDef Linux}
+  // Enable monitor confuguration changed updates in Linux
+  XWatcher := TXRandREventWatcherThread.Create(RRScreenChangeNotifyMask, @OnScreenConfigurationChanged);
+  {$EndIf}
 end;
 
 procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
@@ -521,6 +536,9 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  //XWatcher.Terminate;
+  //XWatcher.WaitFor;
+  XWatcher.Free;
   Grabber.Free;
   KeyHook.Free;
 
@@ -1637,6 +1655,13 @@ begin
   AutoSize := not AutoSize;
   AutoSize := not AutoSize;
   {$EndIf}
+end;
+
+procedure TMainForm.OnScreenConfigurationChanged(const AEvent: TXEvent);
+begin
+  //if AEvent._type = 89 {?} then
+    UpdateMonitorList;
+  //end;
 end;
 
 {$IfDef Windows}
