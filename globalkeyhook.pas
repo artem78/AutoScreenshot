@@ -11,7 +11,7 @@ uses
   {$IfDef Windows}
   Windows,
   {$EndIf}
-  uUtilsMore, fgl;
+  uUtilsMore, fgl, LazLoggerBase;
 
 type
 
@@ -51,13 +51,6 @@ type
 implementation
 
 uses {LCLType,} StrUtils;
-
-procedure DebugMsg(const Msg: String);
-begin
-  {$IfDef Windows}{$IFOPT D+}
-  OutputDebugString(PChar(Msg))
-  {$ENDIF}{$EndIf}
-end;
 
 { TGlobalKeyHook }
 
@@ -154,8 +147,8 @@ begin
     Exit;
   end;
 
-  DebugMsg(Format('Start to register hotkey %s for %s',
-      [AHotKey.ToString, AStringId]));
+  DebugLn('Start to register hotkey %s for %s',
+      [AHotKey.ToString, AStringId]);
 
   // Find atom id
   FullStrId := GetFullStringId(AStringId);
@@ -165,7 +158,7 @@ begin
   begin
     if KeysMap.KeyData[AStringId] = AHotKey then
     begin
-      DebugMsg(Format('Hotkey %s for %s not changed', [AHotKey.ToString, AStringId]));
+      DebugLn('Hotkey %s for %s not changed', [AHotKey.ToString, AStringId]);
 
       Exit;
     end;
@@ -176,9 +169,9 @@ begin
   RegisterKey(Id, AHotKey);
   KeysMap.AddOrSetData(AStringId, AHotKey);
 
-  DebugMsg(Format('Hot key %s for %s registered with id=%d',
-       [AHotKey.ToString, AStringId, id]));
-  DebugMsg(Format('Total registered hot keys: %d', [KeysMap.Count]));
+  DebugLn('Hot key %s for %s registered with id=%d',
+       [AHotKey.ToString, AStringId, id]);
+  DebugLn('Total registered hot keys: %d', [KeysMap.Count]);
 end;
 {$EndIf}
 {$IfDef Linux}
@@ -193,11 +186,11 @@ var
   FullStrId: String;
   Id: Integer;
 begin
-  DebugMsg(Format('Start to unregister hotkey for %s', [AStringId]));
+  DebugLn('Start to unregister hotkey for %s', [AStringId]);
 
   if KeysMap.IndexOf(AStringId) = -1 then
   begin // Not registered yet
-    DebugMsg(Format('Warning: Hotkey for %s not found', [AStringId]));
+    DebugLn('Warning: Hotkey for %s not found', [AStringId]);
     Exit;
   end;
 
@@ -207,8 +200,8 @@ begin
 
   KeysMap.Remove(AStringId);
 
-  DebugMsg(Format('Hot key for %s with id=%d unregistered',  [AStringId, id]));
-  DebugMsg(Format('Total registered hot keys: %d', [KeysMap.Count]));
+  DebugLn('Hot key for %s with id=%d unregistered',  [AStringId, id]);
+  DebugLn('Total registered hot keys: %d', [KeysMap.Count]);
 end;
 {$EndIf}
 {$IfDef Linux}
@@ -236,7 +229,7 @@ begin
   FullStrId := GetFullStringId(AStringId);
   Result := GlobalFindAtom(PChar(FullStrId));
 
-  DebugMsg(Format('%s => id %d', [AStringId, Result]));
+  DebugLn('%s => id %d', [AStringId, Result]);
 end;
 {$EndIf}
 {$IfDef Linux}
