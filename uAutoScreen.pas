@@ -5,7 +5,7 @@ unit uAutoScreen;
 interface
 
 uses
-  {$IfDef windows}
+  {$IfDef Windows}
   Windows,
   {$EndIf}
   {$IfDef Linux}
@@ -130,7 +130,7 @@ type
     FCounter: Integer;
     FCounterDigits: Integer {Byte};
 
-    {$IfDef windows}
+    {$IfDef Windows}
     PrevWndProc: WndProc;
     {$EndIf}
     {$IfDef Linux}
@@ -258,7 +258,7 @@ Idle, LCLType;
 const
   LanguageSubMenuItemNamePrefix = 'LanguageSubMenuItem_';
 
-{$IfDef windows}
+{$IfDef Windows}
 function WndCallback(MyHWND: HWND; uMSG: UINT; wParam: WParam; lParam: LParam): LRESULT; StdCall;
 begin
   case uMSG of
@@ -467,7 +467,7 @@ var
   HotKey: THotKey;
   IniFileName: String;
 begin
-  {$IfDef windows}
+  {$IfDef Windows}
   { Replace default window function with custom one
     for process messages when screen configuration changed }
   PrevWndProc := Windows.WNDPROC

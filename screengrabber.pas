@@ -91,8 +91,8 @@ const
 implementation
 
 uses
-  {$IfDef windows}
-  Windows,
+  {$IfDef Windows}
+  windows,
   {$EndIf}
   Forms {for TMonitor}, LCLType, LCLIntf, BGRABitmap, BGRABitmapTypes, FPWriteJPEG, FPWriteBMP,
   FPWritePNG, FPImage, FPWriteTiff;
@@ -124,7 +124,7 @@ begin
 end;
 
 procedure TScreenGrabber.CaptureRegion(AFileName: String; ARect: TRect);
-{$IfDef linux}
+{$IfDef Linux}
 const
   HWND_DESKTOP = 0;
 {$EndIf}

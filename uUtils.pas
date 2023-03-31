@@ -8,7 +8,7 @@ unit uUtils;
 interface
 
 uses
-  {$IfDef windows}
+  {$IfDef Windows}
   Windows,
   {$EndIf}
   uLocalization;
@@ -81,7 +81,7 @@ uses
   {$IfDef Windows}
   WinDirs {???}, Registry,
   {$EndIf}
-  {$IfDef linux}
+  {$IfDef Linux}
   Unix, LazUTF8, LazFileUtils,
   {$EndIf}
   SysUtils, Classes, DateUtils, StrUtils, uLanguages, Forms {???}, FileInfo, process;
@@ -196,7 +196,7 @@ begin
 end;
 
 function GetLocalComputerName: string;
-{$IfDef windows}
+{$IfDef Windows}
 var
   Size: dword;
   Buf: array [0..MAX_COMPUTERNAME_LENGTH + 1] of char;
@@ -210,7 +210,7 @@ begin
     Result := '';
 end;
 {$EndIf}
-{$IfDef linux}
+{$IfDef Linux}
 begin
   //Result := GetEnvironmentVariable('COMPUTERNAME');
   Result := GetHostName;
@@ -218,7 +218,7 @@ end;
 {$EndIf}
 
 function GetCurrentUserName: string;
-{$IfDef windows}
+{$IfDef Windows}
 const
   UNLEN = 256; // Not defined in windows.pas
 var
@@ -234,7 +234,7 @@ begin
     Result := '';
 end;
 {$EndIf}
-{$IfDef linux}
+{$IfDef Linux}
 const
   BufSize = 256;
 var
@@ -270,10 +270,10 @@ end;}
 
 function GetSystemLanguageCode: String{[2]};
 begin
-  {$IfDef windows}
+  {$IfDef Windows}
   Result := Iso6391FromLcid(GetUserDefaultLCID);
   {$EndIf}
-  {$IfDef linux}
+  {$IfDef Linux}
   Result := GetEnvironmentVariable('LANGUAGE');
   {$EndIf}
 end;
