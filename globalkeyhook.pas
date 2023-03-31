@@ -42,7 +42,10 @@ type
     procedure UnregisterKey(const AStringId: String);{$IfDef windows} overload;{$EndIf}
     function FindHotKey(const AStringId: String): THotKey;
     function HotKeyId(const AStringId: String): integer;
+
+    {$IfDef Windows}
     function IdToStrId(AnId: Integer): String;
+    {$EndIf}
   end;
 
 implementation
@@ -242,8 +245,8 @@ begin
 end;
 {$EndIf}
 
-function TGlobalKeyHook.IdToStrId(AnId: Integer): String;
 {$IfDef Windows}
+function TGlobalKeyHook.IdToStrId(AnId: Integer): String;
 const
   MaxLength = 255;
 var
@@ -257,11 +260,6 @@ begin
 
   Result := Buffer;
   Result := GetShortStringId(Result);
-end;
-{$EndIf}
-{$IfDef Linux}
-begin
-  result:='';
 end;
 {$EndIf}
 
