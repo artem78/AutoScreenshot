@@ -15,7 +15,7 @@ implementation
 uses
   Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls, uUtilsMore,
   uLocalization, uUtils, uAutoScreen, LCLIntf,
-  fphttpclient, opensslsockets, fpjson, jsonparser;
+  fphttpclient, opensslsockets, fpjson, jsonparser, StrUtils;
 
 {$R *.lfm}
 
@@ -74,9 +74,9 @@ type
 const
   ApiUrl =
 {$IFOPT D+}
-    'https://eojiuvjshd8kbzt.m.pipedream.net'
+    'https://eo873h2zv0emseb.m.pipedream.net/'
 {$ELSE}
-    'https://api.github.com/repos/artem78/AutoScreenshot/releases/latest'
+    'https://api.github.com/repos/artem78/AutoScreenshot/releases'
 {$ENDIF}
   ;
 
@@ -167,6 +167,9 @@ var
   ResponseStr: String;
   Client: TFPHTTPClient;
   JsonData: TJSONData;
+  JsonArrayEnum: TBaseJSONEnumerator;
+  TagName: String;
+  Version: TProgramVersion;
 begin
   LatestVersion := TProgramVersion.Create();
   DownloadUrl := '';
@@ -182,9 +185,32 @@ begin
 
       JsonData := GetJSON(ResponseStr);
       try
-        LatestVersion := TProgramVersion.Create(JsonData.GetPath('tag_name').AsString);
-        DownloadUrl := JsonData.GetPath('html_url').AsString;
-        ChangeLog := JsonData.GetPath('body').AsString;
+        JsonArrayEnum := TJSONArray(JsonData).GetEnumerator;
+        try
+          while JsonArrayEnum.MoveNext do
+          begin
+            TagName := JsonArrayEnum.Current.Value.GetPath('tag_name').AsString;
+            // Skip other OS specific release
+            {$IfDef Windows}
+            if ContainsText(TagName, 'linux') then
+              Continue;
+            {$EndIf}
+            {$IfDef Linux}
+            if ContainsText(TagName, {'windows'} 'win') then
+              Continue;
+            {$EndIf}
+
+            Version := TProgramVersion.Create(ExtractDelimited(1, TagName, ['-']));
+            if Version > LatestVersion then
+            begin
+              LatestVersion := Version;
+              DownloadUrl   := JsonArrayEnum.Current.Value.GetPath('html_url').AsString;
+              ChangeLog     := JsonArrayEnum.Current.Value.GetPath('body').AsString;
+            end;
+          end;
+        finally
+          FreeAndNil(JsonArrayEnum)
+        end;
 
         Synchronize(@NotifySuccess);
       finally
