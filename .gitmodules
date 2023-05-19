@@ -1,0 +1,3 @@
+[submodule "libs/Cross.Codebot"]
+	path = libs/Cross.Codebot
+	url = ../../sysrpl/Cross.Codebot.git

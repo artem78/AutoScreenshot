@@ -28,8 +28,8 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = OutputDirEdit
     Left = 95
-    Height = 12
-    Top = 20
+    Height = 14
+    Top = 19
     Width = 91
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
@@ -41,8 +41,8 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = CaptureIntervalDateTimePicker
     Left = 62
-    Height = 12
-    Top = 166
+    Height = 14
+    Top = 165
     Width = 124
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
@@ -54,8 +54,8 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = ImageFormatOptionsPanel
     Left = 145
-    Height = 12
-    Top = 196
+    Height = 14
+    Top = 195
     Width = 41
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
@@ -67,8 +67,8 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = FileNameTemplateComboBox
     Left = 82
-    Height = 12
-    Top = 51
+    Height = 14
+    Top = 50
     Width = 104
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
@@ -80,8 +80,8 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = MonitorComboBox
     Left = 110
-    Height = 12
-    Top = 340
+    Height = 14
+    Top = 339
     Width = 76
     Alignment = taRightJustify
     Anchors = [akTop, akRight]
@@ -331,8 +331,8 @@ object MainForm: TMainForm
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = SeqNumberValueSpinEdit
       Left = 22
-      Height = 12
-      Top = 11
+      Height = 14
+      Top = 10
       Width = 61
       Alignment = taRightJustify
       Anchors = [akTop, akRight]
@@ -344,8 +344,8 @@ object MainForm: TMainForm
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = SeqNumberDigitsCountSpinEdit
       Left = 49
-      Height = 12
-      Top = 40
+      Height = 14
+      Top = 39
       Width = 34
       Alignment = taRightJustify
       Anchors = [akTop, akRight]
@@ -396,8 +396,8 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrCenter
     AnchorSideRight.Control = PostCmdEdit
     Left = 103
-    Height = 12
-    Top = 370
+    Height = 14
+    Top = 369
     Width = 83
     Anchors = [akTop, akRight]
     Caption = 'Run command:'
@@ -434,8 +434,8 @@ object MainForm: TMainForm
     end
     object CompressionLevelLabel: TLabel
       Left = 130
-      Height = 12
-      Top = 8
+      Height = 14
+      Top = 7
       Width = 105
       BorderSpacing.Left = 30
       BorderSpacing.CellAlignVertical = ccaCenter
@@ -461,8 +461,8 @@ object MainForm: TMainForm
     end
     object JPEGQualityLabel: TLabel
       Left = 371
-      Height = 12
-      Top = 8
+      Height = 14
+      Top = 7
       Width = 76
       BorderSpacing.Left = 30
       BorderSpacing.CellAlignVertical = ccaCenter
@@ -480,8 +480,8 @@ object MainForm: TMainForm
     end
     object JPEGQualityPercentLabel: TLabel
       Left = 509
-      Height = 12
-      Top = 8
+      Height = 14
+      Top = 7
       Width = 11
       BorderSpacing.CellAlignVertical = ccaCenter
       Caption = '%'
@@ -489,8 +489,8 @@ object MainForm: TMainForm
     end
     object ColorDepthLabel: TLabel
       Left = 550
-      Height = 12
-      Top = 8
+      Height = 14
+      Top = 7
       Width = 67
       BorderSpacing.Left = 30
       BorderSpacing.CellAlignVertical = ccaCenter
@@ -581,7 +581,6 @@ object MainForm: TMainForm
       end
       object HotKetsSettingsMenuItem: TMenuItem
         Caption = 'Edit hotkeys...'
-        Visible = False
         OnClick = HotKetsSettingsMenuItemClick
       end
     end

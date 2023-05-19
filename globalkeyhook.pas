@@ -1,7 +1,5 @@
 unit GlobalKeyHook;
 
-// ToDo: Not implemented for Linux
-
 {$mode objfpc}{$H+}
 
 interface
@@ -11,6 +9,9 @@ uses
   {$IfDef Windows}
   Windows,
   {$EndIf}
+  {$IfDef Linux}
+  Codebot.Input.HotKeys,
+  {$EndIf}
   uUtilsMore, fgl, LazLoggerBase;
 
 type
@@ -19,29 +20,43 @@ type
 
   TKeysMap = specialize TFPGMap<string, THotKey>;
 
+  {$IfDef Linux}
+  THotKeyEvent = procedure(const AId: String) of object;
+  {$EndIf}
+
   { TGlobalKeyHook }
 
   TGlobalKeyHook = class
-  {$IfDef Windows}
   private
+    KeysMap: TKeysMap;
+    {$IfDef Windows}
     WndHandle: HWND;
     UniqueIdentifier: String;
-    KeysMap: TKeysMap;
+    {$EndIf}
+    {$IfDef Linux}
+    HKCapture: THotkeyCapture;
+    Callback: THotKeyEvent;
+    {$EndIf}
 
+    procedure UnregisterAllKeys;
+    {$IfDef Windows}
     procedure RegisterKey(AHotKeyId: Integer; const AHotKey: THotKey); overload;
     procedure UnregisterKey(AHotKeyId: Integer); overload;
-    procedure UnregisterAllKeys;
     function GetFullStringId(AStringId: string): String;
     function GetShortStringId(AFullStrId: String): String;
-  {$EndIf}
+    {$EndIf}
+    {$IfDef Linux}
+    procedure OnHotKeyEvent(Sender: TObject; Key: Word; Shift: TShiftState);
+    function FindId(const AHotKey: THotKey): String;
+    {$EndIf}
   public
-    constructor Create(AWndHandle: HWND; const AUniqueIdentifier: string);
+    constructor Create({$IfDef Windows}AWndHandle: HWND;const AUniqueIdentifier: string{$EndIf}
+                       {$IfDef Linux}ACallback: THotKeyEvent {= Nil}{$EndIf});
     destructor Destroy; override;
 
     procedure RegisterKey(const AStringId: String; const AHotKey: THotKey);{$IfDef Windows}  overload;{$EndIf}
     procedure UnregisterKey(const AStringId: String);{$IfDef Windows} overload;{$EndIf}
     function FindHotKey(const AStringId: String): THotKey;
-    function HotKeyId(const AStringId: String): integer;
 
     {$IfDef Windows}
     function IdToStrId(AnId: Integer): String;
@@ -88,6 +103,7 @@ begin
   {if not} UnregisterHotKey(WndHandle, AHotKeyId) {then} ;
     // ToDo: check result
 end;
+{$EndIf}
 
 procedure TGlobalKeyHook.UnregisterAllKeys;
 var
@@ -99,6 +115,36 @@ begin
   end;
 end;
 
+{$IfDef Linux}
+procedure TGlobalKeyHook.OnHotKeyEvent(Sender: TObject; Key: Word;
+  Shift: TShiftState);
+var
+  HotKey: THotKey;
+  Id: String;
+begin
+  HotKey.Key := Key;
+  HotKey.ShiftState := Shift;
+  Id := FindId(HotKey);
+
+  DebugLn('Hot key %s event recieved (id=%s)', [HotKey.ToString, Id]);
+
+  if Assigned(Callback) then
+    Callback(Id);
+end;
+
+function TGlobalKeyHook.FindId(const AHotKey: THotKey): String;
+var
+  Idx: Integer;
+begin
+  Result := '';
+
+  Idx := KeysMap.IndexOfData(AHotKey);
+  if Idx <> -1 then
+    Result := KeysMap.Keys[Idx];
+end;
+{$EndIf}
+
+{$IfDef Windows}
 function TGlobalKeyHook.GetFullStringId(AStringId: string): String;
 begin
   Result := UniqueIdentifier + '_' + AStringId;
@@ -113,23 +159,39 @@ begin
 end;
 {$EndIf}
 
-constructor TGlobalKeyHook.Create(AWndHandle: HWND;
-  const AUniqueIdentifier: string);
+constructor TGlobalKeyHook.Create(
+  {$IfDef Windows}
+  AWndHandle: HWND;
+  const AUniqueIdentifier: string
+  {$EndIf}
+  {$IfDef Linux}
+  ACallback: THotKeyEvent
+  {$EndIf}
+  );
 begin
   {$IfDef Windows}
   WndHandle := AWndHandle;
   UniqueIdentifier := AUniqueIdentifier;
+  {$EndIf}
 
   KeysMap := TKeysMap.Create;
+
+  {$IfDef Linux}
+  Callback := ACallback;
+  HKCapture := HotkeyCapture();
   {$EndIf}
 end;
 
 destructor TGlobalKeyHook.Destroy;
 begin
-  {$IfDef Windows}
   UnregisterAllKeys;
   KeysMap.Free;
-  {$EndIf}
+
+
+  (*{$IfDef Linux}
+  //HKCapture.Free;
+  //FreeAndNil(HKCapture);
+  {$EndIf}*)
 
   inherited Destroy;
 end;
@@ -140,6 +202,7 @@ procedure TGlobalKeyHook.RegisterKey(const AStringId: String;
 var
   FullStrId: String;
   Id: Integer;
+{$EndIf}
 begin
   if AHotKey.IsEmpty then
   begin // No key set
@@ -150,6 +213,7 @@ begin
   DebugLn('Start to register hotkey %s for %s',
       [AHotKey.ToString, AStringId]);
 
+  {$IfDef Windows}
   // Find atom id
   FullStrId := GetFullStringId(AStringId);
   if KeysMap.IndexOf(AStringId) = -1 then
@@ -167,24 +231,40 @@ begin
   end;
 
   RegisterKey(Id, AHotKey);
+  {$EndIf}
+  {$IfDef Linux}
+  if (KeysMap.IndexOf(AStringId) <> -1) and (KeysMap.KeyData[AStringId] = AHotKey) then
+  begin
+    DebugLn('Hotkey %s for %s not changed', [AHotKey.ToString, AStringId]);
+
+    Exit;
+  end;
+  HKCapture.RegisterNotify(AHotKey.Key, AHotKey.ShiftState, @OnHotKeyEvent);
+  {$EndIf}
+
   KeysMap.AddOrSetData(AStringId, AHotKey);
 
+  {$IfDef Windows}
   DebugLn('Hot key %s for %s registered with id=%d',
        [AHotKey.ToString, AStringId, id]);
+  {$EndIf}
+  {$IfDef Linux}
+  DebugLn('Hot key %s for %s registered',
+       [AHotKey.ToString, AStringId]);
+  {$EndIf}
+
   DebugLn('Total registered hot keys: %d', [KeysMap.Count]);
 end;
-{$EndIf}
-{$IfDef Linux}
-begin
-
-end;
-{$EndIf}
 
 procedure TGlobalKeyHook.UnregisterKey(const AStringId: String);
-{$IfDef Windows}
 var
+{$IfDef Windows}
   FullStrId: String;
   Id: Integer;
+{$EndIf}
+{$IfDef Linux}
+  HotKey: THotKey;
+{$EndIf}
 begin
   DebugLn('Start to unregister hotkey for %s', [AStringId]);
 
@@ -194,49 +274,33 @@ begin
     Exit;
   end;
 
+  {$IfDef Windows}
   FullStrId := GetFullStringId(AStringId);
   Id := GlobalFindAtom(PChar(FullStrId));
   UnregisterKey(Id);
+  {$EndIf}
+  {$IfDef Linux}
+  HotKey := KeysMap.KeyData[AStringId];
+  HKCapture.UnregisterNotify(HotKey.Key, HotKey.ShiftState);
+  {$EndIf}
 
   KeysMap.Remove(AStringId);
 
+  {$IfDef Windows}
   DebugLn('Hot key for %s with id=%d unregistered',  [AStringId, id]);
+  {$EndIf}
+  {$IfDef Linux}
+  DebugLn('Hot key for %s unregistered',  [AStringId]);
+  {$EndIf}
+
   DebugLn('Total registered hot keys: %d', [KeysMap.Count]);
 end;
-{$EndIf}
-{$IfDef Linux}
-begin
-
-end;
-{$EndIf}
 
 function TGlobalKeyHook.FindHotKey(const AStringId: String): THotKey;
 begin
-  {$IfDef Windows}
   // Returns VK_UNKNOWN if hot key not found
   KeysMap.TryGetData(AStringId, Result);
-  {$EndIf}
-  {$IfDef Linux}
-  Result.Key:=VK_UNKNOWN;
-  {$EndIf}
 end;
-
-function TGlobalKeyHook.HotKeyId(const AStringId: String): integer;
-{$IfDef Windows}
-var
-  FullStrId: String;
-begin
-  FullStrId := GetFullStringId(AStringId);
-  Result := GlobalFindAtom(PChar(FullStrId));
-
-  DebugLn('%s => id %d', [AStringId, Result]);
-end;
-{$EndIf}
-{$IfDef Linux}
-begin
-  result:=0;
-end;
-{$EndIf}
 
 {$IfDef Windows}
 function TGlobalKeyHook.IdToStrId(AnId: Integer): String;

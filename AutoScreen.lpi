@@ -59,7 +59,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs"/>
+            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -102,7 +102,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs"/>
+            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -138,7 +138,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs"/>
+            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -175,7 +175,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs"/>
+            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -227,7 +227,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="15">
+    <Units Count="16">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -308,6 +308,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="XRandREventWatcher"/>
       </Unit14>
+      <Unit15>
+        <Filename Value="libs\Cross.Codebot\source\codebot_controls\codebot.input.hotkeys.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Codebot.Input.Hotkeys"/>
+      </Unit15>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -318,7 +323,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="libs;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="libs"/>
+      <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       <ObjectPath Value="libs\PNGImage"/>
     </SearchPaths>

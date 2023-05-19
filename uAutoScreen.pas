@@ -198,6 +198,8 @@ type
     function GetCompressionLevel: Tcompressionlevel;
     procedure UpdateFormAutoSize;
 
+    procedure OnHotKeyEvent(const AHotKeyId: String);
+
     {$IfDef Linux}
     procedure OnScreenConfigurationChanged(const AEvent: TXEvent);
     {$EndIf}
@@ -505,7 +507,8 @@ begin
     CheckForUpdates(False);
 
   // Enable global hotkeys
-  KeyHook := TGlobalKeyHook.Create(Handle, 'AutoScreenshot');
+  KeyHook := TGlobalKeyHook.Create({$IfDef Windows}Handle, 'AutoScreenshot'{$EndIf}
+                                   {$IfDef Linux}@OnHotKeyEvent{$EndIf});
   HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StartAutoCapture', StartAutoCaptureDefaultHotKey);
   KeyHook.RegisterKey('StartAutoCapture', HotKey);
   HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StopAutoCapture', StopAutoCaptureDefaultHotKey);
@@ -1660,6 +1663,18 @@ begin
   {$EndIf}
 end;
 
+procedure TMainForm.OnHotKeyEvent(const AHotKeyId: String);
+begin
+  case AHotKeyId of
+    'StartAutoCapture': IsTimerEnabled := True;
+    'StopAutoCapture':  IsTimerEnabled := False;
+    'SingleCapture':    MakeScreenshot;
+    (*{$IFOPT D+}
+    else ShowMessage(Format('Unknown hotkey event! (wparam=%d, lparam=%d)', [AMsg.wParam, AMsg.lParam]));
+    {$ENDIF}*)
+  end;
+end;
+
 {$IfDef Linux}
 procedure TMainForm.OnScreenConfigurationChanged(const AEvent: TXEvent);
 begin
@@ -1681,14 +1696,7 @@ begin
   except
   end;
 
-  case StrId of
-    'StartAutoCapture': IsTimerEnabled := True;
-    'StopAutoCapture':  IsTimerEnabled := False;
-    'SingleCapture':    MakeScreenshot;
-    {$IFOPT D+}
-    else ShowMessage(Format('Unknown hotkey event! (wparam=%d, lparam=%d)', [AMsg.wParam, AMsg.lParam]));
-    {$ENDIF}
-  end;
+  OnHotKeyEvent(StrId);
 end;
 {$EndIf}
 
