@@ -536,9 +536,12 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  {$IfDef Linux}
   //XWatcher.Terminate;
   //XWatcher.WaitFor;
   XWatcher.Free;
+  {$EndIf}
+
   Grabber.Free;
   KeyHook.Free;
 
@@ -1657,12 +1660,14 @@ begin
   {$EndIf}
 end;
 
+{$IfDef Linux}
 procedure TMainForm.OnScreenConfigurationChanged(const AEvent: TXEvent);
 begin
   //if AEvent._type = 89 {?} then
     UpdateMonitorList;
   //end;
 end;
+{$EndIf}
 
 {$IfDef Windows}
 procedure TMainForm.WMHotKey(var AMsg: TMessage);
