@@ -1,6 +1,7 @@
 program AutoScreen;
 
 {$MODE objfpc}
+//{$Define LAZLOGGER_FLUSH}
 
 {$R *.res}
 

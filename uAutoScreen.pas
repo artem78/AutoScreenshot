@@ -363,6 +363,8 @@ begin
       LogFileName := ConcatPaths([GetAppConfigDir(False), 'debug_log.txt']);
     DeleteFile(LogFileName); // Overwrite log file
     DebugLogger.LogName := LogFileName;
+    //{$Define LAZLOGGER_FLUSH}
+    DebugLogger.CloseLogFileBetweenWrites := True; // FixMe: Better to set LAZLOGGER_FLUSH, but seems it doesn't work
   end;
 
   if IsPortable then
