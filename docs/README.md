@@ -58,6 +58,11 @@ The latest version for Windows available [here](https://github.com/artem78/AutoS
 
 Note that it is **Alpha** release and some features from Windows build is not implemented yet.
 
+**Note:** make sure you have installed SSL libraries (including development package) to make networking features enabled, such as update checking.
+```
+sudo apt-get install openssl libssl-dev
+```
+
 ## How can I help?
 * [Report about found bug](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
 * [Suggest new idea or feature](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)

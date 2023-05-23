@@ -58,6 +58,11 @@ Auto Screenshot
 
 Обратите внимание, что это пока **Альфа**-версия. Поэтому не весь функционал из версии для Windows реализован и имеются некоторые ошибки.
 
+**Внимание:** для работы сетевых функции (таких как проверка обновлений) должны быть уcтановлены библиотеки для работы с SSL-шифрованием.
+```
+sudo apt-get install openssl libssl-dev
+```
+
 ## Чем я могу помочь проекту?
 * [Сообщить об ошибке](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
 * [Предложить новую идею](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)
