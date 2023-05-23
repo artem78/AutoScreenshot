@@ -198,6 +198,7 @@ type
     procedure UpdateFormAutoSize;
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
+    procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
 
     {$IfDef Linux}
     procedure OnScreenConfigurationChanged(const AEvent: TXEvent);
@@ -365,6 +366,7 @@ begin
     DebugLogger.LogName := LogFileName;
     //{$Define LAZLOGGER_FLUSH}
     DebugLogger.CloseLogFileBetweenWrites := True; // FixMe: Better to set LAZLOGGER_FLUSH, but seems it doesn't work
+    DebugLogger.OnDebugLn := @OnDebugLnEvent;
   end;
 
   if IsPortable then
@@ -511,7 +513,7 @@ begin
   Ini := TIniFile.Create(IniFileName);
   ReadSettings;
 
-  DebugLn('Program started');
+  DebugLn('Program started at ', DateTimeToStr(Now));
   DebugLn('Version: ', GetProgramVersionStr);
   DebugLn('Initializing...');
 
@@ -1152,7 +1154,7 @@ begin
            Screen.Monitors[Idx].PixelsPerInch]
     );
     DebugLnEnter('BoundsRect: ', DbgS(Screen.Monitors[Idx].BoundsRect));
-    DebugLnExit('WorkareaRect" ', DbgS(Screen.Monitors[Idx].WorkareaRect));
+    DebugLnExit('WorkareaRect: ', DbgS(Screen.Monitors[Idx].WorkareaRect));
     DebugLnExit();
   end;
   DebugLn(['SM_CXVIRTUALSCREEN=', GetSystemMetrics(SM_CXVIRTUALSCREEN)]);
@@ -1665,6 +1667,22 @@ begin
     else ShowMessage(Format('Unknown hotkey event! (wparam=%d, lparam=%d)', [AMsg.wParam, AMsg.lParam]));
     {$ENDIF}*)
   end;
+end;
+
+procedure TMainForm.OnDebugLnEvent(Sender: TObject; S: string;
+  var Handled: Boolean);
+var
+  Callback: {TLazLoggerWriteEvent} procedure(Sender: TObject; S: string; var Handled: Boolean) of object;
+begin
+  S := Format('[%s]   %s', [FormatDateTime('hh:nn:ss.zzz', Now()), S]);
+  Callback := DebugLogger.OnDebugLn;
+  DebugLogger.OnDebugLn := Nil;
+  try
+    DebugLn(S);
+  finally
+    DebugLogger.OnDebugLn := Callback;
+  end;
+  Handled := True;
 end;
 
 {$IfDef Linux}
