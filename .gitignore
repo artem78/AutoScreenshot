@@ -49,9 +49,15 @@ lib/
 /build
 *.tmp
 *.bak
+*.backup
 /config.ini
 dunit.ini
 /backup/
 *.log
 /screenshots/
 /ConverterBackup/
+
+# Linux executables:
+/AutoScreenshot
+/Test/AutoScreenshotTest
+/Test/AutoScreenshotTestGUI

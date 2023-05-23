@@ -10,25 +10,28 @@ Auto Screenshot
 ![GitHub All Releases](https://img.shields.io/github/downloads/artem78/AutoScreenshot/total?style=plastic)
 ![GitHub last commit](https://img.shields.io/github/last-commit/artem78/AutoScreenshot?style=plastic)
 [![Supports Windows](https://img.shields.io/badge/support-Windows-blue?logo=Windows&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
+[![Supports Linux](https://img.shields.io/badge/support-Linux-white?logo=Linux&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
 
 ## Overview
-**Auto Screenshot** — Windows application for automatic taking screenshots with specified time interval.
+**Auto Screenshot** — application for automatic taking screenshots with specified time interval.
 
 ## Features
 * Automatic saving screenshots of full screen with specified time interval (from 1 second to 24 hours)
 * Saving images in PNG, JPEG, BMP, TIFF <!--or GIF--> format
 * Pause capture when user is inactive (depending on mouse moves and keyboard events) 
 * Customizable output filenames with variables (date, time, user, computer name, sequential number) and ability of grouping by folders (for example: by day or month)
-* Automatic capture can be started on Windows startup
+* Automatic capture can be started on system startup
 * Multiple screens support
 * High DPI support
 * Can execute custom command after screenshot was taken
 * Absolutely free and open source
 
 ## Screenshots
-![Main program window](images/main_window.png "Main program window")
+![Main program window in Windows 7](images/main_window.png "Main program window in Windows 7")
 
 ![Tray icon](images/tray_icon_animation.gif "Tray icon")
+
+![Runinng on Linux Mint](images/main_window_in_linux_mint.png "Runinng on Linux Mint")
 
 ## Languages
 * English
@@ -44,10 +47,16 @@ Auto Screenshot
 
 ## Supported operation systems
 * Microsoft Windows XP or higher (32/64-bit)
-* Linux (using [Wine](https://www.winehq.org/))
+* Linux
 
 ## Download
-The latest version available [here](https://github.com/artem78/AutoScreenshot/releases/latest). You can choose between portable zip or installer.
+### Windows build
+The latest version for Windows available [here](https://github.com/artem78/AutoScreenshot/releases/latest). You can choose between portable zip or installer.
+
+### Linux build
+[Download](https://github.com/artem78/AutoScreenshot/releases/tag/v1.10.4-linux.alpha.1)
+
+Note that it is **Alpha** release and some features from Windows build is not implemented yet.
 
 ## How can I help?
 * [Report about found bug](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)

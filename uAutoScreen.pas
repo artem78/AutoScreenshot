@@ -5,7 +5,13 @@ unit uAutoScreen;
 interface
 
 uses
-  Windows, {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  {$IfDef Windows}
+  Windows,
+  {$EndIf}
+  {$IfDef Linux}
+  xlib, xrandr, XRandREventWatcher,
+  {$EndIf}
+  {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
   LCLIntf, ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook,
@@ -124,7 +130,12 @@ type
     FCounter: Integer;
     FCounterDigits: Integer {Byte};
 
+    {$IfDef Windows}
     PrevWndProc: WndProc;
+    {$EndIf}
+    {$IfDef Linux}
+    XWatcher: TXRandREventWatcherThread;
+    {$EndIf}
     Grabber: TScreenGrabber;
 
     FStopWhenInactive: Boolean;
@@ -184,6 +195,14 @@ type
     procedure SetSingleCaptureHotKey(AHotKey: THotKey);
     procedure SetCompressionLevel(ALevel: Tcompressionlevel);
     function GetCompressionLevel: Tcompressionlevel;
+    procedure UpdateFormAutoSize;
+
+    procedure OnHotKeyEvent(const AHotKeyId: String);
+
+    {$IfDef Linux}
+    procedure OnScreenConfigurationChanged(const AEvent: TXEvent);
+    {$EndIf}
+
 
     { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
@@ -206,7 +225,9 @@ type
     property CompressionLevel: Tcompressionlevel read GetCompressionLevel write SetCompressionLevel;
 
     // Messages
+    {$IfDef Windows}
     procedure WMHotKey(var AMsg: TMessage); message WM_HOTKEY;
+    {$EndIf}
   public
     { Public declarations }
   end;
@@ -230,13 +251,14 @@ var
 implementation
 
 uses uAbout, DateUtils, StrUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  uIniHelper, UpdateChecker, FileUtil;
+  uIniHelper, UpdateChecker, FileUtil, LCLType, Idle;
 
 {$R *.lfm}
 
 const
   LanguageSubMenuItemNamePrefix = 'LanguageSubMenuItem_';
 
+{$IfDef Windows}
 function WndCallback(MyHWND: HWND; uMSG: UINT; wParam: WParam; lParam: LParam): LRESULT; StdCall;
 begin
   case uMSG of
@@ -252,6 +274,7 @@ begin
 
   Result := Windows.CallWindowProc(MainForm.PrevWndProc, MyHWND, uMsg, WParam, LParam);
 end;
+{$EndIf}
 
 function MyGetApplicationName: String;
 begin
@@ -292,6 +315,17 @@ begin
 
   // Available monitors
   UpdateMonitorList;
+
+  // Predefined filename templates
+  with FileNameTemplateComboBox.Items do
+  begin
+    Clear;
+    Append('screenshot %Y-%M-%D %H-%N-%S');
+    Append('%Y' + PathDelim + '%M' + PathDelim + '%D' + PathDelim + 'screenshot %H-%N-%S');
+    Append('%Y-%M' + PathDelim + '%D' + PathDelim + 'screenshot %H-%N-%S ');
+    Append('%COMP' + PathDelim + '%USER' + PathDelim + 'screenshot %Y-%M-%D %H-%N-%S ');
+    Append('screenshot %NUM');
+  end;
 end;
 
 procedure TMainForm.ReadSettings;
@@ -379,7 +413,7 @@ begin
       Ini.ReadBool(DefaultConfigIniSection, 'StartCaptureOnStartUp', {True} False);
   IsTimerEnabled := StartCaptureOnStartUpCheckBox.Checked;
 
-  // Start with Windows
+  // Start with OS
   AutoRun := Ini.ReadBool(DefaultConfigIniSection, 'AutoRun', False);
   
   // Start minimized
@@ -433,10 +467,12 @@ var
   HotKey: THotKey;
   IniFileName: String;
 begin
+  {$IfDef Windows}
   { Replace default window function with custom one
     for process messages when screen configuration changed }
   PrevWndProc := Windows.WNDPROC
     (SetWindowLongPtr(Self.Handle, GWL_WNDPROC {GWLP_WNDPROC}, PtrUInt(@WndCallback)));
+  {$EndIf}
 
   Application.OnMinimize := @ApplicationMinimize;
 
@@ -469,13 +505,19 @@ begin
     CheckForUpdates(True);
 
   // Enable global hotkeys
-  KeyHook := TGlobalKeyHook.Create(Handle, 'AutoScreenshot');
+  KeyHook := TGlobalKeyHook.Create({$IfDef Windows}Handle, 'AutoScreenshot'{$EndIf}
+                                   {$IfDef Linux}@OnHotKeyEvent{$EndIf});
   HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StartAutoCapture', StartAutoCaptureDefaultHotKey);
   KeyHook.RegisterKey('StartAutoCapture', HotKey);
   HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StopAutoCapture', StopAutoCaptureDefaultHotKey);
   KeyHook.RegisterKey('StopAutoCapture', HotKey);
   HotKey := Ini.ReadHotKey(HotKeysIniSection, 'SingleCapture', SingleCaptureDefaultHotKey);
   KeyHook.RegisterKey('SingleCapture', HotKey);
+
+  {$IfDef Linux}
+  // Enable monitor confuguration changed updates in Linux
+  XWatcher := TXRandREventWatcherThread.Create(RRScreenChangeNotifyMask, @OnScreenConfigurationChanged);
+  {$EndIf}
 end;
 
 procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
@@ -495,6 +537,12 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  {$IfDef Linux}
+  //XWatcher.Terminate;
+  //XWatcher.WaitFor;
+  XWatcher.Free;
+  {$EndIf}
+
   Grabber.Free;
   KeyHook.Free;
 
@@ -566,8 +614,7 @@ begin
     // ToDo: May add comparision of current screenshot with the last one,
     // and if they equal, do not save current
 
-    // ToDo: Use TIdleTimer instead (https://forum.lazarus.freepascal.org/index.php/topic,15811.msg126545.html#msg126545)
-    if Timer.Interval > LastInput then
+    if Timer.Interval > UserIdleTime then
       MakeScreenshot;
   end
   else
@@ -743,6 +790,8 @@ begin
       Grabber.ImageFormat := Format;
   finally
     EnableAutoSizing;
+
+    UpdateFormAutoSize;
   end;
 end;
 
@@ -901,6 +950,8 @@ begin
 
     // Recalculate with of labels area
     RecalculateLabelWidths;
+
+    UpdateFormAutoSize;
   end;
 end;
 
@@ -969,7 +1020,7 @@ var
 begin
   Idx := ColorDepthComboBox.ItemIndex;
   if Idx <> -1 then
-    ColorDepth := TColorDepth(ColorDepthComboBox.Items.Objects[Idx]);
+    ColorDepth := TColorDepth(PtrUint(ColorDepthComboBox.Items.Objects[Idx]));
 end;
 
 procedure TMainForm.UpdateColorDepthValues;
@@ -994,11 +1045,11 @@ begin
     begin
       if ColorDepthTmp in ImageFormatInfoArray[ImageFormat].ColorDepth then
       begin
-        ColorDepthComboBox.Items.AddObject(Format('%d bit', [Integer(ColorDepthTmp)]), TObject(Integer(ColorDepthTmp)));
+        ColorDepthComboBox.Items.AddObject(Format('%d bit', [Integer(ColorDepthTmp)]), TObject({Integer}PtrUint(ColorDepthTmp)));
         if ColorDepthTmp = FColorDepth then
         begin
           // Select last saved color depth if available
-          ColorDepth := TColorDepth(ColorDepthComboBox.Items.Objects[Idx]);
+          ColorDepth := TColorDepth(PtrUint(ColorDepthComboBox.Items.Objects[Idx]));
         end;
         Inc(Idx);
       end;
@@ -1008,7 +1059,7 @@ begin
     begin
       // Select best color depth (last one in the list)
       Idx := ColorDepthComboBox.Items.Count - 1;
-      ColorDepth := TColorDepth(ColorDepthComboBox.Items.Objects[Idx]);
+      ColorDepth := TColorDepth(PtrUint(ColorDepthComboBox.Items.Objects[Idx]));
     end;
   end;
 
@@ -1071,7 +1122,7 @@ begin
     // Choose new value in combobox
     for Idx := 0 to ColorDepthComboBox.Items.Count - 1 do
     begin
-      if TColorDepth(ColorDepthComboBox.Items.Objects[Idx]) = AColorDepth then
+      if TColorDepth(PtrUint(ColorDepthComboBox.Items.Objects[Idx])) = AColorDepth then
       begin
         ColorDepthComboBox.ItemIndex := Idx;
         Break;
@@ -1104,11 +1155,10 @@ begin
         ResName := Format('_CAMERA_FLASH_%d', [TrayIconIdx]);
       end
     //tisDefault:
-    else ResName := 'MAINICON';
+    else ResName := '_CAMERA';
   end;
 
-  TrayIcon.Icon.Handle := LoadImage(HInstance, PChar(ResName), IMAGE_ICON,
-    16, 16, LR_DEFAULTCOLOR);
+  TrayIcon.Icon.LoadFromResourceName(HInstance, ResName);
 end;
 
 procedure TMainForm.TrayIconAnimationTimerTimer(Sender: TObject);
@@ -1119,8 +1169,7 @@ begin
   begin
     Inc(TrayIconIdx);
     ResName := Format('_CAMERA_FLASH_%d', [TrayIconIdx]);
-    TrayIcon.Icon.Handle := LoadImage(HInstance, PChar(ResName), IMAGE_ICON,
-      16, 16, LR_DEFAULTCOLOR);
+    TrayIcon.Icon.LoadFromResourceName(HInstance, ResName);
   end
   else
   begin
@@ -1400,6 +1449,8 @@ begin
   SeqNumberGroup.Visible := Pos('%NUM', FileNameTemplateComboBox.Text) <> 0;
   if SeqNumberGroup.Visible then
     RecalculateLabelWidthsForSeqNumGroup;
+
+  UpdateFormAutoSize;
 end;
 
 procedure TMainForm.SetJPEGQuality(Val: Integer);
@@ -1528,6 +1579,40 @@ begin
   Result := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
 end;
 
+procedure TMainForm.UpdateFormAutoSize;
+begin
+  //{$IfDef Linux}
+  {$IfDef LCLGTK2}
+  // Bugfix for Linux only
+  // https://forum.lazarus.freepascal.org/index.php/topic,62600.0.html
+  // ToDo: Try to find better solution
+  AutoSize := not AutoSize;
+  AutoSize := not AutoSize;
+  {$EndIf}
+end;
+
+procedure TMainForm.OnHotKeyEvent(const AHotKeyId: String);
+begin
+  case AHotKeyId of
+    'StartAutoCapture': IsTimerEnabled := True;
+    'StopAutoCapture':  IsTimerEnabled := False;
+    'SingleCapture':    MakeScreenshot;
+    (*{$IFOPT D+}
+    else ShowMessage(Format('Unknown hotkey event! (wparam=%d, lparam=%d)', [AMsg.wParam, AMsg.lParam]));
+    {$ENDIF}*)
+  end;
+end;
+
+{$IfDef Linux}
+procedure TMainForm.OnScreenConfigurationChanged(const AEvent: TXEvent);
+begin
+  //if AEvent._type = 89 {?} then
+    UpdateMonitorList;
+  //end;
+end;
+{$EndIf}
+
+{$IfDef Windows}
 procedure TMainForm.WMHotKey(var AMsg: TMessage);
 var
   StrId: String = '';
@@ -1539,15 +1624,9 @@ begin
   except
   end;
 
-  case StrId of
-    'StartAutoCapture': IsTimerEnabled := True;
-    'StopAutoCapture':  IsTimerEnabled := False;
-    'SingleCapture':    MakeScreenshot;
-    {$IFOPT D+}
-    else ShowMessage(Format('Unknown hotkey event! (wparam=%d, lparam=%d)', [AMsg.wParam, AMsg.lParam]));
-    {$ENDIF}
-  end;
+  OnHotKeyEvent(StrId);
 end;
+{$EndIf}
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
 begin

@@ -5,6 +5,9 @@ program AutoScreen;
 {$R *.res}
 
 uses
+  {$IFDEF UNIX}
+  cthreads,
+  {$ENDIF}
   Forms,
   LCLIntf, LCLType, LMessages, SysUtils,
   Dialogs, Interfaces,

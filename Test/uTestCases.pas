@@ -164,12 +164,12 @@ begin
   ExeFileName := Application.ExeName;
   AppTitle := 'AutoRun test';
 
-  AssertFalse(CheckAutoRun(AppTitle));
+  AssertFalse(CheckAutoRun(ExeFileName, AppTitle));
   AutoRun(ExeFileName, AppTitle, True); // Turn on autorun
-  AssertTrue(CheckAutoRun(AppTitle));
-  AssertFalse(CheckAutoRun('abcdefg'));
+  AssertTrue(CheckAutoRun(ExeFileName, AppTitle));
+  AssertFalse(CheckAutoRun('xyz', 'abcdefg'));
   AutoRun(ExeFileName, AppTitle, False); // Turn off autorun
-  AssertFalse(CheckAutoRun(AppTitle));
+  AssertFalse(CheckAutoRun(ExeFileName, AppTitle));
 
 
 end;

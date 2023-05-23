@@ -6,9 +6,10 @@ Auto Screenshot
 ![GitHub All Releases](https://img.shields.io/github/downloads/artem78/AutoScreenshot/total?style=plastic)
 ![GitHub last commit](https://img.shields.io/github/last-commit/artem78/AutoScreenshot?style=plastic)
 [![Supports Windows](https://img.shields.io/badge/support-Windows-blue?logo=Windows&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
+[![Supports Linux](https://img.shields.io/badge/support-Linux-white?logo=Linux&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
 
 ## Обзор
-**Auto Screenshot** — программа для Windows, которая автоматически сохраняет снимки рабочего стола через заданный интервал времени.
+**Auto Screenshot** — программа, которая автоматически сохраняет снимки рабочего стола через заданный интервал времени.
 
 <!-- ToDo: Для чего оно надо? -->
 
@@ -17,16 +18,18 @@ Auto Screenshot
 * Сохранение изображений в формате PNG, JPEG, BMP, TIFF <!--или GIF-->
 * Возможность приостановки захвата при бездействии пользователя (определяется по наличию движений мыши и нажатиям клавиш) 
 * Настраиваемые имена выходных файлов с использованием переменных (дата, время, название компьютера/пользователя, порядковый номер снимка) и возможностью группировки по папкам (например, по дням или месяцам)
-* Возможность автоматического запуска вместе с Windows
+* Возможность автоматического запуска вместе с системой
 * Захват с нескольких экранов
 * Поддержка режима High DPI
 * Выполнение произвольных команд после снимка
 * Полностью бесплатное ПО с окрытым исходным кодом
 
 ## Снимки экрана
-![Основное окно программы](images/main_window_ru.png "Основное окно программы")
+![Основное окно программы в Windows 7](images/main_window_ru.png "Основное окно программы в Windows 7")
 
 ![Значок в трее](images/tray_icon_animation.gif "Значок в трее")
+
+![Запуск на Linux Mint](images/main_window_in_linux_mint.png "Запуск на Linux Mint")
 
 ## Языки интерфейса
 * Английский
@@ -44,10 +47,16 @@ Auto Screenshot
 
 ## Операционная система
 * Microsoft Windows XP или выше (32/64-битная)
-* Linux (используя [Wine](https://www.winehq.org/))
+* Linux
 
 ## Скачать
-Последнюю версию программы вы можете скачать [отсюда](https://github.com/artem78/AutoScreenshot/releases/latest).  Можно выбрать zip-архив или установщик.
+### Для Windows
+Последнюю версию программы для Windows вы можете скачать [отсюда](https://github.com/artem78/AutoScreenshot/releases/latest).  Можно выбрать zip-архив или установщик.
+
+### Для Linux
+[Ссылка на скачивание](https://github.com/artem78/AutoScreenshot/releases/tag/v1.10.4-linux.alpha.1)
+
+Обратите внимание, что это пока **Альфа**-версия. Поэтому не весь функционал из версии для Windows реализован и имеются некоторые ошибки.
 
 ## Чем я могу помочь проекту?
 * [Сообщить об ошибке](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)

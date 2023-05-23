@@ -91,8 +91,11 @@ const
 implementation
 
 uses
-  Windows, Forms {for TMonitor}, {Graphics,} BGRABitmap, BGRABitmapTypes,
-  FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, FPWriteTiff;
+  {$IfDef Windows}
+  windows,
+  {$EndIf}
+  Forms {for TMonitor}, LCLType, LCLIntf, BGRABitmap, BGRABitmapTypes, FPWriteJPEG, FPWriteBMP,
+  FPWritePNG, FPImage, FPWriteTiff;
 
 { TScreenGrabber }
 
@@ -121,6 +124,10 @@ begin
 end;
 
 procedure TScreenGrabber.CaptureRegion(AFileName: String; ARect: TRect);
+{$IfDef Linux}
+const
+  HWND_DESKTOP = 0;
+{$EndIf}
 var
   Bitmap: TBGRABitmap;
   Writer: TFPCustomImageWriter;
@@ -131,8 +138,9 @@ begin
 
   //Bitmap.TakeScreenshot(Rect); // Not supports multiply monitors
   ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
-  BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
-           ScreenDC, ARect.Left, ARect.Top, SRCCOPY);
+  {BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
+           ScreenDC, ARect.Left, ARect.Top, SRCCOPY);}
+  Bitmap.LoadFromDevice(ScreenDC, ARect);
   ReleaseDC(0, ScreenDC);
 
   case ImageFormat of

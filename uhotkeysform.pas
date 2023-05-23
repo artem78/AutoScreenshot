@@ -86,7 +86,7 @@ begin
   CtrlCheckBox.Checked := ssCtrl in AHotKey.ShiftState;
   ShiftCheckBox.Checked := ssShift in AHotKey.ShiftState;
 
-  Idx := KeyComboBox.Items.IndexOfObject(TObject(Integer(AHotKey.Key)));
+  Idx := KeyComboBox.Items.IndexOfObject(TObject({Integer}PtrUInt(AHotKey.Key)));
   KeyComboBox.ItemIndex := Idx;
 end;
 
@@ -98,7 +98,7 @@ begin
   if SelIdx = -1 then
     Result.Key := VK_UNKNOWN
   else
-    Result.Key := Integer(KeyComboBox.Items.Objects[SelIdx]);
+    Result.Key := {Integer}PtrUInt(KeyComboBox.Items.Objects[SelIdx]);
 
   Result.ShiftState := [];
 
@@ -143,7 +143,7 @@ begin
     end;
 
     if not KeyStringIsIrregular(KeyName) then
-      KeyComboBox.Items.AddObject(KeyName, TObject(Integer(Key)));
+      KeyComboBox.Items.AddObject(KeyName, TObject({Integer}PtrUInt(Key)));
   end;
 
   KeyComboBox.Items.EndUpdate;

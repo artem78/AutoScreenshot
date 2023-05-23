@@ -22,7 +22,7 @@
         <TextDesc Value="Automatic screenshot maker"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="12">
+      <Resources Count="13">
         <Resource_0 FileName="res\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
         <Resource_1 FileName="res\camera_flash1.ico" Type="ICON" ResourceName="_CAMERA_FLASH_1"/>
         <Resource_2 FileName="res\camera_flash2.ico" Type="ICON" ResourceName="_CAMERA_FLASH_2"/>
@@ -35,6 +35,7 @@
         <Resource_9 FileName="res\stop.bmp" Type="BITMAP" ResourceName="_STOP_ICON"/>
         <Resource_10 FileName="res\logo.png" Type="RCDATA" ResourceName="_LOGO"/>
         <Resource_11 FileName="res\logo_high_dpi.png" Type="RCDATA" ResourceName="_LOGO_HIGH_DPI"/>
+        <Resource_12 FileName="res\camera.ico" Type="ICON" ResourceName="_CAMERA"/>
       </Resources>
     </General>
     <i18n>
@@ -47,9 +48,9 @@
       <RevisionNr Value="4"/>
       <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.10.4"/>
     </VersionInfo>
-    <BuildModes Count="3">
-      <Item1 Name="Default (32bit)" Default="True"/>
-      <Item2 Name="Debug (32bit)">
+    <BuildModes Count="5">
+      <Item1 Name="Default" Default="True"/>
+      <Item2 Name="Debug">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -58,7 +59,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs"/>
+            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -74,8 +75,6 @@
               <OverflowChecks Value="True"/>
               <StackChecks Value="True"/>
             </Checks>
-            <TargetCPU Value="i386"/>
-            <TargetOS Value="win32"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -94,7 +93,7 @@
           </Other>
         </CompilerOptions>
       </Item2>
-      <Item3 Name="Release (32bit)">
+      <Item3 Name="Release">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -103,14 +102,12 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs"/>
+            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
-            <TargetCPU Value="i386"/>
-            <TargetOS Value="win32"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -118,6 +115,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
@@ -131,6 +129,80 @@
           </Other>
         </CompilerOptions>
       </Item3>
+      <Item4 Name="Release (32bit)">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="AutoScreenshot"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="libs;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <ObjectPath Value="libs\PNGImage"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="i386"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+          </Other>
+        </CompilerOptions>
+      </Item4>
+      <Item5 Name="Release (64bit)">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="AutoScreenshot"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="libs;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <ObjectPath Value="libs\PNGImage"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+          </Other>
+        </CompilerOptions>
+      </Item5>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -155,7 +227,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="14">
+    <Units Count="17">
       <Unit0>
         <Filename Value="AutoScreen.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -234,6 +306,20 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UpdateChecker"/>
       </Unit13>
+      <Unit14>
+        <Filename Value="idle.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Idle"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="xrandreventwatcher.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="libs\Cross.Codebot\source\codebot_controls\codebot.input.hotkeys.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Codebot.Input.Hotkeys"/>
+      </Unit16>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -244,14 +330,10 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="libs;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="libs"/>
+      <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       <ObjectPath Value="libs\PNGImage"/>
     </SearchPaths>
-    <CodeGeneration>
-      <TargetCPU Value="i386"/>
-      <TargetOS Value="win32"/>
-    </CodeGeneration>
     <Linking>
       <Options>
         <Win32>
