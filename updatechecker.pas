@@ -304,10 +304,11 @@ begin
           Msg.AppendFormat(Localizer.I18N('UpdateFound'),
                    [LatestVersion.ToString(True), CurrentVersion.ToString(True)])
              .AppendLine
-             .AppendLine
+             // Fix for GTK2 - https://forum.lazarus.freepascal.org/index.php/topic,63451.0.html
+             .AppendLine{$If defined(Linux) and defined(LCLGTK2)}(' '){$EndIf}
              .AppendLine(ChangeLog.Trim)
              //.AppendLine
-             .AppendLine
+             .AppendLine{$If defined(Linux) and defined(LCLGTK2)}(' '){$EndIf}
              .Append(Localizer.I18N('AskDownloadUpdate'));
 
           ButtonPanel1.ShowButtons := [pbOK, pbCancel];
@@ -319,7 +320,7 @@ begin
           Msg.AppendLine(Localizer.I18N('UpdateCheckFailed'));
           if not ErrorMsg.IsEmpty then
           begin
-             Msg.AppendLine
+             Msg.AppendLine{$If defined(Linux) and defined(LCLGTK2)}(' '){$EndIf}
                 .Append(ErrorMsg);
           end;
 
