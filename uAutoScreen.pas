@@ -251,7 +251,14 @@ var
 implementation
 
 uses uAbout, DateUtils, StrUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  uIniHelper, UpdateChecker, FileUtil, LCLType, Idle;
+  uIniHelper, UpdateChecker, FileUtil, LCLType, Idle,
+  //{$IfDef DEBUG}
+  {$IFOPT D+}
+  LazLogger
+  {$Else}
+  LazLoggerDummy
+  {$EndIf}
+  ;
 
 {$R *.lfm}
 
@@ -345,7 +352,19 @@ var
   CfgLang, SysLang, AltLang: TLanguageCode;
   FmtStr: String;
   Seconds: Integer;
+  LogFileName: String;
 begin
+  // Logging
+  if Ini.ReadBool(DefaultConfigIniSection, 'Logging', False) then
+  begin
+    if IsPortable then
+      LogFileName := ConcatPaths([ProgramDirectory, 'debug_log.txt'])
+    else
+      LogFileName := ConcatPaths([GetAppConfigDir(False), 'debug_log.txt']);
+    DeleteFile(LogFileName); // Overwrite log file
+    DebugLogger.LogName := LogFileName;
+  end;
+
   if IsPortable then
     BaseDir := ExtractFilePath(Application.ExeName)
   else
@@ -467,6 +486,10 @@ var
   HotKey: THotKey;
   IniFileName: String;
 begin
+  {DebugLn('Program started');
+  DebugLn('Version: ', GetProgramVersionStr);
+  DebugLn('Initializing...');}
+
   {$IfDef Windows}
   { Replace default window function with custom one
     for process messages when screen configuration changed }
@@ -485,6 +508,10 @@ begin
     IniFileName := ConcatPaths([GetAppConfigDir(False), 'config.ini']);
   Ini := TIniFile.Create(IniFileName);
   ReadSettings;
+
+  DebugLn('Program started');
+  DebugLn('Version: ', GetProgramVersionStr);
+  DebugLn('Initializing...');
 
   //if FindCmdLineSwitch('autorun') then
   //  OutputDebugString('AutoRun');
@@ -518,6 +545,8 @@ begin
   // Enable monitor confuguration changed updates in Linux
   XWatcher := TXRandREventWatcherThread.Create(RRScreenChangeNotifyMask, @OnScreenConfigurationChanged);
   {$EndIf}
+  
+  DebugLn('Initializing finished');
 end;
 
 procedure TMainForm.CheckForUpdatesMenuItemClick(Sender: TObject);
@@ -547,6 +576,8 @@ begin
   KeyHook.Free;
 
   Ini.Free;
+
+  DebugLn('Program ended');
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
@@ -615,7 +646,10 @@ begin
     // and if they equal, do not save current
 
     if Timer.Interval > UserIdleTime then
-      MakeScreenshot;
+      MakeScreenshot
+    else
+      DebugLn('Automatic capture skipped (Timer.Interval=%d, UserIdleTime=%d)',
+          [Timer.Interval, UserIdleTime]);
   end
   else
     MakeScreenshot;
@@ -638,6 +672,11 @@ begin
     TrayIconState := tisDefault
   else
     TrayIconState := tisBlackWhite;
+
+  if AEnabled then
+    DebugLn('Automatic capture started')
+  else
+    DebugLn('Automatic capture stopped');
 end;
 
 procedure TMainForm.StartAutoCaptureButtonClick(Sender: TObject);
@@ -1070,6 +1109,8 @@ begin
 end;
 
 procedure TMainForm.UpdateMonitorList;
+var
+  Idx: Integer;
 begin
   // Update array in Screen variable first
   Screen.UpdateMonitors;
@@ -1095,6 +1136,27 @@ begin
 
   // Fill combobox
   FillMonitorList;
+
+  DebugLn('Monitor configuration changed');
+  DebugLn(['Monitors count: ', Screen.MonitorCount]);
+  for Idx := 0 to Screen.MonitorCount - 1 do
+  begin
+    DebugLnEnter('Monitor id=%d (%d)%s %dx%d dpi=%d',
+          [Screen.Monitors[Idx].MonitorNum,
+           Screen.Monitors[Idx].MonitorNum + 1,
+           IfThen(Screen.Monitors[Idx].Primary, ' primary'),
+           Screen.Monitors[Idx].Width,
+           Screen.Monitors[Idx].Height,
+           Screen.Monitors[Idx].PixelsPerInch]
+    );
+    DebugLnEnter('BoundsRect: ', DbgS(Screen.Monitors[Idx].BoundsRect));
+    DebugLnExit('WorkareaRect" ', DbgS(Screen.Monitors[Idx].WorkareaRect));
+    DebugLnExit();
+  end;
+  DebugLn(['SM_CXVIRTUALSCREEN=', GetSystemMetrics(SM_CXVIRTUALSCREEN)]);
+  DebugLn(['SM_CYVIRTUALSCREEN=', GetSystemMetrics(SM_CYVIRTUALSCREEN)]);
+  DebugLn(['SM_XVIRTUALSCREEN=', GetSystemMetrics(SM_XVIRTUALSCREEN)]);
+  DebugLn(['SM_YVIRTUALSCREEN=', GetSystemMetrics(SM_YVIRTUALSCREEN)]);
 end;
 
 function TMainForm.GetColorDepth: TColorDepth;
