@@ -42,6 +42,7 @@ Auto Screenshot
 * Spanish
 * Turkish
 * German
+* [French](README-fr.md)
 
 [(Help with new translations)](https://github.com/artem78/AutoScreenshot/issues/5)
 
