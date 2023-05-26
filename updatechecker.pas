@@ -221,6 +221,12 @@ begin
               Continue;
             end;
 
+            if JsonArrayEnum.Current.Value.GetPath('draft').AsBoolean then
+            begin
+              DebugLn('Skip draft');
+              Continue;
+            end;
+
             Version := TProgramVersion.Create(ExtractDelimited(1, TagName, ['-']));
             DebugLn('Version %s', [Version.ToString()]);
             if Version > LatestVersion then
