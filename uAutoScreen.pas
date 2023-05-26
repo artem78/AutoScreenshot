@@ -331,7 +331,7 @@ end;
 
 procedure TMainForm.ReadSettings;
 const
-  DefaultFileNameTemplate = '%Y-%M-%D\%Y-%M-%D %H.%N.%S';
+  DefaultFileNameTemplate = '%Y-%M-%D' + PathDelim + '%Y-%M-%D %H.%N.%S';
   DefaultCaptureInterval  = 5;
   DefaultImageFormat      = fmtPNG;
   DefaultJPEGQuality      = 80;
