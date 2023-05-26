@@ -34,4 +34,4 @@ Your operation system with version. For example: Windows 7 64bit
 Add any other context about the problem here.
 
 **Log file**
-To enable logging add to your `config.ini` file line `Logging=1` to `[main]` section and attach file `debug_log.txt` from program dir here.
+Attach your `debug_log.txt` file ([more info](https://github.com/artem78/AutoScreenshot/wiki/How-to-get-log)).
