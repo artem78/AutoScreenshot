@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, ButtonPanel;
 
-procedure CheckForUpdates(ASilent: Boolean = False);
+procedure CheckForUpdates(ASilent: Boolean = False; AIgnorePreRelease: Boolean = True);
 
 
 implementation
@@ -59,6 +59,7 @@ type
     DownloadUrl, ChangeLog: String;
     LastError: Exception;
     UserAgent: String;
+    IgnorePreRelease: Boolean;
 
     procedure NotifySuccess;
     procedure NotifyFail;
@@ -67,7 +68,8 @@ type
   public
     constructor Create(ASucessCallback: TSuccessCallback = Nil;
                        AFailCallback: TFailCallback = Nil;
-                       AUserAgent: String = 'Update Checker');
+                       AUserAgent: String = 'Update Checker';
+                       AIgnorePreRelease: Boolean = True);
   end;
 
 
@@ -118,7 +120,7 @@ begin
   UpdateCheckerThread := Nil;
 end;
 
-procedure CheckForUpdates(ASilent: Boolean);
+procedure CheckForUpdates(ASilent: Boolean; AIgnorePreRelease: Boolean);
 var
   UserAgent: String;
   CurrentVersion: TProgramVersion;
@@ -134,7 +136,7 @@ begin
   UserAgent := Format('%s v%s Update Checker',
           [Application.Title, CurrentVersion.ToString()]);
   UpdateCheckerThread := TUpdateCheckerThread.Create(@OnCheckForUpdatesFinished,
-          @OnCheckForUpdatesFailed, UserAgent);
+          @OnCheckForUpdatesFailed, UserAgent, AIgnorePreRelease);
   UpdateCheckerThread.Start;
 
   //if not Assigned(UpdateCheckerForm) then
@@ -170,6 +172,7 @@ var
   JsonArrayEnum: TBaseJSONEnumerator;
   TagName: String;
   Version: TProgramVersion;
+  IsPreRelease: Boolean;
 begin
   LatestVersion := TProgramVersion.Create();
   DownloadUrl := '';
@@ -210,6 +213,14 @@ begin
             end;
             {$EndIf}
 
+            IsPreRelease := JsonArrayEnum.Current.Value.GetPath('prerelease').AsBoolean;
+            DebugLn('Pre-release: ', dbgs(IsPreRelease));
+            if IgnorePreRelease and IsPreRelease then
+            begin
+              DebugLn('Skip pre-release');
+              Continue;
+            end;
+
             Version := TProgramVersion.Create(ExtractDelimited(1, TagName, ['-']));
             DebugLn('Version %s', [Version.ToString()]);
             if Version > LatestVersion then
@@ -243,11 +254,13 @@ begin
 end;
 
 constructor TUpdateCheckerThread.Create(ASucessCallback: TSuccessCallback;
-                           AFailCallback: TFailCallback; AUserAgent: String);
+                           AFailCallback: TFailCallback; AUserAgent: String;
+                           AIgnorePreRelease: Boolean);
 begin
   SuccessCallback := ASucessCallback;
   FailCallback := AFailCallback;
   UserAgent := AUserAgent;
+  IgnorePreRelease := AIgnorePreRelease;
 
   FreeOnTerminate := True;
 
