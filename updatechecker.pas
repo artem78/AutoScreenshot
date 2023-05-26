@@ -14,7 +14,7 @@ implementation
 
 uses
   Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls, uUtilsMore,
-  uLocalization, uUtils, uAutoScreen, LCLIntf,
+  uLocalization, uUtils, uAutoScreen, LCLIntf, LazLoggerBase,
   fphttpclient, opensslsockets, fpjson, jsonparser, StrUtils;
 
 {$R *.lfm}
@@ -175,6 +175,8 @@ begin
   DownloadUrl := '';
   ChangeLog := '';
 
+  DebugLn('Start update checking...');
+
   Client := TFPHTTPClient.Create(Nil);
   try
     try
@@ -186,21 +188,30 @@ begin
       JsonData := GetJSON(ResponseStr);
       try
         JsonArrayEnum := TJSONArray(JsonData).GetEnumerator;
+        //DebugLnEnter;
         try
           while JsonArrayEnum.MoveNext do
           begin
             TagName := JsonArrayEnum.Current.Value.GetPath('tag_name').AsString;
+            DebugLn('Found tag %s', [TagName]);
             // Skip other OS specific release
             {$IfDef Windows}
             if ContainsText(TagName, 'linux') then
+            begin
+              DebugLn('Skip Linux only release');
               Continue;
+            end;
             {$EndIf}
             {$IfDef Linux}
             if ContainsText(TagName, {'windows'} 'win') then
+            begin
+              DebugLn('Skip Windows only release');
               Continue;
+            end;
             {$EndIf}
 
             Version := TProgramVersion.Create(ExtractDelimited(1, TagName, ['-']));
+            DebugLn('Version %s', [Version.ToString()]);
             if Version > LatestVersion then
             begin
               LatestVersion := Version;
@@ -209,9 +220,11 @@ begin
             end;
           end;
         finally
-          FreeAndNil(JsonArrayEnum)
+          FreeAndNil(JsonArrayEnum);
+          //DebugLnExit;
         end;
 
+        DebugLn('Latest version: %s', [LatestVersion.ToString()]);
         Synchronize(@NotifySuccess);
       finally
         JsonData.Free;
@@ -220,6 +233,7 @@ begin
     except on E: Exception do
       begin
         LastError := E;
+        DebugLn('Check for update failed: %s', [LastError.ToString]);
         Synchronize(@NotifyFail);
       end;
     end;

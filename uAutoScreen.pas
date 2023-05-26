@@ -532,6 +532,10 @@ begin
   
   // Check for updates when program starts
   LastUpdateCheck := Ini.ReadDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', 0);
+  if AutoCheckForUpdates then
+  begin
+    DebugLn('Last update check: %s (%d hours ago)', [DateTimeToStr(LastUpdateCheck), HoursBetween(Now, LastUpdateCheck)]);
+  end;
   if AutoCheckForUpdates and (SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds) then
     CheckForUpdates(True);
 
