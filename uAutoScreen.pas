@@ -252,14 +252,7 @@ var
 implementation
 
 uses uAbout, DateUtils, StrUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  uIniHelper, UpdateChecker, FileUtil, LCLType, Idle,
-  //{$IfDef DEBUG}
-  {$IFOPT D+}
-  LazLogger
-  {$Else}
-  LazLoggerDummy
-  {$EndIf}
-  ;
+  uIniHelper, UpdateChecker, FileUtil, LCLType, Idle, LazLogger;
 
 {$R *.lfm}
 
