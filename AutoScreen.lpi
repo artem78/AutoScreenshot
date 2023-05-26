@@ -59,7 +59,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -102,7 +102,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -138,7 +138,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -175,7 +175,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -330,7 +330,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="libs;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="libs;libs\Cross.Codebot\source;libs\Cross.Codebot\source\codebot_controls"/>
+      <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       <ObjectPath Value="libs\PNGImage"/>
     </SearchPaths>
