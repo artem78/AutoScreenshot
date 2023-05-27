@@ -504,6 +504,7 @@ begin
   else
     IniFileName := ConcatPaths([GetAppConfigDir(False), 'config.ini']);
   Ini := TIniFile.Create(IniFileName);
+  Ini.WriteString(DefaultConfigIniSection, 'ProgramVersion', GetProgramVersionStr);
   ReadSettings;
 
   DebugLn('Program started at ', DateTimeToStr(Now));
