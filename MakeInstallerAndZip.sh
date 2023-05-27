@@ -33,9 +33,9 @@ function Compile(){
 	# Run compile project
 	echo "Starting compile project..."
 	if IsWindows; then
-		"$LazarusDir/lazbuild.exe" --build-mode="Release (32bit)" --verbose AutoScreen.lpi
+		"$LazarusDir/lazbuild.exe" --build-mode="Release (32bit)" --verbose AutoScreenshot.lpi
 	elif IsLinux; then
-		"lazbuild" --build-mode="Release" --verbose AutoScreen.lpi
+		"lazbuild" --build-mode="Release" --verbose AutoScreenshot.lpi
 	fi
 	echo "Compiling finished!"
 	echo ""
@@ -188,7 +188,7 @@ if IsWindows; then
 fi
 
 # Program version
-#ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreen.lpi)
+#ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreenshot.lpi)
 ProgramVersion=$(git describe --dirty)
 echo "Current program version: $ProgramVersion"
 echo ""

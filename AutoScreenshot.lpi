@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="12"/>
+    <PathDelim Value="\"/>
+    <General>
+      <Flags>
+        <MainUnitHasUsesSectionForAllUnits Value="False"/>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+        <CompatibilityMode Value="True"/>
+      </Flags>
+      <SessionStorage Value="InProjectDir"/>
+      <Title Value="Auto Screenshot"/>
+      <Scaled Value="True"/>
+      <UseAppBundle Value="False"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="True/PM"/>
+        <TextName Value="Auto Screenshot"/>
+        <TextDesc Value="Automatic screenshot maker"/>
+      </XPManifest>
+      <Icon Value="0"/>
+      <Resources Count="13">
+        <Resource_0 FileName="res\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
+        <Resource_1 FileName="res\camera_flash1.ico" Type="ICON" ResourceName="_CAMERA_FLASH_1"/>
+        <Resource_2 FileName="res\camera_flash2.ico" Type="ICON" ResourceName="_CAMERA_FLASH_2"/>
+        <Resource_3 FileName="res\camera_flash3.ico" Type="ICON" ResourceName="_CAMERA_FLASH_3"/>
+        <Resource_4 FileName="res\camera_flash4.ico" Type="ICON" ResourceName="_CAMERA_FLASH_4"/>
+        <Resource_5 FileName="res\camera_flash5.ico" Type="ICON" ResourceName="_CAMERA_FLASH_5"/>
+        <Resource_6 FileName="res\camera_flash6.ico" Type="ICON" ResourceName="_CAMERA_FLASH_6"/>
+        <Resource_7 FileName="res\camera_flash7.ico" Type="ICON" ResourceName="_CAMERA_FLASH_7"/>
+        <Resource_8 FileName="res\start.bmp" Type="BITMAP" ResourceName="_START_ICON"/>
+        <Resource_9 FileName="res\stop.bmp" Type="BITMAP" ResourceName="_STOP_ICON"/>
+        <Resource_10 FileName="res\logo.png" Type="RCDATA" ResourceName="_LOGO"/>
+        <Resource_11 FileName="res\logo_high_dpi.png" Type="RCDATA" ResourceName="_LOGO_HIGH_DPI"/>
+        <Resource_12 FileName="res\camera.ico" Type="ICON" ResourceName="_CAMERA"/>
+      </Resources>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <MajorVersionNr Value="1"/>
+      <MinorVersionNr Value="10"/>
+      <RevisionNr Value="4"/>
+      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.10.4"/>
+    </VersionInfo>
+    <BuildModes Count="5">
+      <Item1 Name="Default" Default="True"/>
+      <Item2 Name="Debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="AutoScreenshot"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="libs;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <ObjectPath Value="libs\PNGImage"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseHeaptrc Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+          </Other>
+        </CompilerOptions>
+      </Item2>
+      <Item3 Name="Release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="AutoScreenshot"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="libs;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <ObjectPath Value="libs\PNGImage"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+          </Other>
+        </CompilerOptions>
+      </Item3>
+      <Item4 Name="Release (32bit)">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="AutoScreenshot"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="libs;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <ObjectPath Value="libs\PNGImage"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="i386"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+          </Other>
+        </CompilerOptions>
+      </Item4>
+      <Item5 Name="Release (64bit)">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="AutoScreenshot"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="libs;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <ObjectPath Value="libs\PNGImage"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+          </Other>
+        </CompilerOptions>
+      </Item5>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <RequiredPackages Count="4">
+      <Item1>
+        <PackageName Value="BGRABitmapPack"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="uniqueinstance_package"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="DateTimeCtrls"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="LCL"/>
+      </Item4>
+    </RequiredPackages>
+    <Units Count="17">
+      <Unit0>
+        <Filename Value="AutoScreenshot.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="uAutoScreen.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="uAbout.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="AboutForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="uLocalization.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="uUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="uLanguages.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="ufilenametemplatehelpform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FileNameTemplateHelpForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uFileNameTemplateHelpForm"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="screengrabber.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ScreenGrabber"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="languagecodes.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="uutilsmore.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uUtilsMore"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="uhotkeysform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="HotKeysForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uHotKeysForm"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="uinihelper.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uIniHelper"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="globalkeyhook.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GlobalKeyHook"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="updatechecker.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="UpdateCheckerForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="UpdateChecker"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="idle.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Idle"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="xrandreventwatcher.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="libs\Cross.Codebot\source\codebot_controls\codebot.input.hotkeys.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Codebot.Input.Hotkeys"/>
+      </Unit16>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="AutoScreenshot"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="libs;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
+      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      <ObjectPath Value="libs\PNGImage"/>
+    </SearchPaths>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="5">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+      <Item4>
+        <Name Value="ELocalizerException"/>
+      </Item4>
+      <Item5>
+        <Name Value="Exception"/>
+      </Item5>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

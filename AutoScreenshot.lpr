@@ -1,4 +1,4 @@
-program AutoScreen;
+program AutoScreenshot;
 
 {$MODE objfpc}
 //{$Define LAZLOGGER_FLUSH}
