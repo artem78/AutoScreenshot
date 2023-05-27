@@ -1,4 +1,6 @@
-[![Russian](images/russian_icon.png) RU](README-ru.md "Russian")
+[:uk: EN](README.md "English")&nbsp;&nbsp;
+[:ru: RU](README-ru.md "Russian")
+
 ---
 Auto Screenshot
 ===============

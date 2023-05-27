@@ -1,4 +1,5 @@
-[![Russian](images/russian_icon.png) RU](README-ru.md "Russian")
+[:fr: FR](README-fr.md "French")&nbsp;&nbsp;
+[:ru: RU](README-ru.md "Russian")
 
 -------------------------  
 
