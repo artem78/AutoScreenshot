@@ -37,7 +37,7 @@ Auto Screenshot
 ![Запуск на Linux Mint](images/main_window_in_linux_mint.png "Запуск на Linux Mint")
 
 ## Языки интерфейса
-* Английский
+* [Английский](README.md)
 * Русский
 * Китайский
 * Украинский
@@ -45,6 +45,7 @@ Auto Screenshot
 * Испанский
 * Турецкий
 * Немецкий
+* [Французский](README-fr.md)
 
 [(Помочь с переводом)](https://github.com/artem78/AutoScreenshot/issues/5)
 
