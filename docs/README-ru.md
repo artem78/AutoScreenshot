@@ -13,7 +13,7 @@ Auto Screenshot
 [![Supports Windows](https://img.shields.io/badge/support-Windows-blue?logo=Windows&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
 [![Supports Linux](https://img.shields.io/badge/support-Linux-white?logo=Linux&style=plastic)](https://github.com/artem78/AutoScreenshot/releases/latest)
 
-## Обзор
+## О программе
 **Auto Screenshot** — программа, которая автоматически сохраняет снимки рабочего стола через заданный интервал времени.
 
 <!-- ToDo: Для чего оно надо? -->
