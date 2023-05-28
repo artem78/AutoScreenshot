@@ -341,22 +341,24 @@ const
   DefaultCounterValue     = MinCounterValue;
   DefaultCounterDigits    = 6;
   DefaultCompressionLevel = cldefault;
+  
+  LogFileName = 'log.txt';
 var
   DefaultOutputDir, BaseDir: String;
   CfgLang, SysLang, AltLang: TLanguageCode;
   FmtStr: String;
   Seconds: Integer;
-  LogFileName: String;
+  LogFilePath: String;
 begin
   // Logging
   if Ini.ReadBool(DefaultConfigIniSection, 'Logging', False) then
   begin
     if IsPortable then
-      LogFileName := ConcatPaths([ProgramDirectory, 'debug_log.txt'])
+      LogFilePath := ConcatPaths([ProgramDirectory, LogFileName])
     else
-      LogFileName := ConcatPaths([GetAppConfigDir(False), 'debug_log.txt']);
-    DeleteFile(LogFileName); // Overwrite log file
-    DebugLogger.LogName := LogFileName;
+      LogFilePath := ConcatPaths([GetAppConfigDir(False), LogFileName]);
+    DeleteFile(LogFilePath); // Overwrite log file
+    DebugLogger.LogName := LogFilePath;
     //{$Define LAZLOGGER_FLUSH}
     DebugLogger.CloseLogFileBetweenWrites := True; // FixMe: Better to set LAZLOGGER_FLUSH, but seems it doesn't work
     DebugLogger.OnDebugLn := @OnDebugLnEvent;
