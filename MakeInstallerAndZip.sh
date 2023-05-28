@@ -90,11 +90,11 @@ function MakeZip(){
 	### Note! For MinGW (Git Bash) see https://stackoverflow.com/a/55749636 ###
 	echo "Pack all files to ZIP archive..."
 	if IsWindows; then
-		local OsTypeName="windows"
+		local OsTypeName="Windows"
 	elif IsLinux; then
-		local OsTypeName="linux"
+		local OsTypeName="Linux"
 	fi
-	ZipPath="$TargetZipDir/autoscreenshot_${ProgramVersion}_${OsTypeName}_portable.zip"
+	ZipPath="$TargetZipDir/AutoScreenshot_${ProgramVersion}_${OsTypeName}_portable.zip"
 	rm -f "$ZipPath"
 	cd "$BuildDir"
 	zip -r "$ZipPath" *
@@ -109,7 +109,7 @@ function MakeInstaller(){
 
 	# Make installation file
 	echo "Make installation file..."
-	"$InnoSetupDir/iscc.exe" //F"autoscreenshot_${ProgramVersion}_setup" "setup.iss"
+	"$InnoSetupDir/iscc.exe" //F"AutoScreenshot_${ProgramVersion}_Windows_setup" "setup.iss"
 	echo "Done!"
 	echo ""
 }

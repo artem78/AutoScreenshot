@@ -23,7 +23,7 @@ DefaultDirName={pf}\AutoScreenshot
 DisableProgramGroupPage=yes
 LicenseFile=LICENSE.txt
 OutputDir=build\setup
-OutputBaseFilename=autoscreenshot_{#MyAppVersion}_setup
+OutputBaseFilename=AutoScreenshot_{#MyAppVersion}_Windows_setup
 Compression=lzma
 SolidCompression=yes
 
