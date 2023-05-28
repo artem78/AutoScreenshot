@@ -67,7 +67,6 @@ const
 var
   Png: TPortableNetworkGraphic;
   ResourceName: String;
-  VersionStr: String;
 begin
   Caption := Localizer.I18N('About');
 
@@ -90,13 +89,8 @@ begin
   ProgramNameLabel.Caption := Application.Title;
 
   VersionTitleLabel.Caption := Localizer.I18N('Version') + ':';
-  VersionStr := GetProgramVersionStr;
-  {$IfDef Linux}
-    // ToDo: Don't forget to remove this in the future
-    VersionStr := VersionStr + ' Alpha-1';
-  {$EndIf}
   VersionValueLabel.Caption := Format('%s (%s) %s', [
-          VersionStr, Bitness,
+          GetProgramVersionStr(), Bitness,
           IfThen(IsPortable, Localizer.I18N('Portable'))
   ]);
   {$IFOPT D+}
