@@ -52,13 +52,13 @@ Auto Screenshot
 * Linux
 
 ## Download
-### Windows build
-The latest version for Windows available [here](https://github.com/artem78/AutoScreenshot/releases/latest). You can choose between portable zip or installer.
+Download program [here](https://github.com/artem78/AutoScreenshot/releases/).
 
-### Linux build
-[Download](https://github.com/artem78/AutoScreenshot/releases/tag/v1.10.4-linux.alpha.1)
+### Windows
+You can choose between portable zip or installer.
 
-Note that it is **Alpha** release and some features from Windows build is not implemented yet.
+### Linux
+At the moment only portable version is available. I will make deb-package in the future.
 
 **Note:** make sure you have installed SSL libraries (including development package) to make networking features enabled, such as update checking.
 ```
