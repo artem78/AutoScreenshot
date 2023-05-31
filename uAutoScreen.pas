@@ -466,16 +466,16 @@ end;
 procedure TMainForm.FormCreate(Sender: TObject);
 const
   StartAutoCaptureDefaultHotKey: THotKey = (
-    ShiftState: [ssCtrl];
-    Key: VK_F5;
+    ShiftState: [];
+    Key: VK_UNKNOWN;
   );
   StopAutoCaptureDefaultHotKey: THotKey = (
-    ShiftState: [ssCtrl];
-    Key: VK_F6;
+    ShiftState: [];
+    Key: VK_UNKNOWN;
   );
   SingleCaptureDefaultHotKey: THotKey = (
-    ShiftState: [ssCtrl];
-    Key: VK_F7;
+    ShiftState: [];
+    Key: VK_UNKNOWN;
   );
 var
   ///////
