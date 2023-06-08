@@ -17,6 +17,7 @@ uses
 type
 
   EGlobalKeyHookException = class(Exception);
+  EGlobalKeyHookRegistrationFailedException = class(EGlobalKeyHookException);
 
   TKeysMap = specialize TFPGMap<string, THotKey>;
 
@@ -91,8 +92,9 @@ begin
   UnregisterKey(AHotKeyId);
 
   if not RegisterHotKey(WndHandle, AHotkeyId, Modifiers, AHotKey.Key) then
-    raise EGlobalKeyHookException.CreateFmt('Failed to register hot key (RegisterHotKey, error %d)',
-                              [GetLastError]);
+    raise EGlobalKeyHookRegistrationFailedException.CreateFmt(
+             'Failed to register hot key %s (error code %d)',
+             [AHotKey.ToString, GetLastError]);
 end;
 
 procedure TGlobalKeyHook.UnregisterKey(AHotKeyId: Integer);
@@ -198,11 +200,15 @@ end;
 
 procedure TGlobalKeyHook.RegisterKey(const AStringId: String;
   const AHotKey: THotKey);
-{$IfDef Windows}
 var
+  {$IfDef Windows}
   FullStrId: String;
   Id: Integer;
-{$EndIf}
+  {$EndIf}
+  {$IfDef Linux}
+  Res: Boolean;
+  ErrMsg: String;
+  {$EndIf}
 begin
   if AHotKey.IsEmpty then
   begin // No key set
@@ -213,34 +219,48 @@ begin
   DebugLn('Start to register hotkey %s for %s',
       [AHotKey.ToString, AStringId]);
 
-  {$IfDef Windows}
-  // Find atom id
-  FullStrId := GetFullStringId(AStringId);
-  if KeysMap.IndexOf(AStringId) = -1 then
-    Id := GlobalAddAtom(PChar(FullStrId))
-  else
-  begin
-    if KeysMap.KeyData[AStringId] = AHotKey then
+  try
+    {$IfDef Windows}
+    // Find atom id
+    FullStrId := GetFullStringId(AStringId);
+    if KeysMap.IndexOf(AStringId) = -1 then
+      Id := GlobalAddAtom(PChar(FullStrId))
+    else
+    begin
+      if KeysMap.KeyData[AStringId] = AHotKey then
+      begin
+        DebugLn('Hotkey %s for %s not changed', [AHotKey.ToString, AStringId]);
+
+        Exit;
+      end;
+
+      Id := GlobalFindAtom(PChar(FullStrId));
+    end;
+
+    RegisterKey(Id, AHotKey);
+    {$EndIf}
+    {$IfDef Linux}
+    if (KeysMap.IndexOf(AStringId) <> -1) and (KeysMap.KeyData[AStringId] = AHotKey) then
     begin
       DebugLn('Hotkey %s for %s not changed', [AHotKey.ToString, AStringId]);
 
       Exit;
     end;
 
-    Id := GlobalFindAtom(PChar(FullStrId));
+    Res := HKCapture.RegisterNotify(AHotKey.Key, AHotKey.ShiftState, @OnHotKeyEvent);
+    if not Res then
+    begin
+      ErrMsg := Format('Failed to register hotkey %s for %s', [AHotKey.ToString, AStringId]);
+      raise EGlobalKeyHookRegistrationFailedException.Create(ErrMsg);
+    end;
+    {$EndIf}
+  except
+    on E: Exception do
+    begin
+      DebugLn({E.ToString} E.Message);
+      raise;
+    end
   end;
-
-  RegisterKey(Id, AHotKey);
-  {$EndIf}
-  {$IfDef Linux}
-  if (KeysMap.IndexOf(AStringId) <> -1) and (KeysMap.KeyData[AStringId] = AHotKey) then
-  begin
-    DebugLn('Hotkey %s for %s not changed', [AHotKey.ToString, AStringId]);
-
-    Exit;
-  end;
-  HKCapture.RegisterNotify(AHotKey.Key, AHotKey.ShiftState, @OnHotKeyEvent);
-  {$EndIf}
 
   KeysMap.AddOrSetData(AStringId, AHotKey);
 

@@ -532,11 +532,23 @@ begin
   KeyHook := TGlobalKeyHook.Create({$IfDef Windows}Handle, 'AutoScreenshot'{$EndIf}
                                    {$IfDef Linux}@OnHotKeyEvent{$EndIf});
   HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StartAutoCapture', NoHotKey);
-  KeyHook.RegisterKey('StartAutoCapture', HotKey);
+  try
+    KeyHook.RegisterKey('StartAutoCapture', HotKey);
+  except
+    KeyHook.RegisterKey('StartAutoCapture', NoHotKey);
+  end;
   HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StopAutoCapture', NoHotKey);
-  KeyHook.RegisterKey('StopAutoCapture', HotKey);
+  try
+    KeyHook.RegisterKey('StopAutoCapture', HotKey);
+  except
+    KeyHook.RegisterKey('StopAutoCapture', NoHotKey);
+  end;
   HotKey := Ini.ReadHotKey(HotKeysIniSection, 'SingleCapture', NoHotKey);
-  KeyHook.RegisterKey('SingleCapture', HotKey);
+  try
+    KeyHook.RegisterKey('SingleCapture', HotKey);
+  except
+    KeyHook.RegisterKey('SingleCapture', NoHotKey);
+  end;
 
   {$IfDef Linux}
   // Enable monitor confuguration changed updates in Linux
@@ -585,6 +597,7 @@ end;
 procedure TMainForm.HotKetsSettingsMenuItemClick(Sender: TObject);
 var
   HotKeysForm: THotKeysForm;
+  HasErrors: Boolean = False;
 begin
   HotKeysForm := THotKeysForm.Create(Nil);
   HotKeysForm.StartAutoCaptureKey := Self.KeyHook.FindHotKey('StartAutoCapture');
@@ -592,9 +605,28 @@ begin
   HotKeysForm.SingleCaptureKey := Self.KeyHook.FindHotKey('SingleCapture');
   if HotKeysForm.ShowModal = mrOK then
   begin
-    SetStartAutoCaptureHotKey(HotKeysForm.StartAutoCaptureKey);
-    SetStopAutoCaptureHotKey(HotKeysForm.StopAutoCaptureKey);
-    SetSingleCaptureHotKey(HotKeysForm.SingleCaptureKey);
+    try
+      SetStartAutoCaptureHotKey(HotKeysForm.StartAutoCaptureKey);
+    except
+      HasErrors := True;
+    end;
+
+    try
+      SetStopAutoCaptureHotKey(HotKeysForm.StopAutoCaptureKey);
+    except
+      HasErrors := True;
+    end;
+
+    try
+      SetSingleCaptureHotKey(HotKeysForm.SingleCaptureKey);
+    except
+      HasErrors := True;
+    end;
+
+    if HasErrors then
+    begin
+      MessageDlg('Failed to register key(s)!', mtError, [mbOK], 0);
+    end;
   end;
 
   HotKeysForm.Free;
