@@ -144,9 +144,17 @@ begin
   //Bitmap.TakeScreenshot(Rect); // Not supports multiply monitors
   ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
   DebugLn('ScreenDC=', DbgS(ScreenDC));
-  {BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
-           ScreenDC, ARect.Left, ARect.Top, SRCCOPY);}
+  {$IfDef Windows}
+  // https://github.com/artem78/AutoScreenshot/issues/35
+  // and https://github.com/bgrabitmap/bgrabitmap/issues/200
+  BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
+           ScreenDC, ARect.Left, ARect.Top, SRCCOPY);
+  {$EndIf}
+  {$IfDef Linux}
+  // ToDo: Check bug #35 in Linux
   Bitmap.LoadFromDevice(ScreenDC, ARect);
+  {$EndIf}
+
   ReleaseDC(0, ScreenDC);
 
   case ImageFormat of
