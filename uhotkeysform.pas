@@ -3,6 +3,8 @@ unit uHotKeysForm;
 {$mode objfpc}{$H+}
 {$modeSwitch advancedRecords}
 
+// ToDo: Too much code duplicates
+
 interface
 
 uses
@@ -37,7 +39,7 @@ type
   THotKeysForm = class(TForm)
     ButtonPanel: TButtonPanel;
     Panel: TPanel;
-    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    //procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
   private
     Labels: array [0..2] of TLabel;
@@ -49,8 +51,11 @@ type
     function GetStopAutoCaptureKey: THotKey;
     procedure SetSingleCaptureKey(const AHotKey: THotKey);
     function GetSingleCaptureKey: THotKey;
+    procedure SetStartAutoCaptureMarked(AVal: Boolean);
+    procedure SetStopAutoCaptureMarked(AVal: Boolean);
+    procedure SetSingleCaptureMarked(AVal: Boolean);
 
-    function Validate(out AErrorMsg: string): Boolean;
+    //function Validate(out AErrorMsg: string): Boolean;
     procedure Translate;
   public
     property StartAutoCaptureKey: THotKey read GetStartAutoCaptureKey
@@ -59,6 +64,9 @@ type
                          write SetStopAutoCaptureKey;
     property SingleCaptureKey: THotKey read GetSingleCaptureKey
                          write SetSingleCaptureKey;
+    property StartAutoCaptureMarked: Boolean write SetStartAutoCaptureMarked;
+    property StopAutoCaptureMarked: Boolean write SetStopAutoCaptureMarked;
+    property SingleCaptureMarked: Boolean write SetSingleCaptureMarked;
   end;
 
 var
@@ -247,7 +255,7 @@ begin
   end;
 end;
 
-procedure THotKeysForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+(*procedure THotKeysForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
   ErrorMsg: String;
 begin
@@ -261,7 +269,7 @@ begin
       MessageDlg(ErrorMsg, {mtError} mtWarning, [mbOK], 0);
     end;
   end;
-end;
+end; *)
 
 procedure THotKeysForm.SetStartAutoCaptureKey(const AHotKey: THotKey);
 begin
@@ -293,7 +301,58 @@ begin
   Result := HotKeyControls[SingleCaptureIdx].HotKey;
 end;
 
-function THotKeysForm.Validate(out AErrorMsg: string): Boolean;
+procedure THotKeysForm.SetStartAutoCaptureMarked(AVal: Boolean);
+begin
+  with Labels[StartAutoCaptureIdx] do
+  begin
+    if AVal then
+    begin
+      Font.Color := clRed;
+      Font.Bold := True;
+    end
+    else
+    begin
+      Font.Color := clDefault;
+      Font.Bold := False;
+    end;
+  end;
+end;
+
+procedure THotKeysForm.SetStopAutoCaptureMarked(AVal: Boolean);
+begin
+  with Labels[StopAutoCaptureIdx] do
+  begin
+    if AVal then
+    begin
+      Font.Color := clRed;
+      Font.Bold := True;
+    end
+    else
+    begin
+      Font.Color := clDefault;
+      Font.Bold := False;
+    end;
+  end;
+end;
+
+procedure THotKeysForm.SetSingleCaptureMarked(AVal: Boolean);
+begin
+  with Labels[SingleCaptureIdx] do
+  begin
+    if AVal then
+    begin
+      Font.Color := clRed;
+      Font.Bold := True;
+    end
+    else
+    begin
+      Font.Color := clDefault;
+      Font.Bold := False;
+    end;
+  end;
+end;
+
+(*function THotKeysForm.Validate(out AErrorMsg: string): Boolean;
   function HasDuplicates: Boolean;
   var
     I1, I2: Integer;
@@ -317,7 +376,7 @@ begin
     AErrorMsg := ''
   else
     AErrorMsg := Localizer.I18N('HotKeyOccupied');
-end;
+end;  *)
 
 procedure THotKeysForm.Translate;
 begin

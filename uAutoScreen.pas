@@ -599,35 +599,47 @@ var
   HotKeysForm: THotKeysForm;
   HasErrors: Boolean = False;
 begin
+  // ToDo: Reduce amount of code duplicates
+
   HotKeysForm := THotKeysForm.Create(Nil);
   HotKeysForm.StartAutoCaptureKey := Self.KeyHook.FindHotKey('StartAutoCapture');
   HotKeysForm.StopAutoCaptureKey := Self.KeyHook.FindHotKey('StopAutoCapture');
   HotKeysForm.SingleCaptureKey := Self.KeyHook.FindHotKey('SingleCapture');
-  if HotKeysForm.ShowModal = mrOK then
-  begin
-    try
-      SetStartAutoCaptureHotKey(HotKeysForm.StartAutoCaptureKey);
-    except
-      HasErrors := True;
-    end;
 
-    try
-      SetStopAutoCaptureHotKey(HotKeysForm.StopAutoCaptureKey);
-    except
-      HasErrors := True;
-    end;
-
-    try
-      SetSingleCaptureHotKey(HotKeysForm.SingleCaptureKey);
-    except
-      HasErrors := True;
-    end;
-
-    if HasErrors then
+  repeat
+    HasErrors := False;
+    if HotKeysForm.ShowModal = mrOK then
     begin
-      MessageDlg('Failed to register key(s)!', mtError, [mbOK], 0);
+      try
+        SetStartAutoCaptureHotKey(HotKeysForm.StartAutoCaptureKey);
+        HotKeysForm.StartAutoCaptureMarked := False;
+      except
+        HasErrors := True;
+        HotKeysForm.StartAutoCaptureMarked := True;
+      end;
+
+      try
+        SetStopAutoCaptureHotKey(HotKeysForm.StopAutoCaptureKey);
+        HotKeysForm.StopAutoCaptureMarked := False;
+      except
+        HasErrors := True;
+        HotKeysForm.StopAutoCaptureMarked := True;
+      end;
+
+      try
+        SetSingleCaptureHotKey(HotKeysForm.SingleCaptureKey);
+        HotKeysForm.SingleCaptureMarked := False;
+      except
+        HasErrors := True;
+        HotKeysForm.SingleCaptureMarked := True;
+      end;
+
+      if HasErrors then
+      begin
+        MessageDlg(Localizer.I18N('HotKeyOccupied'), mtError, [mbOK], 0);
+      end;
     end;
-  end;
+  until not HasErrors;
 
   HotKeysForm.Free;
 end;
