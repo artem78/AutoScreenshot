@@ -34,16 +34,19 @@ type
     property HotKey: THotKey read GetHotKey write SetHotKey;
   end;
 
+  TSavingCallback = function(ASender: TObject; out AErrorMsg: string): Boolean of object;
+
   { THotKeysForm }
 
   THotKeysForm = class(TForm)
     ButtonPanel: TButtonPanel;
     Panel: TPanel;
-    //procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
   private
     Labels: array [0..2] of TLabel;
     HotKeyControls: array [0..2] of THotKeyControl;
+    SavingCallback: TSavingCallback;
 
     procedure SetStartAutoCaptureKey(const AHotKey: THotKey);
     function GetStartAutoCaptureKey: THotKey;
@@ -55,9 +58,10 @@ type
     procedure SetStopAutoCaptureMarked(AVal: Boolean);
     procedure SetSingleCaptureMarked(AVal: Boolean);
 
-    //function Validate(out AErrorMsg: string): Boolean;
     procedure Translate;
   public
+    constructor Create(TheOwner: TComponent; ASavingCallback: TSavingCallback = Nil){; override};
+
     property StartAutoCaptureKey: THotKey read GetStartAutoCaptureKey
                          write SetStartAutoCaptureKey;
     property StopAutoCaptureKey: THotKey read GetStopAutoCaptureKey
@@ -255,7 +259,7 @@ begin
   end;
 end;
 
-(*procedure THotKeysForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+procedure THotKeysForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var
   ErrorMsg: String;
 begin
@@ -263,13 +267,13 @@ begin
 
   if ModalResult = mrOK then
   begin
-    if not Validate(ErrorMsg) then
+    if Assigned(SavingCallback) and not SavingCallback(self, ErrorMsg) then
     begin
       CanClose := False;
       MessageDlg(ErrorMsg, {mtError} mtWarning, [mbOK], 0);
     end;
   end;
-end; *)
+end;
 
 procedure THotKeysForm.SetStartAutoCaptureKey(const AHotKey: THotKey);
 begin
@@ -352,37 +356,19 @@ begin
   end;
 end;
 
-(*function THotKeysForm.Validate(out AErrorMsg: string): Boolean;
-  function HasDuplicates: Boolean;
-  var
-    I1, I2: Integer;
-  begin
-    Result := False;
-
-    for I1 := Low(HotKeyControls) + 1 to High(HotKeyControls) do
-    begin
-      for I2 := Low(HotKeyControls) to I1 - 1 do
-      begin
-        if (HotKeyControls[I1].HotKey = HotKeyControls[I2].HotKey) and not HotKeyControls[I1].HotKey.IsEmpty then
-          Exit(True);
-      end;
-    end;
-  end;
-
-begin
-  Result := not HasDuplicates;
-
-  if Result then
-    AErrorMsg := ''
-  else
-    AErrorMsg := Localizer.I18N('HotKeyOccupied');
-end;  *)
-
 procedure THotKeysForm.Translate;
 begin
   Caption := Localizer.I18N('Hotkeys');
   ButtonPanel.OKButton.Caption := Localizer.I18N('Save');
   ButtonPanel.CancelButton.Caption := Localizer.I18N('Cancel');
+end;
+
+constructor THotKeysForm.Create(TheOwner: TComponent;
+  ASavingCallback: TSavingCallback);
+begin
+  inherited Create(TheOwner);
+
+  SavingCallback := ASavingCallback;
 end;
 
 end.

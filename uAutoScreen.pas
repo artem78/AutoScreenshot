@@ -200,6 +200,7 @@ type
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
+    function OnHotKeysSaving(ASender: TObject; out AErrorMsg: string): Boolean;
 
     {$IfDef Linux}
     procedure OnScreenConfigurationChanged(const AEvent: TXEvent);
@@ -601,46 +602,11 @@ var
 begin
   // ToDo: Reduce amount of code duplicates
 
-  HotKeysForm := THotKeysForm.Create(Nil);
+  HotKeysForm := THotKeysForm.Create(Nil, @OnHotKeysSaving);
   HotKeysForm.StartAutoCaptureKey := Self.KeyHook.FindHotKey('StartAutoCapture');
   HotKeysForm.StopAutoCaptureKey := Self.KeyHook.FindHotKey('StopAutoCapture');
   HotKeysForm.SingleCaptureKey := Self.KeyHook.FindHotKey('SingleCapture');
-
-  repeat
-    HasErrors := False;
-    if HotKeysForm.ShowModal = mrOK then
-    begin
-      try
-        SetStartAutoCaptureHotKey(HotKeysForm.StartAutoCaptureKey);
-        HotKeysForm.StartAutoCaptureMarked := False;
-      except
-        HasErrors := True;
-        HotKeysForm.StartAutoCaptureMarked := True;
-      end;
-
-      try
-        SetStopAutoCaptureHotKey(HotKeysForm.StopAutoCaptureKey);
-        HotKeysForm.StopAutoCaptureMarked := False;
-      except
-        HasErrors := True;
-        HotKeysForm.StopAutoCaptureMarked := True;
-      end;
-
-      try
-        SetSingleCaptureHotKey(HotKeysForm.SingleCaptureKey);
-        HotKeysForm.SingleCaptureMarked := False;
-      except
-        HasErrors := True;
-        HotKeysForm.SingleCaptureMarked := True;
-      end;
-
-      if HasErrors then
-      begin
-        MessageDlg(Localizer.I18N('HotKeyOccupied'), mtError, [mbOK], 0);
-      end;
-    end;
-  until not HasErrors;
-
+  HotKeysForm.ShowModal;
   HotKeysForm.Free;
 end;
 
@@ -1723,6 +1689,45 @@ begin
     DebugLogger.OnDebugLn := Callback;
   end;
   Handled := True;
+end;
+
+function TMainForm.OnHotKeysSaving(ASender: TObject; out AErrorMsg: string): Boolean;
+var
+  HasErrors: Boolean = False;
+  HotKeysForm: THotKeysForm;
+begin
+  HotKeysForm := THotKeysForm(ASender);
+
+  try
+    SetStartAutoCaptureHotKey(HotKeysForm.StartAutoCaptureKey);
+    HotKeysForm.StartAutoCaptureMarked := False;
+  except
+    HasErrors := True;
+    HotKeysForm.StartAutoCaptureMarked := True;
+  end;
+
+  try
+    SetStopAutoCaptureHotKey(HotKeysForm.StopAutoCaptureKey);
+    HotKeysForm.StopAutoCaptureMarked := False;
+  except
+    HasErrors := True;
+    HotKeysForm.StopAutoCaptureMarked := True;
+  end;
+
+  try
+    SetSingleCaptureHotKey(HotKeysForm.SingleCaptureKey);
+    HotKeysForm.SingleCaptureMarked := False;
+  except
+    HasErrors := True;
+    HotKeysForm.SingleCaptureMarked := True;
+  end;
+
+  if HasErrors then
+    AErrorMsg := Localizer.I18N('HotKeyOccupied')
+  else
+    AErrorMsg := '';
+
+  Result := not HasErrors;
 end;
 
 {$IfDef Linux}
