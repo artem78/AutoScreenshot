@@ -596,4 +596,11 @@ object MainForm: TMainForm
       end
     end
   end
+  object UniqueInstance1: TUniqueInstance
+    Enabled = True
+    Identifier = 'AutoScreenshot'
+    OnOtherInstance = UniqueInstance1OtherInstance
+    Left = 547
+    Top = 105
+  end
 end

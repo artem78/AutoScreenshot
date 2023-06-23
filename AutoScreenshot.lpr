@@ -27,9 +27,9 @@ begin
   //setHeapTraceOutput('trace.log');
 
   // Prevent to run second instance
-  if InstanceRunning('AutoScreenshot') then
+  if InstanceRunning('AutoScreenshot', True) then
   begin
-    Application.MessageBox('Another instance is running!', 'Error', MB_ICONERROR + MB_OK);
+    //Application.MessageBox('Another instance is running!', 'Error', MB_ICONERROR + MB_OK);
     Application.Terminate;
     Exit;
   end;

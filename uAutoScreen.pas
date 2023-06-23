@@ -13,8 +13,8 @@ uses
   {$EndIf}
   {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
-  Menus, Buttons, EditBtn, uLocalization, DateTimePicker,
-  LCLIntf, ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook,
+  Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf,
+  ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, UniqueInstance,
   ZStream { for Tcompressionlevel };
 
 type
@@ -78,6 +78,7 @@ type
     SeqNumberValueSpinEdit: TSpinEdit;
     SeqNumberDigitsCountSpinEdit: TSpinEdit;
     SeqNumberDigitsCountLabel: TLabel;
+    UniqueInstance1: TUniqueInstance;
     procedure CheckForUpdatesMenuItemClick(Sender: TObject);
     procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure CompressionLevelComboBoxChange(Sender: TObject);
@@ -115,6 +116,8 @@ type
     procedure TrayIconDblClick(Sender: TObject);
     procedure SeqNumberValueSpinEditChange(Sender: TObject);
     procedure SeqNumberDigitsCountSpinEditChange(Sender: TObject);
+    procedure UniqueInstance1OtherInstance(Sender: TObject;
+      ParamCount: Integer; const Parameters: array of String);
   private
     { Private declarations }
 
@@ -1718,6 +1721,12 @@ begin
     CounterDigits := SeqNumberDigitsCountSpinEdit.Value;
   finally
   end;
+end;
+
+procedure TMainForm.UniqueInstance1OtherInstance(Sender: TObject;
+  ParamCount: Integer; const Parameters: array of String);
+begin
+  RestoreFromTray;
 end;
 
 end.
