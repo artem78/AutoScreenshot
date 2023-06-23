@@ -596,10 +596,4 @@ object MainForm: TMainForm
       end
     end
   end
-  object UniqueInstance: TUniqueInstance
-    Enabled = True
-    Identifier = 'AutoScreenshot'
-    Left = 560
-    Top = 248
-  end
 end

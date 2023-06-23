@@ -13,7 +13,7 @@ uses
   {$EndIf}
   {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
-  Menus, Buttons, EditBtn, UniqueInstance, uLocalization, DateTimePicker,
+  Menus, Buttons, EditBtn, uLocalization, DateTimePicker,
   LCLIntf, ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook,
   ZStream { for Tcompressionlevel };
 
@@ -73,7 +73,6 @@ type
     AboutMenuItem: TMenuItem;
     OptionsSubMenu: TMenuItem;
     LanguageSubMenu: TMenuItem;
-    UniqueInstance: TUniqueInstance;
     SeqNumberGroup: TGroupBox;
     SeqNumberValueLabel: TLabel;
     SeqNumberValueSpinEdit: TSpinEdit;

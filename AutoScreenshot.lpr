@@ -16,7 +16,8 @@ uses
   uAbout in 'uAbout.pas' {AboutForm},
   uLocalization in 'uLocalization.pas',
   uUtils in 'uUtils.pas',
-  uLanguages in 'uLanguages.pas';
+  uLanguages in 'uLanguages.pas',
+  UniqueInstanceRaw;
 
 begin
   // heaptrc settings
@@ -24,6 +25,14 @@ begin
     globalSkipIfNoLeaks := true;
   {$endIf}
   //setHeapTraceOutput('trace.log');
+
+  // Prevent to run second instance
+  if InstanceRunning('AutoScreenshot') then
+  begin
+    Application.MessageBox('Another instance is running!', 'Error', MB_ICONERROR + MB_OK);
+    Application.Terminate;
+    Exit;
+  end;
 
   Application.Scaled:=True;
   Application.Initialize;
