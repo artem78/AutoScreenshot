@@ -48,8 +48,9 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="uTestCases.pas"/>
+        <Filename Value="utilstests.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="UtilsTests"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\uUtils.pas"/>
