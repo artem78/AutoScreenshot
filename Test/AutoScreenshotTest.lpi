@@ -65,6 +65,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="uUtilsMore"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="grabbertests.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GrabberTests"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

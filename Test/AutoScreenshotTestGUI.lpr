@@ -3,7 +3,8 @@ program AutoScreenshotTestGUI;
 {$mode objfpc}{$H+}
 
 uses
-  Interfaces, Forms, GuiTestRunner, fpcunittestrunner, uTestCases;
+  Interfaces, Forms, GuiTestRunner, fpcunittestrunner, uTestCases,
+  GrabberTests;
 
 {$R *.res}
 

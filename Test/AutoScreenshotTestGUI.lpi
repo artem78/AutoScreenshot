@@ -42,7 +42,7 @@
         <PackageName Value="FCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="AutoScreenshotTestGUI.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -65,6 +65,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="uUtilsMore"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="grabbertests.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GrabberTests"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
