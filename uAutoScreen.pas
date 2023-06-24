@@ -195,12 +195,14 @@ type
     procedure SetStartAutoCaptureHotKey(AHotKey: THotKey);
     procedure SetStopAutoCaptureHotKey(AHotKey: THotKey);
     procedure SetSingleCaptureHotKey(AHotKey: THotKey);
+    procedure SetHotKey(AHotKeyId: String; AHotKey: THotKey);
     procedure SetCompressionLevel(ALevel: Tcompressionlevel);
     function GetCompressionLevel: Tcompressionlevel;
     procedure UpdateFormAutoSize;
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
+    function OnHotKeysSaving(ASender: TObject; out AErrorMsg: string): Boolean;
 
     {$IfDef Linux}
     procedure OnScreenConfigurationChanged(const AEvent: TXEvent);
@@ -467,17 +469,9 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 const
-  StartAutoCaptureDefaultHotKey: THotKey = (
-    ShiftState: [ssCtrl];
-    Key: VK_F5;
-  );
-  StopAutoCaptureDefaultHotKey: THotKey = (
-    ShiftState: [ssCtrl];
-    Key: VK_F6;
-  );
-  SingleCaptureDefaultHotKey: THotKey = (
-    ShiftState: [ssCtrl];
-    Key: VK_F7;
+  NoHotKey: THotKey = (
+    ShiftState: [];
+    Key: VK_UNKNOWN;
   );
 var
   ///////
@@ -540,12 +534,24 @@ begin
   // Enable global hotkeys
   KeyHook := TGlobalKeyHook.Create({$IfDef Windows}Handle, 'AutoScreenshot'{$EndIf}
                                    {$IfDef Linux}@OnHotKeyEvent{$EndIf});
-  HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StartAutoCapture', StartAutoCaptureDefaultHotKey);
-  KeyHook.RegisterKey('StartAutoCapture', HotKey);
-  HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StopAutoCapture', StopAutoCaptureDefaultHotKey);
-  KeyHook.RegisterKey('StopAutoCapture', HotKey);
-  HotKey := Ini.ReadHotKey(HotKeysIniSection, 'SingleCapture', SingleCaptureDefaultHotKey);
-  KeyHook.RegisterKey('SingleCapture', HotKey);
+  HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StartAutoCapture', NoHotKey);
+  try
+    KeyHook.RegisterKey('StartAutoCapture', HotKey);
+  except
+    KeyHook.RegisterKey('StartAutoCapture', NoHotKey);
+  end;
+  HotKey := Ini.ReadHotKey(HotKeysIniSection, 'StopAutoCapture', NoHotKey);
+  try
+    KeyHook.RegisterKey('StopAutoCapture', HotKey);
+  except
+    KeyHook.RegisterKey('StopAutoCapture', NoHotKey);
+  end;
+  HotKey := Ini.ReadHotKey(HotKeysIniSection, 'SingleCapture', NoHotKey);
+  try
+    KeyHook.RegisterKey('SingleCapture', HotKey);
+  except
+    KeyHook.RegisterKey('SingleCapture', NoHotKey);
+  end;
 
   {$IfDef Linux}
   // Enable monitor confuguration changed updates in Linux
@@ -594,18 +600,15 @@ end;
 procedure TMainForm.HotKetsSettingsMenuItemClick(Sender: TObject);
 var
   HotKeysForm: THotKeysForm;
+  HasErrors: Boolean = False;
 begin
-  HotKeysForm := THotKeysForm.Create(Nil);
+  // ToDo: Reduce amount of code duplicates
+
+  HotKeysForm := THotKeysForm.Create(Nil, @OnHotKeysSaving);
   HotKeysForm.StartAutoCaptureKey := Self.KeyHook.FindHotKey('StartAutoCapture');
   HotKeysForm.StopAutoCaptureKey := Self.KeyHook.FindHotKey('StopAutoCapture');
   HotKeysForm.SingleCaptureKey := Self.KeyHook.FindHotKey('SingleCapture');
-  if HotKeysForm.ShowModal = mrOK then
-  begin
-    SetStartAutoCaptureHotKey(HotKeysForm.StartAutoCaptureKey);
-    SetStopAutoCaptureHotKey(HotKeysForm.StopAutoCaptureKey);
-    SetSingleCaptureHotKey(HotKeysForm.SingleCaptureKey);
-  end;
-
+  HotKeysForm.ShowModal;
   HotKeysForm.Free;
 end;
 
@@ -1618,20 +1621,23 @@ end;
 
 procedure TMainForm.SetStartAutoCaptureHotKey(AHotKey: THotKey);
 begin
-  KeyHook.RegisterKey('StartAutoCapture', AHotKey);
-  Ini.WriteHotKey(HotKeysIniSection, 'StartAutoCapture', AHotKey);
+  SetHotKey('StartAutoCapture', AHotKey);
 end;
 
 procedure TMainForm.SetStopAutoCaptureHotKey(AHotKey: THotKey);
 begin
-  KeyHook.RegisterKey('StopAutoCapture', AHotKey);
-  Ini.WriteHotKey(HotKeysIniSection, 'StopAutoCapture', AHotKey);
+  SetHotKey('StopAutoCapture', AHotKey);
 end;
 
 procedure TMainForm.SetSingleCaptureHotKey(AHotKey: THotKey);
 begin
-  KeyHook.RegisterKey('SingleCapture', AHotKey);
-  Ini.WriteHotKey(HotKeysIniSection, 'SingleCapture', AHotKey);
+  SetHotKey('SingleCapture', AHotKey);
+end;
+
+procedure TMainForm.SetHotKey(AHotKeyId: String; AHotKey: THotKey);
+begin
+  KeyHook.RegisterKey(AHotKeyId, AHotKey);
+  Ini.WriteHotKey(HotKeysIniSection, AHotKeyId, AHotKey);
 end;
 
 procedure TMainForm.SetCompressionLevel(ALevel: Tcompressionlevel);
@@ -1685,6 +1691,45 @@ begin
     DebugLogger.OnDebugLn := Callback;
   end;
   Handled := True;
+end;
+
+function TMainForm.OnHotKeysSaving(ASender: TObject; out AErrorMsg: string): Boolean;
+var
+  HasErrors: Boolean = False;
+  HotKeysForm: THotKeysForm;
+begin
+  HotKeysForm := THotKeysForm(ASender);
+
+  try
+    SetStartAutoCaptureHotKey(HotKeysForm.StartAutoCaptureKey);
+    HotKeysForm.StartAutoCaptureMarked := False;
+  except
+    HasErrors := True;
+    HotKeysForm.StartAutoCaptureMarked := True;
+  end;
+
+  try
+    SetStopAutoCaptureHotKey(HotKeysForm.StopAutoCaptureKey);
+    HotKeysForm.StopAutoCaptureMarked := False;
+  except
+    HasErrors := True;
+    HotKeysForm.StopAutoCaptureMarked := True;
+  end;
+
+  try
+    SetSingleCaptureHotKey(HotKeysForm.SingleCaptureKey);
+    HotKeysForm.SingleCaptureMarked := False;
+  except
+    HasErrors := True;
+    HotKeysForm.SingleCaptureMarked := True;
+  end;
+
+  if HasErrors then
+    AErrorMsg := Localizer.I18N('HotKeyOccupied')
+  else
+    AErrorMsg := '';
+
+  Result := not HasErrors;
 end;
 
 {$IfDef Linux}
