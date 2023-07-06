@@ -248,10 +248,23 @@ begin
   end;
 end;
 
+var
+  LangDir: String;
+
 initialization
 begin
+  {$IfDef Windows}
+  LangDir := AppendPathDelim(ConcatPaths([ProgramDirectory, 'lang']);
+  {$EndIf}
+  {$IfDef Linux}
+  if IsPortable then
+    LangDir := AppendPathDelim(ConcatPaths([ProgramDirectory, 'lang']))
+  else
+    LangDir := '/usr/share/autoscreenshot/lang/';
+  {$EndIf}
+
   // ToDo: Use alternatives only in Release build
-  Localizer := TLocalizer.Create(AppendPathDelim(ConcatPaths([ProgramDirectory, 'lang'])), True);
+  Localizer := TLocalizer.Create(LangDir, True);
 end;
 
 finalization

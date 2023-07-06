@@ -47,6 +47,85 @@
       <MinorVersionNr Value="12"/>
       <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.12"/>
     </VersionInfo>
+    <CustomData Count="13">
+      <Item0 Name="lazpackager/copyright" Value="2020-2023, Artem Demin &lt;megabyte1024@ya.ru>"/>
+      <Item1 Name="lazpackager/deb/ppa" Value="ppa:johndoe/use-your-own"/>
+      <Item2 Name="lazpackager/deb/series" Value="precise"/>
+      <Item3 Name="lazpackager/deb/tpl_changelog" Value="?PACKAGE_NAME? (?FULLVERSION?) ?SERIES?; urgency=low
+
+  * Original version ?VERSION? packaged with lazdebian
+
+ -- ?MAINTAINER? &lt;?MAINTAINER_EMAIL?>  ?DATER?
+"/>
+      <Item4 Name="lazpackager/deb/tpl_control" Value="Source: ?PACKAGE_NAME?
+Maintainer: ?MAINTAINER? &lt;?MAINTAINER_EMAIL?>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.3
+Build-Depends: fpc, lazarus, lcl, lcl-utils, debhelper (>= 8)
+Homepage: https://github.com/artem78/AutoScreenshot
+Vcs-Git: https://github.com/artem78/AutoScreenshot.git
+Vcs-Browser: https://github.com/artem78/AutoScreenshot
+
+Package: ?PACKAGE_NAME?
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, openssl, libssl-dev
+Description: ?DESCRIPTION?
+ ?DESCRIPTION_LONG?
+"/>
+      <Item5 Name="lazpackager/deb/tpl_copyright" Value="Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Source: https://github.com/artem78/AutoScreenshot
+Upstream-Contact: ?MAINTAINER? &lt;?MAINTAINER_EMAIL?>
+
+Files: *
+Copyright: ?COPYRIGHT?
+License: GPL-3
+"/>
+      <Item6 Name="lazpackager/deb/tpl_rules" Value="#!/usr/bin/make -f
+
+ROOT = $(CURDIR)/debian/?PACKAGE_NAME?
+
+override_dh_auto_clean:
+	$(RM) -r lib
+	$(RM) lib *.res ?EXECUTABLE?
+
+override_dh_auto_build:
+	lazbuild --build-mode=&quot;Release&quot; ?PROJECT?
+
+override_dh_auto_install:
+	install -d -m 755 &quot;$(ROOT)/usr/bin&quot;
+	install -s -m 755 ?EXECUTABLE? &quot;$(ROOT)/usr/bin/autoscreenshot&quot;
+	install -d -m 755 &quot;$(ROOT)/usr/share/autoscreenshot&quot;
+	install -d -m 755 &quot;$(ROOT)/usr/share/autoscreenshot/lang&quot;
+	install -m 644 -T &quot;lang/de.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/de.ini&quot;
+	install -m 644 -T &quot;lang/en.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/en.ini&quot;
+	install -m 644 -T &quot;lang/es.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/es.ini&quot;
+	install -m 644 -T &quot;lang/fr.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/fr.ini&quot;
+	install -m 644 -T &quot;lang/pt.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/pt.ini&quot;
+	install -m 644 -T &quot;lang/ru.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/ru.ini&quot;
+	install -m 644 -T &quot;lang/tr.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/tr.ini&quot;
+	install -m 644 -T &quot;lang/uk.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/uk.ini&quot;
+	install -m 644 -T &quot;lang/zh.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/zh.ini&quot;
+
+%:
+	dh $@
+"/>
+      <Item7 Name="lazpackager/description" Value="Automatic screenshot maker"/>
+      <Item8 Name="lazpackager/description_long" Value="Auto Screenshot — application for automatic taking screenshots with specified time interval."/>
+      <Item9 Name="lazpackager/export_cmd" Value="?CP? *.lpi ?TEMPFOLDER?/
+?CP? *.lpr ?TEMPFOLDER?/
+?CP? *.pas ?TEMPFOLDER?/
+?CP? *.lfm ?TEMPFOLDER?/
+?CP? *.ico ?TEMPFOLDER?/
+
+?CP? -r res/ ?TEMPFOLDER?/
+?CP? *.inc ?TEMPFOLDER?/
+?CP? -r libs/ ?TEMPFOLDER?/
+?CP? -r lang/ ?TEMPFOLDER?/"/>
+      <Item10 Name="lazpackager/maintainer" Value="Artem Demin"/>
+      <Item11 Name="lazpackager/maintainer_email" Value="megabyte1024@ya.ru"/>
+      <Item12 Name="lazpackager/package_name" Value="autoscreenshot"/>
+    </CustomData>
     <BuildModes Count="5">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
