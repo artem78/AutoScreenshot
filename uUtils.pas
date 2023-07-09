@@ -419,11 +419,18 @@ begin
 end;
 
 function IsPortable: Boolean;
+{$IfDef Windows}
 var
   UninstallerFileName: String;
+{$EndIf}
 begin
+  {$IfDef Windows}
   UninstallerFileName := ExtractFilePath(Application.ExeName) + 'unins000.exe';
   Result := not FileExists(UninstallerFileName);
+  {$EndIf}
+  {$IfDef Linux}
+  Result := not Application.ExeName.StartsWith('/usr/bin/');
+  {$EndIf}
 end;
 
 function GetUserPicturesDir: WideString;
