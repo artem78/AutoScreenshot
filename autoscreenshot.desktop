@@ -1,0 +1,18 @@
+[Desktop Entry]
+#Version=1.0
+Encoding=UTF-8
+Type=Application
+Name=AutoScreenshot
+#Name[ru]=
+GenericName=Screenshot tool
+#GenericName[ru]=
+Comment=Automatic screenshot capturing
+Comment[ru]=Автоматическое создание снимков экрана
+Exec="/usr/bin/autoscreenshot"
+#StartupNotify=false
+#StartupWMClass=Lmxconverter
+Terminal=false
+Categories=Graphics;Utility;ImageProcessing
+#Icon=autoscreenshot
+Keywords=screenshot;capture;capturing;grabbing
+

@@ -106,6 +106,9 @@ override_dh_auto_install:
 	install -m 644 -T &quot;lang/tr.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/tr.ini&quot;
 	install -m 644 -T &quot;lang/uk.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/uk.ini&quot;
 	install -m 644 -T &quot;lang/zh.ini&quot; &quot;$(ROOT)/usr/share/autoscreenshot/lang/zh.ini&quot;
+	install -d -m 755 &quot;$(ROOT)/usr/share/applications&quot;
+	sed -e &apos;/^\s*#/d; /^\s*$$/d&apos; &quot;autoscreenshot.desktop&quot; > &quot;autoscreenshot_tmp.desktop&quot;
+	install -m 644 &quot;autoscreenshot_tmp.desktop&quot; &quot;$(ROOT)/usr/share/applications&quot;
 
 %:
 	dh $@
@@ -121,7 +124,8 @@ override_dh_auto_install:
 ?CP? -r res/ ?TEMPFOLDER?/
 ?CP? *.inc ?TEMPFOLDER?/
 ?CP? -r libs/ ?TEMPFOLDER?/
-?CP? -r lang/ ?TEMPFOLDER?/"/>
+?CP? -r lang/ ?TEMPFOLDER?/
+?CP? *.desktop ?TEMPFOLDER?/"/>
       <Item10 Name="lazpackager/maintainer" Value="Artem Demin"/>
       <Item11 Name="lazpackager/maintainer_email" Value="megabyte1024@ya.ru"/>
       <Item12 Name="lazpackager/package_name" Value="autoscreenshot"/>
