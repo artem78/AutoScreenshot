@@ -434,14 +434,30 @@ begin
 end;
 
 function GetUserPicturesDir: WideString;
+{$IfDef Linux}
+var
+  CmdRes: AnsiString;
+{$EndIf}
 begin
+  Result := '';
+
   {$IfDef Windows}
   //Result := GetUserDir + 'Pictures';
   Result := GetWindowsSpecialDirUnicode(CSIDL_MYPICTURES);
   {$EndIf}
   {$IfDef Linux}
-  Result := '~/Pictures'; // Not 100% guarantee, but most likely
+  try
+    if RunCommand('xdg-user-dir PICTURES', CmdRes) then
+      Result := Trim(CmdRes);
+  except
+  end;
+
+  if (Result = '') or (not DirectoryExists(Result)) then
+    // As fallback - not 100% guarantee, but most likely
+    Result := ConcatPaths([GetEnvironmentVariable('HOME'), 'Pictures']);
   {$EndIf}
+
+  Result := IncludeTrailingPathDelimiter(Result);
 end;
 
 end.
