@@ -69,7 +69,7 @@ Vcs-Browser: https://github.com/artem78/AutoScreenshot
 
 Package: ?PACKAGE_NAME?
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, openssl, libssl-dev
+Depends: ${shlibs:Depends}, ${misc:Depends}, openssl
 Description: ?DESCRIPTION?
  ?DESCRIPTION_LONG?
 "/>
