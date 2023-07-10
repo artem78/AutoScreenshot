@@ -13,6 +13,6 @@ Exec="/usr/bin/autoscreenshot"
 #StartupWMClass=Lmxconverter
 Terminal=false
 Categories=Graphics;Utility;ImageProcessing
-#Icon=autoscreenshot
+Icon=autoscreenshot
 Keywords=screenshot;capture;capturing;grabbing
 

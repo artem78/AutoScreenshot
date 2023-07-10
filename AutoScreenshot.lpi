@@ -109,6 +109,16 @@ override_dh_auto_install:
 	install -d -m 755 &quot;$(ROOT)/usr/share/applications&quot;
 	sed -e &apos;/^\s*#/d; /^\s*$$/d&apos; &quot;autoscreenshot.desktop&quot; > &quot;autoscreenshot_tmp.desktop&quot;
 	install -m 644 &quot;autoscreenshot_tmp.desktop&quot; &quot;$(ROOT)/usr/share/applications&quot;
+	install -d -m 755 &quot;$(ROOT)/usr/share/icons/hicolor/16x16/apps&quot;
+	install -m 644 -T &quot;res/main_icon_16px.png&quot; &quot;$(ROOT)/usr/share/icons/hicolor/16x16/apps/autoscreenshot.png&quot;
+	install -d -m 755 &quot;$(ROOT)/usr/share/icons/hicolor/24x24/apps&quot;
+	install -m 644 -T &quot;res/main_icon_24px.png&quot; &quot;$(ROOT)/usr/share/icons/hicolor/24x24/apps/autoscreenshot.png&quot;
+	install -d -m 755 &quot;$(ROOT)/usr/share/icons/hicolor/32x32/apps&quot;
+	install -m 644 -T &quot;res/main_icon_32px.png&quot; &quot;$(ROOT)/usr/share/icons/hicolor/32x32/apps/autoscreenshot.png&quot;
+	install -d -m 755 &quot;$(ROOT)/usr/share/icons/hicolor/48x48/apps&quot;
+	install -m 644 -T &quot;res/main_icon_48px.png&quot; &quot;$(ROOT)/usr/share/icons/hicolor/48x48/apps/autoscreenshot.png&quot;
+	install -d -m 755 &quot;$(ROOT)/usr/share/icons/hicolor/64x64/apps&quot;
+	install -m 644 -T &quot;res/main_icon_64px.png&quot; &quot;$(ROOT)/usr/share/icons/hicolor/64x64/apps/autoscreenshot.png&quot;
 
 %:
 	dh $@
