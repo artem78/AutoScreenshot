@@ -82,5 +82,7 @@ sudo apt-get install openssl libssl-dev
 ## Автор
 Artem78 (электропочта для связи: [megabyte1024@ya.ru](mailto:megabyte1024@ya.ru?subject=AutoScreenshot))
 
-## Пожертвования
-Если вам понравился проект, вы можете вознаградить автора материально отправив любую сумму через платёжную систему PayPal на адрес <u>megabyte1024@yandex.com</u> (в примечании платежа укажите "Пожертвование на AutoScreenshot").
+## Вознаградить автора материально
+PayPal: megabyte1024@yandex.com
+
+ETH Ethereum: 0xB14C877b2eAF7E3b4b49df25039122C0545edA74
