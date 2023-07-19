@@ -121,7 +121,9 @@ override_dh_auto_install:
 ?CP? *.inc ?TEMPFOLDER?/
 ?CP? -r libs/ ?TEMPFOLDER?/
 ?CP? -r lang/ ?TEMPFOLDER?/
-?CP? *.desktop ?TEMPFOLDER?/"/>
+?CP? *.desktop ?TEMPFOLDER?/
+
+?CP? -rf debian ?TEMPFOLDER?/"/>
       <Item10 Name="lazpackager/maintainer" Value="Artem Demin"/>
       <Item11 Name="lazpackager/maintainer_email" Value="megabyte1024@ya.ru"/>
       <Item12 Name="lazpackager/package_name" Value="autoscreenshot"/>

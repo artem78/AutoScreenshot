@@ -1,0 +1,14 @@
+#!/bin/sh -e
+
+case "$1" in
+    purge)
+		for i in $(getent passwd | grep "$SHELL" | cut -d: -f6); do
+			rm -rf "$i/.config/AutoScreenshot";
+		done
+    ;;
+
+    *)
+    ;;
+esac
+
+exit 0
