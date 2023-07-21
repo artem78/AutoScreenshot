@@ -77,6 +77,6 @@ Vous êtes libre d'utiliser, modifier ou distribuer ce logiciel sous la licence 
 Artem78 (email: [megabyte1024@ya.ru](mailto:megabyte1024@ya.ru?subject=AutoScreenshot))
 
 ## Faire un don
-PayPal: megabyte1024@yandex.com
-
-ETH Ethereum: 0xB14C877b2eAF7E3b4b49df25039122C0545edA74
+- PayPal: megabyte1024@yandex.com
+- ETH Ethereum: 0xB14C877b2eAF7E3b4b49df25039122C0545edA74
+- Webmoney WMZ: Z598881055273

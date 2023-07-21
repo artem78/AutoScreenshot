@@ -83,6 +83,6 @@ sudo apt-get install openssl libssl-dev
 Artem78 (электропочта для связи: [megabyte1024@ya.ru](mailto:megabyte1024@ya.ru?subject=AutoScreenshot))
 
 ## Вознаградить автора материально
-PayPal: megabyte1024@yandex.com
-
-ETH Ethereum: 0xB14C877b2eAF7E3b4b49df25039122C0545edA74
+- PayPal: megabyte1024@yandex.com
+- ETH Ethereum: 0xB14C877b2eAF7E3b4b49df25039122C0545edA74
+- Webmoney WMZ: Z598881055273
