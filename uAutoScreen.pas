@@ -600,7 +600,6 @@ end;
 procedure TMainForm.HotKetsSettingsMenuItemClick(Sender: TObject);
 var
   HotKeysForm: THotKeysForm;
-  HasErrors: Boolean = False;
 begin
   // ToDo: Reduce amount of code duplicates
 
