@@ -15,6 +15,7 @@ type
     procedure FormCreate(Sender: TObject);
   private
     procedure CopyWalletToClipboard(ASender: TObject);
+    class procedure LoadWalletsData(ASL: TStringList); static;
   public
 
   end;
@@ -24,7 +25,7 @@ var
 
 implementation
 
-uses StdCtrls, Clipbrd, uLocalization;
+uses StdCtrls, Clipbrd, uLocalization, fpjson, opensslsockets, fphttpclient;
 
 {$R *.lfm}
 
@@ -39,12 +40,7 @@ begin
 
   Wallets := TStringList.Create;
   try
-    with Wallets do
-    begin;
-      AddPair('PayPal', 'megabyte1024@yandex.com');
-      AddPair('ETH Ethereum / Tether USDT', '0xB14C877b2eAF7E3b4b49df25039122C0545edA74');
-      AddPair('Webmoney WMZ', 'Z598881055273');
-    end;
+    LoadWalletsData(Wallets);
 
     for I := 0 to Wallets.Count - 1 do
     begin
@@ -97,9 +93,56 @@ var
   Component: TEdit;
 begin
   Component := TEdit(FindPrevComponent(TComponent(ASender)));
-  //Component.SelectAll;
-  //Component.CopyToClipboard;
   Clipboard.AsText := Component.Text;
+end;
+
+class procedure TDonateForm.LoadWalletsData(ASL: TStringList);
+const
+  ApiUrl = 'https://api.github.com/gists/6c79ab382865da9b598927194c52eb09';
+var
+  Http: TFPHTTPClient;
+  Json: TJSONData;
+  Str: String;
+  Enumerator: TBaseJSONEnumerator;
+  PaymentMethod, WalletID: String;
+begin
+  ASL.Clear;
+
+  Http := TFPHttpClient.Create(Nil);
+  try
+    Http.AllowRedirect := True;
+    Http.AddHeader('Accept', 'application/vnd.github+json');
+    Http.AddHeader('User-Agent', 'Auto Screenshot');
+    Json := GetJSON(Http.Get(ApiUrl));
+    try
+      Str := TJSONObject(Json).Objects['files'].Objects['donate_wallets.json'].Strings['content'];
+    finally
+      Json.Free;
+    end;
+
+    Json := GetJSON(Str);
+    try
+      Enumerator := TJSONObject(Json).GetEnumerator;
+      try
+        while Enumerator.MoveNext do
+        begin
+          with TJSONArray(Enumerator.Current.Value) do
+          begin
+            PaymentMethod := Items[0].AsString;
+            WalletID      := Items[1].AsString;
+          end;
+          ASL.AddPair(PaymentMethod, WalletID);
+        end;
+      finally
+        Enumerator.Free;
+      end;
+    finally
+      Json.Free;
+    end;
+
+  finally
+    Http.Free;
+  end;
 end;
 
 end.
