@@ -319,7 +319,7 @@ override_dh_auto_install:
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="17">
+    <Units Count="18">
       <Unit0>
         <Filename Value="AutoScreenshot.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -412,6 +412,14 @@ override_dh_auto_install:
         <IsPartOfProject Value="True"/>
         <UnitName Value="Codebot.Input.Hotkeys"/>
       </Unit16>
+      <Unit17>
+        <Filename Value="udonateform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DonateForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uDonateForm"/>
+      </Unit17>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
