@@ -85,6 +85,12 @@ function MakeZip(){
 	cp -v --preserve=timestamps lang/*.ini "$BuildDir/lang/"
 	echo "Done!"
 	echo ""
+	
+	# Move files to subfolder
+	TmpDir=$(mktemp -d --suffix "-AutoScreenshotBuild")
+	echo "TmpDir=${TmpDir}"
+	#mkdir -p "$TmpDir/AutoScreenshot_${ProgramVersion}"
+	cp -R --preserve=timestamps "$BuildDir" "$TmpDir/AutoScreenshot_${ProgramVersion}"	
 
 	# Pack to ZIP archive
 	### Note! For MinGW (Git Bash) see https://stackoverflow.com/a/55749636 ###
@@ -96,11 +102,13 @@ function MakeZip(){
 	fi
 	ZipPath="$TargetZipDir/AutoScreenshot_${ProgramVersion}_${OsTypeName}_portable.zip"
 	rm -f "$ZipPath"
-	cd "$BuildDir"
+	cd "$TmpDir"
 	zip -r "$ZipPath" *
 	#tar -C "$BuildDir" -cvf "$ZipPath" "$BuildDir/*"
 	echo "Done!"
 	echo ""
+	
+	rm -rf "$TmpDir"
 }
 
 function MakeInstaller(){
