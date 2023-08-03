@@ -254,7 +254,7 @@ var
 initialization
 begin
   {$IfDef Windows}
-  LangDir := AppendPathDelim(ConcatPaths([ProgramDirectory, 'lang']);
+  LangDir := AppendPathDelim(ConcatPaths([ProgramDirectory, 'lang']));
   {$EndIf}
   {$IfDef Linux}
   if IsPortable then
