@@ -314,11 +314,13 @@ end;
 function OldScreenshotsRemovingPeriodUnitToString(AValue: TOldScreenshotsRemovingPeriodUnit): String;
 begin
   Result := GetEnumName(TypeInfo(TOldScreenshotsRemovingPeriodUnit), Ord(AValue));
+  if Result.StartsWith('osrpu') then
+    Result := Result.Remove(0, 5);
 end;
 
 function StringToOldScreenshotsRemovingPeriodUnit(AValue: String): TOldScreenshotsRemovingPeriodUnit;
 begin
-  Result := TOldScreenshotsRemovingPeriodUnit(GetEnumValue(TypeInfo(TOldScreenshotsRemovingPeriodUnit),AValue));
+  Result := TOldScreenshotsRemovingPeriodUnit(GetEnumValue(TypeInfo(TOldScreenshotsRemovingPeriodUnit), 'osrpu' + AValue));
 end;
 
 procedure TMainForm.InitUI;
