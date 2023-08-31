@@ -13,9 +13,11 @@ type
 
   TDonateForm = class(TForm)
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     procedure CopyWalletToClipboard(ASender: TObject);
     class procedure LoadWalletsData(ASL: TStringList); static;
+    class procedure OpenWebPage; static;
   public
 
   end;
@@ -25,7 +27,8 @@ var
 
 implementation
 
-uses StdCtrls, Clipbrd, uLocalization, fpjson, opensslsockets, fphttpclient;
+uses StdCtrls, Clipbrd, LCLIntf, uLocalization, fpjson, opensslsockets,
+  fphttpclient;
 
 {$R *.lfm}
 
@@ -40,39 +43,53 @@ begin
 
   Wallets := TStringList.Create;
   try
-    LoadWalletsData(Wallets);
+    try
+      LoadWalletsData(Wallets);
 
-    for I := 0 to Wallets.Count - 1 do
-    begin
-      with TLabel.Create(Self) do
+      for I := 0 to Wallets.Count - 1 do
       begin
-        Caption := Wallets.Names[I] + ':';
-        BorderSpacing.CellAlignVertical := ccaCenter;
-        BorderSpacing.CellAlignHorizontal := ccaRightBottom;
-        Parent := Self;
-      end;
+        with TLabel.Create(Self) do
+        begin
+          Caption := Wallets.Names[I] + ':';
+          BorderSpacing.CellAlignVertical := ccaCenter;
+          BorderSpacing.CellAlignHorizontal := ccaRightBottom;
+          Parent := Self;
+        end;
 
-      with TEdit.Create(Self) do
-      begin
-        Width := 300;
-        Constraints.MinWidth := Width;
-        Text := Wallets.ValueFromIndex[I];
-        ReadOnly := True;
-        BorderSpacing.CellAlignVertical := ccaCenter;
-        Parent := Self;
-      end;
+        with TEdit.Create(Self) do
+        begin
+          Width := 300;
+          Constraints.MinWidth := Width;
+          Text := Wallets.ValueFromIndex[I];
+          ReadOnly := True;
+          BorderSpacing.CellAlignVertical := ccaCenter;
+          Parent := Self;
+        end;
 
-      with TButton.Create(Self) do
-      begin
-        Caption := Localizer.I18N('Copy');
-        OnClick := @CopyWalletToClipboard;
-        BorderSpacing.CellAlignVertical := ccaCenter;
-        Parent := Self;
+        with TButton.Create(Self) do
+        begin
+          Caption := Localizer.I18N('Copy');
+          OnClick := @CopyWalletToClipboard;
+          BorderSpacing.CellAlignVertical := ccaCenter;
+          Parent := Self;
+        end;
       end;
+    finally
+      Wallets.Free;
     end;
-  finally
-    Wallets.Free;
+  except
+    // No action needed there
   end;
+end;
+
+procedure TDonateForm.FormShow(Sender: TObject);
+begin
+  if ComponentCount = 0 then
+  begin
+    // Open Donate url in web browser as fallback if something goes wrong
+    OpenWebPage;
+    Close;
+  end
 end;
 
 procedure TDonateForm.CopyWalletToClipboard(ASender: TObject);
@@ -143,6 +160,22 @@ begin
   finally
     Http.Free;
   end;
+end;
+
+class procedure TDonateForm.OpenWebPage;
+var
+  Url: String;
+begin
+  case Localizer.LanguageInfo.Code of
+    'fr':
+      Url := 'https://github.com/artem78/AutoScreenshot/blob/master/docs/README-fr.md#faire-un-don';
+    'ru', 'uk':
+      Url := 'https://github.com/artem78/AutoScreenshot/blob/master/docs/README-ru.md#%D0%B2%D0%BE%D0%B7%D0%BD%D0%B0%D0%B3%D1%80%D0%B0%D0%B4%D0%B8%D1%82%D1%8C-%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B0-%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE';
+    else
+      Url := 'https://github.com/artem78/AutoScreenshot/tree/master#donate';
+  end;
+
+  OpenURL(Url);
 end;
 
 end.
