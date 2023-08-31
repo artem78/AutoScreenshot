@@ -14,13 +14,11 @@ uses
   {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf,
-  ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, UniqueInstance,
-  ZStream { for Tcompressionlevel };
+  ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
+  UniqueInstance, ZStream { for Tcompressionlevel };
 
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
-
-  TOldScreenshotsRemovingPeriodUnit = (osrpuHours, osrpuDays, osrpuWeeks, osrpuMonths);
 
   { TMainForm }
 
@@ -155,6 +153,7 @@ type
     FGrayscale: Boolean;
 
     KeyHook: TGlobalKeyHook;
+    OldScreenshotCleaner: TOldScreenshotCleaner;
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -208,16 +207,11 @@ type
     procedure SetCompressionLevel(ALevel: Tcompressionlevel);
     function GetCompressionLevel: Tcompressionlevel;
     procedure UpdateFormAutoSize;
-    procedure SetOldScreenshotsRemovingEnabled(AValue: Boolean);
-    function GetOldScreenshotsRemovingEnabled: Boolean;
-    procedure SetOldScreenshotsRemovingPeriodValue(AValue: Integer {Cardinal});
-    function GetOldScreenshotsRemovingPeriodValue: Integer {Cardinal};
-    procedure SetOldScreenshotsRemovingPeriodUnit(AValue: TOldScreenshotsRemovingPeriodUnit);
-    function GetOldScreenshotsRemovingPeriodUnit: TOldScreenshotsRemovingPeriodUnit;
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
     function OnHotKeysSaving(ASender: TObject; out AErrorMsg: string): Boolean;
+    procedure OnScreenshotCleanerChanged;
 
     {$IfDef Linux}
     procedure OnScreenConfigurationChanged(const AEvent: TXEvent);
@@ -243,13 +237,6 @@ type
     property PostCommand: String read GetPostCommand write SetPostCommand;
     property AutoCheckForUpdates: Boolean read GetAutoCheckForUpdates write SetAutoCheckForUpdates;
     property CompressionLevel: Tcompressionlevel read GetCompressionLevel write SetCompressionLevel;
-    property OldScreenshotsRemovingEnabled: Boolean read GetOldScreenshotsRemovingEnabled
-                                            write SetOldScreenshotsRemovingEnabled;
-    property OldScreenshotsRemovingPeriodValue: Integer read GetOldScreenshotsRemovingPeriodValue
-                                            write SetOldScreenshotsRemovingPeriodValue;
-    property OldScreenshotsRemovingPeriodUnit: TOldScreenshotsRemovingPeriodUnit
-                                            read GetOldScreenshotsRemovingPeriodUnit
-                                            write SetOldScreenshotsRemovingPeriodUnit;
 
     // Messages
     {$IfDef Windows}
@@ -279,7 +266,7 @@ var
 
 implementation
 
-uses uAbout, DateUtils, StrUtils, uUtils, Math, TypInfo,
+uses uAbout, DateUtils, StrUtils, uUtils, Math,
   uFileNameTemplateHelpForm, uIniHelper, UpdateChecker, FileUtil, LCLType, Idle,
   LazLogger;
 
@@ -309,18 +296,6 @@ end;
 function MyGetApplicationName: String;
 begin
   Result := 'AutoScreenshot';
-end;
-
-function OldScreenshotsRemovingPeriodUnitToString(AValue: TOldScreenshotsRemovingPeriodUnit): String;
-begin
-  Result := GetEnumName(TypeInfo(TOldScreenshotsRemovingPeriodUnit), Ord(AValue));
-  if Result.StartsWith('osrpu') then
-    Result := Result.Remove(0, 5);
-end;
-
-function StringToOldScreenshotsRemovingPeriodUnit(AValue: String): TOldScreenshotsRemovingPeriodUnit;
-begin
-  Result := TOldScreenshotsRemovingPeriodUnit(GetEnumValue(TypeInfo(TOldScreenshotsRemovingPeriodUnit), 'osrpu' + AValue));
 end;
 
 procedure TMainForm.InitUI;
@@ -397,8 +372,10 @@ const
   DefaultCounterValue     = MinCounterValue;
   DefaultCounterDigits    = 6;
   DefaultCompressionLevel = cldefault;
-  DefaultOldScreenshotsRemovingPeriodValue = 1;
-  DefaultOldScreenshotsRemovingPeriodUnit = osrpuMonths;
+  DefaultScreenshotCleanerInterval: TInterval = (
+    Val: 1;
+    Unit_: iuMonths
+  );
   
   LogFileName = 'log.txt';
 var
@@ -407,6 +384,8 @@ var
   FmtStr: String;
   Seconds: Integer;
   LogFilePath: String;
+  Interval: TInterval;
+  CleanerActive: Boolean;
 begin
   // Logging
   if Ini.ReadBool(DefaultConfigIniSection, 'Logging', False) then
@@ -521,17 +500,19 @@ begin
   CompressionLevel := Tcompressionlevel(Ini.ReadInteger(DefaultConfigIniSection, 'Compression', Ord(DefaultCompressionLevel)));
 
   // Old screenshots removing
-  OldScreenshotsRemovingEnabled := Ini.ReadBool(DefaultConfigIniSection,
+  CleanerActive := Ini.ReadBool(DefaultConfigIniSection,
                                       'OldScreenshotsRemovingEnabled', False);
-  OldScreenshotsRemovingPeriodValue := Ini.ReadInteger(DefaultConfigIniSection,
+  Interval.Val := Ini.ReadInteger(DefaultConfigIniSection,
                                        'OldScreenshotsRemovingPeriodValue',
-                                       DefaultOldScreenshotsRemovingPeriodValue);
-  OldScreenshotsRemovingPeriodUnit := StringToOldScreenshotsRemovingPeriodUnit(
+                                       DefaultScreenshotCleanerInterval.Val);
+  Interval.Unit_ := StringToIntervalUnit(
       Ini.ReadString(DefaultConfigIniSection,
                      'OldScreenshotsRemovingPeriodUnit',
-                      OldScreenshotsRemovingPeriodUnitToString(DefaultOldScreenshotsRemovingPeriodUnit)
+                      IntervalUnitToString(DefaultScreenshotCleanerInterval.Unit_)
                     )
   );
+  OldScreenshotCleaner.Interval := Interval;
+  OldScreenshotCleaner.Active := CleanerActive;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -570,6 +551,10 @@ begin
     IniFileName := ConcatPaths([GetAppConfigDir(False), 'config.ini']);
   Ini := TIniFile.Create(IniFileName);
   Ini.WriteString(DefaultConfigIniSection, 'ProgramVersion', GetProgramVersionStr);
+
+  OldScreenshotCleaner := TOldScreenshotCleaner.Create;
+  OldScreenshotCleaner.OnChangeCallback := @OnScreenshotCleanerChanged;
+
   ReadSettings;
 
   DebugLn('Program started at ', DateTimeToStr(Now));
@@ -645,8 +630,7 @@ end;
 
 procedure TMainForm.EnableOldScreenshotsRemovingCheckBoxChange(Sender: TObject);
 begin
-  //Ini.WriteBool(DefaultConfigIniSection, 'OldScreenshotsRemovingEnabled', TCheckBox(Sender).Checked);
-  OldScreenshotsRemovingEnabled := TCheckBox(Sender).Checked;
+  OldScreenshotCleaner.Active := TCheckBox(Sender).Checked;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -659,7 +643,7 @@ begin
 
   Grabber.Free;
   KeyHook.Free;
-
+  OldScreenshotCleaner.Free;
   Ini.Free;
 
   DebugLn('Program ended');
@@ -692,14 +676,22 @@ end;
 
 procedure TMainForm.OldScreenshotsRemovingPeriodUnitComboBoxChange(
   Sender: TObject);
+var
+  Interval: TInterval;
 begin
-  OldScreenshotsRemovingPeriodUnit := TOldScreenshotsRemovingPeriodUnit(TComboBox(Sender).ItemIndex);
+  Interval := OldScreenshotCleaner.Interval;
+  Interval.Unit_:= TIntervalUnit(TComboBox(Sender).ItemIndex);
+  OldScreenshotCleaner.Interval := Interval;
 end;
 
 procedure TMainForm.OldScreenshotsRemovingPeriodValueSpinEditChange(
   Sender: TObject);
+var
+  Interval: TInterval;
 begin
-  OldScreenshotsRemovingPeriodValue := TSpinEdit(Sender).Value;
+  Interval := OldScreenshotCleaner.Interval;
+  Interval.Val := TSpinEdit(Sender).Value;
+  OldScreenshotCleaner.Interval := Interval;
 end;
 
 procedure TMainForm.OutputDirEditChange(Sender: TObject);
@@ -1750,41 +1742,6 @@ begin
   {$EndIf}
 end;
 
-procedure TMainForm.SetOldScreenshotsRemovingEnabled(AValue: Boolean);
-begin
-  EnableOldScreenshotsRemovingCheckBox.Checked := AValue;
-  Ini.WriteBool(DefaultConfigIniSection, 'OldScreenshotsRemovingEnabled', AValue);
-end;
-
-function TMainForm.GetOldScreenshotsRemovingEnabled: Boolean;
-begin
-  Result := EnableOldScreenshotsRemovingCheckBox.Checked;
-end;
-
-procedure TMainForm.SetOldScreenshotsRemovingPeriodValue(AValue: Integer);
-begin
-  OldScreenshotsRemovingPeriodValueSpinEdit.Value := AValue;
-  Ini.WriteInteger(DefaultConfigIniSection, 'OldScreenshotsRemovingPeriodValue', AValue);
-end;
-
-function TMainForm.GetOldScreenshotsRemovingPeriodValue: Integer;
-begin
-  Result := OldScreenshotsRemovingPeriodValueSpinEdit.Value;
-end;
-
-procedure TMainForm.SetOldScreenshotsRemovingPeriodUnit(
-  AValue: TOldScreenshotsRemovingPeriodUnit);
-begin
-  OldScreenshotsRemovingPeriodUnitComboBox.ItemIndex := Ord(AValue);
-  Ini.WriteString(DefaultConfigIniSection, 'OldScreenshotsRemovingPeriodUnit',
-                     OldScreenshotsRemovingPeriodUnitToString(AValue));
-end;
-
-function TMainForm.GetOldScreenshotsRemovingPeriodUnit: TOldScreenshotsRemovingPeriodUnit;
-begin
-  Result := TOldScreenshotsRemovingPeriodUnit(OldScreenshotsRemovingPeriodUnitComboBox.ItemIndex);
-end;
-
 procedure TMainForm.OnHotKeyEvent(const AHotKeyId: String);
 begin
   case AHotKeyId of
@@ -1850,6 +1807,18 @@ begin
     AErrorMsg := '';
 
   Result := not HasErrors;
+end;
+
+procedure TMainForm.OnScreenshotCleanerChanged;
+begin
+  EnableOldScreenshotsRemovingCheckBox.Checked := OldScreenshotCleaner.Active;
+  Ini.WriteBool(DefaultConfigIniSection, 'OldScreenshotsRemovingEnabled', OldScreenshotCleaner.Active);
+
+  OldScreenshotsRemovingPeriodValueSpinEdit.Value := OldScreenshotCleaner.Interval.Val;
+  Ini.WriteInteger(DefaultConfigIniSection, 'OldScreenshotsRemovingPeriodValue', OldScreenshotCleaner.Interval.Val);
+
+  OldScreenshotsRemovingPeriodUnitComboBox.ItemIndex := Ord(OldScreenshotCleaner.Interval.Unit_);
+  Ini.WriteString(DefaultConfigIniSection, 'OldScreenshotsRemovingPeriodUnit', IntervalUnitToString(OldScreenshotCleaner.Interval.Unit_));
 end;
 
 {$IfDef Linux}
