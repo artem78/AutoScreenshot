@@ -384,7 +384,6 @@ var
   FmtStr: String;
   Seconds: Integer;
   LogFilePath: String;
-  Interval: TInterval;
   CleanerActive: Boolean;
 begin
   // Logging
@@ -501,17 +500,10 @@ begin
 
   // Old screenshots removing
   CleanerActive := Ini.ReadBool(DefaultConfigIniSection,
-                                      'OldScreenshotsRemovingEnabled', False);
-  Interval.Val := Ini.ReadInteger(DefaultConfigIniSection,
-                                       'OldScreenshotsRemovingPeriodValue',
-                                       DefaultScreenshotCleanerInterval.Val);
-  Interval.Unit_ := StringToIntervalUnit(
-      Ini.ReadString(DefaultConfigIniSection,
-                     'OldScreenshotsRemovingPeriodUnit',
-                      IntervalUnitToString(DefaultScreenshotCleanerInterval.Unit_)
-                    )
-  );
-  OldScreenshotCleaner.Interval := Interval;
+                                'OldScreenshotsRemovingEnabled', False);
+  OldScreenshotCleaner.Interval := TInterval(Ini.ReadString(DefaultConfigIniSection,
+                                             'OldScreenshotsRemovingPeriod',
+                                             String(DefaultScreenshotCleanerInterval)));
   OldScreenshotCleaner.Active := CleanerActive;
 end;
 
@@ -1815,10 +1807,8 @@ begin
   Ini.WriteBool(DefaultConfigIniSection, 'OldScreenshotsRemovingEnabled', OldScreenshotCleaner.Active);
 
   OldScreenshotsRemovingPeriodValueSpinEdit.Value := OldScreenshotCleaner.Interval.Val;
-  Ini.WriteInteger(DefaultConfigIniSection, 'OldScreenshotsRemovingPeriodValue', OldScreenshotCleaner.Interval.Val);
-
   OldScreenshotsRemovingPeriodUnitComboBox.ItemIndex := Ord(OldScreenshotCleaner.Interval.Unit_);
-  Ini.WriteString(DefaultConfigIniSection, 'OldScreenshotsRemovingPeriodUnit', IntervalUnitToString(OldScreenshotCleaner.Interval.Unit_));
+  Ini.WriteString(DefaultConfigIniSection, 'OldScreenshotsRemovingPeriod', String(OldScreenshotCleaner.Interval));
 end;
 
 {$IfDef Linux}

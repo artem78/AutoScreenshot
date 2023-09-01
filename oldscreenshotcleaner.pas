@@ -35,24 +35,40 @@ type
                read FOnChangeCallback write FOnChangeCallback;
   end;
 
-  function IntervalUnitToString(AValue: TIntervalUnit): String;
-  function StringToIntervalUnit(AValue: String): TIntervalUnit;
+  operator explicit (const AInterval: TInterval): String;
+  operator explicit (const AStr: String): TInterval;
 
 implementation
 
-uses TypInfo;
-
-function IntervalUnitToString(AValue: TIntervalUnit): String;
+operator explicit (const AInterval: TInterval): String;
+var
+  UnitShortName: Char;
 begin
-  Result := GetEnumName(TypeInfo(TIntervalUnit), Ord(AValue));
-  if Result.StartsWith('iu') then
-    Result := Result.Remove(0, 2);
+  case AInterval.Unit_ of
+    iuHours:  UnitShortName := 'h';
+    iudays:   UnitShortName := 'd';
+    iuWeeks:  UnitShortName := 'w';
+    iuMonths: UnitShortName := 'm';
+  end;
+
+  Result := IntToStr(AInterval.Val) + UnitShortName;
 end;
 
-function StringToIntervalUnit(AValue: String): TIntervalUnit;
+operator explicit (const AStr: String): TInterval;
+var
+  UnitShortName: Char;
 begin
-  Result := TIntervalUnit(GetEnumValue(TypeInfo(TIntervalUnit), 'iu' + AValue));
+  UnitShortName := AStr[Length(AStr)];
+  case UnitShortName of
+    'h': Result.Unit_ := iuHours;
+    'd': Result.Unit_ := iudays;
+    'w': Result.Unit_ := iuWeeks;
+    'm': Result.Unit_ := iuMonths;
+    else raise Exception.CreateFmt('Unknown unit character ''%s''', [UnitShortName]);
+  end;
+  Result.Val := StrToInt(Copy(AStr, 1, Length(AStr) - 1));
 end;
+
 
 { TOldScreenshotCleaner }
 
