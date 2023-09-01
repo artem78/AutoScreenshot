@@ -372,7 +372,7 @@ const
   DefaultCounterValue     = MinCounterValue;
   DefaultCounterDigits    = 6;
   DefaultCompressionLevel = cldefault;
-  DefaultScreenshotCleanerInterval: TInterval = (
+  DefaultScreenshotCleanerMaxAge: TInterval = (
     Val: 1;
     Unit_: iuMonths
   );
@@ -500,10 +500,10 @@ begin
 
   // Old screenshots removing
   CleanerActive := Ini.ReadBool(DefaultConfigIniSection,
-                                'OldScreenshotsRemovingEnabled', False);
-  OldScreenshotCleaner.Interval := TInterval(Ini.ReadString(DefaultConfigIniSection,
-                                             'OldScreenshotsRemovingPeriod',
-                                             String(DefaultScreenshotCleanerInterval)));
+                                'OldScreenshotCleanerEnabled', False);
+  OldScreenshotCleaner.MaxAge := TInterval(Ini.ReadString(DefaultConfigIniSection,
+                                             'OldScreenshotCleanerMaxAge',
+                                             String(DefaultScreenshotCleanerMaxAge)));
   OldScreenshotCleaner.Active := CleanerActive;
 end;
 
@@ -671,9 +671,9 @@ procedure TMainForm.OldScreenshotsRemovingPeriodUnitComboBoxChange(
 var
   Interval: TInterval;
 begin
-  Interval := OldScreenshotCleaner.Interval;
+  Interval := OldScreenshotCleaner.MaxAge;
   Interval.Unit_:= TIntervalUnit(TComboBox(Sender).ItemIndex);
-  OldScreenshotCleaner.Interval := Interval;
+  OldScreenshotCleaner.MaxAge := Interval;
 end;
 
 procedure TMainForm.OldScreenshotsRemovingPeriodValueSpinEditChange(
@@ -681,9 +681,9 @@ procedure TMainForm.OldScreenshotsRemovingPeriodValueSpinEditChange(
 var
   Interval: TInterval;
 begin
-  Interval := OldScreenshotCleaner.Interval;
+  Interval := OldScreenshotCleaner.MaxAge;
   Interval.Val := TSpinEdit(Sender).Value;
-  OldScreenshotCleaner.Interval := Interval;
+  OldScreenshotCleaner.MaxAge := Interval;
 end;
 
 procedure TMainForm.OutputDirEditChange(Sender: TObject);
@@ -1804,11 +1804,11 @@ end;
 procedure TMainForm.OnScreenshotCleanerChanged;
 begin
   EnableOldScreenshotsRemovingCheckBox.Checked := OldScreenshotCleaner.Active;
-  Ini.WriteBool(DefaultConfigIniSection, 'OldScreenshotsRemovingEnabled', OldScreenshotCleaner.Active);
+  Ini.WriteBool(DefaultConfigIniSection, 'OldScreenshotCleanerEnabled', OldScreenshotCleaner.Active);
 
-  OldScreenshotsRemovingPeriodValueSpinEdit.Value := OldScreenshotCleaner.Interval.Val;
-  OldScreenshotsRemovingPeriodUnitComboBox.ItemIndex := Ord(OldScreenshotCleaner.Interval.Unit_);
-  Ini.WriteString(DefaultConfigIniSection, 'OldScreenshotsRemovingPeriod', String(OldScreenshotCleaner.Interval));
+  OldScreenshotsRemovingPeriodValueSpinEdit.Value := OldScreenshotCleaner.MaxAge.Val;
+  OldScreenshotsRemovingPeriodUnitComboBox.ItemIndex := Ord(OldScreenshotCleaner.MaxAge.Unit_);
+  Ini.WriteString(DefaultConfigIniSection, 'OldScreenshotCleanerMaxAge', String(OldScreenshotCleaner.MaxAge));
 end;
 
 {$IfDef Linux}

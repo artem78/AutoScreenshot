@@ -21,15 +21,15 @@ type
 
   TOldScreenshotCleaner = class
   private
-    FInterval: TInterval;
+    FMaxAge: TInterval;
     FActive: Boolean;
     FOnChangeCallback: TOldScreenshotCleanerChangeCallback;
 
-    procedure SetInterval(AInterval: TInterval);
+    procedure SetMaxAge(AMaxAge: TInterval);
     procedure SetActive(AActive: Boolean);
   public
 
-    property Interval: TInterval read FInterval write SetInterval;
+    property MaxAge: TInterval read FMaxAge write SetMaxAge;
     property Active: Boolean read FActive write SetActive;
     property OnChangeCallback: TOldScreenshotCleanerChangeCallback
                read FOnChangeCallback write FOnChangeCallback;
@@ -72,12 +72,12 @@ end;
 
 { TOldScreenshotCleaner }
 
-procedure TOldScreenshotCleaner.SetInterval(AInterval: TInterval);
+procedure TOldScreenshotCleaner.SetMaxAge(AMaxAge: TInterval);
 begin
-  //if (FInterval.Unit_ = AInterval.Unit_) and (FInterval.Val = AInterval.Val) then
+  //if (FMaxAge.Unit_ = AMaxAge.Unit_) and (FMaxAge.Val = AMaxAge.Val) then
   //  Exit;
 
-  FInterval := AInterval;
+  FMaxAge := AMaxAge;
 
   if Assigned(FOnChangeCallback) then
     FOnChangeCallback;
