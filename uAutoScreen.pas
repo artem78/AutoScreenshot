@@ -1809,6 +1809,9 @@ begin
   OldScreenshotsRemovingPeriodValueSpinEdit.Value := OldScreenshotCleaner.MaxAge.Val;
   OldScreenshotsRemovingPeriodUnitComboBox.ItemIndex := Ord(OldScreenshotCleaner.MaxAge.Unit_);
   Ini.WriteString(DefaultConfigIniSection, 'OldScreenshotCleanerMaxAge', String(OldScreenshotCleaner.MaxAge));
+
+  OldScreenshotsRemovingPeriodValueSpinEdit.Enabled := OldScreenshotCleaner.Active;
+  OldScreenshotsRemovingPeriodUnitComboBox.Enabled := OldScreenshotCleaner.Active;
 end;
 
 {$IfDef Linux}
