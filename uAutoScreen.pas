@@ -301,6 +301,7 @@ end;
 procedure TMainForm.InitUI;
 var
   Fmt: TImageFormat;
+  I: Integer;
 begin
   {$IFOPT D+}
     MainForm.Caption := MainForm.Caption + '    [DEBUG BUILD]';
@@ -353,11 +354,10 @@ begin
   with OldScreenshotCleanerMaxAgeUnitComboBox.Items do
   begin
     Clear;
-    Append('Hours');
-    Append('Days');
-    Append('Weeks');
-    Append('Months');
+    for I := Ord(Low(TIntervalUnit)) to Ord(High(TIntervalUnit)) do
+      Append('');
   end;
+
 end;
 
 procedure TMainForm.ReadSettings;
@@ -1054,6 +1054,15 @@ begin
       Items[1] := Localizer.I18N('CompressionLevelFastest');
       Items[2] := Localizer.I18N('CompressionLevelDefault');
       Items[3] := Localizer.I18N('CompressionLevelMax');
+    end;
+
+    OldScreenshotCleanerEnabledCheckBox.Caption := Localizer.I18N('DeleteScreenshotsOlderThan');
+    with OldScreenshotCleanerMaxAgeUnitComboBox do
+    begin
+      Items[Ord(iuHours)]  := Localizer.I18N('Hours');
+      Items[Ord(iuDays)]   := Localizer.I18N('Days');
+      Items[Ord(iuWeeks)]  := Localizer.I18N('Weeks');
+      Items[Ord(iuMonths)] := Localizer.I18N('Months');
     end;
 
     // Tray icon
