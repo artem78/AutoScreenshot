@@ -104,7 +104,7 @@ object MainForm: TMainForm
     AnchorSideBottom.Side = asrBottom
     Left = 40
     Height = 28
-    Top = 510
+    Top = 481
     Width = 107
     Anchors = [akLeft, akBottom]
     AutoSize = True
@@ -112,7 +112,7 @@ object MainForm: TMainForm
     Caption = 'Take screenshot'
     Constraints.MinWidth = 100
     OnClick = TakeScreenshotButtonClick
-    TabOrder = 12
+    TabOrder = 14
   end
   object OpenOutputDirButton: TButton
     AnchorSideLeft.Control = OutputDirEdit
@@ -143,16 +143,16 @@ object MainForm: TMainForm
     OnClick = StopWhenInactiveCheckBoxClick
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 6
+    TabOrder = 7
   end
   object AutoCaptureControlGroup: TGroupBox
     AnchorSideLeft.Control = Owner
     AnchorSideLeft.Side = asrCenter
-    AnchorSideTop.Control = OldScreenshotsRemovingGroupBox
+    AnchorSideTop.Control = OldScreenshotCleanerPanel
     AnchorSideTop.Side = asrBottom
     Left = 251
     Height = 57
-    Top = 489
+    Top = 460
     Width = 220
     AutoSize = True
     BorderSpacing.Top = 24
@@ -165,7 +165,7 @@ object MainForm: TMainForm
     ChildSizing.ControlsPerLine = 2
     ClientHeight = 40
     ClientWidth = 218
-    TabOrder = 13
+    TabOrder = 15
     object StartAutoCaptureButton: TBitBtn
       Left = 6
       Height = 28
@@ -203,7 +203,7 @@ object MainForm: TMainForm
     Width = 261
     Caption = 'Start auto capture when program starts'
     OnClick = StartCaptureOnStartUpCheckBoxClick
-    TabOrder = 7
+    TabOrder = 8
   end
   object StartMinimizedCheckBox: TCheckBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -215,7 +215,7 @@ object MainForm: TMainForm
     Width = 159
     Caption = 'Start minimized to tray'
     OnClick = StartMinimizedCheckBoxClick
-    TabOrder = 8
+    TabOrder = 9
   end
   object FileNameTemplateComboBox: TComboBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -283,7 +283,7 @@ object MainForm: TMainForm
     Width = 225
     Caption = 'Run application at system startup'
     OnClick = AutoRunCheckBoxClick
-    TabOrder = 9
+    TabOrder = 10
   end
   object MonitorComboBox: TComboBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -303,7 +303,7 @@ object MainForm: TMainForm
     )
     OnChange = MonitorComboBoxChange
     Style = csDropDownList
-    TabOrder = 10
+    TabOrder = 11
   end
   object SeqNumberGroup: TGroupBox
     AnchorSideLeft.Control = OutputDirEdit
@@ -385,7 +385,7 @@ object MainForm: TMainForm
     OnChange = PostCmdEditChange
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 11
+    TabOrder = 12
   end
   object PostCmdLabel: TLabel
     AnchorSideTop.Control = PostCmdEdit
@@ -415,7 +415,7 @@ object MainForm: TMainForm
     ChildSizing.ControlsPerLine = 99
     ClientHeight = 29
     ClientWidth = 856
-    TabOrder = 14
+    TabOrder = 6
     object ImageFormatComboBox: TComboBox
       Left = 0
       Height = 29
@@ -426,7 +426,7 @@ object MainForm: TMainForm
       ItemHeight = 0
       OnChange = ImageFormatComboBoxChange
       Style = csDropDownList
-      TabOrder = 1
+      TabOrder = 0
     end
     object CompressionLevelLabel: TLabel
       Left = 130
@@ -453,7 +453,7 @@ object MainForm: TMainForm
       )
       OnChange = CompressionLevelComboBoxChange
       Style = csDropDownList
-      TabOrder = 0
+      TabOrder = 1
     end
     object JPEGQualityLabel: TLabel
       Left = 379
@@ -517,55 +517,52 @@ object MainForm: TMainForm
       TabOrder = 4
     end
   end
-  object OldScreenshotsRemovingGroupBox: TGroupBox
-    AnchorSideLeft.Control = Owner
+  object OldScreenshotCleanerPanel: TPanel
+    AnchorSideLeft.Control = OutputDirEdit
     AnchorSideTop.Control = PostCmdEdit
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    Left = 15
-    Height = 58
+    Left = 192
+    Height = 29
     Top = 407
-    Width = 693
-    Anchors = [akTop, akLeft, akRight]
+    Width = 367
     AutoSize = True
-    Caption = 'Delete old screenshots'
-    ChildSizing.LeftRightSpacing = 6
-    ChildSizing.TopBottomSpacing = 6
+    BevelOuter = bvNone
     ChildSizing.HorizontalSpacing = 6
     ChildSizing.VerticalSpacing = 6
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 999
-    ClientHeight = 41
-    ClientWidth = 691
-    TabOrder = 15
-    object EnableOldScreenshotsRemovingCheckBox: TCheckBox
-      Left = 6
+    ClientHeight = 29
+    ClientWidth = 367
+    TabOrder = 13
+    object OldScreenshotCleanerEnabledCheckBox: TCheckBox
+      Left = 0
       Height = 29
-      Top = 6
-      Width = 74
-      Caption = 'Enabled'
-      OnChange = EnableOldScreenshotsRemovingCheckBoxChange
+      Top = 0
+      Width = 205
+      Caption = 'Delete screenshots older than'
+      OnChange = OldScreenshotCleanerEnabledCheckBoxChange
       TabOrder = 0
     end
-    object OldScreenshotsRemovingPeriodValueSpinEdit: TSpinEdit
-      Left = 86
+    object OldScreenshotCleanerMaxAgeValueSpinEdit: TSpinEdit
+      Left = 211
       Height = 29
-      Top = 6
+      Top = 0
       Width = 50
       MaxValue = 999
       MinValue = 1
-      OnChange = OldScreenshotsRemovingPeriodValueSpinEditChange
+      OnChange = OldScreenshotCleanerMaxAgeValueSpinEditChange
       TabOrder = 1
       Value = 1
     end
-    object OldScreenshotsRemovingPeriodUnitComboBox: TComboBox
-      Left = 142
+    object OldScreenshotCleanerMaxAgeUnitComboBox: TComboBox
+      Left = 267
       Height = 29
-      Top = 6
+      Top = 0
       Width = 100
       ItemHeight = 0
-      OnChange = OldScreenshotsRemovingPeriodUnitComboBoxChange
+      OnChange = OldScreenshotCleanerMaxAgeUnitComboBoxChange
       Style = csDropDownList
       TabOrder = 2
     end

@@ -24,19 +24,19 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
-    EnableOldScreenshotsRemovingCheckBox: TCheckBox;
-    OldScreenshotsRemovingPeriodUnitComboBox: TComboBox;
     CompressionLevelComboBox: TComboBox;
-    OldScreenshotsRemovingGroupBox: TGroupBox;
+    OldScreenshotCleanerEnabledCheckBox: TCheckBox;
     HotKetsSettingsMenuItem: TMenuItem;
     CompressionLevelLabel: TLabel;
     ImageFormatOptionsPanel: TPanel;
     DonateMenuItem: TMenuItem;
+    OldScreenshotCleanerPanel: TPanel;
+    OldScreenshotCleanerMaxAgeUnitComboBox: TComboBox;
+    OldScreenshotCleanerMaxAgeValueSpinEdit: TSpinEdit;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
     OutputDirEdit: TDirectoryEdit;
-    OldScreenshotsRemovingPeriodValueSpinEdit: TSpinEdit;
     Timer: TTimer;
     OutputDirLabel: TLabel;
     CaptureIntervalLabel: TLabel;
@@ -86,14 +86,14 @@ type
     procedure CheckForUpdatesMenuItemClick(Sender: TObject);
     procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure CompressionLevelComboBoxChange(Sender: TObject);
-    procedure EnableOldScreenshotsRemovingCheckBoxChange(Sender: TObject);
+    procedure OldScreenshotCleanerEnabledCheckBoxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure HotKetsSettingsMenuItemClick(Sender: TObject);
     procedure DonateMenuItemClick(Sender: TObject);
-    procedure OldScreenshotsRemovingPeriodUnitComboBoxChange(Sender: TObject);
-    procedure OldScreenshotsRemovingPeriodValueSpinEditChange(Sender: TObject);
+    procedure OldScreenshotCleanerMaxAgeUnitComboBoxChange(Sender: TObject);
+    procedure OldScreenshotCleanerMaxAgeValueSpinEditChange(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalDateTimePickerChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
@@ -344,13 +344,13 @@ begin
     Append('screenshot %NUM');
   end;
 
-  with OldScreenshotsRemovingPeriodValueSpinEdit do
+  with OldScreenshotCleanerMaxAgeValueSpinEdit do
   begin
     MinValue := MinOldScreenshotsRemovingPeriodValue;
     MaxValue := MaxOldScreenshotsRemovingPeriodValue;
   end;
 
-  with OldScreenshotsRemovingPeriodUnitComboBox.Items do
+  with OldScreenshotCleanerMaxAgeUnitComboBox.Items do
   begin
     Clear;
     Append('Hours');
@@ -620,7 +620,7 @@ begin
   CompressionLevel := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
 end;
 
-procedure TMainForm.EnableOldScreenshotsRemovingCheckBoxChange(Sender: TObject);
+procedure TMainForm.OldScreenshotCleanerEnabledCheckBoxChange(Sender: TObject);
 begin
   OldScreenshotCleaner.Active := TCheckBox(Sender).Checked;
 end;
@@ -666,7 +666,7 @@ begin
   ShowMessage('PayPal: megabyte1024@yandex.com');
 end;
 
-procedure TMainForm.OldScreenshotsRemovingPeriodUnitComboBoxChange(
+procedure TMainForm.OldScreenshotCleanerMaxAgeUnitComboBoxChange(
   Sender: TObject);
 var
   Interval: TInterval;
@@ -676,7 +676,7 @@ begin
   OldScreenshotCleaner.MaxAge := Interval;
 end;
 
-procedure TMainForm.OldScreenshotsRemovingPeriodValueSpinEditChange(
+procedure TMainForm.OldScreenshotCleanerMaxAgeValueSpinEditChange(
   Sender: TObject);
 var
   Interval: TInterval;
@@ -1803,15 +1803,15 @@ end;
 
 procedure TMainForm.OnScreenshotCleanerChanged;
 begin
-  EnableOldScreenshotsRemovingCheckBox.Checked := OldScreenshotCleaner.Active;
+  OldScreenshotCleanerEnabledCheckBox.Checked := OldScreenshotCleaner.Active;
   Ini.WriteBool(DefaultConfigIniSection, 'OldScreenshotCleanerEnabled', OldScreenshotCleaner.Active);
 
-  OldScreenshotsRemovingPeriodValueSpinEdit.Value := OldScreenshotCleaner.MaxAge.Val;
-  OldScreenshotsRemovingPeriodUnitComboBox.ItemIndex := Ord(OldScreenshotCleaner.MaxAge.Unit_);
+  OldScreenshotCleanerMaxAgeValueSpinEdit.Value := OldScreenshotCleaner.MaxAge.Val;
+  OldScreenshotCleanerMaxAgeUnitComboBox.ItemIndex := Ord(OldScreenshotCleaner.MaxAge.Unit_);
   Ini.WriteString(DefaultConfigIniSection, 'OldScreenshotCleanerMaxAge', String(OldScreenshotCleaner.MaxAge));
 
-  OldScreenshotsRemovingPeriodValueSpinEdit.Enabled := OldScreenshotCleaner.Active;
-  OldScreenshotsRemovingPeriodUnitComboBox.Enabled := OldScreenshotCleaner.Active;
+  OldScreenshotCleanerMaxAgeValueSpinEdit.Enabled := OldScreenshotCleaner.Active;
+  OldScreenshotCleanerMaxAgeUnitComboBox.Enabled := OldScreenshotCleaner.Active;
 end;
 
 {$IfDef Linux}
