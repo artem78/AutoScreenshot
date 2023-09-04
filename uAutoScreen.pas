@@ -327,8 +327,8 @@ begin
     Clear;
     Append('screenshot %Y-%M-%D %H-%N-%S');
     Append('%Y' + PathDelim + '%M' + PathDelim + '%D' + PathDelim + 'screenshot %H-%N-%S');
-    Append('%Y-%M' + PathDelim + '%D' + PathDelim + 'screenshot %H-%N-%S ');
-    Append('%COMP' + PathDelim + '%USER' + PathDelim + 'screenshot %Y-%M-%D %H-%N-%S ');
+    Append('%Y-%M' + PathDelim + '%D' + PathDelim + 'screenshot %H-%N-%S');
+    Append('%COMP' + PathDelim + '%USER' + PathDelim + 'screenshot %Y-%M-%D %H-%N-%S');
     Append('screenshot %NUM');
   end;
 end;
