@@ -88,7 +88,20 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+            <CustomOptions Value="-dBorland
+-dVer150
+-dDelphi7
+-dCompiler6_Up
+-dPUREPASCAL
+-dSIMULATE_OLD_FILES_DELETION"/>
+            <OtherDefines Count="6">
+              <Define0 Value="Borland"/>
+              <Define1 Value="Ver150"/>
+              <Define2 Value="Delphi7"/>
+              <Define3 Value="Compiler6_Up"/>
+              <Define4 Value="PUREPASCAL"/>
+              <Define5 Value="SIMULATE_OLD_FILES_DELETION"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>

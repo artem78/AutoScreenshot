@@ -75,6 +75,13 @@ procedure RunCmdInbackground(ACmd: String);
 function IsPortable: Boolean;
 function GetUserPicturesDir: WideString;
 
+type
+  TDeleteOldFilesCallback = procedure of Object;
+
+procedure DeleteOldFiles(const ADir: string; AMaxDateTime: TDateTime;
+  AIncludeSubdirs: Boolean; const AAllowedExtensions: array of {String} AnsiString;
+  ADeleteEmptyDirs: Boolean; ACallback: TDeleteOldFilesCallback = Nil);
+
 implementation
 
 uses
@@ -84,7 +91,8 @@ uses
   {$IfDef Linux}
   Unix, LazUTF8, LazFileUtils,
   {$EndIf}
-  SysUtils, Classes, DateUtils, StrUtils, uLanguages, Forms {???}, FileInfo, process;
+  SysUtils, Classes, DateUtils, StrUtils, uLanguages, Forms {???}, FileInfo, process,
+  FileUtil, LazLogger;
 
 {$IfDef Windows}
 const
@@ -435,6 +443,120 @@ begin
   {$IfDef Linux}
   Result := '~/Pictures'; // Not 100% guarantee, but most likely
   {$EndIf}
+end;
+
+procedure DeleteOldFiles(const ADir: string; AMaxDateTime: TDateTime;
+  AIncludeSubdirs: Boolean; const AAllowedExtensions: array of {String} AnsiString;
+  ADeleteEmptyDirs: Boolean; ACallback: TDeleteOldFilesCallback);
+
+  function IsEmptyDirectory(ADir: String): Boolean;
+  var
+    SearchRecResult: TSearchRec;
+  begin
+    Result := True;
+
+    if FindFirst(ConcatPaths([ADir, '*']), faAnyFile, SearchRecResult) = 0 then
+    begin
+      repeat
+        if (SearchRecResult.Name = '.') or (SearchRecResult.Name = '..') then
+          Continue;
+
+        Result := False;
+        Break;
+      until FindNext(SearchRecResult) <> 0;
+      FindClose(SearchRecResult);
+    end;
+  end;
+var
+  SearchRec: TSearchRec;
+  ExtList: TStringList;
+  Ext: String;
+  FullName: String;
+  Res: Boolean;
+begin
+  ExtList := TStringList.Create;
+  try
+    ExtList.CaseSensitive := False;
+    ExtList.Duplicates := dupIgnore;
+    ExtList.Sorted := True;
+
+    for Ext in AAllowedExtensions do
+      ExtList.Add(Ext);
+
+    {DebugLn}DebugLnEnter('Prepare for clean "%s" directory from old files', [ADir]);
+    //DebugLn('Allowed extensions: ', ExtList.CommaText);
+
+    if FindFirst(ConcatPaths([ADir, '*']), faAnyFile, SearchRec) = 0 then
+    begin
+      try
+        repeat
+          if Assigned(ACallback) then
+            ACallback;
+
+          FullName := ConcatPaths([ADir, SearchRec.Name]);
+
+          if (SearchRec.Attr and faDirectory) = faDirectory then
+          begin
+            if (SearchRec.Name = '.') or (SearchRec.Name = '..') then
+              Continue;
+
+            if AIncludeSubdirs then
+              DeleteOldFiles(ConcatPaths([ADir, SearchRec.Name]), AMaxDateTime,
+                             AIncludeSubdirs, AAllowedExtensions, ADeleteEmptyDirs);
+
+            Continue;
+          end;
+
+          if ExtList.Count > 0 then
+          begin
+            Ext := ExtractFileExt(SearchRec.Name);
+            if (Length(Ext) > 0) and (Ext[1] = '.') then
+              Delete(Ext, 1, 1); // Delete dot before extension
+            if ExtList.IndexOf(Ext) = -1 then
+            begin
+              DebugLn('Skip "%s" with excluded extension', [FullName]);
+              Continue;
+            end;
+          end;
+
+          if SearchRec.TimeStamp >= AMaxDateTime then
+          begin
+            DebugLn('Skip new file "%s" with date %s', [FullName, DateTimeToStr(SearchRec.TimeStamp)]);
+            Continue;
+          end;
+
+          DebugLn('Try to delete "%s" with date %s ...', [FullName, DateTimeToStr(SearchRec.TimeStamp)]);
+{$IfDef SIMULATE_OLD_FILES_DELETION}
+          DebugLn('[ Simulation! ]');
+          Res := True;
+{$Else}
+          Res := DeleteFile(FullName);
+{$EndIf}
+          DebugLn(IfThen(Res, 'Ok', 'Failed!'));
+        until FindNext(SearchRec) <> 0;
+      finally
+        FindClose(SearchRec);
+      end;
+    end;
+
+    if ADeleteEmptyDirs and IsEmptyDirectory(ADir) then
+    begin
+      DebugLn('Try to delete empty directory "%s" ...', [ADir]);
+{$IfDef SIMULATE_OLD_FILES_DELETION}
+        DebugLn('[ Simulation! ]');
+        Res := True;
+{$Else}
+        Res := DeleteDirectory(ADir, False);
+{$EndIf}
+      DebugLn(IfThen(Res, 'Ok', 'Failed!'));
+    end;
+
+  finally
+    ExtList.Free;
+  end;
+
+  DebugLn('Old files cleaning in directory "%s" finished',  [ADir]);
+  DebugLnExit;
 end;
 
 end.
