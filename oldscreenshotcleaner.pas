@@ -46,7 +46,7 @@ var
 begin
   case AInterval.Unit_ of
     iuHours:  UnitShortName := 'h';
-    iudays:   UnitShortName := 'd';
+    iuDays:   UnitShortName := 'd';
     iuWeeks:  UnitShortName := 'w';
     iuMonths: UnitShortName := 'm';
   end;
@@ -61,7 +61,7 @@ begin
   UnitShortName := AStr[Length(AStr)];
   case UnitShortName of
     'h': Result.Unit_ := iuHours;
-    'd': Result.Unit_ := iudays;
+    'd': Result.Unit_ := iuDays;
     'w': Result.Unit_ := iuWeeks;
     'm': Result.Unit_ := iuMonths;
     else raise Exception.CreateFmt('Unknown unit character ''%s''', [UnitShortName]);
