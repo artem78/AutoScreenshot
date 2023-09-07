@@ -549,7 +549,7 @@ begin
 
           if FileTime >= AMaxDateTime then
           begin
-            DebugLn('Skip new file "%s" with date %s', [FullName, DateTimeToStr(FileTime)]);
+            DebugLn('Skip file "%s" with date %s', [FullName, DateTimeToStr(FileTime)]);
             Continue;
           end;
 

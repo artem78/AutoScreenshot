@@ -194,7 +194,8 @@ procedure TOldScreenshotCleaner.Start;
 begin
   if not Timer.Enabled then
   begin
-    Timer.Interval := 1 * MSecsPerSec; // For the first run only, will be increased later
+    Timer.Interval := 1 * MSecsPerSec; // To start immediately, will be
+                                       // increased later after first run
     Timer.Enabled := True;
     DebugLn('Old screenshot cleaner started');
   end;
