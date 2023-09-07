@@ -268,7 +268,7 @@ implementation
 
 uses uAbout, DateUtils, StrUtils, uUtils, Math,
   uFileNameTemplateHelpForm, uIniHelper, UpdateChecker, FileUtil, LCLType, Idle,
-  LazLogger;
+  uDonateForm, LazLogger;
 
 {$R *.lfm}
 
@@ -662,7 +662,14 @@ end;
 
 procedure TMainForm.DonateMenuItemClick(Sender: TObject);
 begin
-  ShowMessage('PayPal: megabyte1024@yandex.com');
+  with TDonateForm.Create(Self) do
+  begin
+    try
+      ShowModal;
+    finally
+      Free;
+    end;
+  end;
 end;
 
 procedure TMainForm.OldScreenshotCleanerMaxAgeUnitComboBoxChange(

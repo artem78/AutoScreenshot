@@ -1,0 +1,19 @@
+object DonateForm: TDonateForm
+  Left = 260
+  Height = 240
+  Top = 250
+  Width = 320
+  AutoSize = True
+  BorderStyle = bsDialog
+  Caption = 'DonateForm'
+  ChildSizing.LeftRightSpacing = 15
+  ChildSizing.TopBottomSpacing = 15
+  ChildSizing.HorizontalSpacing = 6
+  ChildSizing.VerticalSpacing = 6
+  ChildSizing.Layout = cclLeftToRightThenTopToBottom
+  ChildSizing.ControlsPerLine = 3
+  OnCreate = FormCreate
+  OnShow = FormShow
+  Position = poOwnerFormCenter
+  LCLVersion = '2.2.4.0'
+end

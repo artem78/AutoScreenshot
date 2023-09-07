@@ -418,6 +418,14 @@ override_dh_auto_install:
         <IsPartOfProject Value="True"/>
         <UnitName Value="OldScreenshotCleaner"/>
       </Unit17>
+      <Unit18>
+        <Filename Value="udonateform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DonateForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uDonateForm"/>
+      </Unit18>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
