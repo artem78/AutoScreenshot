@@ -445,6 +445,24 @@ begin
   {$EndIf}
 end;
 
+{$IfDef Windows}
+function FileCreatedTime(const ASearchRec: TSearchRec): TDateTime;
+// Source: https://www.cyberforum.ru/post10364301.html+}
+var
+  t1:TFILETIME;
+  t2:TSYSTEMTIME;
+begin
+  FileTimeToLocalFileTime(ASearchRec.FindData.ftCreationTime,t1);
+  FileTimeToSystemTime(t1,t2);
+  Result := SystemTimeToDateTime(t2);
+end;
+{$EndIf}
+
+function FileModifiedTime(const ASearchRec: TSearchRec): TDateTime; inline;
+begin
+  Result := ASearchRec.TimeStamp;
+end;
+
 procedure DeleteOldFiles(const ADir: string; AMaxDateTime: TDateTime;
   AIncludeSubdirs: Boolean; const AAllowedExtensions: array of {String} AnsiString;
   ADeleteEmptyDirs: Boolean; ACallback: TDeleteOldFilesCallback);
@@ -473,6 +491,7 @@ var
   Ext: String;
   FullName: String;
   Res: Boolean;
+  FileTime: TDateTime;
 begin
   ExtList := TStringList.Create;
   try
@@ -519,13 +538,22 @@ begin
             end;
           end;
 
-          if SearchRec.TimeStamp >= AMaxDateTime then
+          {$IfDef Windows}
+          FileTime := FileCreatedTime(SearchRec);
+          {$EndIf}
+          {$IfDef Linux}
+          // On Linux getting creation time is not always possible and not easy,
+          // therefore modification time used instead.
+          FileTime := FileModifiedTime(SearchRec);
+          {$EndIf}
+
+          if FileTime >= AMaxDateTime then
           begin
-            DebugLn('Skip new file "%s" with date %s', [FullName, DateTimeToStr(SearchRec.TimeStamp)]);
+            DebugLn('Skip new file "%s" with date %s', [FullName, DateTimeToStr(FileTime)]);
             Continue;
           end;
 
-          DebugLn('Try to delete "%s" with date %s ...', [FullName, DateTimeToStr(SearchRec.TimeStamp)]);
+          DebugLn('Try to delete "%s" with date %s ...', [FullName, DateTimeToStr(FileTime)]);
 {$IfDef SIMULATE_OLD_FILES_DELETION}
           DebugLn('[ Simulation! ]');
           Res := True;
