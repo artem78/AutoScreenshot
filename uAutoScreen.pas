@@ -14,8 +14,8 @@ uses
   {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf,
-  ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, UniqueInstance,
-  ZStream { for Tcompressionlevel };
+  ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
+  UniqueInstance, ZStream { for Tcompressionlevel };
 
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
@@ -25,10 +25,14 @@ type
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
     CompressionLevelComboBox: TComboBox;
+    OldScreenshotCleanerEnabledCheckBox: TCheckBox;
     HotKetsSettingsMenuItem: TMenuItem;
     CompressionLevelLabel: TLabel;
     ImageFormatOptionsPanel: TPanel;
     DonateMenuItem: TMenuItem;
+    OldScreenshotCleanerPanel: TPanel;
+    OldScreenshotCleanerMaxAgeUnitComboBox: TComboBox;
+    OldScreenshotCleanerMaxAgeValueSpinEdit: TSpinEdit;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
@@ -82,11 +86,14 @@ type
     procedure CheckForUpdatesMenuItemClick(Sender: TObject);
     procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure CompressionLevelComboBoxChange(Sender: TObject);
+    procedure OldScreenshotCleanerEnabledCheckBoxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure HotKetsSettingsMenuItemClick(Sender: TObject);
     procedure DonateMenuItemClick(Sender: TObject);
+    procedure OldScreenshotCleanerMaxAgeUnitComboBoxChange(Sender: TObject);
+    procedure OldScreenshotCleanerMaxAgeValueSpinEditChange(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalDateTimePickerChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
@@ -146,6 +153,7 @@ type
     FGrayscale: Boolean;
 
     KeyHook: TGlobalKeyHook;
+    OldScreenshotCleaner: TOldScreenshotCleaner;
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -203,6 +211,7 @@ type
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
     function OnHotKeysSaving(ASender: TObject; out AErrorMsg: string): Boolean;
+    procedure OnScreenshotCleanerChanged;
 
     {$IfDef Linux}
     procedure OnScreenConfigurationChanged(const AEvent: TXEvent);
@@ -248,6 +257,8 @@ const
   MinCounterDigits = 1;
   MaxCounterDigits = 10;
   UpdateCheckIntervalInSeconds = 3 * 24 * 60 * 60; // Every 3 days
+  MinOldScreenshotsRemovingPeriodValue = 1;
+  MaxOldScreenshotsRemovingPeriodValue = 999;
 
 var
   MainForm: TMainForm;
@@ -255,8 +266,9 @@ var
 
 implementation
 
-uses uAbout, DateUtils, StrUtils, uUtils, Math, uFileNameTemplateHelpForm,
-  uIniHelper, UpdateChecker, FileUtil, LCLType, Idle, LazLogger;
+uses uAbout, DateUtils, StrUtils, uUtils, Math,
+  uFileNameTemplateHelpForm, uIniHelper, UpdateChecker, FileUtil, LCLType, Idle,
+  LazLogger;
 
 {$R *.lfm}
 
@@ -289,6 +301,7 @@ end;
 procedure TMainForm.InitUI;
 var
   Fmt: TImageFormat;
+  I: Integer;
 begin
   {$IFOPT D+}
     MainForm.Caption := MainForm.Caption + '    [DEBUG BUILD]';
@@ -331,6 +344,20 @@ begin
     Append('%COMP' + PathDelim + '%USER' + PathDelim + 'screenshot %Y-%M-%D %H-%N-%S');
     Append('screenshot %NUM');
   end;
+
+  with OldScreenshotCleanerMaxAgeValueSpinEdit do
+  begin
+    MinValue := MinOldScreenshotsRemovingPeriodValue;
+    MaxValue := MaxOldScreenshotsRemovingPeriodValue;
+  end;
+
+  with OldScreenshotCleanerMaxAgeUnitComboBox.Items do
+  begin
+    Clear;
+    for I := Ord(Low(TIntervalUnit)) to Ord(High(TIntervalUnit)) do
+      Append('');
+  end;
+
 end;
 
 procedure TMainForm.ReadSettings;
@@ -345,6 +372,10 @@ const
   DefaultCounterValue     = MinCounterValue;
   DefaultCounterDigits    = 6;
   DefaultCompressionLevel = cldefault;
+  DefaultScreenshotCleanerMaxAge: TInterval = (
+    Val: 1;
+    Unit_: iuMonths
+  );
   
   LogFileName = 'log.txt';
 var
@@ -353,6 +384,7 @@ var
   FmtStr: String;
   Seconds: Integer;
   LogFilePath: String;
+  CleanerActive: Boolean;
 begin
   // Logging
   if Ini.ReadBool(DefaultConfigIniSection, 'Logging', False) then
@@ -465,6 +497,14 @@ begin
 
   // Compression level
   CompressionLevel := Tcompressionlevel(Ini.ReadInteger(DefaultConfigIniSection, 'Compression', Ord(DefaultCompressionLevel)));
+
+  // Old screenshots removing
+  CleanerActive := Ini.ReadBool(DefaultConfigIniSection,
+                                'OldScreenshotCleanerEnabled', False);
+  OldScreenshotCleaner.MaxAge := TInterval(Ini.ReadString(DefaultConfigIniSection,
+                                             'OldScreenshotCleanerMaxAge',
+                                             String(DefaultScreenshotCleanerMaxAge)));
+  OldScreenshotCleaner.Active := CleanerActive;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -503,6 +543,10 @@ begin
     IniFileName := ConcatPaths([GetAppConfigDir(False), 'config.ini']);
   Ini := TIniFile.Create(IniFileName);
   Ini.WriteString(DefaultConfigIniSection, 'ProgramVersion', GetProgramVersionStr);
+
+  OldScreenshotCleaner := TOldScreenshotCleaner.Create;
+  OldScreenshotCleaner.OnChangeCallback := @OnScreenshotCleanerChanged;
+
   ReadSettings;
 
   DebugLn('Program started at ', DateTimeToStr(Now));
@@ -576,6 +620,11 @@ begin
   CompressionLevel := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
 end;
 
+procedure TMainForm.OldScreenshotCleanerEnabledCheckBoxChange(Sender: TObject);
+begin
+  OldScreenshotCleaner.Active := TCheckBox(Sender).Checked;
+end;
+
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   {$IfDef Linux}
@@ -586,7 +635,7 @@ begin
 
   Grabber.Free;
   KeyHook.Free;
-
+  OldScreenshotCleaner.Free;
   Ini.Free;
 
   DebugLn('Program ended');
@@ -614,6 +663,26 @@ end;
 procedure TMainForm.DonateMenuItemClick(Sender: TObject);
 begin
   ShowMessage('PayPal: megabyte1024@yandex.com');
+end;
+
+procedure TMainForm.OldScreenshotCleanerMaxAgeUnitComboBoxChange(
+  Sender: TObject);
+var
+  Interval: TInterval;
+begin
+  Interval := OldScreenshotCleaner.MaxAge;
+  Interval.Unit_:= TIntervalUnit(TComboBox(Sender).ItemIndex);
+  OldScreenshotCleaner.MaxAge := Interval;
+end;
+
+procedure TMainForm.OldScreenshotCleanerMaxAgeValueSpinEditChange(
+  Sender: TObject);
+var
+  Interval: TInterval;
+begin
+  Interval := OldScreenshotCleaner.MaxAge;
+  Interval.Val := TSpinEdit(Sender).Value;
+  OldScreenshotCleaner.MaxAge := Interval;
 end;
 
 procedure TMainForm.OutputDirEditChange(Sender: TObject);
@@ -984,6 +1053,15 @@ begin
       Items[1] := Localizer.I18N('CompressionLevelFastest');
       Items[2] := Localizer.I18N('CompressionLevelDefault');
       Items[3] := Localizer.I18N('CompressionLevelMax');
+    end;
+
+    OldScreenshotCleanerEnabledCheckBox.Caption := Localizer.I18N('DeleteScreenshotsOlderThan');
+    with OldScreenshotCleanerMaxAgeUnitComboBox do
+    begin
+      Items[Ord(iuHours)]  := Localizer.I18N('Hours');
+      Items[Ord(iuDays)]   := Localizer.I18N('Days');
+      Items[Ord(iuWeeks)]  := Localizer.I18N('Weeks');
+      Items[Ord(iuMonths)] := Localizer.I18N('Months');
     end;
 
     // Tray icon
@@ -1729,6 +1807,19 @@ begin
     AErrorMsg := '';
 
   Result := not HasErrors;
+end;
+
+procedure TMainForm.OnScreenshotCleanerChanged;
+begin
+  OldScreenshotCleanerEnabledCheckBox.Checked := OldScreenshotCleaner.Active;
+  Ini.WriteBool(DefaultConfigIniSection, 'OldScreenshotCleanerEnabled', OldScreenshotCleaner.Active);
+
+  OldScreenshotCleanerMaxAgeValueSpinEdit.Value := OldScreenshotCleaner.MaxAge.Val;
+  OldScreenshotCleanerMaxAgeUnitComboBox.ItemIndex := Ord(OldScreenshotCleaner.MaxAge.Unit_);
+  Ini.WriteString(DefaultConfigIniSection, 'OldScreenshotCleanerMaxAge', String(OldScreenshotCleaner.MaxAge));
+
+  OldScreenshotCleanerMaxAgeValueSpinEdit.Enabled := OldScreenshotCleaner.Active;
+  OldScreenshotCleanerMaxAgeUnitComboBox.Enabled := OldScreenshotCleaner.Active;
 end;
 
 {$IfDef Linux}
