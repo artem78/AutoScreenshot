@@ -61,7 +61,7 @@ const
   {$IFOPT D+}
     5 * MSecsPerSec;
   {$Else}
-    0.5 * MSecsPerSec * SecsPerHour; // 30 minutes
+    30 * MSecsPerSec * SecsPerMin; // 30 minutes
   {$ENDIF}
 
 operator explicit (const AInterval: TInterval): String;
