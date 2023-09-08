@@ -320,7 +320,7 @@ override_dh_auto_install:
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="18">
+    <Units Count="19">
       <Unit0>
         <Filename Value="AutoScreenshot.lpr"/>
         <IsPartOfProject Value="True"/>
