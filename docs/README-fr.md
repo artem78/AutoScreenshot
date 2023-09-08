@@ -59,7 +59,7 @@ Auto Screenshot
 
 La dernière version pour Windows est disponible [ici](https://github.com/artem78/AutoScreenshot/releases/latest). Vous pouvez choisir entre la version portable zip ou l'installeur.
 
-### Version Linux
+### Version Linux <!-- Todo: update section -->
 [Télécharger](https://github.com/artem78/AutoScreenshot/releases/tag/v1.10.4-linux.alpha.1)
 
 Noter que c'est une **Alpha** et certaines fonctionnalités de la version Windows ne sont pas encore implémentées  

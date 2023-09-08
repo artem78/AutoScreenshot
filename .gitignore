@@ -62,3 +62,7 @@ dunit.ini
 /Test/AutoScreenshotTest
 /Test/AutoScreenshotTestGUI
 /*log.txt
+
+# Linux build files
+/DEBUILD/
+/DEBUILD.sh

@@ -47,6 +47,87 @@
       <MinorVersionNr Value="12"/>
       <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.12"/>
     </VersionInfo>
+    <CustomData Count="13">
+      <Item0 Name="lazpackager/copyright" Value="2020-2023, Artem Demin &lt;megabyte1024@ya.ru>"/>
+      <Item1 Name="lazpackager/deb/ppa" Value="ppa:artem78/autoscreenshot"/>
+      <Item2 Name="lazpackager/deb/series" Value="precise"/>
+      <Item3 Name="lazpackager/deb/tpl_changelog" Value="?PACKAGE_NAME? (?FULLVERSION?) ?SERIES?; urgency=low
+
+  * Original version ?VERSION? packaged with lazdebian
+
+ -- ?MAINTAINER? &lt;?MAINTAINER_EMAIL?>  ?DATER?
+"/>
+      <Item4 Name="lazpackager/deb/tpl_control" Value="Source: ?PACKAGE_NAME?
+Maintainer: ?MAINTAINER? &lt;?MAINTAINER_EMAIL?>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.3
+Build-Depends: fpc, lazarus, lcl, lcl-utils, debhelper (>= 8)
+Homepage: https://github.com/artem78/AutoScreenshot
+Vcs-Git: https://github.com/artem78/AutoScreenshot.git
+Vcs-Browser: https://github.com/artem78/AutoScreenshot
+
+Package: ?PACKAGE_NAME?
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, openssl
+Description: ?DESCRIPTION?
+ ?DESCRIPTION_LONG?
+"/>
+      <Item5 Name="lazpackager/deb/tpl_copyright" Value="Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Source: https://github.com/artem78/AutoScreenshot
+Upstream-Contact: ?MAINTAINER? &lt;?MAINTAINER_EMAIL?>
+
+Files: *
+Copyright: ?COPYRIGHT?
+License: GPL-3
+"/>
+      <Item6 Name="lazpackager/deb/tpl_rules" Value="#!/usr/bin/make -f
+
+ROOT = $(CURDIR)/debian/?PACKAGE_NAME?
+
+override_dh_auto_clean:
+	$(RM) -r lib
+	$(RM) lib *.res ?EXECUTABLE?
+
+override_dh_auto_build:
+	lazbuild --build-mode=&quot;Release&quot; ?PROJECT?
+
+override_dh_auto_install:
+	install -d -m 755 &quot;$(ROOT)/usr/bin&quot;
+	install -s -m 755 ?EXECUTABLE? &quot;$(ROOT)/usr/bin/autoscreenshot&quot;
+	install -d -m 755 &quot;$(ROOT)/usr/share/autoscreenshot/lang&quot;
+	cp lang/*.ini &quot;$(ROOT)/usr/share/autoscreenshot/lang/&quot;
+	chmod -R 644 &quot;$(ROOT)/usr/share/autoscreenshot/lang/&quot;
+	install -d -m 755 &quot;$(ROOT)/usr/share/applications&quot;
+	sed -e &apos;/^\s*#/d; /^\s*$$/d&apos; &quot;autoscreenshot.desktop&quot; > &quot;autoscreenshot_tmp.desktop&quot;
+	install -m 644 &quot;autoscreenshot_tmp.desktop&quot; &quot;$(ROOT)/usr/share/applications/autoscreenshot.desktop&quot;
+	for size in $$(ls -1 res | egrep -o main_icon_[0-9]+px.png | egrep -o [0-9]+); do \
+		install -d -m 755 &quot;$(ROOT)/usr/share/icons/hicolor/$${size}x$${size}/apps&quot;; \
+		install -m 644 -T &quot;res/main_icon_$${size}px.png&quot; &quot;$(ROOT)/usr/share/icons/hicolor/$${size}x$${size}/apps/autoscreenshot.png&quot;; \
+	done
+
+%:
+	dh $@
+"/>
+      <Item7 Name="lazpackager/description" Value="Automatic screenshot maker"/>
+      <Item8 Name="lazpackager/description_long" Value="Auto Screenshot — application for automatic taking screenshots with specified time interval."/>
+      <Item9 Name="lazpackager/export_cmd" Value="?CP? *.lpi ?TEMPFOLDER?/
+?CP? *.lpr ?TEMPFOLDER?/
+?CP? *.pas ?TEMPFOLDER?/
+?CP? *.lfm ?TEMPFOLDER?/
+?CP? *.ico ?TEMPFOLDER?/
+
+?CP? -r res/ ?TEMPFOLDER?/
+?CP? *.inc ?TEMPFOLDER?/
+?CP? -r libs/ ?TEMPFOLDER?/
+?CP? -r lang/ ?TEMPFOLDER?/
+?CP? *.desktop ?TEMPFOLDER?/
+
+?CP? -rf debian ?TEMPFOLDER?/"/>
+      <Item10 Name="lazpackager/maintainer" Value="Artem Demin"/>
+      <Item11 Name="lazpackager/maintainer_email" Value="megabyte1024@ya.ru"/>
+      <Item12 Name="lazpackager/package_name" Value="autoscreenshot"/>
+    </CustomData>
     <BuildModes Count="5">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
@@ -88,7 +169,20 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+            <CustomOptions Value="-dBorland
+-dVer150
+-dDelphi7
+-dCompiler6_Up
+-dPUREPASCAL
+-dSIMULATE_OLD_FILES_DELETION"/>
+            <OtherDefines Count="6">
+              <Define0 Value="Borland"/>
+              <Define1 Value="Ver150"/>
+              <Define2 Value="Delphi7"/>
+              <Define3 Value="Compiler6_Up"/>
+              <Define4 Value="PUREPASCAL"/>
+              <Define5 Value="SIMULATE_OLD_FILES_DELETION"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -226,7 +320,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="17">
+    <Units Count="19">
       <Unit0>
         <Filename Value="AutoScreenshot.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -319,6 +413,19 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Codebot.Input.Hotkeys"/>
       </Unit16>
+      <Unit17>
+        <Filename Value="oldscreenshotcleaner.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OldScreenshotCleaner"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="udonateform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DonateForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uDonateForm"/>
+      </Unit18>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
