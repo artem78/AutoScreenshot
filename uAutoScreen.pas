@@ -1765,13 +1765,17 @@ procedure TMainForm.OnDebugLnEvent(Sender: TObject; S: string;
   var Handled: Boolean);
 var
   Callback: {TLazLoggerWriteEvent} procedure(Sender: TObject; S: string; var Handled: Boolean) of object;
+  IndentLevel: Integer;
 begin
   S := Format('[%s]   %s', [FormatDateTime('hh:nn:ss.zzz', Now()), S]);
   Callback := DebugLogger.OnDebugLn;
+  IndentLevel := DebugLogger.NestLvlIndent;
   DebugLogger.OnDebugLn := Nil;
+  DebugLogger.NestLvlIndent := 0;
   try
     DebugLn(S);
   finally
+    DebugLogger.NestLvlIndent := IndentLevel;
     DebugLogger.OnDebugLn := Callback;
   end;
   Handled := True;
