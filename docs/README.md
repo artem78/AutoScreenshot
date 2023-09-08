@@ -25,6 +25,7 @@ Auto Screenshot
 * Multiple screens support
 * High DPI support
 * Can execute custom command after screenshot was taken
+* Clearing old screenshots
 * Absolutely free and open source
 
 ## Screenshots
@@ -58,12 +59,14 @@ Download program [here](https://github.com/artem78/AutoScreenshot/releases/).
 You can choose between portable zip or installer.
 
 ### Linux
-At the moment only portable version is available. I will make deb-package in the future.
+For Linux portable version and deb package available. Tested with Linux Mint and Ubuntu.
 
+<!--
 **Note:** make sure you have installed SSL libraries (including development package) to make networking features enabled, such as update checking.
 ```
 sudo apt-get install openssl libssl-dev
 ```
+-->
 
 ## How can I help?
 * [Report about found bug](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
