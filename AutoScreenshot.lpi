@@ -44,8 +44,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="12"/>
-      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.12"/>
+      <MinorVersionNr Value="13"/>
+      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.13"/>
     </VersionInfo>
     <CustomData Count="13">
       <Item0 Name="lazpackager/copyright" Value="2020-2023, Artem Demin &lt;megabyte1024@ya.ru>"/>
