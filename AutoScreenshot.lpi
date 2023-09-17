@@ -51,11 +51,14 @@
       <Item0 Name="lazpackager/copyright" Value="2020-2023, Artem Demin &lt;megabyte1024@ya.ru>"/>
       <Item1 Name="lazpackager/deb/ppa" Value="ppa:artem78/autoscreenshot"/>
       <Item2 Name="lazpackager/deb/series" Value="precise"/>
-      <Item3 Name="lazpackager/deb/tpl_changelog" Value="?PACKAGE_NAME? (?FULLVERSION?) ?SERIES?; urgency=low
+      <Item3 Name="lazpackager/deb/tpl_changelog" Value="?PACKAGE_NAME? (1.13.0.0-1) precise; urgency=low
 
-  * Original version ?VERSION? packaged with lazdebian
+  * Added old screenshots cleaning feature
+  * Added DEB-package for Linux OS
+  * Removed trailing whitespaces from predefined filename templates
+  * Remade donate window
 
- -- ?MAINTAINER? &lt;?MAINTAINER_EMAIL?>  ?DATER?
+ -- ?MAINTAINER? &lt;?MAINTAINER_EMAIL?>  Fri Sep 8 10:39:27 2023 +0300
 "/>
       <Item4 Name="lazpackager/deb/tpl_control" Value="Source: ?PACKAGE_NAME?
 Maintainer: ?MAINTAINER? &lt;?MAINTAINER_EMAIL?>
