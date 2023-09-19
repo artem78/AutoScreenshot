@@ -159,7 +159,7 @@ begin
       ImgExts.Append(ImageFormatInfoArray[ImgFmt].Extension);
     //DebugLn('ImgExts=', ImgExts.CommaText);
 
-    Dir := MainForm.BaseOutputDirEdit.Directory {TODO: remake this!};
+    Dir := MainForm.BaseOutputDir {TODO: remake this!};
     Assert(not Dir.IsEmpty, 'Wrong path!');
     Assert(Dir <> '/', 'Wrong path!');
 

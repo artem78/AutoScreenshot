@@ -207,6 +207,8 @@ type
     procedure SetCompressionLevel(ALevel: Tcompressionlevel);
     function GetCompressionLevel: Tcompressionlevel;
     procedure UpdateFormAutoSize;
+    procedure SetBaseOutputDir(const ADir: String);
+    function GetBaseOutputDir: String;
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
@@ -220,6 +222,9 @@ type
 
     { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
+  public  /////////
+    property BaseOutputDir: String read GetBaseOutputDir write SetBaseOutputDir;
+  private /////////
     property FinalOutputDir: String read GetFinalOutputDir;
     property ImagePath: String read GetImagePath;
     //property Language: TLanguage read FLanguage write SetLanguage;
@@ -405,10 +410,10 @@ begin
   else
     BaseDir := GetUserPicturesDir();
   DefaultOutputDir := IncludeTrailingPathDelimiter(ConcatPaths([BaseDir, 'screenshots']));
-  BaseOutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
+  BaseOutputDir := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
   // ToDo: Check that directory exists or can be created (with subdirs if needed)
-  if BaseOutputDirEdit.Text = '' then
-    BaseOutputDirEdit.Text := DefaultOutputDir;
+  if BaseOutputDir = '' then
+    BaseOutputDir := DefaultOutputDir;
 
   FileNameTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', DefaultFileNameTemplate);
 
@@ -694,7 +699,7 @@ end;
 
 procedure TMainForm.BaseOutputDirEditChange(Sender: TObject);
 begin
-    Ini.WriteString(DefaultConfigIniSection, 'OutputDir', BaseOutputDirEdit.Text);
+  Ini.WriteString(DefaultConfigIniSection, 'OutputDir', BaseOutputDirEdit.Text);
 end;
 
 procedure TMainForm.CaptureIntervalDateTimePickerChange(Sender: TObject);
@@ -1747,6 +1752,17 @@ begin
   AutoSize := not AutoSize;
   AutoSize := not AutoSize;
   {$EndIf}
+end;
+
+procedure TMainForm.SetBaseOutputDir(const ADir: String);
+begin
+  BaseOutputDirEdit.Directory := ADir;
+  Ini.WriteString(DefaultConfigIniSection, 'OutputDir', ADir);
+end;
+
+function TMainForm.GetBaseOutputDir: String;
+begin
+  Result := BaseOutputDirEdit.Directory;
 end;
 
 procedure TMainForm.OnHotKeyEvent(const AHotKeyId: String);
