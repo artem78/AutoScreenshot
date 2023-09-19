@@ -114,7 +114,7 @@ object MainForm: TMainForm
     OnClick = TakeScreenshotButtonClick
     TabOrder = 14
   end
-  object OpenOutputDirButton: TButton
+  object OpenFinalOutputDirButton: TButton
     AnchorSideLeft.Control = OutputDirEdit
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = OutputDirEdit
@@ -126,7 +126,7 @@ object MainForm: TMainForm
     AutoSize = True
     Caption = 'Open directory'
     Constraints.MinWidth = 100
-    OnClick = OpenOutputDirButtonClick
+    OnClick = OpenFinalOutputDirButtonClick
     ParentShowHint = False
     ShowHint = True
     TabOrder = 1

@@ -45,7 +45,7 @@ type
     TakeScreenshotButton: TButton;
     JPEGQualityLabel: TLabel;
     JPEGQualitySpinEdit: TSpinEdit;
-    OpenOutputDirButton: TButton;
+    OpenFinalOutputDirButton: TButton;
     StopWhenInactiveCheckBox: TCheckBox;
     ImageFormatComboBox: TComboBox;
     JPEGQualityPercentLabel: TLabel;
@@ -103,7 +103,7 @@ type
     procedure StopAutoCaptureButtonClick(Sender: TObject);
     procedure TakeScreenshotButtonClick(Sender: TObject);
     procedure JPEGQualitySpinEditChange(Sender: TObject);
-    procedure OpenOutputDirButtonClick(Sender: TObject);
+    procedure OpenFinalOutputDirButtonClick(Sender: TObject);
     procedure StopWhenInactiveCheckBoxClick(Sender: TObject);
     procedure ImageFormatComboBoxChange(Sender: TObject);
     procedure ToggleAutoCaptureTrayMenuItemClick(Sender: TObject);
@@ -873,7 +873,7 @@ begin
   Result := DirName + FileName + '.' + ImageFormatInfoArray[ImageFormat].Extension;
 end;
 
-procedure TMainForm.OpenOutputDirButtonClick(Sender: TObject);
+procedure TMainForm.OpenFinalOutputDirButtonClick(Sender: TObject);
 begin
   OpenDocument(FinalOutputDir);
 end;
@@ -1028,8 +1028,8 @@ begin
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
     OutputDirEdit.DialogTitle := Localizer.I18N('SelectOutputDirectory');
-    OpenOutputDirButton.Caption := Localizer.I18N('OpenDirectory');
-    OpenOutputDirButton.Hint := Localizer.I18N('OpenDirectoryHint');
+    OpenFinalOutputDirButton.Caption := Localizer.I18N('OpenDirectory');
+    OpenFinalOutputDirButton.Hint := Localizer.I18N('OpenDirectoryHint');
     FileNameTemplateLabel.Caption := Localizer.I18N('FileNameTemplate') + ':';
     CaptureIntervalLabel.Caption := Localizer.I18N('CaptureInterval') + ':';
     StopWhenInactiveCheckBox.Caption := Localizer.I18N('PauseCaptureWhenIdle');
