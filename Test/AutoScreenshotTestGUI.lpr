@@ -4,7 +4,7 @@ program AutoScreenshotTestGUI;
 
 uses
   Interfaces, Forms, GuiTestRunner, fpcunittestrunner, UtilsTests,
-  GrabberTests;
+  GrabberTests, OldScreenshotCleanerTests;
 
 {$R *.res}
 
