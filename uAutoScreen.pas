@@ -36,7 +36,7 @@ type
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
-    OutputDirEdit: TDirectoryEdit;
+    BaseOutputDirEdit: TDirectoryEdit;
     Timer: TTimer;
     OutputDirLabel: TLabel;
     CaptureIntervalLabel: TLabel;
@@ -94,7 +94,7 @@ type
     procedure DonateMenuItemClick(Sender: TObject);
     procedure OldScreenshotCleanerMaxAgeUnitComboBoxChange(Sender: TObject);
     procedure OldScreenshotCleanerMaxAgeValueSpinEditChange(Sender: TObject);
-    procedure OutputDirEditChange(Sender: TObject);
+    procedure BaseOutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalDateTimePickerChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
@@ -405,10 +405,10 @@ begin
   else
     BaseDir := GetUserPicturesDir();
   DefaultOutputDir := IncludeTrailingPathDelimiter(ConcatPaths([BaseDir, 'screenshots']));
-  OutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
+  BaseOutputDirEdit.Text := Ini.ReadString(DefaultConfigIniSection, 'OutputDir', DefaultOutputDir);
   // ToDo: Check that directory exists or can be created (with subdirs if needed)
-  if OutputDirEdit.Text = '' then
-    OutputDirEdit.Text := DefaultOutputDir;
+  if BaseOutputDirEdit.Text = '' then
+    BaseOutputDirEdit.Text := DefaultOutputDir;
 
   FileNameTemplateComboBox.Text := Ini.ReadString(DefaultConfigIniSection, 'FileNameTemplate', DefaultFileNameTemplate);
 
@@ -692,9 +692,9 @@ begin
   OldScreenshotCleaner.MaxAge := Interval;
 end;
 
-procedure TMainForm.OutputDirEditChange(Sender: TObject);
+procedure TMainForm.BaseOutputDirEditChange(Sender: TObject);
 begin
-    Ini.WriteString(DefaultConfigIniSection, 'OutputDir', OutputDirEdit.Text);
+    Ini.WriteString(DefaultConfigIniSection, 'OutputDir', BaseOutputDirEdit.Text);
 end;
 
 procedure TMainForm.CaptureIntervalDateTimePickerChange(Sender: TObject);
@@ -1027,7 +1027,7 @@ begin
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
-    OutputDirEdit.DialogTitle := Localizer.I18N('SelectOutputDirectory');
+    BaseOutputDirEdit.DialogTitle := Localizer.I18N('SelectOutputDirectory');
     OpenFinalOutputDirButton.Caption := Localizer.I18N('OpenDirectory');
     OpenFinalOutputDirButton.Hint := Localizer.I18N('OpenDirectoryHint');
     FileNameTemplateLabel.Caption := Localizer.I18N('FileNameTemplate') + ':';
@@ -1527,7 +1527,7 @@ begin
   MaxWidth := max(MaxWidth, MonitorLabel.Width);
   MaxWidth := max(MaxWidth, PostCmdLabel.Width);
 
-  OutputDirEdit.Left := MaxWidth + ChildSizing.LeftRightSpacing
+  BaseOutputDirEdit.Left := MaxWidth + ChildSizing.LeftRightSpacing
       + ChildSizing.HorizontalSpacing;
 
   // Sequential number group
