@@ -82,6 +82,9 @@ operator explicit (const AStr: String): TInterval;
 var
   UnitShortName: Char;
 begin
+  if AStr.IsEmpty then
+    raise Exception.Create('Empty string given');
+
   UnitShortName := AStr[Length(AStr)];
   case UnitShortName of
     'h': Result.Unit_ := iuHours;
