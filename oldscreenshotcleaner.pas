@@ -23,12 +23,14 @@ type
   private
     FMaxAge: TInterval;
     FOnChangeCallback: TOldScreenshotCleanerChangeCallback;
+    FDir: string;
 
     Timer: TTimer;
 
     procedure SetMaxAge(AMaxAge: TInterval);
     procedure SetActive(AActive: Boolean);
     function GetActive: Boolean;
+    procedure SetDir(const ADir: String);
     procedure DoOnTimer(ASender: TObject);
     procedure UpdateUI;
 
@@ -40,6 +42,8 @@ type
     property Active: Boolean read GetActive write SetActive;
     property OnChangeCallback: TOldScreenshotCleanerChangeCallback
                read FOnChangeCallback write FOnChangeCallback;
+    property Dir: String read FDir write SetDir;
+
     procedure Start;
     procedure Stop;
   end;
@@ -51,10 +55,7 @@ type
 implementation
 
 uses LazLoggerBase, uUtils, ScreenGrabber, DateUtils,
-  ///////////
-  uAutoScreen, Forms
-  ///////////
-  ;
+  forms;
 
 const
   RunInterval: Integer =
@@ -139,12 +140,19 @@ begin
   Result := Timer.Enabled;
 end;
 
+procedure TOldScreenshotCleaner.SetDir(const ADir: String);
+begin
+  FDir := ADir;
+
+  {if Assigned(FOnChangeCallback) then
+    FOnChangeCallback;}
+end;
+
 procedure TOldScreenshotCleaner.DoOnTimer(ASender: TObject);
 var
   MaxDateTime: TDateTime;
   ImgExts: TStringList;
   ImgFmt: TImageFormat;
-  Dir: String;
 begin
   // Set normal timer interval at first run
   if Timer.Interval <> RunInterval then
@@ -159,7 +167,6 @@ begin
       ImgExts.Append(ImageFormatInfoArray[ImgFmt].Extension);
     //DebugLn('ImgExts=', ImgExts.CommaText);
 
-    Dir := MainForm.BaseOutputDir {TODO: remake this!};
     Assert(not Dir.IsEmpty, 'Wrong path!');
     Assert(Dir <> '/', 'Wrong path!');
 

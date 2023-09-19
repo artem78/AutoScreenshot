@@ -699,7 +699,7 @@ end;
 
 procedure TMainForm.BaseOutputDirEditChange(Sender: TObject);
 begin
-  Ini.WriteString(DefaultConfigIniSection, 'OutputDir', BaseOutputDirEdit.Text);
+  BaseOutputDir := BaseOutputDir;
 end;
 
 procedure TMainForm.CaptureIntervalDateTimePickerChange(Sender: TObject);
@@ -1758,6 +1758,7 @@ procedure TMainForm.SetBaseOutputDir(const ADir: String);
 begin
   BaseOutputDirEdit.Directory := ADir;
   Ini.WriteString(DefaultConfigIniSection, 'OutputDir', ADir);
+  OldScreenshotCleaner.Dir := ADir;
 end;
 
 function TMainForm.GetBaseOutputDir: String;
