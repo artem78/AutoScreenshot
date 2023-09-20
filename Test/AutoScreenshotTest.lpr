@@ -4,7 +4,7 @@ program AutoScreenshotTest;
 
 uses
   Interfaces, Forms, consoletestrunner, fpcunittestrunner, UtilsTests,
-  GrabberTests;
+  GrabberTests, OldScreenshotCleanerTests, DeleteOldFilesTests;
 
 {$R *.res}
 
