@@ -573,12 +573,6 @@ object MainForm: TMainForm
     Left = 16
     Top = 124
   end
-  object TrayIcon: TTrayIcon
-    PopUpMenu = TrayIconPopupMenu
-    OnDblClick = TrayIconDblClick
-    Left = 96
-    Top = 124
-  end
   object TrayIconPopupMenu: TPopupMenu
     Left = 136
     Top = 120
@@ -605,13 +599,6 @@ object MainForm: TMainForm
       Caption = 'Quit'
       OnClick = ExitTrayMenuItemClick
     end
-  end
-  object TrayIconAnimationTimer: TTimer
-    Enabled = False
-    Interval = 160
-    OnTimer = TrayIconAnimationTimerTimer
-    Left = 16
-    Top = 168
   end
   object MainMenu: TMainMenu
     Left = 40

@@ -320,7 +320,7 @@ override_dh_auto_install:
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="19">
+    <Units Count="20">
       <Unit0>
         <Filename Value="AutoScreenshot.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -426,6 +426,11 @@ override_dh_auto_install:
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uDonateForm"/>
       </Unit18>
+      <Unit19>
+        <Filename Value="myctrls.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="MyCtrls"/>
+      </Unit19>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

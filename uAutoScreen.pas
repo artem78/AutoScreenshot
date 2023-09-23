@@ -15,10 +15,9 @@ uses
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf,
   ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
-  UniqueInstance, ZStream { for Tcompressionlevel };
+  MyCtrls, UniqueInstance, ZStream { for Tcompressionlevel };
 
 type
-  TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
 
   { TMainForm }
 
@@ -40,7 +39,6 @@ type
     Timer: TTimer;
     OutputDirLabel: TLabel;
     CaptureIntervalLabel: TLabel;
-    TrayIcon: TTrayIcon;
     ImageFormatLabel: TLabel;
     TakeScreenshotButton: TButton;
     JPEGQualityLabel: TLabel;
@@ -68,7 +66,6 @@ type
     ColorDepthLabel: TLabel;
     ColorDepthComboBox: TComboBox;
     CaptureIntervalDateTimePicker: TDateTimePicker;
-    TrayIconAnimationTimer: TTimer;
     AutoRunCheckBox: TCheckBox;
     MonitorLabel: TLabel;
     MonitorComboBox: TComboBox;
@@ -116,7 +113,6 @@ type
     procedure FileNameTemplateHelpButtonClick(Sender: TObject);
     procedure GrayscaleCheckBoxClick(Sender: TObject);
     procedure ColorDepthComboBoxChange(Sender: TObject);
-    procedure TrayIconAnimationTimerTimer(Sender: TObject);
     procedure AutoRunCheckBoxClick(Sender: TObject);
     procedure MonitorComboBoxChange(Sender: TObject);
     procedure AboutMenuItemClick(Sender: TObject);
@@ -132,9 +128,6 @@ type
     AvailableLanguages: TLanguagesArray;
     FLanguage: TLanguageCode;  { ??? }
     FColorDepth: TColorDepth;
-    FTrayIconState: TTrayIconState;
-
-    TrayIconIdx: 1..7;
 
     FCounter: Integer;
     FCounterDigits: Integer {Byte};
@@ -154,6 +147,9 @@ type
 
     KeyHook: TGlobalKeyHook;
     OldScreenshotCleaner: TOldScreenshotCleaner;
+
+    { Components }
+    TrayIcon: TMyTrayIcon;
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -165,7 +161,6 @@ type
     function GetImageFormat: TImageFormat;
     procedure SetColorDepth(AColorDepth: TColorDepth);
     function GetColorDepth: TColorDepth;
-    procedure SetTrayIconState(IconState: TTrayIconState);
     procedure MakeScreenshot;
     procedure MinimizeToTray;
     procedure RestoreFromTray;
@@ -230,7 +225,6 @@ type
     //property Language: TLanguage read FLanguage write SetLanguage;
     property ImageFormat: TImageFormat read GetImageFormat write SetImageFormat;
     property ColorDepth: TColorDepth read GetColorDepth write SetColorDepth;
-    property TrayIconState: TTrayIconState write SetTrayIconState;
     property MonitorId: Integer read GetMonitorId write SetMonitorId;
     property Counter: Integer read FCounter write SetCounter;
     property CounterDigits: {Byte} Integer read FCounterDigits write SetCounterDigits;
@@ -313,7 +307,11 @@ begin
   {$ENDIF}
 
   // Set default tray icon
-  TrayIconState := tisDefault;
+  // Tray icon
+  TrayIcon := TMyTrayIcon.Create;
+  TrayIcon.PopupMenu := TrayIconPopupMenu;
+  TrayIcon.OnDblClick := @TrayIconDblClick;
+  TrayIcon.SetDefaultIcon;
   TrayIcon.Hint := Application.Title;
 
   // Fill combobox with image formats
@@ -642,6 +640,7 @@ begin
   KeyHook.Free;
   OldScreenshotCleaner.Free;
   Ini.Free;
+  TrayIcon.Free;
 
   DebugLn('Program ended');
 end;
@@ -758,9 +757,9 @@ begin
   ToggleAutoCaptureTrayMenuItem.Checked := AEnabled;
   // Tray icon
   if AEnabled then
-    TrayIconState := tisDefault
+    TrayIcon.SetDefaultIcon
   else
-    TrayIconState := tisBlackWhite;
+    TrayIcon.SetInactiveIcon;
 
   if AEnabled then
     DebugLn('Automatic capture started')
@@ -787,7 +786,7 @@ procedure TMainForm.MakeScreenshot;
 var
   Cmd: String;
 begin
-  TrayIconState := tisFlashAnimation;
+  TrayIcon.StartFlashAnimation;
 
   if MonitorId = NoMonitorId then
     Grabber.CaptureAllMonitors(ImagePath)
@@ -1297,48 +1296,6 @@ begin
   else
     raise Exception.CreateFmt('Color depth %d-bit not allowed for %s format',
       [integer(AColorDepth), ImageFormatInfoArray[ImageFormat].Name]);
-end;
-
-procedure TMainForm.SetTrayIconState(IconState: TTrayIconState);
-var
-  ResName: String;
-begin
-  if IconState <> tisFlashAnimation then
-    FTrayIconState := IconState;
-  
-  case IconState of
-    tisBlackWhite: ResName := '_CAMERA_BW';
-    tisFlashAnimation:
-      begin
-        TrayIconIdx := Low(TrayIconIdx);
-        TrayIconAnimationTimer.Enabled := True;
-        ResName := Format('_CAMERA_FLASH_%d', [TrayIconIdx]);
-      end
-    //tisDefault:
-    else ResName := '_CAMERA';
-  end;
-
-  TrayIcon.Icon.LoadFromResourceName(HInstance, ResName);
-end;
-
-procedure TMainForm.TrayIconAnimationTimerTimer(Sender: TObject);
-var
-  ResName: String;
-begin
-  if (TrayIconIdx < High(TrayIconIdx)) then
-  begin
-    Inc(TrayIconIdx);
-    ResName := Format('_CAMERA_FLASH_%d', [TrayIconIdx]);
-    TrayIcon.Icon.LoadFromResourceName(HInstance, ResName);
-  end
-  else
-  begin
-    TrayIconIdx := Low(TrayIconIdx);
-    TrayIconAnimationTimer.Enabled := False; // Stop animation
-
-    // Restore previous tray icon
-    TrayIconState := FTrayIconState;
-  end;
 end;
 
 procedure TMainForm.AutoRunCheckBoxClick(Sender: TObject);
