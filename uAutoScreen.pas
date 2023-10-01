@@ -33,7 +33,7 @@ type
     OldScreenshotCleanerPanel: TPanel;
     OldScreenshotCleanerMaxAgeUnitComboBox: TComboBox;
     OldScreenshotCleanerMaxAgeValueSpinEdit: TSpinEdit;
-    PlaySound: Tplaysound;
+    SoundPlayer: Tplaysound;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
@@ -209,6 +209,7 @@ type
     procedure SetCompressionLevel(ALevel: Tcompressionlevel);
     function GetCompressionLevel: Tcompressionlevel;
     procedure UpdateFormAutoSize;
+    procedure PlaySound(const AFileName: String);
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
@@ -763,14 +764,10 @@ begin
   // Play sound
   if FormInitialized or AEnabled then // Prevent to play "stop" sound immediately after program starts
   begin
-    with PlaySound do
-    begin
-      if AEnabled then
-        SoundFile := ConcatPaths([ProgramDirectory, 'sounds', 'CameraStart4.wav'])
-      else
-        SoundFile := ConcatPaths([ProgramDirectory, 'sounds', 'CameraStop4.wav']);
-      Execute;
-    end;
+    if AEnabled then
+      PlaySound('CameraStart4.wav')
+    else
+      PlaySound('CameraStop4.wav');
   end;
 
   if AEnabled then
@@ -798,11 +795,7 @@ procedure TMainForm.MakeScreenshot;
 var
   Cmd: String;
 begin
-  with PlaySound do
-  begin
-    SoundFile := ConcatPaths([ProgramDirectory, 'sounds', 'Photo1.wav']);
-    Execute;
-  end;
+  PlaySound('Photo1.wav');
   TrayIconState := tisFlashAnimation;
 
   if MonitorId = NoMonitorId then
@@ -1768,6 +1761,15 @@ begin
   AutoSize := not AutoSize;
   AutoSize := not AutoSize;
   {$EndIf}
+end;
+
+procedure TMainForm.PlaySound(const AFileName: String);
+begin
+  with SoundPlayer do
+  begin
+    SoundFile := ConcatPaths([ProgramDirectory, 'sounds', AFileName]);
+    Execute;
+  end;
 end;
 
 procedure TMainForm.OnHotKeyEvent(const AHotKeyId: String);

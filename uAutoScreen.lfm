@@ -653,7 +653,7 @@ object MainForm: TMainForm
     Left = 547
     Top = 105
   end
-  object PlaySound: Tplaysound
+  object SoundPlayer: Tplaysound
     About.Description.Strings = (
       'Plays WAVE sounds in Windows or Linux'
     )
@@ -669,7 +669,7 @@ object MainForm: TMainForm
     About.AuthorEmail = 'minesadorada@charcodelvalle.com'
     About.ComponentName = 'PlaySound'
     About.LicenseType = abModifiedGPL
-    SoundFile = 'sounds/Photo1.wav'
+    SoundFile = ''
     PlayCommand = 'aplay -q'
     Left = 567
     Top = 303
