@@ -778,9 +778,9 @@ begin
   if FormInitialized or AEnabled then // Prevent to play "stop" sound immediately after program starts
   begin
     if AEnabled then
-      PlaySound('CameraStart.wav')
+      PlaySound('start.wav')
     else
-      PlaySound('CameraStop.wav');
+      PlaySound('stop.wav');
   end;
 
   if AEnabled then
@@ -808,7 +808,7 @@ procedure TMainForm.MakeScreenshot;
 var
   Cmd: String;
 begin
-  PlaySound('Photo.wav');
+  PlaySound('camera_shutter.wav');
   TrayIconState := tisFlashAnimation;
 
   if MonitorId = NoMonitorId then
