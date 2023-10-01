@@ -112,7 +112,7 @@ object MainForm: TMainForm
     Caption = 'Take screenshot'
     Constraints.MinWidth = 100
     OnClick = TakeScreenshotButtonClick
-    TabOrder = 14
+    TabOrder = 15
   end
   object OpenOutputDirButton: TButton
     AnchorSideLeft.Control = OutputDirEdit
@@ -165,7 +165,7 @@ object MainForm: TMainForm
     ChildSizing.ControlsPerLine = 2
     ClientHeight = 40
     ClientWidth = 218
-    TabOrder = 15
+    TabOrder = 16
     object StartAutoCaptureButton: TBitBtn
       Left = 6
       Height = 28
@@ -577,7 +577,7 @@ object MainForm: TMainForm
     Width = 97
     Caption = 'Play sounds'
     OnChange = PlaySoundsCheckBoxChange
-    TabOrder = 16
+    TabOrder = 14
   end
   object Timer: TTimer
     Enabled = False
