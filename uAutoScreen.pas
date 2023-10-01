@@ -155,6 +155,7 @@ type
 
     KeyHook: TGlobalKeyHook;
     OldScreenshotCleaner: TOldScreenshotCleaner;
+    FormInitialized: Boolean;
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -602,7 +603,8 @@ begin
   // Enable monitor confuguration changed updates in Linux
   XWatcher := TXRandREventWatcherThread.Create(RRScreenChangeNotifyMask, @OnScreenConfigurationChanged);
   {$EndIf}
-  
+
+  FormInitialized := True;
   DebugLn('Initializing finished');
 end;
 
@@ -759,13 +761,16 @@ begin
     TrayIconState := tisBlackWhite;
 
   // Play sound
-  with PlaySound do
+  if FormInitialized or AEnabled then // Prevent to play "stop" sound immediately after program starts
   begin
-    if AEnabled then
-      SoundFile := ConcatPaths([ProgramDirectory, 'sounds', 'CameraStart4.wav'])
-    else
-      SoundFile := ConcatPaths([ProgramDirectory, 'sounds', 'CameraStop4.wav']);
-    Execute;
+    with PlaySound do
+    begin
+      if AEnabled then
+        SoundFile := ConcatPaths([ProgramDirectory, 'sounds', 'CameraStart4.wav'])
+      else
+        SoundFile := ConcatPaths([ProgramDirectory, 'sounds', 'CameraStop4.wav']);
+      Execute;
+    end;
   end;
 
   if AEnabled then
