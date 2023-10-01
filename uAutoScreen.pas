@@ -1779,13 +1779,25 @@ begin
 end;
 
 procedure TMainForm.PlaySound(const AFileName: String);
+var
+  SoundDir: String;
 begin
   if not Sounds then
     Exit;
 
   with SoundPlayer do
   begin
-    SoundFile := ConcatPaths([ProgramDirectory, 'sounds', AFileName]);
+    {$IfDef Windows}
+    SoundDir := ConcatPaths([ProgramDirectory, 'sounds']);
+    {$EndIf}
+    {$IfDef Linux}
+    if IsPortable then
+      SoundDir := ConcatPaths([ProgramDirectory, 'sounds'])
+    else
+      SoundDir := '/usr/share/autoscreenshot/sounds/';
+    {$EndIf}
+
+    SoundFile := ConcatPaths([SoundDir, AFileName]);
     Execute;
   end;
 end;
