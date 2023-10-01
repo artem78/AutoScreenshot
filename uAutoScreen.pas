@@ -24,6 +24,7 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
+    PlaySoundsCheckBox: TCheckBox;
     CompressionLevelComboBox: TComboBox;
     OldScreenshotCleanerEnabledCheckBox: TCheckBox;
     HotKetsSettingsMenuItem: TMenuItem;
@@ -97,6 +98,7 @@ type
     procedure OldScreenshotCleanerMaxAgeValueSpinEditChange(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalDateTimePickerChange(Sender: TObject);
+    procedure PlaySoundsCheckBoxChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure ApplicationMinimize(Sender: TObject);
@@ -210,6 +212,8 @@ type
     function GetCompressionLevel: Tcompressionlevel;
     procedure UpdateFormAutoSize;
     procedure PlaySound(const AFileName: String);
+    procedure SetSounds(AEnabled: Boolean);
+    function GetSounds: Boolean;
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
@@ -240,6 +244,7 @@ type
     property PostCommand: String read GetPostCommand write SetPostCommand;
     property AutoCheckForUpdates: Boolean read GetAutoCheckForUpdates write SetAutoCheckForUpdates;
     property CompressionLevel: Tcompressionlevel read GetCompressionLevel write SetCompressionLevel;
+    property Sounds: Boolean read GetSounds write SetSounds;
 
     // Messages
     {$IfDef Windows}
@@ -508,6 +513,9 @@ begin
                                              'OldScreenshotCleanerMaxAge',
                                              String(DefaultScreenshotCleanerMaxAge)));
   OldScreenshotCleaner.Active := CleanerActive;
+
+  // Sounds
+  Sounds := Ini.ReadBool(DefaultConfigIniSection, 'Sounds', False);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -714,6 +722,11 @@ begin
   end;
   Ini.WriteFloat(DefaultConfigIniSection, 'CaptureInterval', Seconds / SecsPerMin);
   Timer.Interval := Seconds * MSecsPerSec;
+end;
+
+procedure TMainForm.PlaySoundsCheckBoxChange(Sender: TObject);
+begin
+  Sounds := Sounds;
 end;
 
 procedure TMainForm.PostCmdEditChange(Sender: TObject);
@@ -1084,6 +1097,8 @@ begin
       Items[Ord(iuWeeks)]  := Localizer.I18N('Weeks');
       Items[Ord(iuMonths)] := Localizer.I18N('Months');
     end;
+
+    PlaySoundsCheckBox.Caption := Localizer.I18N('PlaySounds');
 
     // Tray icon
     RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
@@ -1765,11 +1780,25 @@ end;
 
 procedure TMainForm.PlaySound(const AFileName: String);
 begin
+  if not Sounds then
+    Exit;
+
   with SoundPlayer do
   begin
     SoundFile := ConcatPaths([ProgramDirectory, 'sounds', AFileName]);
     Execute;
   end;
+end;
+
+procedure TMainForm.SetSounds(AEnabled: Boolean);
+begin
+  PlaySoundsCheckBox.Checked := AEnabled;
+  Ini.WriteBool(DefaultConfigIniSection, 'Sounds', AEnabled);
+end;
+
+function TMainForm.GetSounds: Boolean;
+begin
+  Result := PlaySoundsCheckBox.Checked;
 end;
 
 procedure TMainForm.OnHotKeyEvent(const AHotKeyId: String);
