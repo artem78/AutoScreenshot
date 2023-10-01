@@ -15,7 +15,7 @@ uses
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf,
   ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
-  UniqueInstance, ZStream { for Tcompressionlevel };
+  UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
 
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
@@ -33,6 +33,7 @@ type
     OldScreenshotCleanerPanel: TPanel;
     OldScreenshotCleanerMaxAgeUnitComboBox: TComboBox;
     OldScreenshotCleanerMaxAgeValueSpinEdit: TSpinEdit;
+    PlaySound: Tplaysound;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
@@ -757,6 +758,16 @@ begin
   else
     TrayIconState := tisBlackWhite;
 
+  // Play sound
+  with PlaySound do
+  begin
+    if AEnabled then
+      SoundFile := ConcatPaths([ProgramDirectory, 'sounds', 'CameraStart4.wav'])
+    else
+      SoundFile := ConcatPaths([ProgramDirectory, 'sounds', 'CameraStop4.wav']);
+    Execute;
+  end;
+
   if AEnabled then
     DebugLn('Automatic capture started')
   else
@@ -782,6 +793,11 @@ procedure TMainForm.MakeScreenshot;
 var
   Cmd: String;
 begin
+  with PlaySound do
+  begin
+    SoundFile := ConcatPaths([ProgramDirectory, 'sounds', 'Photo1.wav']);
+    Execute;
+  end;
   TrayIconState := tisFlashAnimation;
 
   if MonitorId = NoMonitorId then

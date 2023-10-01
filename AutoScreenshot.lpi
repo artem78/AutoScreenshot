@@ -306,19 +306,22 @@ override_dh_auto_install:
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="4">
+    <RequiredPackages Count="5">
       <Item1>
-        <PackageName Value="BGRABitmapPack"/>
+        <PackageName Value="playwavepackage"/>
       </Item1>
       <Item2>
-        <PackageName Value="uniqueinstance_package"/>
+        <PackageName Value="BGRABitmapPack"/>
       </Item2>
       <Item3>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="uniqueinstance_package"/>
       </Item3>
       <Item4>
-        <PackageName Value="LCL"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item4>
+      <Item5>
+        <PackageName Value="LCL"/>
+      </Item5>
     </RequiredPackages>
     <Units Count="19">
       <Unit0>
