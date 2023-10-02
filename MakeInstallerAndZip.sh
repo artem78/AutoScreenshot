@@ -86,6 +86,13 @@ function MakeZip(){
 	echo "Done!"
 	echo ""
 	
+	# Sounds
+	echo "Copy sound files..."
+	mkdir -p "$BuildDir/sounds"
+	cp -v --preserve=timestamps sounds/*.wav "$BuildDir/sounds/"
+	echo "Done!"
+	echo ""
+	
 	# Move files to subfolder
 	TmpDir=$(mktemp -d --suffix "-AutoScreenshotBuild")
 	echo "TmpDir=${TmpDir}"

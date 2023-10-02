@@ -15,7 +15,7 @@ uses
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf,
   ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
-  UniqueInstance, ZStream { for Tcompressionlevel };
+  UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
 
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
@@ -24,6 +24,7 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
+    PlaySoundsCheckBox: TCheckBox;
     CompressionLevelComboBox: TComboBox;
     OldScreenshotCleanerEnabledCheckBox: TCheckBox;
     HotKetsSettingsMenuItem: TMenuItem;
@@ -33,6 +34,7 @@ type
     OldScreenshotCleanerPanel: TPanel;
     OldScreenshotCleanerMaxAgeUnitComboBox: TComboBox;
     OldScreenshotCleanerMaxAgeValueSpinEdit: TSpinEdit;
+    SoundPlayer: Tplaysound;
     PostCmdLabel: TLabel;
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
@@ -96,6 +98,7 @@ type
     procedure OldScreenshotCleanerMaxAgeValueSpinEditChange(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
     procedure CaptureIntervalDateTimePickerChange(Sender: TObject);
+    procedure PlaySoundsCheckBoxChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure ApplicationMinimize(Sender: TObject);
@@ -154,6 +157,7 @@ type
 
     KeyHook: TGlobalKeyHook;
     OldScreenshotCleaner: TOldScreenshotCleaner;
+    FormInitialized: Boolean;
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -207,6 +211,9 @@ type
     procedure SetCompressionLevel(ALevel: Tcompressionlevel);
     function GetCompressionLevel: Tcompressionlevel;
     procedure UpdateFormAutoSize;
+    procedure PlaySound(const AFileName: String);
+    procedure SetSounds(AEnabled: Boolean);
+    function GetSounds: Boolean;
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
@@ -237,6 +244,7 @@ type
     property PostCommand: String read GetPostCommand write SetPostCommand;
     property AutoCheckForUpdates: Boolean read GetAutoCheckForUpdates write SetAutoCheckForUpdates;
     property CompressionLevel: Tcompressionlevel read GetCompressionLevel write SetCompressionLevel;
+    property Sounds: Boolean read GetSounds write SetSounds;
 
     // Messages
     {$IfDef Windows}
@@ -514,6 +522,9 @@ begin
                                              'OldScreenshotCleanerMaxAge',
                                              String(DefaultScreenshotCleanerMaxAge)));
   OldScreenshotCleaner.Active := CleanerActive;
+
+  // Sounds
+  Sounds := Ini.ReadBool(DefaultConfigIniSection, 'Sounds', False);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -610,7 +621,8 @@ begin
   // Enable monitor confuguration changed updates in Linux
   XWatcher := TXRandREventWatcherThread.Create(RRScreenChangeNotifyMask, @OnScreenConfigurationChanged);
   {$EndIf}
-  
+
+  FormInitialized := True;
   DebugLn('Initializing finished');
 end;
 
@@ -721,6 +733,11 @@ begin
   Timer.Interval := Seconds * MSecsPerSec;
 end;
 
+procedure TMainForm.PlaySoundsCheckBoxChange(Sender: TObject);
+begin
+  Sounds := Sounds;
+end;
+
 procedure TMainForm.PostCmdEditChange(Sender: TObject);
 begin
   Ini.WriteString(DefaultConfigIniSection, 'PostCmd', PostCommand);
@@ -766,6 +783,15 @@ begin
   else
     TrayIconState := tisBlackWhite;
 
+  // Play sound
+  if FormInitialized or AEnabled then // Prevent to play "stop" sound immediately after program starts
+  begin
+    if AEnabled then
+      PlaySound('start.wav')
+    else
+      PlaySound('stop.wav');
+  end;
+
   if AEnabled then
     DebugLn('Automatic capture started')
   else
@@ -791,6 +817,7 @@ procedure TMainForm.MakeScreenshot;
 var
   Cmd: String;
 begin
+  PlaySound('camera_shutter.wav');
   TrayIconState := tisFlashAnimation;
 
   if MonitorId = NoMonitorId then
@@ -1079,6 +1106,8 @@ begin
       Items[Ord(iuWeeks)]  := Localizer.I18N('Weeks');
       Items[Ord(iuMonths)] := Localizer.I18N('Months');
     end;
+
+    PlaySoundsCheckBox.Caption := Localizer.I18N('PlaySounds');
 
     // Tray icon
     RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
@@ -1756,6 +1785,41 @@ begin
   AutoSize := not AutoSize;
   AutoSize := not AutoSize;
   {$EndIf}
+end;
+
+procedure TMainForm.PlaySound(const AFileName: String);
+var
+  SoundDir: String;
+begin
+  if not Sounds then
+    Exit;
+
+  with SoundPlayer do
+  begin
+    {$IfDef Windows}
+    SoundDir := ConcatPaths([ProgramDirectory, 'sounds']);
+    {$EndIf}
+    {$IfDef Linux}
+    if IsPortable then
+      SoundDir := ConcatPaths([ProgramDirectory, 'sounds'])
+    else
+      SoundDir := '/usr/share/autoscreenshot/sounds/';
+    {$EndIf}
+
+    SoundFile := ConcatPaths([SoundDir, AFileName]);
+    Execute;
+  end;
+end;
+
+procedure TMainForm.SetSounds(AEnabled: Boolean);
+begin
+  PlaySoundsCheckBox.Checked := AEnabled;
+  Ini.WriteBool(DefaultConfigIniSection, 'Sounds', AEnabled);
+end;
+
+function TMainForm.GetSounds: Boolean;
+begin
+  Result := PlaySoundsCheckBox.Checked;
 end;
 
 procedure TMainForm.OnHotKeyEvent(const AHotKeyId: String);
