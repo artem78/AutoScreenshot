@@ -398,6 +398,12 @@ begin
     //{$Define LAZLOGGER_FLUSH}
     DebugLogger.CloseLogFileBetweenWrites := True; // FixMe: Better to set LAZLOGGER_FLUSH, but seems it doesn't work
     DebugLogger.OnDebugLn := @OnDebugLnEvent;
+  end
+  else
+  begin
+    {$IfDef Windows}{$IFOPT D-}
+    DebugLogger.LogName := 'nul';
+    {$ENDIF}{$EndIf}
   end;
 
   if IsPortable then
