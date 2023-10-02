@@ -41,6 +41,7 @@ Source: "lang\*"; DestDir: "{app}\lang"; Flags: ignoreversion recursesubdirs cre
 ; ToDo: Remove config.ini when uninstall or make this optional
 Source: "{#GetEnv("LazarusDir")}\ssleay32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#GetEnv("LazarusDir")}\libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "sounds\*.wav"; DestDir: "{app}\sounds"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

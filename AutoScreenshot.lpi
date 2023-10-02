@@ -105,6 +105,9 @@ override_dh_auto_install:
 		install -d -m 755 &quot;$(ROOT)/usr/share/icons/hicolor/$${size}x$${size}/apps&quot;; \
 		install -m 644 -T &quot;res/main_icon_$${size}px.png&quot; &quot;$(ROOT)/usr/share/icons/hicolor/$${size}x$${size}/apps/autoscreenshot.png&quot;; \
 	done
+	install -d -m 755 &quot;$(ROOT)/usr/share/autoscreenshot/sounds&quot;
+	cp sounds/*.wav &quot;$(ROOT)/usr/share/autoscreenshot/sounds/&quot;
+	chmod -R 644 &quot;$(ROOT)/usr/share/autoscreenshot/sounds/&quot;
 
 %:
 	dh $@
@@ -122,6 +125,7 @@ override_dh_auto_install:
 ?CP? -r libs/ ?TEMPFOLDER?/
 ?CP? -r lang/ ?TEMPFOLDER?/
 ?CP? *.desktop ?TEMPFOLDER?/
+?CP? -r sounds/ ?TEMPFOLDER?/
 
 ?CP? -rf debian ?TEMPFOLDER?/"/>
       <Item10 Name="lazpackager/maintainer" Value="Artem Demin"/>
@@ -306,19 +310,22 @@ override_dh_auto_install:
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="4">
+    <RequiredPackages Count="5">
       <Item1>
-        <PackageName Value="BGRABitmapPack"/>
+        <PackageName Value="playwavepackage"/>
       </Item1>
       <Item2>
-        <PackageName Value="uniqueinstance_package"/>
+        <PackageName Value="BGRABitmapPack"/>
       </Item2>
       <Item3>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="uniqueinstance_package"/>
       </Item3>
       <Item4>
-        <PackageName Value="LCL"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item4>
+      <Item5>
+        <PackageName Value="LCL"/>
+      </Item5>
     </RequiredPackages>
     <Units Count="19">
       <Unit0>
