@@ -325,7 +325,7 @@ var
   {$IfDef Linux}
   AutostartFileContent: TStringList;
   {$EndIf}
-  Cmd: String;
+  Cmd, AutostartFile: String;
 begin
   Cmd := '"' + FileName + '" ' + Args;
 
@@ -341,6 +341,8 @@ begin
   {$EndIf}
 
   {$IfDef Linux}
+  AutostartFile := GetAutostartFileName(FileName);
+  ForceDirectories(ExtractFileDir(AutostartFile));
   AutostartFileContent := TStringList.Create;
   try
     with AutostartFileContent do
@@ -350,7 +352,7 @@ begin
       Add('Exec=' + Cmd);
       Add('Hidden=false');
       Add('Name=' + AppTitle);
-      SaveToFile(GetAutostartFileName(FileName));
+      SaveToFile(AutostartFile);
     end;
   finally
     AutostartFileContent.Free;

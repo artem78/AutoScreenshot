@@ -401,9 +401,12 @@ begin
   end
   else
   begin
-    {$IfDef Windows}{$IFOPT D-}
-    DebugLogger.LogName := 'nul';
-    {$ENDIF}{$EndIf}
+    {$IFOPT D-}
+    DebugLogger.LogName :=
+                 {$IfDef Windows}'nul'{$EndIf}
+                 {$IfDef Linux}'/dev/null'{$ENDIF}
+    ;
+    {$EndIf}
   end;
 
   if IsPortable then
