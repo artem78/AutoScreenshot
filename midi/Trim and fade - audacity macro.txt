@@ -1,0 +1,4 @@
+SelectTime:End="1" Start="0"
+Trim:
+СтудийныйФейд-спад:Use_Preset="<Factory Defaults>"
+SelectTime:End="1" Start="0,6"
