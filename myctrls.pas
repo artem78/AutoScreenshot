@@ -9,45 +9,37 @@ uses
 
 type
 
-  TMyTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
-
   { TMyTrayIcon }
 
-  TMyTrayIcon = class
+  TMyTrayIcon = class(TTrayIcon)
+    private
+      type
+        TState = (tisDefault, tisBlackWhite, tisFlashAnimation);
+
     private
       IconIdx: 1..7;
-      FIconState: TMyTrayIconState;
-      TrayIcon: TTrayIcon;
+      FIconState: TState;
       AnimationTimer: TTimer;
 
-      procedure SetIconState(AnIconState: TMyTrayIconState);
+      procedure SetIconState(AnIconState: TState);
       procedure SetNextAnimationIcon();
       procedure OnTimer(Sender: TObject);
-      procedure SetPopupMenu(APopupMenu: TPopupMenu);
-      procedure SetOnDblClickEvent(AnEvent: TNotifyEvent);
-      procedure SetHint(const AText: String);
 
-      property IconState: TMyTrayIconState write SetIconState;
+      property IconState: TState write SetIconState;
     public
-      constructor Create;
+      constructor Create(AOwner: TComponent); override;
       destructor Destroy; override;
-
-      property PopupMenu: TPopupMenu write SetPopupMenu;
-      property OnDblClick: TNotifyEvent write SetOnDblClickEvent;
-      property Hint: String write SetHint;
 
       procedure SetDefaultIcon;
       procedure SetInactiveIcon {SetBlackWhiteIcon};
       procedure StartFlashAnimation;
-      procedure Show;
-      procedure Hide;
   end;
 
 implementation
 
 { TMyTrayIcon }
 
-procedure TMyTrayIcon.SetIconState(AnIconState: TMyTrayIconState);
+procedure TMyTrayIcon.SetIconState(AnIconState: TState);
 var
   ResName: String;
 begin
@@ -66,7 +58,7 @@ begin
     else ResName := '_CAMERA';
   end;
 
-  TrayIcon.Icon.LoadFromResourceName(HInstance, ResName);
+  Icon.LoadFromResourceName(HInstance, ResName);
 end;
 
 procedure TMyTrayIcon.SetNextAnimationIcon();
@@ -77,7 +69,7 @@ begin
   begin
     Inc(IconIdx);
     ResName := Format('_CAMERA_FLASH_%d', [IconIdx]);
-    TrayIcon.Icon.LoadFromResourceName(HInstance, ResName);
+    Icon.LoadFromResourceName(HInstance, ResName);
   end
   else
   begin
@@ -94,28 +86,11 @@ begin
   SetNextAnimationIcon();
 end;
 
-procedure TMyTrayIcon.SetPopupMenu(APopupMenu: TPopupMenu);
+constructor TMyTrayIcon.Create(AOwner: TComponent);
 begin
-  TrayIcon.PopUpMenu := APopupMenu;
-end;
+  inherited Create(AOwner);
 
-procedure TMyTrayIcon.SetOnDblClickEvent(AnEvent: TNotifyEvent);
-begin
-  TrayIcon.OnDblClick := AnEvent;
-end;
-
-procedure TMyTrayIcon.SetHint(const AText: String);
-begin
-  TrayIcon.Hint := AText;
-end;
-
-constructor TMyTrayIcon.Create;
-begin
-  inherited;
-
-  TrayIcon := TTrayIcon.Create(Nil);
   SetDefaultIcon;
-  PopupMenu := Nil;
   AnimationTimer := TTimer.Create(Nil);
   AnimationTimer.OnTimer := @OnTimer;
   AnimationTimer.Interval := 160;
@@ -126,12 +101,9 @@ destructor TMyTrayIcon.Destroy;
 begin
   AnimationTimer.Enabled := False;
   AnimationTimer.Free;
-  TrayIcon.Free;
 
   inherited Destroy;
 end;
-
-
 
 procedure TMyTrayIcon.SetDefaultIcon;
 begin
@@ -148,16 +120,4 @@ begin
   IconState := tisFlashAnimation;
 end;
 
-procedure TMyTrayIcon.Show;
-begin
-  TrayIcon.Show;
-end;
-
-procedure TMyTrayIcon.Hide;
-begin
-  TrayIcon.Hide;
-end;
-
 end.
-
-

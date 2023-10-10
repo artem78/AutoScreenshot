@@ -308,7 +308,7 @@ begin
 
   // Set default tray icon
   // Tray icon
-  TrayIcon := TMyTrayIcon.Create;
+  TrayIcon := TMyTrayIcon.Create(Nil);
   TrayIcon.PopupMenu := TrayIconPopupMenu;
   TrayIcon.OnDblClick := @TrayIconDblClick;
   TrayIcon.SetDefaultIcon;
