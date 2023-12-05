@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# ToDo: remake to apache ant build script
+
 # Script for building project on Linux or Windows (using Cygwin or MinGW)
 #
 # Note for Winows only!
