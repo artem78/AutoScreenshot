@@ -14,6 +14,7 @@ object MainForm: TMainForm
   ClientHeight = 653
   ClientWidth = 723
   Menu = MainMenu
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
@@ -112,7 +113,7 @@ object MainForm: TMainForm
     Caption = 'Take screenshot'
     Constraints.MinWidth = 100
     OnClick = TakeScreenshotButtonClick
-    TabOrder = 15
+    TabOrder = 16
   end
   object OpenOutputDirButton: TButton
     AnchorSideLeft.Control = OutputDirEdit
@@ -148,7 +149,7 @@ object MainForm: TMainForm
   object AutoCaptureControlGroup: TGroupBox
     AnchorSideLeft.Control = Owner
     AnchorSideLeft.Side = asrCenter
-    AnchorSideTop.Control = PlaySoundsCheckBox
+    AnchorSideTop.Control = MinimizeInsteadOfCloseCheckBox
     AnchorSideTop.Side = asrBottom
     Left = 251
     Height = 57
@@ -165,7 +166,7 @@ object MainForm: TMainForm
     ChildSizing.ControlsPerLine = 2
     ClientHeight = 40
     ClientWidth = 218
-    TabOrder = 16
+    TabOrder = 17
     object StartAutoCaptureButton: TBitBtn
       Left = 6
       Height = 28
@@ -578,6 +579,18 @@ object MainForm: TMainForm
     Caption = 'Play sounds'
     OnChange = PlaySoundsCheckBoxChange
     TabOrder = 14
+  end
+  object MinimizeInsteadOfCloseCheckBox: TCheckBox
+    AnchorSideLeft.Control = OutputDirEdit
+    AnchorSideTop.Control = PlaySoundsCheckBox
+    AnchorSideTop.Side = asrBottom
+    Left = 192
+    Height = 19
+    Top = 433
+    Width = 213
+    Caption = 'Minimize to tray when close window'
+    OnChange = MinimizeInsteadOfCloseCheckBoxChange
+    TabOrder = 15
   end
   object Timer: TTimer
     Enabled = False

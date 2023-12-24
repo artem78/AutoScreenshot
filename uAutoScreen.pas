@@ -24,6 +24,7 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
+    MinimizeInsteadOfCloseCheckBox: TCheckBox;
     PlaySoundsCheckBox: TCheckBox;
     CompressionLevelComboBox: TComboBox;
     OldScreenshotCleanerEnabledCheckBox: TCheckBox;
@@ -88,6 +89,8 @@ type
     procedure CheckForUpdatesMenuItemClick(Sender: TObject);
     procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure CompressionLevelComboBoxChange(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
     procedure OldScreenshotCleanerEnabledCheckBoxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -214,6 +217,8 @@ type
     procedure PlaySound(const AFileName: String);
     procedure SetSounds(AEnabled: Boolean);
     function GetSounds: Boolean;
+    procedure SetMinimizeInsteadOfClose(AEnabled: Boolean);
+    function GetMinimizeInsteadOfClose: Boolean;
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
@@ -245,6 +250,7 @@ type
     property AutoCheckForUpdates: Boolean read GetAutoCheckForUpdates write SetAutoCheckForUpdates;
     property CompressionLevel: Tcompressionlevel read GetCompressionLevel write SetCompressionLevel;
     property Sounds: Boolean read GetSounds write SetSounds;
+    property MinimizeInsteadOfClose: Boolean read GetMinimizeInsteadOfClose write SetMinimizeInsteadOfClose;
 
     // Messages
     {$IfDef Windows}
@@ -525,6 +531,9 @@ begin
 
   // Sounds
   Sounds := Ini.ReadBool(DefaultConfigIniSection, 'Sounds', False);
+
+  // Minimize instead of close
+  MinimizeInsteadOfClose := Ini.ReadBool(DefaultConfigIniSection, 'MinimizeInsteadOfClose', False);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -639,6 +648,18 @@ end;
 procedure TMainForm.CompressionLevelComboBoxChange(Sender: TObject);
 begin
   CompressionLevel := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
+end;
+
+procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose := not MinimizeInsteadOfClose;
+  if MinimizeInsteadOfClose then
+    MinimizeToTray;
+end;
+
+procedure TMainForm.MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
+begin
+  MinimizeInsteadOfClose := MinimizeInsteadOfClose;
 end;
 
 procedure TMainForm.OldScreenshotCleanerEnabledCheckBoxChange(Sender: TObject);
@@ -975,7 +996,8 @@ end;
 
 procedure TMainForm.ExitTrayMenuItemClick(Sender: TObject);
 begin
-  Close;
+  //Close;
+  Application.Terminate;
 end;
 
 procedure TMainForm.MinimizeToTray;
@@ -987,8 +1009,8 @@ begin
   {Application.MainFormOnTaskBar := False;
   Application.ShowMainForm := False;
   //Hide;}
-  WindowState := wsMinimized;
   Hide;
+  WindowState := wsMinimized;
   TrayIcon.Show;
 end;
 
@@ -1108,6 +1130,7 @@ begin
     end;
 
     PlaySoundsCheckBox.Caption := Localizer.I18N('PlaySounds');
+    MinimizeInsteadOfCloseCheckBox.Caption := Localizer.I18N('MinimizeInSteadOfClose');
 
     // Tray icon
     RestoreWindowTrayMenuItem.Caption := Localizer.I18N('Restore');
@@ -1820,6 +1843,17 @@ end;
 function TMainForm.GetSounds: Boolean;
 begin
   Result := PlaySoundsCheckBox.Checked;
+end;
+
+procedure TMainForm.SetMinimizeInsteadOfClose(AEnabled: Boolean);
+begin
+  MinimizeInsteadOfCloseCheckBox.Checked := AEnabled;
+  Ini.WriteBool(DefaultConfigIniSection, 'MinimizeInsteadOfClose', AEnabled);
+end;
+
+function TMainForm.GetMinimizeInsteadOfClose: Boolean;
+begin
+  Result := MinimizeInsteadOfCloseCheckBox.Checked;
 end;
 
 procedure TMainForm.OnHotKeyEvent(const AHotKeyId: String);
