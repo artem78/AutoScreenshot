@@ -219,6 +219,7 @@ type
     function GetSounds: Boolean;
     procedure SetMinimizeInsteadOfClose(AEnabled: Boolean);
     function GetMinimizeInsteadOfClose: Boolean;
+    function ConfirmExit: Boolean;
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
@@ -655,6 +656,9 @@ begin
   CanClose := not MinimizeInsteadOfClose;
   if MinimizeInsteadOfClose then
     MinimizeToTray;
+
+  if CanClose then
+    CanClose := ConfirmExit;
 end;
 
 procedure TMainForm.MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
@@ -996,8 +1000,9 @@ end;
 
 procedure TMainForm.ExitTrayMenuItemClick(Sender: TObject);
 begin
-  //Close;
-  Application.Terminate;
+  if ConfirmExit then
+    //Close;
+    Application.Terminate;
 end;
 
 procedure TMainForm.MinimizeToTray;
@@ -1854,6 +1859,13 @@ end;
 function TMainForm.GetMinimizeInsteadOfClose: Boolean;
 begin
   Result := MinimizeInsteadOfCloseCheckBox.Checked;
+end;
+
+function TMainForm.ConfirmExit: Boolean;
+begin
+  Result := QuestionDlg('', Localizer.I18N('ExitConfirmation'), mtConfirmation,
+            [mrYes, Localizer.I18N('Yes'), mrNo, Localizer.I18N('No'), 'IsDefault'],
+            0) = mrYes;
 end;
 
 procedure TMainForm.OnHotKeyEvent(const AHotKeyId: String);
