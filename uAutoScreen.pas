@@ -255,7 +255,7 @@ const
   MinCounterValue  = 1;
   MinCounterDigits = 1;
   MaxCounterDigits = 10;
-  UpdateCheckIntervalInSeconds = 3 * 24 * 60 * 60; // Every 3 days
+  UpdateCheckIntervalInSeconds = 3 * SecsPerDay; // Every 3 days
   MinOldScreenshotsRemovingPeriodValue = 1;
   MaxOldScreenshotsRemovingPeriodValue = 999;
 
