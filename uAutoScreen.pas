@@ -815,7 +815,7 @@ end;
 
 procedure TMainForm.MakeScreenshot;
 var
-  Cmd, ImageFileName: String;
+  Cmd, ImageFileName, ErrMsg: String;
 begin
   ImageFileName := ImagePath; // Use local variable because ImagePath() result
                               // may be changed on next call
@@ -845,7 +845,16 @@ begin
       DebugLn('Execution success!');
     end;
   except
-    on E: Exception do DebugLn('Execution failed: ', E.ToString);
+    on E: Exception do
+    begin
+      DebugLn('Execution failed: ', E.ToString);
+
+      if not Timer.Enabled then // Manual capture
+      begin
+        ErrMsg := {'Execution of custom command failed: ' +} E.Message;
+        MessageDlg('', ErrMsg, mtWarning, [mbOK], '');
+      end;
+    end;
   end;
 
   // Increment counter after successful capture
