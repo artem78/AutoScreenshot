@@ -815,19 +815,22 @@ end;
 
 procedure TMainForm.MakeScreenshot;
 var
-  Cmd: String;
+  Cmd, ImageFileName: String;
 begin
+  ImageFileName := ImagePath; // Use local variable because ImagePath() result
+                              // may be changed on next call
+
   PlaySound('camera_shutter.wav');
   TrayIconState := tisFlashAnimation;
 
   if MonitorId = NoMonitorId then
-    Grabber.CaptureAllMonitors(ImagePath)
+    Grabber.CaptureAllMonitors(ImageFileName)
   else
   begin
     if MonitorId = MonitorWithCursor then
-      Grabber.CaptureMonitor(ImagePath, GetMonitorWithCursor)
+      Grabber.CaptureMonitor(ImageFileName, GetMonitorWithCursor)
     else
-      Grabber.CaptureMonitor(ImagePath, MonitorId);
+      Grabber.CaptureMonitor(ImageFileName, MonitorId);
   end;
 
 
@@ -836,7 +839,7 @@ begin
     Cmd := PostCommand;
     if Cmd <> '' then
     begin
-      Cmd := StringReplace(Cmd, '%FILENAME%', ImagePath, [rfReplaceAll{, rfIgnoreCase}]);
+      Cmd := StringReplace(Cmd, '%FILENAME%', ImageFileName, [rfReplaceAll{, rfIgnoreCase}]);
       RunCmdInbackground(Cmd);
     end;
   except
