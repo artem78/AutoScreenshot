@@ -24,6 +24,7 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
+    ExitMenuItem: TMenuItem;
     MinimizeInsteadOfCloseCheckBox: TCheckBox;
     PlaySoundsCheckBox: TCheckBox;
     CompressionLevelComboBox: TComboBox;
@@ -89,6 +90,7 @@ type
     procedure CheckForUpdatesMenuItemClick(Sender: TObject);
     procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure CompressionLevelComboBoxChange(Sender: TObject);
+    procedure ExitMenuItemClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
     procedure OldScreenshotCleanerEnabledCheckBoxChange(Sender: TObject);
@@ -651,6 +653,13 @@ begin
   CompressionLevel := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
 end;
 
+procedure TMainForm.ExitMenuItemClick(Sender: TObject);
+begin
+  if ConfirmExit then
+    //Close;
+    Application.Terminate;
+end;
+
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   CanClose := not MinimizeInsteadOfClose;
@@ -1087,6 +1096,7 @@ begin
     AutoCheckForUpdatesMenuItem.Caption := Localizer.I18N('AutoCheckForUpdates');
     HotKetsSettingsMenuItem.Caption := Localizer.I18N('EditHotKeys') + '...';
     DonateMenuItem.Caption := Localizer.I18N('Donate');
+    ExitMenuItem.Caption := Localizer.I18N('Exit');
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';

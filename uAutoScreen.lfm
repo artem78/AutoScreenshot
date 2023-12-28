@@ -670,6 +670,10 @@ object MainForm: TMainForm
         OnClick = AboutMenuItemClick
       end
     end
+    object ExitMenuItem: TMenuItem
+      Caption = 'Exit'
+      OnClick = ExitMenuItemClick
+    end
   end
   object UniqueInstance1: TUniqueInstance
     Enabled = True
