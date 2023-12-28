@@ -840,9 +840,12 @@ begin
     if Cmd <> '' then
     begin
       Cmd := StringReplace(Cmd, '%FILENAME%', ImageFileName, [rfReplaceAll{, rfIgnoreCase}]);
+      DebugLn('Execute command: ', Cmd);
       RunCmdInbackground(Cmd);
+      DebugLn('Execution success!');
     end;
   except
+    on E: Exception do DebugLn('Execution failed: ', E.ToString);
   end;
 
   // Increment counter after successful capture
