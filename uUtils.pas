@@ -420,7 +420,14 @@ var
 begin
   proc := TProcess.Create(nil);
   try
+    {$IfDef Windows}
+    proc.Executable := 'cmd.exe';
+    proc.Parameters.Add('/c');
+    proc.Parameters.Add(ACmd);
+    {$EndIf}
+    {$IfDef Linux}
     proc.CommandLine := ACmd;
+    {$EndIf}
     //proc.Options := proc.Options + ...;
     proc.Execute;
   finally
