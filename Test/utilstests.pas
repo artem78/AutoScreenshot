@@ -14,17 +14,19 @@ type
   TUtilsTestCase= class(TTestCase)
   private
     function GetFormattedPath(Path: String): String;
+    procedure RunCmdWithError;
   published
     procedure TestFormatPath;
     procedure TestDecode;
     procedure TestJoinPath;
     procedure TestVersions;
     procedure TestAutoRun;
+    procedure TestCmdExecution;
   end;
 
 implementation
 
-uses uUtils, {SysUtils} DateUtils, uUtilsMore, Forms;
+uses uUtils, {SysUtils} DateUtils, process, uUtilsMore, Forms;
 
 { TUtilsTestCase }
 
@@ -34,6 +36,22 @@ var
 begin
   DateTime := EncodeDateTime(2020, 4, 19, 12, 34, 56, 789);
   Result := FormatDateTime2(Path, DateTime);
+end;
+
+procedure TUtilsTestCase.RunCmdWithError;
+const
+  Dir = 'tmp';
+var
+  Cmd: String;
+begin
+  {$IfDef Windows}
+  Cmd := 'copy';
+  {$EndIf}
+  {$IfDef Linux}
+  Cmd := 'cp';
+  {$EndIf}
+  RunCmdInbackground(Cmd);
+  Sleep(500);
 end;
 
 procedure TUtilsTestCase.TestDecode;
@@ -172,6 +190,56 @@ begin
   AssertFalse(CheckAutoRun(ExeFileName, AppTitle));
 
 
+end;
+
+procedure TUtilsTestCase.TestCmdExecution;
+const
+  Dir = 'tmp';
+  {$IfDef Windows}
+  CopyCmd = 'copy';
+  {$EndIf}
+  {$IfDef Linux}
+  CopyCmd = 'cp';
+  {$EndIf}
+  {$IfDef Windows}
+  DeleteCmd = 'del';
+  {$EndIf}
+  {$IfDef Linux}
+  DeleteCmd = 'rm';
+  {$EndIf}
+var
+  F: TextFile;
+  Cmd: String;
+begin
+  if DirectoryExists(Dir) then
+    RemoveDir(Dir);
+  CreateDir(Dir);
+
+  Assign(F, ConcatPaths([Dir, 'my_file.txt']));
+  Rewrite(F);
+  WriteLn(F, 'one');
+  WriteLn(F, 'two');
+  WriteLn(F, 'three');
+  Close(F);
+
+
+  Cmd := Format('%s "%s" "%s"', [CopyCmd, ConcatPaths([Dir, 'my_file.txt']), ConcatPaths([Dir, 'copy of my_file.txt'])]);
+  RunCmdInbackground(Cmd);
+  Sleep(500);
+  AssertTrue(FileExists(ConcatPaths([Dir, 'copy of my_file.txt'])));
+
+
+  Cmd := Format('%s "%s" "%s"', [CopyCmd, ConcatPaths([Dir, 'my_file.txt']), ConcatPaths([Dir, 'новый файл.txt'])]);
+  RunCmdInbackground(Cmd);
+  Sleep(500);
+  AssertTrue(FileExists(ConcatPaths([Dir, 'новый файл.txt'])));
+
+  Cmd := Format('%s "%s"', [DeleteCmd, ConcatPaths([Dir, 'my_file.txt'])]);
+  RunCmdInbackground(Cmd);
+  Sleep(500);
+  AssertFalse(FileExists(ConcatPaths([Dir, 'my_file.txt'])));
+
+  //AssertException(EProcess, @RunCmdWithError);
 end;
 
 initialization
