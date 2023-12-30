@@ -428,7 +428,7 @@ begin
     {$IfDef Linux}
     proc.CommandLine := ACmd;
     {$EndIf}
-    //proc.Options := proc.Options + ...;
+    proc.Options := proc.Options + [poNoConsole];
     proc.Execute;
   finally
     proc.Free;
