@@ -1887,9 +1887,13 @@ begin
 end;
 
 function TMainForm.ConfirmExit: Boolean;
+var
+  YesStr, NoStr: String;
 begin
+  YesStr := Localizer.I18N('Yes');
+  NoStr  := Localizer.I18N('No');
   Result := QuestionDlg('', Localizer.I18N('ExitConfirmation'), mtConfirmation,
-            [mrYes, Localizer.I18N('Yes'), mrNo, Localizer.I18N('No'), 'IsDefault'],
+            [mrYes, YesStr, mrNo, NoStr, 'IsDefault'],
             0) = mrYes;
 end;
 
