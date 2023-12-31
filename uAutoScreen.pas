@@ -876,7 +876,7 @@ begin
       Cmd := StringReplace(Cmd, '%FILENAME%', ImageFileName, [rfReplaceAll{, rfIgnoreCase}]);
       DebugLn('Execute command: ', Cmd);
       RunCmdInbackground(Cmd);
-      DebugLn('Execution success!');
+      //DebugLn('Execution success!'); // Not works
     end;
   except
     on E: Exception do
