@@ -426,7 +426,9 @@ begin
     proc.Parameters.Add(ACmd);
     {$EndIf}
     {$IfDef Linux}
-    proc.CommandLine := ACmd;
+    proc.Executable := FindDefaultExecutablePath('bash');
+    proc.Parameters.Add('-c');
+    proc.Parameters.Add(ACmd);
     {$EndIf}
     proc.Options := proc.Options + [poNoConsole];
     proc.Execute;
