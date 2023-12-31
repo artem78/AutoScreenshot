@@ -641,6 +641,13 @@ object MainForm: TMainForm
   object MainMenu: TMainMenu
     Left = 40
     Top = 40
+    object FileMenuItem: TMenuItem
+      Caption = 'File'
+      object ExitMenuItem: TMenuItem
+        Caption = 'Exit'
+        OnClick = ExitMenuItemClick
+      end
+    end
     object OptionsSubMenu: TMenuItem
       Caption = 'Options'
       object LanguageSubMenu: TMenuItem
@@ -669,10 +676,6 @@ object MainForm: TMainForm
         Caption = 'About...'
         OnClick = AboutMenuItemClick
       end
-    end
-    object ExitMenuItem: TMenuItem
-      Caption = 'Exit'
-      OnClick = ExitMenuItemClick
     end
   end
   object UniqueInstance1: TUniqueInstance

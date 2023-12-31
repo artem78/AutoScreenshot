@@ -24,6 +24,7 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
+    FileMenuItem: TMenuItem;
     ExitMenuItem: TMenuItem;
     MinimizeInsteadOfCloseCheckBox: TCheckBox;
     PlaySoundsCheckBox: TCheckBox;
@@ -1119,6 +1120,7 @@ begin
     HotKetsSettingsMenuItem.Caption := Localizer.I18N('EditHotKeys') + '...';
     DonateMenuItem.Caption := Localizer.I18N('Donate');
     ExitMenuItem.Caption := Localizer.I18N('Exit');
+    FileMenuItem.Caption := Localizer.I18N('File');
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
