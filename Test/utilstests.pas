@@ -26,7 +26,7 @@ type
 
 implementation
 
-uses uUtils, {SysUtils} DateUtils, process, uUtilsMore, Forms;
+uses uUtils, {SysUtils} DateUtils, process, uUtilsMore, Forms, FileUtil;
 
 { TUtilsTestCase }
 
@@ -212,7 +212,7 @@ var
   Cmd: String;
 begin
   if DirectoryExists(Dir) then
-    RemoveDir(Dir);
+    DeleteDirectory(Dir, False);
   CreateDir(Dir);
 
   Assign(F, ConcatPaths([Dir, 'my_file.txt']));
