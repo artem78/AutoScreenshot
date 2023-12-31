@@ -1096,6 +1096,13 @@ begin
 end;
 
 procedure TMainForm.TranslateForm;
+const
+  {$IfDef Windows}
+  CmdExample = 'copy "%FILENAME%" "C:\dir\"';
+  {$EndIf}
+  {$IfDef Linux}
+  CmdExample = 'cp "%FILENAME%" "~/dir/"';
+  {$EndIf}
 begin
   DisableAutoSizing;
 
@@ -1139,7 +1146,8 @@ begin
     SeqNumberValueLabel.Caption := Localizer.I18N('NextValue') + ':';
     SeqNumberDigitsCountLabel.Caption := Localizer.I18N('Digits') + ':';
     PostCmdLabel.Caption := Localizer.I18N('RunCommand') + ':';
-    PostCmdEdit.Hint := Localizer.I18N('RunCommandHelpText');
+    PostCmdEdit.Hint := StringReplace(Localizer.I18N('RunCommandHelpText'),
+                                      '%s', CmdExample, []);
 
     CompressionLevelLabel.Caption := Localizer.I18N('CompressionLevel') + ':';
     with CompressionLevelComboBox do
