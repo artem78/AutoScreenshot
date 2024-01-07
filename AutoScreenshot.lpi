@@ -193,19 +193,9 @@ override_dh_auto_install:
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dBorland
--dVer150
--dDelphi7
--dCompiler6_Up
--dPUREPASCAL
--dSIMULATE_OLD_FILES_DELETION"/>
-            <OtherDefines Count="6">
-              <Define0 Value="Borland"/>
-              <Define1 Value="Ver150"/>
-              <Define2 Value="Delphi7"/>
-              <Define3 Value="Compiler6_Up"/>
-              <Define4 Value="PUREPASCAL"/>
-              <Define5 Value="SIMULATE_OLD_FILES_DELETION"/>
+            <CustomOptions Value="-dSIMULATE_OLD_FILES_DELETION"/>
+            <OtherDefines Count="1">
+              <Define0 Value="SIMULATE_OLD_FILES_DELETION"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
@@ -241,9 +231,6 @@ override_dh_auto_install:
               </Win32>
             </Options>
           </Linking>
-          <Other>
-            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
-          </Other>
         </CompilerOptions>
       </Item3>
       <Item4 Name="Release (32bit)">
@@ -278,9 +265,6 @@ override_dh_auto_install:
               </Win32>
             </Options>
           </Linking>
-          <Other>
-            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
-          </Other>
         </CompilerOptions>
       </Item4>
       <Item5 Name="Release (64bit)">
@@ -315,9 +299,6 @@ override_dh_auto_install:
               </Win32>
             </Options>
           </Linking>
-          <Other>
-            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
-          </Other>
         </CompilerOptions>
       </Item5>
     </BuildModes>
@@ -474,9 +455,6 @@ override_dh_auto_install:
         </Win32>
       </Options>
     </Linking>
-    <Other>
-      <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
-    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="5">
