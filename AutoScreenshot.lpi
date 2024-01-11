@@ -238,6 +238,9 @@ override_dh_auto_install:
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-B"/>
+          </Other>
         </CompilerOptions>
       </Item3>
       <Item4 Name="Release (32bit)">
@@ -272,6 +275,9 @@ override_dh_auto_install:
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-B"/>
+          </Other>
         </CompilerOptions>
       </Item4>
       <Item5 Name="Release (64bit)">
@@ -306,6 +312,9 @@ override_dh_auto_install:
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-B"/>
+          </Other>
         </CompilerOptions>
       </Item5>
     </BuildModes>
