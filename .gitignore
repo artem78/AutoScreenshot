@@ -63,3 +63,4 @@ lib/
 /DEBUILD/
 /DEBUILD.sh
 /build
+/local.properties

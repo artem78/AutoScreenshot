@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<project name="Auto Screenshot">
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+
+	<!-- Properties: -->
+	<!-- <property file="local.properties"/> -->
+	<loadproperties srcfile="local.properties" encoding="UTF-8">
+		<filterchain>
+			<escapeunicode />
+		</filterchain>
+	</loadproperties>
+	
+	
+	<condition property="os_family" value="Windows">
+		<os family="windows" />
+	</condition>
+	<condition property="os_family" value="Linux">
+		<os family="unix" />
+	</condition>
+	
+	<!--<property name="build_dir" location="build"/>-->
+	<property name="build_dir" location="build/files"/>
+	<property name="releases_dir" location="releases"/>
+	<property name="zip_dir" location="build/zip"/>
+	<property name="test_dir" location="Test"/>
+	<property name="temp_dir" location="build/temp"/>
+	<!-- #ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreenshot.lpi) -->
+	<exec executable="git" outputproperty="version">
+		<arg value="describe"/>
+		<arg value="--dirty"/>
+		<!-- <arg value=" - - long"/> -->
+	</exec>
+	
+	<condition property="executable" value="AutoScreenshot.exe">
+		<os family="windows" />
+	</condition>
+	<condition property="executable" value="AutoScreenshot">
+		<os family="unix" />
+	</condition>
+	
+	<condition property="build_mode" value="Release (32bit)">
+		<os family="windows" />
+	</condition>
+	<condition property="build_mode" value="Release">
+		<os family="unix" />
+	</condition>
+	
+	<condition property="lazbuild_path" value="${lazarus_dir}/lazbuild.exe">
+		<os family="windows" />
+	</condition>
+	<condition property="lazbuild_path" value="lazbuild">
+		<os family="unix" />
+	</condition>
+	
+	
+	
+	<!-- Targets: -->
+	<target name="clean">
+		<delete dir="${build_dir}"/>
+		<delete dir="lib"/>
+		<delete file="${executable}"/>
+		<delete dir="${temp_dir}"/>
+	</target>
+	
+	<target name="init" depends="clean">
+		<!-- <echoproperties/> -->
+		<echo>Program version: ${version}</echo>
+		<mkdir dir="${build_dir}"/>
+		<mkdir dir="${releases_dir}"/>
+		<mkdir dir="${zip_dir}"/>
+	</target>
+	
+	<target name="build" depends="init" description="Compile executable">
+		<echo>Compile executable</echo>
+		<exec executable="${lazbuild_path}">
+			<arg value="--build-mode=${build_mode}"/>
+			<!--<arg value="- - verbose"/>-->
+			<arg value="AutoScreenshot.lpi"/>
+		</exec>
+	</target>
+	
+	<target name="build_tests">
+		<echo>Compile tests</echo>
+		<exec executable="${lazbuild_path}" dir="${test_dir}">
+			<arg value="AutoScreenshotTest.lpi"/>
+		</exec>
+	</target>
+	
+	<target name="tests" depends="build_tests" description="Run all unit tests">
+		<echo>Run tests</echo>
+		<condition property="test_executable_filename" value="AutoScreenshotTest.exe">
+			<os family="windows" />
+		</condition>
+		<condition property="test_executable_filename" value="AutoScreenshotTest">
+			<os family="unix" />
+		</condition>
+		<!-- <exec executable="${test_executable_filename}" dir="${test_dir}" failonerror="true"> -->
+		<exec executable="${test_dir}/${test_executable_filename}" failonerror="true">
+			<arg value="--all"/>
+			<arg value="--format=plain"/>
+		</exec>
+	</target>
+	
+	<target name="zip" depends="build, tests" description="Pack all to ZIP archive">
+		<copy file="${executable}" todir="${build_dir}" preservelastmodified="true"/>
+		<if>
+			<equals arg1="${os_family}" arg2="Windows" />
+			<then>
+				<copy file="${lazarus_dir}/libeay32.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<copy file="${lazarus_dir}/ssleay32.dll" todir="${build_dir}" preservelastmodified="true"/>
+			</then>
+		</if>
+		<mkdir dir="${build_dir}/lang"/>
+		<copy todir="${build_dir}/lang" preservelastmodified="true">
+			<fileset dir="lang" includes="*.ini"/>
+		</copy>
+		<copy todir="${build_dir}/sounds" preservelastmodified="true">
+			<fileset dir="sounds" includes="*.wav"/>
+		</copy>
+		
+		<copy todir="${temp_dir}/AutoScreenshot_${version}" preservelastmodified="true">
+			<fileset dir="${build_dir}" includes="**"/>
+		</copy>
+		
+		<zip basedir="${temp_dir}" destfile="${zip_dir}/AutoScreenshot_${version}_${os_family}_portable.zip" level="9"/>
+	</target>
+	
+	<target name="installer" depends="build, tests" description="Make installer file (Windows only)">
+		<if>
+			<os family="windows"/>
+			<then>
+				<exec executable="${inno_setup_dir}/ISCC.exe" failonerror="true">
+					<env key="LazarusDir" value="${lazarus_dir}"/>
+					<arg value="/FAutoScreenshot_${version}_Windows_setup"/>
+					<arg value="setup.iss"/>
+				</exec>
+			</then>
+			<else>
+				<fail>Target not supported on this OS</fail>
+			</else>
+		</if>
+	</target>
+</project>
