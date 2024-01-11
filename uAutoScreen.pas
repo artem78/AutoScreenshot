@@ -887,7 +887,7 @@ begin
       if not Timer.Enabled then // Manual capture
       begin
         ErrMsg := {'Execution of custom command failed: ' +} E.Message;
-        MessageDlg('', ErrMsg, mtWarning, [mbOK], '');
+        MessageDlg('Auto Screenshot', ErrMsg, mtWarning, [mbOK], '');
       end;
     end;
   end;
@@ -1902,7 +1902,7 @@ var
 begin
   YesStr := Localizer.I18N('Yes');
   NoStr  := Localizer.I18N('No');
-  Result := QuestionDlg('', Localizer.I18N('ExitConfirmation'), mtConfirmation,
+  Result := QuestionDlg('Auto Screenshot', Localizer.I18N('ExitConfirmation'), mtConfirmation,
             [mrYes, YesStr, mrNo, NoStr, 'IsDefault'],
             0) = mrYes;
 end;
