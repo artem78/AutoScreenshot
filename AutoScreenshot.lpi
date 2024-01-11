@@ -45,13 +45,20 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="15"/>
-      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.15"/>
+      <RevisionNr Value="1"/>
+      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.15.1"/>
     </VersionInfo>
     <CustomData Count="13">
       <Item0 Name="lazpackager/copyright" Value="2020-2023, Artem Demin &lt;megabyte1024@ya.ru>"/>
       <Item1 Name="lazpackager/deb/ppa" Value="ppa:artem78/autoscreenshot"/>
       <Item2 Name="lazpackager/deb/series" Value="precise"/>
-      <Item3 Name="lazpackager/deb/tpl_changelog" Value="?PACKAGE_NAME? (1.15.0.0-1) precise; urgency=low
+      <Item3 Name="lazpackager/deb/tpl_changelog" Value="?PACKAGE_NAME? (1.15.1.0-1) precise; urgency=low
+
+  * Updated Chinese translation up to v1.15
+
+ -- ?MAINTAINER? &lt;?MAINTAINER_EMAIL?>  Thu, 11 Jan 2024 11:16:41 +0300
+
+?PACKAGE_NAME? (1.15.0.0-1) precise; urgency=low
 
   * Fixed running user command after capture not works
   * Added option for minimizing to tray when form closed (issue #44)
