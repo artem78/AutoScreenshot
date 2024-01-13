@@ -174,7 +174,6 @@ end;
 
 procedure TUtilsTestCase.TestCmdExecution;
 const
-  Dir = 'tmp';
   {$IfDef Windows}
   CopyCmd = 'copy';
   {$EndIf}
@@ -190,7 +189,11 @@ const
 var
   F: TextFile;
   Cmd: String;
+  Dir: String;
 begin
+  Dir := ConcatPaths([ExtractFileDir(Application.ExeName), 'tmp']);
+  Dir := IncludeTrailingPathDelimiter(Dir);
+
   if DirectoryExists(Dir) then
     DeleteDirectory(Dir, False);
   CreateDir(Dir);
