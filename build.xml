@@ -52,6 +52,10 @@
 		<os family="unix" />
 	</condition>
 	
+	<property name="libeay32_dll.sha1" value="be25d0575530aab50b0bb96571ea52124bdaaf77"/>
+	<property name="ssleay32_dll.sha1" value="61f6e4c18415a86e152d4f6453b513111866b505"/>
+	<property name="ssl_dlls.download_url" value="https://github.com/IndySockets/OpenSSL-Binaries/raw/master/Archive/openssl-1.0.2j-i386-win32.zip"/>
+	
 	
 	
 	<!-- Targets: -->
@@ -68,6 +72,7 @@
 		<mkdir dir="${build_dir}"/>
 		<mkdir dir="${releases_dir}"/>
 		<mkdir dir="${zip_dir}"/>
+		<mkdir dir="${temp_dir}"/>
 	</target>
 	
 	<target name="build" depends="init" description="Compile executable">
@@ -101,7 +106,7 @@
 		</exec>
 	</target>
 	
-	<target name="zip" depends="build, tests" description="Pack all to ZIP archive">
+	<target name="zip" depends="download_ssl_dlls, build, tests" description="Pack all to ZIP archive">
 		<copy file="${executable}" todir="${build_dir}" preservelastmodified="true"/>
 		<if>
 			<equals arg1="${os_family}" arg2="Windows" />
@@ -125,7 +130,7 @@
 		<zip basedir="${temp_dir}" destfile="${zip_dir}/AutoScreenshot_${version}_${os_family}_portable.zip" level="9"/>
 	</target>
 	
-	<target name="installer" depends="build, tests" description="Make installer file (Windows only)">
+	<target name="installer" depends="download_ssl_dlls, build, tests" description="Make installer file (Windows only)">
 		<if>
 			<os family="windows"/>
 			<then>
@@ -139,5 +144,41 @@
 				<fail>Target not supported on this OS</fail>
 			</else>
 		</if>
+	</target>
+	
+	<target name="download_ssl_dlls" depends="check_ssl_dlls_checksum" unless="${ssl_dlls.checksum_is_ok}">
+		<echo>Start download OpenSSL binaries archive</echo>
+		<tempfile property="zip_temp_file" prefix="openssl_" suffix=".zip" destdir="${temp_dir}" deleteonexit="true"/>
+		<echo>zip_temp_file: ${zip_temp_file}</echo>
+		<get src="${ssl_dlls.download_url}" dest="${zip_temp_file}" verbose="on"/>
+		<unzip src="${zip_temp_file}" dest="" overwrite="true">
+			<patternset>
+				<include name="libeay32.dll"/>
+				<include name="ssleay32.dll"/>
+			</patternset>
+		</unzip>
+		<!-- Todo: Check dll sums after download -->
+	</target>
+	
+	<target name="check_ssl_dlls_available">
+		<condition property="ssl_dlls.is_available">
+			<and>
+				<available file="libeay32.dll"/>
+				<available file="ssleay32.dll"/>
+			</and>
+		</condition>
+		<echo>SSL dlls exists: ${ssl_dlls.is_available}</echo>
+	</target>
+	
+	<target name="check_ssl_dlls_checksum" depends="check_ssl_dlls_available" if="ssl_dlls.is_available">
+		<checksum file="libeay32.dll" algorithm="SHA-1" property="${libeay32_dll.sha1}" verifyProperty="libeay32_dll.checksum_is_ok"/>
+		<checksum file="ssleay32.dll" algorithm="SHA-1" property="${ssleay32_dll.sha1}" verifyProperty="ssleay32_dll.checksum_is_ok"/>
+		<condition property="ssl_dlls.checksum_is_ok">
+			<and>
+				<equals arg1="${libeay32_dll.checksum_is_ok}" arg2="true" />
+				<equals arg1="${ssleay32_dll.checksum_is_ok}" arg2="true" />
+			</and>
+		</condition>
+		<echo>SSL dll checksums are valid: ${ssl_dlls.checksum_is_ok}</echo>
 	</target>
 </project>
