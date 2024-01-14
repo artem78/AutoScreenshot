@@ -18,6 +18,13 @@
 		<os family="unix" />
 	</condition>
 	
+	<condition property="is_windows">
+		<os family="windows"/>
+	</condition>
+	<condition property="is_linux">
+		<os family="unix"/>
+	</condition>
+	
 	<!--<property name="build_dir" location="build"/>-->
 	<property name="build_dir" location="build/files"/>
 	<property name="releases_dir" location="releases"/>
@@ -130,23 +137,23 @@
 		<zip basedir="${temp_dir}" destfile="${zip_dir}/AutoScreenshot_${version}_${os_family}_portable.zip" level="9"/>
 	</target>
 	
-	<target name="installer" depends="download_ssl_dlls, build, tests" description="Make installer file (Windows only)">
-		<if>
+	<target name="installer" depends="download_ssl_dlls, build, tests" description="Make installer file (Windows only)" if="is_windows">
+		<!--<if>
 			<os family="windows"/>
-			<then>
+			<then>-->
 				<exec executable="${inno_setup_dir}/ISCC.exe" failonerror="true">
 					<env key="LazarusDir" value="${lazarus_dir}"/>
 					<arg value="/FAutoScreenshot_${version}_Windows_setup"/>
 					<arg value="setup.iss"/>
 				</exec>
-			</then>
+			<!--</then>
 			<else>
 				<fail>Target not supported on this OS</fail>
 			</else>
-		</if>
+		</if>-->
 	</target>
 	
-	<target name="download_ssl_dlls" depends="check_ssl_dlls_checksum" unless="${ssl_dlls.checksum_is_ok}">
+	<target name="download_ssl_dlls" depends="check_ssl_dlls_checksum" unless="${ssl_dlls.checksum_is_ok}" if="is_windows">
 		<echo>Start download OpenSSL binaries archive</echo>
 		<tempfile property="zip_temp_file" prefix="openssl_" suffix=".zip" destdir="${temp_dir}" deleteonexit="true"/>
 		<echo>zip_temp_file: ${zip_temp_file}</echo>
