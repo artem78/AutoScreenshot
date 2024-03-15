@@ -11,7 +11,7 @@ object DonateForm: TDonateForm
   ChildSizing.HorizontalSpacing = 6
   ChildSizing.VerticalSpacing = 6
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
-  ChildSizing.ControlsPerLine = 3
+  ChildSizing.ControlsPerLine = 4
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poOwnerFormCenter
