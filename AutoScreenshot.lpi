@@ -22,7 +22,7 @@
         <TextDesc Value="Automatic screenshot maker"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="13">
+      <Resources Count="22">
         <Resource_0 FileName="res\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
         <Resource_1 FileName="res\camera_flash1.ico" Type="ICON" ResourceName="_CAMERA_FLASH_1"/>
         <Resource_2 FileName="res\camera_flash2.ico" Type="ICON" ResourceName="_CAMERA_FLASH_2"/>
@@ -36,6 +36,15 @@
         <Resource_10 FileName="res\logo.png" Type="RCDATA" ResourceName="_LOGO"/>
         <Resource_11 FileName="res\logo_high_dpi.png" Type="RCDATA" ResourceName="_LOGO_HIGH_DPI"/>
         <Resource_12 FileName="res\camera.ico" Type="ICON" ResourceName="_CAMERA"/>
+        <Resource_13 FileName="libs/FlagKit/Assets/PNG/DE.png" Type="RCDATA" ResourceName="FLAG_DE"/>
+        <Resource_14 FileName="libs/FlagKit/Assets/PNG/GB.png" Type="RCDATA" ResourceName="FLAG_EN"/>
+        <Resource_15 FileName="libs/FlagKit/Assets/PNG/ES.png" Type="RCDATA" ResourceName="FLAG_ES"/>
+        <Resource_16 FileName="libs/FlagKit/Assets/PNG/FR.png" Type="RCDATA" ResourceName="FLAG_FR"/>
+        <Resource_17 FileName="libs/FlagKit/Assets/PNG/PT.png" Type="RCDATA" ResourceName="FLAG_PT"/>
+        <Resource_18 FileName="libs/FlagKit/Assets/PNG/RU.png" Type="RCDATA" ResourceName="FLAG_RU"/>
+        <Resource_19 FileName="libs/FlagKit/Assets/PNG/TR.png" Type="RCDATA" ResourceName="FLAG_TR"/>
+        <Resource_20 FileName="libs/FlagKit/Assets/PNG/UA.png" Type="RCDATA" ResourceName="FLAG_UK"/>
+        <Resource_21 FileName="libs/FlagKit/Assets/PNG/CN.png" Type="RCDATA" ResourceName="FLAG_ZH"/>
       </Resources>
     </General>
     <i18n>

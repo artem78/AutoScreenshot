@@ -26,6 +26,7 @@ type
     AutoCheckForUpdatesMenuItem: TMenuItem;
     FileMenuItem: TMenuItem;
     ExitMenuItem: TMenuItem;
+    LangFlagImageList: TImageList;
     MinimizeInsteadOfCloseCheckBox: TCheckBox;
     PlaySoundsCheckBox: TCheckBox;
     CompressionLevelComboBox: TComboBox;
@@ -1548,10 +1549,12 @@ var
   MenuItem: TMenuItem;
   LangsList: TStringList;
   Line: String;
+  FlagResourceName: String;
 begin
   while LanguageSubMenu.Count > 0 do
     LanguageSubMenu.Items[0].Free;
   LanguageSubMenu.Clear;
+  LangFlagImageList.Clear;
 
   LangsList := TStringList.Create;
 
@@ -1580,6 +1583,13 @@ begin
     MenuItem.RadioItem := True;
     //MenuItem.GroupIndex := GroupIdx;
     MenuItem.Name := LanguageSubMenuItemNamePrefix + ExtractDelimited(2, Line, [#9]);
+
+    // Flag icon
+    FlagResourceName := 'FLAG_' + UpperCase(ExtractDelimited(2, Line, [#9]));
+    if FindResource(HINSTANCE, FlagResourceName, RT_RCDATA) <> 0 then
+      MenuItem.ImageIndex := LangFlagImageList.AddResourceName(HINSTANCE, FlagResourceName)
+    else
+      MenuItem.ImageIndex := -1;
 
     LanguageSubMenu.Add(MenuItem);
   end;

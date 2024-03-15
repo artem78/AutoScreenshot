@@ -1,3 +1,6 @@
 [submodule "libs/Cross.Codebot"]
 	path = libs/Cross.Codebot
 	url = git@github.com:artem78/Cross.Codebot.git
+[submodule "libs/FlagKit"]
+	path = libs/FlagKit
+	url = https://github.com/madebybowtie/FlagKit.git
