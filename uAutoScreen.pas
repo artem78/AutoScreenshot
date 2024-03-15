@@ -1586,7 +1586,7 @@ begin
 
     // Flag icon
     FlagResourceName := 'FLAG_' + UpperCase(ExtractDelimited(2, Line, [#9]));
-    if FindResource(HINSTANCE, FlagResourceName, RT_RCDATA) <> 0 then
+    if system.FindResource(HINSTANCE, FlagResourceName, RT_RCDATA) <> 0 then
       MenuItem.ImageIndex := LangFlagImageList.AddResourceName(HINSTANCE, FlagResourceName)
     else
       MenuItem.ImageIndex := -1;
