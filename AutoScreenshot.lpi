@@ -36,15 +36,15 @@
         <Resource_10 FileName="res\logo.png" Type="RCDATA" ResourceName="_LOGO"/>
         <Resource_11 FileName="res\logo_high_dpi.png" Type="RCDATA" ResourceName="_LOGO_HIGH_DPI"/>
         <Resource_12 FileName="res\camera.ico" Type="ICON" ResourceName="_CAMERA"/>
-        <Resource_13 FileName="libs/FlagKit/Assets/PNG/DE.png" Type="RCDATA" ResourceName="FLAG_DE"/>
-        <Resource_14 FileName="libs/FlagKit/Assets/PNG/GB.png" Type="RCDATA" ResourceName="FLAG_EN"/>
-        <Resource_15 FileName="libs/FlagKit/Assets/PNG/ES.png" Type="RCDATA" ResourceName="FLAG_ES"/>
-        <Resource_16 FileName="libs/FlagKit/Assets/PNG/FR.png" Type="RCDATA" ResourceName="FLAG_FR"/>
-        <Resource_17 FileName="libs/FlagKit/Assets/PNG/PT.png" Type="RCDATA" ResourceName="FLAG_PT"/>
-        <Resource_18 FileName="libs/FlagKit/Assets/PNG/RU.png" Type="RCDATA" ResourceName="FLAG_RU"/>
-        <Resource_19 FileName="libs/FlagKit/Assets/PNG/TR.png" Type="RCDATA" ResourceName="FLAG_TR"/>
-        <Resource_20 FileName="libs/FlagKit/Assets/PNG/UA.png" Type="RCDATA" ResourceName="FLAG_UK"/>
-        <Resource_21 FileName="libs/FlagKit/Assets/PNG/CN.png" Type="RCDATA" ResourceName="FLAG_ZH"/>
+        <Resource_13 FileName="libs/country-flags/country-flags/de_16.png" Type="RCDATA" ResourceName="FLAG_DE"/>
+        <Resource_14 FileName="libs/country-flags/country-flags/gb_16.png" Type="RCDATA" ResourceName="FLAG_EN"/>
+        <Resource_15 FileName="libs/country-flags/country-flags/es_16.png" Type="RCDATA" ResourceName="FLAG_ES"/>
+        <Resource_16 FileName="libs/country-flags/country-flags/fr_16.png" Type="RCDATA" ResourceName="FLAG_FR"/>
+        <Resource_17 FileName="libs/country-flags/country-flags/pt_16.png" Type="RCDATA" ResourceName="FLAG_PT"/>
+        <Resource_18 FileName="libs/country-flags/country-flags/ru_16.png" Type="RCDATA" ResourceName="FLAG_RU"/>
+        <Resource_19 FileName="libs/country-flags/country-flags/tr_16.png" Type="RCDATA" ResourceName="FLAG_TR"/>
+        <Resource_20 FileName="libs/country-flags/country-flags/ua_16.png" Type="RCDATA" ResourceName="FLAG_UK"/>
+        <Resource_21 FileName="libs/country-flags/country-flags/cn_16.png" Type="RCDATA" ResourceName="FLAG_ZH"/>
       </Resources>
     </General>
     <i18n>
