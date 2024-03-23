@@ -52,7 +52,7 @@ implementation
 
 uses LazLoggerBase, uUtils, ScreenGrabber, DateUtils,
   ///////////
-  uAutoScreen, Forms
+  umainform, Forms
   ///////////
   ;
 

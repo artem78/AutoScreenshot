@@ -359,11 +359,12 @@ override_dh_auto_install:
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="uAutoScreen.pas"/>
+        <Filename Value="umainform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uMainForm"/>
       </Unit1>
       <Unit2>
         <Filename Value="uAbout.pas"/>
