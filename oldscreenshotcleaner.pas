@@ -31,6 +31,8 @@ type
     function GetActive: Boolean;
     procedure DoOnTimer(ASender: TObject);
     procedure UpdateUI;
+    function GetMaxDateTime: TDateTime;
+    property MaxDateTime: TDateTime read GetMaxDateTime;
 
   public
     constructor Create;
@@ -141,7 +143,6 @@ end;
 
 procedure TOldScreenshotCleaner.DoOnTimer(ASender: TObject);
 var
-  MaxDateTime: TDateTime;
   ImgExts: TStringList;
   ImgFmt: TImageFormat;
   Dir: String;
@@ -149,9 +150,6 @@ begin
   // Set normal timer interval at first run
   if Timer.Interval <> RunInterval then
     Timer.Interval := RunInterval;
-
-  MaxDateTime := Now - MaxAge;
-  //DebugLn('MaxDateTime=', DateTimeToStr(MaxDateTime));
 
   ImgExts := TStringList.Create;
   try
@@ -176,6 +174,11 @@ end;
 procedure TOldScreenshotCleaner.UpdateUI;
 begin
   Application.ProcessMessages;
+end;
+
+function TOldScreenshotCleaner.GetMaxDateTime: TDateTime;
+begin
+  Result := Now - MaxAge;
 end;
 
 constructor TOldScreenshotCleaner.Create;
