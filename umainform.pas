@@ -25,7 +25,9 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
+    //////////
     DataSource1: TDataSource;
+    ////////////
     FileMenuItem: TMenuItem;
     ExitMenuItem: TMenuItem;
     LangFlagImageList: TImageList;
@@ -45,10 +47,12 @@ type
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
     OutputDirEdit: TDirectoryEdit;
+    ////////////
     SQLite3Connection1: TSQLite3Connection;
     Sqlite3Dataset1: TSqlite3Dataset;
     SQLQuery1: TSQLQuery;
     SQLTransaction1: TSQLTransaction;
+    ///////////////
     Timer: TTimer;
     OutputDirLabel: TLabel;
     CaptureIntervalLabel: TLabel;
@@ -171,6 +175,10 @@ type
     KeyHook: TGlobalKeyHook;
     OldScreenshotCleaner: TOldScreenshotCleaner;
     FormInitialized: Boolean;
+
+    public
+    FileJournal: TJournal;
+    private
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -642,8 +650,12 @@ begin
   XWatcher := TXRandREventWatcherThread.Create(RRScreenChangeNotifyMask, @OnScreenConfigurationChanged);
   {$EndIf}
 
-  Sqlite3Dataset1.Open;
-  SQLite3Connection1.Connected:=True;
+  /////////
+  {Sqlite3Dataset1.Open;
+  SQLite3Connection1.Connected:=True;}
+  //////////
+
+  FileJournal := TJournal.Create;
 
   FormInitialized := True;
   DebugLn('Initializing finished');
@@ -693,6 +705,8 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  FileJournal.Free;
+
   {$IfDef Linux}
   //XWatcher.Terminate;
   //XWatcher.WaitFor;
@@ -878,7 +892,8 @@ begin
       Grabber.CaptureMonitor(ImageFileName, MonitorId);
   end;
 
-  with SQLQuery1 do
+  /////////////////
+  {with SQLQuery1 do
   begin
     SQL.Clear;
     SQL.Add('INSERT INTO `files` (`filename`, `created`) VALUES (:filename, :created);');
@@ -887,7 +902,10 @@ begin
     ExecSQL;
     SQLTransaction1.Commit;
     Close;
-  end;
+  end;}
+  /////////////////////
+
+  FileJournal.AddFile(ImageFileName);
 
 
   // Run user command

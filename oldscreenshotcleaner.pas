@@ -5,7 +5,7 @@ unit OldScreenshotCleaner;
 interface
 
 uses
-  Classes, SysUtils, ExtCtrls;
+  Classes, SysUtils, ExtCtrls, SQLite3DS, SQLite3Conn, SQLDB, DB;
 
 type
   TIntervalUnit = (iuHours, iuDays, iuWeeks, iuMonths);
@@ -46,9 +46,32 @@ type
     procedure Stop;
   end;
 
+  { TJournal }
+
+  TJournal = class
+  private
+    SQLite3Connection1: TSQLite3Connection;
+    Sqlite3Dataset1: TSqlite3Dataset;
+    SQLQuery1: TSQLQuery;
+    SQLTransaction1: TSQLTransaction;
+    DataSource1: TDataSource;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure AddFile(const AFileName: String);
+    procedure RemoveBefore(ADateTime: TDateTime);
+    function GetBefore(ADateTime: TDateTime): TStringList;
+  end;
+
+
+  // Operator overloads
+
   operator explicit (const AInterval: TInterval): String;
   operator explicit (const AStr: String): TInterval;
   operator - (ADateTime: TDateTime; AInterval: TInterval): TDateTime;
+
+
 
 implementation
 
@@ -105,6 +128,108 @@ begin
     iuDays:   Result := IncDay(ADateTime, -AInterval.Val);
     iuWeeks:  Result := IncDay(ADateTime, -AInterval.Val * 7);
     iuMonths: Result := IncMonth(ADateTime, -AInterval.Val);
+  end;
+end;
+
+{ TJournal }
+
+constructor TJournal.Create;
+begin
+  Sqlite3Dataset1 := TSqlite3Dataset.Create(Nil);
+  with Sqlite3Dataset1 do
+  begin
+    FileName := 'db.db';
+    TableName := 'files';
+  end;
+
+  SQLite3Connection1 := TSQLite3Connection.Create(Nil);
+  with SQLite3Connection1 do
+  begin
+    DatabaseName := {'db.db'} Sqlite3Dataset1.FileName;
+    CharSet := 'UTF8';
+  end;
+
+  SQLTransaction1 := TSQLTransaction.Create(Nil);
+  SQLTransaction1.DataBase := SQLite3Connection1;
+  SQLite3Connection1.Transaction := SQLTransaction1;
+
+  SQLQuery1 := TSQLQuery.Create(Nil);
+  with SQLQuery1 do
+  begin
+    Database := SQLite3Connection1;
+    Transaction := SQLTransaction1;
+  end;
+
+  DataSource1 := TDataSource.Create(Nil);
+  DataSource1.DataSet := Sqlite3Dataset1;
+
+
+  Sqlite3Dataset1.Open;
+  SQLite3Connection1.Connected := True;
+end;
+
+destructor TJournal.Destroy;
+begin
+  inherited Destroy;
+
+  SQLite3Connection1.Connected := False;
+  Sqlite3Dataset1.Close;
+
+  DataSource1.Free;
+  SQLQuery1.Free;
+  SQLTransaction1.Free;
+  SQLite3Connection1.Free;
+  Sqlite3Dataset1.Free;
+end;
+
+procedure TJournal.AddFile(const AFileName: String);
+begin
+  with SQLQuery1 do
+  begin
+    SQL.Clear;
+    SQL.Add('INSERT INTO `' + Sqlite3Dataset1.TableName + '` (`filename`, `created`) VALUES (:filename, :created);');
+    ParamByName('filename').AsString := AFileName;
+    ParamByName('created').{AsDateTime}AsFloat := Now;
+    ExecSQL;
+    SQLTransaction1.Commit;
+    Close;
+  end;
+end;
+
+procedure TJournal.RemoveBefore(ADateTime: TDateTime);
+begin
+  with SQLQuery1 do
+  begin
+    SQL.Clear;
+    SQL.Add('DELETE FROM `' + Sqlite3Dataset1.TableName + '` WHERE `created` < :created_before;');
+    ParamByName('created_before').{AsDateTime}AsFloat := ADateTime;
+    ExecSQL;
+    SQLTransaction1.Commit;
+    Close;
+  end;
+end;
+
+function TJournal.GetBefore(ADateTime: TDateTime): TStringList;
+begin
+  Result.Create;
+
+  with SQLQuery1 do
+  begin
+    SQL.Clear;
+    SQL.Add('SELECT `filename`, `created` FROM `' + Sqlite3Dataset1.TableName + '` WHERE `created` < :created_before;');
+    ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} ADateTime;
+    Open;
+    First;
+    while not EOF do
+    begin
+      Result.Add(FieldByName('filename').AsString + #9 + FloatToStr(FieldByName('created').{AsDateTime}AsFloat));
+
+
+     //// UpdateUI; // To prevent form freezes if too many files to delete
+
+      Next;
+    end;
+    Close;
   end;
 end;
 
@@ -189,49 +314,62 @@ procedure TOldScreenshotCleaner.DeleteOldFiles;
 var
   Res: Boolean;
   CreatedBefore: TDateTime; // Needs for prevent other time in second call to MaxDateTime property
+
+  sl: TStringList;
+  s, FileName, Created: String;
 begin
   CreatedBefore := MaxDateTime;
 
   DebugLn('Start clearing old screenshots until %s (%s ago)',
          [DateTimeToStr(CreatedBefore), String(MaxAge)]);
 
-  with MainForm.SQLQuery1 do
+  {with MainForm.SQLQuery1 do
   begin
     SQL.Clear;
-    SQL.Add('SELECT `filename`, `created` FROM `files` WHERE `created` < :created_before;');
+    SQL.Add('SELECT `filename`, `created` FROM `' + Sqlite3Dataset1.TableName + '` WHERE `created` < :created_before;');
     ParamByName('created_before').{AsDateTime}AsFloat := CreatedBefore;
     Open;
     First;
     while not EOF do
-    begin
-      DebugLn('Try to delete "%s" created at %s ...',
-              [FieldByName('filename').AsString,
-               DateTimeToStr(FieldByName('created').{AsDateTime}AsFloat, True)]);
+    begin}
+
+
+  sl := MainForm.FileJournal.GetBefore(CreatedBefore);
+  for s in sl do
+  begin
+    FileName:=ExtractDelimited(0, s, [#9]);
+    Created:=DateTimeToStr(StrToFloat(ExtractDelimited(1, s, [#9])));
+
+    DebugLn('Try to delete "%s" created at %s ...',
+            [FileName,
+             created]);
 {$IfDef SIMULATE_OLD_FILES_DELETION}
-      DebugLn('[ Simulation! ]');
-      Res := True;
+    DebugLn('[ Simulation! ]');
+    Res := True;
 {$Else}
-      Res := DeleteFile(FieldByName('filename').AsString);
+    Res := DeleteFile(FileName);
 {$EndIf}
-      DebugLn(IfThen(Res, 'Ok', 'Failed!'));
+    DebugLn(IfThen(Res, 'Ok', 'Failed!'));
 
-      UpdateUI; // To prevent form freezes if too many files to delete
-
-      Next;
-    end;
-    Close;
+    UpdateUI; // To prevent form freezes if too many files to delete
+  end;
 
 {$IfNDef SIMULATE_OLD_FILES_DELETION}
-    SQL.Clear;
+//////////////////////
+    {SQL.Clear;
     SQL.Add('DELETE FROM `files` WHERE `created` < :created_before;');
     ParamByName('created_before').{AsDateTime}AsFloat := CreatedBefore;
     ExecSQL;
     MainForm.SQLTransaction1.Commit;
-    Close;
+    Close;}
+//////////////////////////
+    MainForm.FileJournal.RemoveBefore(CreatedBefore);
 {$EndIf}
-  end;
+ // end;
 
   DebugLn('Old files cleaning finished');
+
+  sl.free;
 end;
 
 constructor TOldScreenshotCleaner.Create;
