@@ -15,7 +15,8 @@ uses
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf,
   ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
-  UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
+  UniqueInstance, uplaysound, ZStream { for Tcompressionlevel },
+  SQLite3DS, SQLite3Conn, SQLDB, DB;
 
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
@@ -24,6 +25,7 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
+    DataSource1: TDataSource;
     FileMenuItem: TMenuItem;
     ExitMenuItem: TMenuItem;
     LangFlagImageList: TImageList;
@@ -43,6 +45,10 @@ type
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
     OutputDirEdit: TDirectoryEdit;
+    SQLite3Connection1: TSQLite3Connection;
+    Sqlite3Dataset1: TSqlite3Dataset;
+    SQLQuery1: TSQLQuery;
+    SQLTransaction1: TSQLTransaction;
     Timer: TTimer;
     OutputDirLabel: TLabel;
     CaptureIntervalLabel: TLabel;
@@ -636,6 +642,9 @@ begin
   XWatcher := TXRandREventWatcherThread.Create(RRScreenChangeNotifyMask, @OnScreenConfigurationChanged);
   {$EndIf}
 
+  Sqlite3Dataset1.Open;
+  SQLite3Connection1.Connected:=True;
+
   FormInitialized := True;
   DebugLn('Initializing finished');
 end;
@@ -867,6 +876,17 @@ begin
       Grabber.CaptureMonitor(ImageFileName, GetMonitorWithCursor)
     else
       Grabber.CaptureMonitor(ImageFileName, MonitorId);
+  end;
+
+  with SQLQuery1 do
+  begin
+    SQL.Clear;
+    SQL.Add('INSERT INTO `files` (`filename`, `created`) VALUES (:filename, :created);');
+    ParamByName('filename').AsString := ImageFileName;
+    ParamByName('created').{AsDateTime}AsFloat := Now;
+    ExecSQL;
+    SQLTransaction1.Commit;
+    Close;
   end;
 
 

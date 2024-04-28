@@ -78,9 +78,9 @@ function GetUserPicturesDir: WideString;
 type
   TDeleteOldFilesCallback = procedure of Object;
 
-procedure DeleteOldFiles(const ADir: string; AMaxDateTime: TDateTime;
+(*procedure DeleteOldFiles(const ADir: string; AMaxDateTime: TDateTime;
   AIncludeSubdirs: Boolean; const AAllowedExtensions: array of {String} AnsiString;
-  ADeleteEmptyDirs: Boolean; ACallback: TDeleteOldFilesCallback = Nil);
+  ADeleteEmptyDirs: Boolean; ACallback: TDeleteOldFilesCallback = Nil);*)
 
 implementation
 
@@ -497,7 +497,7 @@ begin
   Result := ASearchRec.TimeStamp;
 end;
 
-procedure DeleteOldFiles(const ADir: string; AMaxDateTime: TDateTime;
+(*procedure DeleteOldFiles(const ADir: string; AMaxDateTime: TDateTime;
   AIncludeSubdirs: Boolean; const AAllowedExtensions: array of {String} AnsiString;
   ADeleteEmptyDirs: Boolean; ACallback: TDeleteOldFilesCallback);
 
@@ -619,6 +619,6 @@ begin
 
   DebugLn('Old files cleaning in directory "%s" finished',  [ADir]);
   DebugLnExit;
-end;
+end;     *)
 
 end.

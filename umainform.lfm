@@ -105,7 +105,7 @@ object MainForm: TMainForm
     AnchorSideBottom.Side = asrBottom
     Left = 40
     Height = 28
-    Top = 509
+    Top = 537
     Width = 107
     Anchors = [akLeft, akBottom]
     AutoSize = True
@@ -153,7 +153,7 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrBottom
     Left = 251
     Height = 57
-    Top = 488
+    Top = 516
     Width = 220
     AutoSize = True
     BorderSpacing.Top = 24
@@ -585,9 +585,9 @@ object MainForm: TMainForm
     AnchorSideTop.Control = PlaySoundsCheckBox
     AnchorSideTop.Side = asrBottom
     Left = 192
-    Height = 19
-    Top = 433
-    Width = 213
+    Height = 22
+    Top = 470
+    Width = 240
     Caption = 'Minimize to tray when close window'
     OnChange = MinimizeInsteadOfCloseCheckBoxChange
     TabOrder = 15
@@ -709,5 +709,41 @@ object MainForm: TMainForm
   object LangFlagImageList: TImageList
     Left = 558
     Top = 478
+  end
+  object Sqlite3Dataset1: TSqlite3Dataset
+    FileName = 'db.db'
+    TableName = 'files'
+    Left = 80
+    Top = 584
+  end
+  object SQLite3Connection1: TSQLite3Connection
+    Connected = False
+    LoginPrompt = False
+    DatabaseName = 'db.db'
+    KeepConnection = False
+    Transaction = SQLTransaction1
+    AlwaysUseBigint = False
+    Left = 184
+    Top = 584
+  end
+  object SQLQuery1: TSQLQuery
+    FieldDefs = <>
+    Database = SQLite3Connection1
+    Transaction = SQLTransaction1
+    Params = <>
+    Macros = <>
+    Left = 304
+    Top = 584
+  end
+  object SQLTransaction1: TSQLTransaction
+    Active = False
+    Database = SQLite3Connection1
+    Left = 392
+    Top = 584
+  end
+  object DataSource1: TDataSource
+    DataSet = Sqlite3Dataset1
+    Left = 488
+    Top = 584
   end
 end

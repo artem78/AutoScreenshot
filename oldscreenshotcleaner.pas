@@ -33,7 +33,7 @@ type
     procedure UpdateUI;
     function GetMaxDateTime: TDateTime;
     property MaxDateTime: TDateTime read GetMaxDateTime;
-
+    procedure DeleteOldFiles;
   public
     constructor Create;
     destructor Destroy; override;
@@ -52,7 +52,7 @@ type
 
 implementation
 
-uses LazLoggerBase, uUtils, ScreenGrabber, DateUtils,
+uses LazLoggerBase, uUtils, ScreenGrabber, DateUtils, StrUtils,
   ///////////
   umainform, Forms
   ///////////
@@ -61,7 +61,7 @@ uses LazLoggerBase, uUtils, ScreenGrabber, DateUtils,
 const
   RunInterval: Integer =
   {$IFOPT D+}
-    5 * MSecsPerSec;
+    5 * MSecsPerSec; // 5 seconds
   {$Else}
     30 * MSecsPerSec * SecsPerMin; // 30 minutes
   {$ENDIF}
@@ -142,30 +142,34 @@ begin
 end;
 
 procedure TOldScreenshotCleaner.DoOnTimer(ASender: TObject);
-var
-  ImgExts: TStringList;
-  ImgFmt: TImageFormat;
-  Dir: String;
+//var
+//  MaxDateTime: TDateTime;
+  //ImgExts: TStringList;
+ // ImgFmt: TImageFormat;
+//  Dir: String;
 begin
   // Set normal timer interval at first run
   if Timer.Interval <> RunInterval then
     Timer.Interval := RunInterval;
 
-  ImgExts := TStringList.Create;
+  //MaxDateTime := Now - MaxAge;
+  //DebugLn('MaxDateTime=', DateTimeToStr(MaxDateTime));
+
+  //ImgExts := TStringList.Create;
   try
-    for ImgFmt in TImageFormat do
-      ImgExts.Append(ImageFormatInfoArray[ImgFmt].Extension);
-    //DebugLn('ImgExts=', ImgExts.CommaText);
+    //for ImgFmt in TImageFormat do
+    //  ImgExts.Append(ImageFormatInfoArray[ImgFmt].Extension);
+    ////DebugLn('ImgExts=', ImgExts.CommaText);
 
-    Dir := MainForm.OutputDirEdit.Directory {TODO: remake this!};
-    Assert(not Dir.IsEmpty, 'Wrong path!');
-    Assert(Dir <> '/', 'Wrong path!');
+  //  Dir := MainForm.OutputDirEdit.Directory {TODO: remake this!};
+  //  Assert(not Dir.IsEmpty, 'Wrong path!');
+  //  Assert(Dir <> '/', 'Wrong path!');
 
-    DebugLn('Start clearing old screenshots until ', DateTimeToStr(MaxDateTime));
+    //DebugLn('Start clearing old screenshots until ', DateTimeToStr(MaxDateTime));
     DebugLnEnter;
-    DeleteOldFiles(Dir, MaxDateTime, True, ImgExts.ToStringArray, True, @UpdateUI);
+    DeleteOldFiles{(Dir, MaxDateTime, True, ImgExts.ToStringArray, True, @UpdateUI)};
   finally
-    ImgExts.Free;
+    //ImgExts.Free;
     DebugLnExit;
     DebugLn('Old files cleaning finished');
   end;
@@ -179,6 +183,50 @@ end;
 function TOldScreenshotCleaner.GetMaxDateTime: TDateTime;
 begin
   Result := Now - MaxAge;
+end;
+  
+procedure TOldScreenshotCleaner.DeleteOldFiles;
+var
+  Res: Boolean;
+  CreatedBefore: TDateTime; // Needs for prevent other time in second call to MaxDateTime property
+begin
+  DebugLn('Start clearing old screenshots until %s (%s ago)',
+         [DateTimeToStr(MaxDateTime), String(MaxAge)]);
+
+  CreatedBefore := MaxDateTime;
+
+  with MainForm.SQLQuery1 do
+  begin
+    SQL.Clear;
+    SQL.Add('SELECT `filename`, `created` FROM `files` WHERE `created` < :created_before;');
+    ParamByName('created_before').{AsDateTime}AsFloat := CreatedBefore;
+    Open;
+    First;
+    while not EOF do
+    begin
+      DebugLn('Try to delete "%s" with date %s ...',
+              [FieldByName('filename').AsString,
+               DateTimeToStr(FieldByName('created').{AsDateTime}AsFloat, True)]);
+{$IfDef SIMULATE_OLD_FILES_DELETION}
+      DebugLn('[ Simulation! ]');
+      Res := True;
+{$Else}
+      Res := DeleteFile(FullName);
+{$EndIf}
+      DebugLn(IfThen(Res, 'Ok', 'Failed!'));
+      Next;
+    end;
+    Close;
+
+{$IfNDef SIMULATE_OLD_FILES_DELETION}
+    SQL.Clear;
+    SQL.Add('DELETE FROM `files` WHERE `created` < :created_before;');
+    ParamByName('created_before').{AsDateTime}AsFloat := CreatedBefore;
+    ExecSQL;
+    SQLTransaction1.Commit;
+    Close;
+{$EndIf}
+  end;
 end;
 
 constructor TOldScreenshotCleaner.Create;
