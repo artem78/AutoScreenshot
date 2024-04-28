@@ -75,8 +75,8 @@ procedure RunCmdInbackground(ACmd: String);
 function IsPortable: Boolean;
 function GetUserPicturesDir: WideString;
 
-type
-  TDeleteOldFilesCallback = procedure of Object;
+//type
+//  TDeleteOldFilesCallback = procedure of Object;
 
 (*procedure DeleteOldFiles(const ADir: string; AMaxDateTime: TDateTime;
   AIncludeSubdirs: Boolean; const AAllowedExtensions: array of {String} AnsiString;

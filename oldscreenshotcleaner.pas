@@ -52,7 +52,7 @@ type
 
 implementation
 
-uses LazLoggerBase, uUtils, ScreenGrabber, DateUtils, StrUtils,
+uses LazLoggerBase, {uUtils, ScreenGrabber,} DateUtils, StrUtils,
   ///////////
   umainform, Forms
   ///////////
@@ -156,7 +156,7 @@ begin
   //DebugLn('MaxDateTime=', DateTimeToStr(MaxDateTime));
 
   //ImgExts := TStringList.Create;
-  try
+  //try
     //for ImgFmt in TImageFormat do
     //  ImgExts.Append(ImageFormatInfoArray[ImgFmt].Extension);
     ////DebugLn('ImgExts=', ImgExts.CommaText);
@@ -166,13 +166,13 @@ begin
   //  Assert(Dir <> '/', 'Wrong path!');
 
     //DebugLn('Start clearing old screenshots until ', DateTimeToStr(MaxDateTime));
-    DebugLnEnter;
+    //DebugLnEnter;
     DeleteOldFiles{(Dir, MaxDateTime, True, ImgExts.ToStringArray, True, @UpdateUI)};
-  finally
+  //finally
     //ImgExts.Free;
-    DebugLnExit;
-    DebugLn('Old files cleaning finished');
-  end;
+    //DebugLnExit;
+   // DebugLn('Old files cleaning finished');
+  //end;
 end;
 
 procedure TOldScreenshotCleaner.UpdateUI;
@@ -190,10 +190,10 @@ var
   Res: Boolean;
   CreatedBefore: TDateTime; // Needs for prevent other time in second call to MaxDateTime property
 begin
-  DebugLn('Start clearing old screenshots until %s (%s ago)',
-         [DateTimeToStr(MaxDateTime), String(MaxAge)]);
-
   CreatedBefore := MaxDateTime;
+
+  DebugLn('Start clearing old screenshots until %s (%s ago)',
+         [DateTimeToStr(CreatedBefore), String(MaxAge)]);
 
   with MainForm.SQLQuery1 do
   begin
@@ -204,16 +204,19 @@ begin
     First;
     while not EOF do
     begin
-      DebugLn('Try to delete "%s" with date %s ...',
+      DebugLn('Try to delete "%s" created at %s ...',
               [FieldByName('filename').AsString,
                DateTimeToStr(FieldByName('created').{AsDateTime}AsFloat, True)]);
 {$IfDef SIMULATE_OLD_FILES_DELETION}
       DebugLn('[ Simulation! ]');
       Res := True;
 {$Else}
-      Res := DeleteFile(FullName);
+      Res := DeleteFile(FieldByName('filename').AsString);
 {$EndIf}
       DebugLn(IfThen(Res, 'Ok', 'Failed!'));
+
+      UpdateUI; // To prevent form freezes if too many files to delete
+
       Next;
     end;
     Close;
@@ -223,10 +226,12 @@ begin
     SQL.Add('DELETE FROM `files` WHERE `created` < :created_before;');
     ParamByName('created_before').{AsDateTime}AsFloat := CreatedBefore;
     ExecSQL;
-    SQLTransaction1.Commit;
+    MainForm.SQLTransaction1.Commit;
     Close;
 {$EndIf}
   end;
+
+  DebugLn('Old files cleaning finished');
 end;
 
 constructor TOldScreenshotCleaner.Create;

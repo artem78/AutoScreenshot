@@ -722,6 +722,7 @@ object MainForm: TMainForm
     DatabaseName = 'db.db'
     KeepConnection = False
     Transaction = SQLTransaction1
+    CharSet = 'UTF8'
     AlwaysUseBigint = False
     Left = 184
     Top = 584
