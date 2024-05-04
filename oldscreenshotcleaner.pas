@@ -77,7 +77,7 @@ type
 
 implementation
 
-uses LazLoggerBase, {uUtils, ScreenGrabber,} DateUtils, StrUtils,
+uses LazLoggerBase, FileUtil, uUtils,{ ScreenGrabber,} DateUtils, StrUtils,
   ///////////
   umainform, Forms
   ///////////
@@ -151,18 +151,27 @@ begin
 end;
 
 constructor TJournal.Create;
+var
+  DBFileName: String;
 begin
+  if IsPortable then
+    DBFileName := ProgramDirectory
+  else
+    DBFileName := GetAppConfigDir(False);
+  DBFileName := ConcatPaths([DBFileName, 'db.db']);
+
+
   Sqlite3Dataset1 := TSqlite3Dataset.Create(Nil);
   with Sqlite3Dataset1 do
   begin
-    FileName := 'db.db';
+    FileName :=  DBFileName;
     TableName := 'files';
   end;
 
   SQLite3Connection1 := TSQLite3Connection.Create(Nil);
   with SQLite3Connection1 do
   begin
-    DatabaseName := {'db.db'} Sqlite3Dataset1.FileName;
+    DatabaseName := DBFileName;
     CharSet := 'UTF8';
   end;
 
