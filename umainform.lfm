@@ -710,41 +710,4 @@ object MainForm: TMainForm
     Left = 558
     Top = 478
   end
-  object Sqlite3Dataset1: TSqlite3Dataset
-    FileName = 'db.db'
-    TableName = 'files'
-    Left = 80
-    Top = 584
-  end
-  object SQLite3Connection1: TSQLite3Connection
-    Connected = False
-    LoginPrompt = False
-    DatabaseName = 'db.db'
-    KeepConnection = False
-    Transaction = SQLTransaction1
-    CharSet = 'UTF8'
-    AlwaysUseBigint = False
-    Left = 184
-    Top = 584
-  end
-  object SQLQuery1: TSQLQuery
-    FieldDefs = <>
-    Database = SQLite3Connection1
-    Transaction = SQLTransaction1
-    Params = <>
-    Macros = <>
-    Left = 304
-    Top = 584
-  end
-  object SQLTransaction1: TSQLTransaction
-    Active = False
-    Database = SQLite3Connection1
-    Left = 392
-    Top = 584
-  end
-  object DataSource1: TDataSource
-    DataSet = Sqlite3Dataset1
-    Left = 488
-    Top = 584
-  end
 end

@@ -15,8 +15,7 @@ uses
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf,
   ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
-  UniqueInstance, uplaysound, ZStream { for Tcompressionlevel },
-  SQLite3DS, SQLite3Conn, SQLDB, DB;
+  UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
 
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
@@ -25,9 +24,6 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
-    //////////
-    DataSource1: TDataSource;
-    ////////////
     FileMenuItem: TMenuItem;
     ExitMenuItem: TMenuItem;
     LangFlagImageList: TImageList;
@@ -47,12 +43,6 @@ type
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
     OutputDirEdit: TDirectoryEdit;
-    ////////////
-    SQLite3Connection1: TSQLite3Connection;
-    Sqlite3Dataset1: TSqlite3Dataset;
-    SQLQuery1: TSQLQuery;
-    SQLTransaction1: TSQLTransaction;
-    ///////////////
     Timer: TTimer;
     OutputDirLabel: TLabel;
     CaptureIntervalLabel: TLabel;
