@@ -55,6 +55,8 @@ type
     SQLQuery1: TSQLQuery;
     SQLTransaction1: TSQLTransaction;
     DataSource1: TDataSource;
+
+    procedure CreateTables;
   public
     constructor Create;
     destructor Destroy; override;
@@ -133,6 +135,21 @@ end;
 
 { TJournal }
 
+procedure TJournal.CreateTables;
+begin
+  with SQLQuery1 do
+  begin
+    SQL.Clear;
+    SQL.Add('CREATE TABLE IF NOT EXISTS `' + Sqlite3Dataset1.TableName + '` (');
+    SQL.Add('  `filename` TEXT,');
+    SQL.Add('  `created` REAL');
+    SQL.Add(');');
+    ExecSQL;
+    SQLTransaction1.Commit;
+    Close;
+  end;
+end;
+
 constructor TJournal.Create;
 begin
   Sqlite3Dataset1 := TSqlite3Dataset.Create(Nil);
@@ -163,9 +180,12 @@ begin
   DataSource1 := TDataSource.Create(Nil);
   DataSource1.DataSet := Sqlite3Dataset1;
 
+  CreateTables;
 
   Sqlite3Dataset1.Open;
   SQLite3Connection1.Connected := True;
+
+  //CreateTables;
 end;
 
 destructor TJournal.Destroy;
