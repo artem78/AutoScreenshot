@@ -64,6 +64,7 @@ type
     procedure AddFile(const AFileName: String);
     procedure RemoveBefore(ADateTime: TDateTime);
     function GetBefore(ADateTime: TDateTime): TStringList;
+    function GetDirsBefore(ADateTime: TDateTime): TStringList;
   end;
 
 
@@ -77,9 +78,9 @@ type
 
 implementation
 
-uses LazLoggerBase, FileUtil, uUtils,{ ScreenGrabber,} DateUtils, StrUtils,
+uses LazLoggerBase, FileUtil, uUtils, DateUtils, StrUtils, SQLite3Dyn,
   ///////////
-  umainform, Forms
+  umainform, Forms, ctypes
   ///////////
   ;
 
@@ -133,6 +134,24 @@ begin
   end;
 end;
 
+procedure DirCallback(ACtx: psqlite3_context; AArgc: longint;
+  AArgv: ppsqlite3_value); cdecl;
+var
+  Dir: String;
+begin
+  //DebugLn('DirCallback');
+
+  if (AArgc <> 1) or (sqlite3_value_type(AArgv[0]) <> SQLITE_TEXT) then
+  begin
+    sqlite3_result_null(ACtx);
+    Exit;
+  end;
+
+  Dir := ExtractFilePath(sqlite3_value_text(AArgv[0]));
+
+  sqlite3_result_text(ACtx, PAnsiChar(Dir), -1, sqlite3_destructor_type(SQLITE_TRANSIENT));
+end;
+
 { TJournal }
 
 procedure TJournal.CreateTables;
@@ -153,6 +172,7 @@ end;
 constructor TJournal.Create;
 var
   DBFileName: String;
+  RC: cint;
 begin
   if IsPortable then
     DBFileName := ProgramDirectory
@@ -194,7 +214,12 @@ begin
   Sqlite3Dataset1.Open;
   SQLite3Connection1.Connected := True;
 
-  //CreateTables;
+
+  //Register custom sqlite3 function
+  RC := sqlite3_create_function(SQLite3Connection1.Handle, PAnsiChar('DIR'), 1,
+     SQLITE_UTF8 or SQLITE_DETERMINISTIC, Nil, @DirCallback, Nil, Nil);
+  if RC <> SQLITE_OK then
+    raise Exception.Create('Failed to create sqlite3 function');
 end;
 
 destructor TJournal.Destroy;
@@ -240,7 +265,7 @@ end;
 
 function TJournal.GetBefore(ADateTime: TDateTime): TStringList;
 begin
-  Result.Create;
+  Result := TStringList.Create;
 
   with SQLQuery1 do
   begin
@@ -253,6 +278,40 @@ begin
     begin
       Result.Add(FieldByName('filename').AsString + #9 + FloatToStr(FieldByName('created').{AsDateTime}AsFloat));
 
+
+     //// UpdateUI; // To prevent form freezes if too many files to delete
+
+      Next;
+    end;
+    Close;
+  end;
+end;
+
+function TJournal.GetDirsBefore(ADateTime: TDateTime): TStringList;
+{var
+  Files: TStringList;}
+begin
+  {Result := TStringList.Create;
+  with Result do
+  begin
+    CaseSensitive := True;
+    Sorted := True;
+    Duplicates := dupIgnore;
+  end;}
+
+  Result := TStringList.Create;
+
+  with SQLQuery1 do
+  begin
+    SQL.Clear;
+    SQL.Add('SELECT DISTINCT DIR(`filename`) AS `directory` FROM `' + Sqlite3Dataset1.TableName + '` WHERE `created` < :created_before ORDER BY `directory` ASC;');
+    ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} ADateTime;
+    Open;
+    First;
+    while not EOF do
+    begin
+      Result.Add(FieldByName('directory').AsString (*+ #9 + FloatToStr(FieldByName('created').{AsDateTime}AsFloat)*));
+      //debugln('directory: ', FieldByName('directory').AsString);
 
      //// UpdateUI; // To prevent form freezes if too many files to delete
 
@@ -345,29 +404,21 @@ var
   CreatedBefore: TDateTime; // Needs for prevent other time in second call to MaxDateTime property
 
   sl: TStringList;
-  s, FileName, Created: String;
+  s, FileName, Created, Dir: String;
+  Dirs: TStringList;
 begin
   CreatedBefore := MaxDateTime;
 
   DebugLn('Start clearing old screenshots until %s (%s ago)',
          [DateTimeToStr(CreatedBefore), String(MaxAge)]);
 
-  {with MainForm.SQLQuery1 do
-  begin
-    SQL.Clear;
-    SQL.Add('SELECT `filename`, `created` FROM `' + Sqlite3Dataset1.TableName + '` WHERE `created` < :created_before;');
-    ParamByName('created_before').{AsDateTime}AsFloat := CreatedBefore;
-    Open;
-    First;
-    while not EOF do
-    begin}
-
 
   sl := MainForm.FileJournal.GetBefore(CreatedBefore);
+  DebugLn('%d old screenshots found', [sl.Count]);
   for s in sl do
   begin
-    FileName:=ExtractDelimited(0, s, [#9]);
-    Created:=DateTimeToStr(StrToFloat(ExtractDelimited(1, s, [#9])));
+    FileName:=ExtractDelimited(1, s, [#9]);
+    Created:=DateTimeToStr(StrToFloat(ExtractDelimited(2, s, [#9])));
 
     DebugLn('Try to delete "%s" created at %s ...',
             [FileName,
@@ -383,18 +434,44 @@ begin
     UpdateUI; // To prevent form freezes if too many files to delete
   end;
 
-{$IfNDef SIMULATE_OLD_FILES_DELETION}
-//////////////////////
-    {SQL.Clear;
-    SQL.Add('DELETE FROM `files` WHERE `created` < :created_before;');
-    ParamByName('created_before').{AsDateTime}AsFloat := CreatedBefore;
-    ExecSQL;
-    MainForm.SQLTransaction1.Commit;
-    Close;}
-//////////////////////////
-    MainForm.FileJournal.RemoveBefore(CreatedBefore);
+  Dirs := MainForm.FileJournal.GetDirsBefore(CreatedBefore);
+  for s in Dirs do
+  begin
+    Dir := s;
+    //DebugLn('dir=', Dir);
+    while not Dir.IsEmpty do
+    begin
+      DebugLn('dir=', Dir);
+      if DirectoryExists(Dir) then
+      begin
+        if DirectoryIsEmpty(Dir) then
+        begin
+          DebugLn('Try to delete empty directory "%s" ...', [Dir]);
+{$IfDef SIMULATE_OLD_FILES_DELETION}
+          DebugLn('[ Simulation! ]');
+          Res := True;
+{$Else}
+          Res := DeleteDirectory(Dir, False);
 {$EndIf}
- // end;
+          DebugLn(IfThen(Res, 'Ok', 'Failed!'));
+        end
+        else
+        begin
+          DebugLn('Skip deletion of not empty directory "%s"', [Dir]);
+          Break;
+        end;
+      end;
+
+      Dir := ParentDirectory(Dir);
+
+      UpdateUI; // To prevent form freezes if too many folders to delete
+    end;
+  end;
+  Dirs.Free;
+
+{$IfNDef SIMULATE_OLD_FILES_DELETION}
+  MainForm.FileJournal.RemoveBefore(CreatedBefore);
+{$EndIf}
 
   DebugLn('Old files cleaning finished');
 

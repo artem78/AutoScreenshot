@@ -82,6 +82,11 @@ function GetUserPicturesDir: WideString;
   AIncludeSubdirs: Boolean; const AAllowedExtensions: array of {String} AnsiString;
   ADeleteEmptyDirs: Boolean; ACallback: TDeleteOldFilesCallback = Nil);*)
 
+
+// todo: make tests
+function DirectoryIsEmpty(const ADir: String): Boolean;
+function ParentDirectory(const ADir: String): String;
+
 implementation
 
 uses
@@ -477,6 +482,33 @@ begin
   {$EndIf}
 
   Result := IncludeTrailingPathDelimiter(Result);
+end;
+
+function DirectoryIsEmpty(const ADir: String): Boolean;
+var
+  SearchRec: TSearchRec;
+begin
+  Result := False;
+
+  if FindFirst(ConcatPaths([ADir, '*']), faAnyFile, SearchRec) = 0 then
+  begin
+    Result := True;
+    repeat
+      if (SearchRec.Name = '.') or (SearchRec.Name = '..') then
+        Continue;
+
+      Result := False;
+      Break;
+    until FindNext(SearchRec) <> 0;
+
+    FindClose(SearchRec);
+  end;
+end;
+
+function ParentDirectory(const ADir: String): String;
+// https://stackoverflow.com/a/30811944/4108542
+begin
+   Result := ExtractFilePath(ExcludeTrailingPathDelimiter(ADir));
 end;
 
 {$IfDef Windows}
