@@ -288,17 +288,7 @@ begin
 end;
 
 function TJournal.GetDirsBefore(ADateTime: TDateTime): TStringList;
-{var
-  Files: TStringList;}
 begin
-  {Result := TStringList.Create;
-  with Result do
-  begin
-    CaseSensitive := True;
-    Sorted := True;
-    Duplicates := dupIgnore;
-  end;}
-
   Result := TStringList.Create;
 
   with SQLQuery1 do
@@ -355,37 +345,12 @@ begin
 end;
 
 procedure TOldScreenshotCleaner.DoOnTimer(ASender: TObject);
-//var
-//  MaxDateTime: TDateTime;
-  //ImgExts: TStringList;
- // ImgFmt: TImageFormat;
-//  Dir: String;
 begin
   // Set normal timer interval at first run
   if Timer.Interval <> RunInterval then
     Timer.Interval := RunInterval;
 
-  //MaxDateTime := Now - MaxAge;
-  //DebugLn('MaxDateTime=', DateTimeToStr(MaxDateTime));
-
-  //ImgExts := TStringList.Create;
-  //try
-    //for ImgFmt in TImageFormat do
-    //  ImgExts.Append(ImageFormatInfoArray[ImgFmt].Extension);
-    ////DebugLn('ImgExts=', ImgExts.CommaText);
-
-  //  Dir := MainForm.OutputDirEdit.Directory {TODO: remake this!};
-  //  Assert(not Dir.IsEmpty, 'Wrong path!');
-  //  Assert(Dir <> '/', 'Wrong path!');
-
-    //DebugLn('Start clearing old screenshots until ', DateTimeToStr(MaxDateTime));
-    //DebugLnEnter;
-    DeleteOldFiles{(Dir, MaxDateTime, True, ImgExts.ToStringArray, True, @UpdateUI)};
-  //finally
-    //ImgExts.Free;
-    //DebugLnExit;
-   // DebugLn('Old files cleaning finished');
-  //end;
+    DeleteOldFiles;
 end;
 
 procedure TOldScreenshotCleaner.UpdateUI;
