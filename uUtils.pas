@@ -244,31 +244,15 @@ begin
 end;
 {$EndIf}
 {$IfDef Linux}
-const
-  BufSize = 256;
 var
-  S: TProcess;
-  Count, I: Integer;
-  Buffer: array[1..BufSize] of {byte} char;
-  SL: TStringList;
+  Output: {String} AnsiString;
 begin
   //Result := GetEnvironmentVariable({'USERNAME'} {'USER'} 'LOGNAME');
-  S:=TProcess.Create(Nil);
-  S.Commandline:='whoami';
-  S.Options:=[poUsePipes,poNoConsole];
-  S.execute;
-  {Repeat
-    Count:=s.output.read(Buffer,BufSize);
-    // reverse print for fun.
-    For I:=1 to count do
-      Result:=Result + Buffer[i];
-  until Count=0;}
-  sl:=TStringList.Create;
-  sl.LoadFromStream(s.Output);
-  Result:=sl[0];
-  sl.Free;
 
-  s.Free;
+  Result := '';
+
+  if RunCommand('/bin/bash', ['-c', 'whoami'], Output) then
+    Result := TrimRightSet(Output, [#10, #13]); // Remove ending line break
 end;
 {$EndIf}
 
