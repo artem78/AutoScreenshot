@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Auto Screenshot"
-#define MyAppVersion "1.15.1"
+#define MyAppVersion Copy(Revision, 2) ; Drop leading 'v'
 #define MyAppPublisher "Artem Demin"
 #define MyAppURL "https://github.com/artem78/AutoScreenshot#readme"
 #define MyAppExeName "AutoScreenshot.exe"
@@ -23,7 +23,7 @@ DefaultDirName={pf}\AutoScreenshot
 DisableProgramGroupPage=yes
 LicenseFile=LICENSE.txt
 OutputDir=build\setup
-OutputBaseFilename=AutoScreenshot_{#MyAppVersion}_Windows_setup
+OutputBaseFilename=AutoScreenshot_v{#MyAppVersion}_Windows_setup
 Compression=lzma
 SolidCompression=yes
 

@@ -143,7 +143,7 @@
 			<then>-->
 				<exec executable="${inno_setup_dir}/ISCC.exe" failonerror="true">
 					<!--<env key="LazarusDir" value="${lazarus_dir}"/>-->
-					<arg value="/FAutoScreenshot_${version}_Windows_setup"/>
+					<arg value="/DRevision=${version}"/>
 					<arg value="setup.iss"/>
 				</exec>
 			<!--</then>
