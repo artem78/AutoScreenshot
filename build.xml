@@ -153,7 +153,7 @@
 		</if>-->
 	</target>
 	
-	<target name="download_ssl_dlls" depends="check_ssl_dlls_checksum" unless="${ssl_dlls.checksum_is_ok}" if="is_windows">
+	<target name="download_ssl_dlls" depends="check_ssl_dlls_checksum, init" unless="${ssl_dlls.checksum_is_ok}" if="is_windows">
 		<echo>Start download OpenSSL binaries archive</echo>
 		<tempfile property="zip_temp_file" prefix="openssl_" suffix=".zip" destdir="${temp_dir}" deleteonexit="true"/>
 		<echo>zip_temp_file: ${zip_temp_file}</echo>
