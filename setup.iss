@@ -39,8 +39,8 @@ Source: "AutoScreenshot.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "lang\*"; DestDir: "{app}\lang"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.bak"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 ; ToDo: Remove config.ini when uninstall or make this optional
-Source: "{#GetEnv("LazarusDir")}\ssleay32.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#GetEnv("LazarusDir")}\libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "ssleay32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "sounds\*.wav"; DestDir: "{app}\sounds"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
