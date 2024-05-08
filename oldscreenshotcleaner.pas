@@ -34,6 +34,7 @@ type
     function GetMaxDateTime: TDateTime;
     property MaxDateTime: TDateTime read GetMaxDateTime;
     procedure DeleteOldFiles;
+
   public
     constructor Create;
     destructor Destroy; override;
@@ -46,9 +47,9 @@ type
     procedure Stop;
   end;
 
-  { TJournal }
+  { TFileJournal }
 
-  TJournal = class
+  TFileJournal = class
   private
     SQLite3Connection: TSQLite3Connection;
     Sqlite3Dataset: TSqlite3Dataset;
@@ -57,14 +58,15 @@ type
     DataSource: TDataSource;
 
     procedure CreateTables;
+
   public
     constructor Create;
     destructor Destroy; override;
 
-    procedure AddFile(const AFileName: String);
-    procedure RemoveBefore(ADateTime: TDateTime);
-    function GetBefore(ADateTime: TDateTime): TStringList;
-    function GetDirsBefore(ADateTime: TDateTime): TStringList;
+    procedure Add(const AFileName: String);
+    procedure Remove(AMaxDateTime: TDateTime);
+    function GetFiles(AMaxDateTime: TDateTime): TStringList;
+    function GetDirs(AMaxDateTime: TDateTime): TStringList;
   end;
 
 
@@ -78,9 +80,9 @@ type
 
 implementation
 
-uses LazLoggerBase, FileUtil, uUtils, DateUtils, StrUtils, SQLite3Dyn,
+uses LazLoggerBase, FileUtil, uUtils, DateUtils, StrUtils, SQLite3Dyn, ctypes,
   ///////////
-  umainform, Forms, ctypes
+  umainform, Forms
   ///////////
   ;
 
@@ -139,8 +141,6 @@ procedure DirCallback(ACtx: psqlite3_context; AArgc: longint;
 var
   Dir: String;
 begin
-  //DebugLn('DirCallback');
-
   if (AArgc <> 1) or (sqlite3_value_type(AArgv[0]) <> SQLITE_TEXT) then
   begin
     sqlite3_result_null(ACtx);
@@ -152,9 +152,9 @@ begin
   sqlite3_result_text(ACtx, PAnsiChar(Dir), -1, sqlite3_destructor_type(SQLITE_TRANSIENT));
 end;
 
-{ TJournal }
+{ TFileJournal }
 
-procedure TJournal.CreateTables;
+procedure TFileJournal.CreateTables;
 begin
   with SQLQuery do
   begin
@@ -169,7 +169,7 @@ begin
   end;
 end;
 
-constructor TJournal.Create;
+constructor TFileJournal.Create;
 var
   DBFileName: String;
   RC: cint;
@@ -222,7 +222,7 @@ begin
     raise Exception.Create('Failed to create sqlite3 function');
 end;
 
-destructor TJournal.Destroy;
+destructor TFileJournal.Destroy;
 begin
   inherited Destroy;
 
@@ -236,7 +236,7 @@ begin
   Sqlite3Dataset.Free;
 end;
 
-procedure TJournal.AddFile(const AFileName: String);
+procedure TFileJournal.Add(const AFileName: String);
 begin
   with SQLQuery do
   begin
@@ -250,20 +250,20 @@ begin
   end;
 end;
 
-procedure TJournal.RemoveBefore(ADateTime: TDateTime);
+procedure TFileJournal.Remove(AMaxDateTime: TDateTime);
 begin
   with SQLQuery do
   begin
     SQL.Clear;
     SQL.Add('DELETE FROM `' + Sqlite3Dataset.TableName + '` WHERE `created` < :created_before;');
-    ParamByName('created_before').{AsDateTime}AsFloat := ADateTime;
+    ParamByName('created_before').{AsDateTime}AsFloat := AMaxDateTime;
     ExecSQL;
     SQLTransaction.Commit;
     Close;
   end;
 end;
 
-function TJournal.GetBefore(ADateTime: TDateTime): TStringList;
+function TFileJournal.GetFiles(AMaxDateTime: TDateTime): TStringList;
 begin
   Result := TStringList.Create;
 
@@ -271,7 +271,7 @@ begin
   begin
     SQL.Clear;
     SQL.Add('SELECT `filename`, `created` FROM `' + Sqlite3Dataset.TableName + '` WHERE `created` < :created_before;');
-    ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} ADateTime;
+    ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} AMaxDateTime;
     Open;
     First;
     while not EOF do
@@ -287,7 +287,7 @@ begin
   end;
 end;
 
-function TJournal.GetDirsBefore(ADateTime: TDateTime): TStringList;
+function TFileJournal.GetDirs(AMaxDateTime: TDateTime): TStringList;
 begin
   Result := TStringList.Create;
 
@@ -295,7 +295,7 @@ begin
   begin
     SQL.Clear;
     SQL.Add('SELECT DISTINCT DIR(`filename`) AS `directory` FROM `' + Sqlite3Dataset.TableName + '` WHERE `created` < :created_before ORDER BY `directory` ASC;');
-    ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} ADateTime;
+    ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} AMaxDateTime;
     Open;
     First;
     while not EOF do
@@ -378,7 +378,7 @@ begin
          [DateTimeToStr(CreatedBefore), String(MaxAge)]);
 
 
-  sl := MainForm.FileJournal.GetBefore(CreatedBefore);
+  sl := MainForm.FileJournal.GetFiles(CreatedBefore);
   DebugLn('%d old screenshots found', [sl.Count]);
   for s in sl do
   begin
@@ -399,7 +399,7 @@ begin
     UpdateUI; // To prevent form freezes if too many files to delete
   end;
 
-  Dirs := MainForm.FileJournal.GetDirsBefore(CreatedBefore);
+  Dirs := MainForm.FileJournal.GetDirs(CreatedBefore);
   for s in Dirs do
   begin
     Dir := s;

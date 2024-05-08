@@ -167,7 +167,7 @@ type
     FormInitialized: Boolean;
 
     public
-    FileJournal: TJournal;
+    FileJournal: TFileJournal;
     private
     
     { Methods }
@@ -640,7 +640,7 @@ begin
   XWatcher := TXRandREventWatcherThread.Create(RRScreenChangeNotifyMask, @OnScreenConfigurationChanged);
   {$EndIf}
 
-  FileJournal := TJournal.Create;
+  FileJournal := TFileJournal.Create;
 
   FormInitialized := True;
   DebugLn('Initializing finished');
@@ -877,7 +877,7 @@ begin
       Grabber.CaptureMonitor(ImageFileName, MonitorId);
   end;
 
-  FileJournal.AddFile(ImageFileName);
+  FileJournal.Add(ImageFileName);
 
 
   // Run user command
