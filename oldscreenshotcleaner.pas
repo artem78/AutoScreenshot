@@ -241,7 +241,8 @@ begin
   with SQLQuery do
   begin
     SQL.Clear;
-    SQL.Add('INSERT INTO `' + Sqlite3Dataset.TableName + '` (`filename`, `created`) VALUES (:filename, :created);');
+    SQL.Add('INSERT INTO `' + Sqlite3Dataset.TableName + '` (`filename`, `created`)');
+    SQL.Add('  VALUES (:filename, :created);');
     ParamByName('filename').AsString := AFileName;
     ParamByName('created').{AsDateTime}AsFloat := Now;
     ExecSQL;
@@ -270,7 +271,8 @@ begin
   with SQLQuery do
   begin
     SQL.Clear;
-    SQL.Add('SELECT `filename`, `created` FROM `' + Sqlite3Dataset.TableName + '` WHERE `created` < :created_before;');
+    SQL.Add('SELECT `filename`, `created` FROM `' + Sqlite3Dataset.TableName + '`');
+    SQL.Add('  WHERE `created` < :created_before;');
     ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} AMaxDateTime;
     Open;
     First;
@@ -294,14 +296,15 @@ begin
   with SQLQuery do
   begin
     SQL.Clear;
-    SQL.Add('SELECT DISTINCT DIR(`filename`) AS `directory` FROM `' + Sqlite3Dataset.TableName + '` WHERE `created` < :created_before ORDER BY `directory` ASC;');
+    SQL.Add('SELECT DISTINCT DIR(`filename`) AS `directory` FROM `' + Sqlite3Dataset.TableName + '`');
+    SQL.Add('  WHERE `created` < :created_before');
+    SQL.Add('  ORDER BY `directory` ASC;');
     ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} AMaxDateTime;
     Open;
     First;
     while not EOF do
     begin
       Result.Add(FieldByName('directory').AsString (*+ #9 + FloatToStr(FieldByName('created').{AsDateTime}AsFloat)*));
-      //debugln('directory: ', FieldByName('directory').AsString);
 
      //// UpdateUI; // To prevent form freezes if too many files to delete
 
