@@ -178,7 +178,7 @@ begin
     DBFileName := ProgramDirectory
   else
     DBFileName := GetAppConfigDir(False);
-  DBFileName := ConcatPaths([DBFileName, 'db.db']);
+  DBFileName := ConcatPaths([DBFileName, 'journal.dat']);
 
 
   Sqlite3Dataset := TSqlite3Dataset.Create(Nil);
