@@ -273,7 +273,7 @@ begin
     SQL.Clear;
     SQL.Add('SELECT `filename`, `created` FROM `' + Sqlite3Dataset.TableName + '`');
     SQL.Add('  WHERE `created` < :created_before;');
-    ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} AMaxDateTime;
+    ParamByName('created_before').{AsDateTime}AsFloat := AMaxDateTime;
     Open;
     First;
     while not EOF do
@@ -295,12 +295,12 @@ begin
     SQL.Add('SELECT DISTINCT DIR(`filename`) AS `directory` FROM `' + Sqlite3Dataset.TableName + '`');
     SQL.Add('  WHERE `created` < :created_before');
     SQL.Add('  ORDER BY `directory` ASC;');
-    ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} AMaxDateTime;
+    ParamByName('created_before').{AsDateTime}AsFloat := AMaxDateTime;
     Open;
     First;
     while not EOF do
     begin
-      Result.Add(FieldByName('directory').AsString (*+ #9 + FloatToStr(FieldByName('created').{AsDateTime}AsFloat)*));
+      Result.Add(FieldByName('directory').AsString);
       Next;
     end;
     Close;
@@ -373,68 +373,78 @@ begin
          [DateTimeToStr(CreatedBefore), String(MaxAge)]);
 
 
+  // Delete files
   FileList := MainForm.FileJournal.GetFiles(CreatedBefore);
-  DebugLn('%d old screenshots found', [FileList.Count]);
-  for Str in FileList do
-  begin
-    FileName := ExtractDelimited(1, Str, [#9]);
-    Created := DateTimeToStr(StrToFloat(ExtractDelimited(2, Str, [#9])));
+  try
+    DebugLn('%d old screenshots found', [FileList.Count]);
+    for Str in FileList do
+    begin
+      FileName := ExtractDelimited(1, Str, [#9]);
+      Created := DateTimeToStr(StrToFloat(ExtractDelimited(2, Str, [#9])));
 
-    DebugLn('Try to delete "%s" created at %s ...',
-            [FileName, Created]);
-{$IfDef SIMULATE_OLD_FILES_DELETION}
-    DebugLn('[ Simulation! ]');
-    Res := True;
-{$Else}
-    Res := DeleteFile(FileName);
-{$EndIf}
-    DebugLn(IfThen(Res, 'Ok', 'Failed!'));
+      DebugLn('Try to delete "%s" created at %s ...',
+              [FileName, Created]);
+  {$IfDef SIMULATE_OLD_FILES_DELETION}
+      DebugLn('[ Simulation! ]');
+      Res := True;
+  {$Else}
+      Res := DeleteFile(FileName);
+  {$EndIf}
+      DebugLn(IfThen(Res, 'Ok', 'Failed!'));
 
-    UpdateUI; // To prevent form freezes if too many files to delete
+      UpdateUI; // To prevent form freezes if too many files to delete
+    end;
+  finally
+    FileList.free;
   end;
 
+
+  // Recursively delete empty directories
   DirList := MainForm.FileJournal.GetDirs(CreatedBefore);
-  for Str in DirList do
-  begin
-    Dir := Str;
-
-    while not Dir.IsEmpty do
+  try
+    for Str in DirList do
     begin
-      //DebugLn('dir=', Dir);
-      if DirectoryExists(Dir) then
-      begin
-        if DirectoryIsEmpty(Dir) then
-        begin
-          DebugLn('Try to delete empty directory "%s" ...', [Dir]);
-{$IfDef SIMULATE_OLD_FILES_DELETION}
-          DebugLn('[ Simulation! ]');
-          Res := True;
-{$Else}
-          Res := DeleteDirectory(Dir, False);
-{$EndIf}
-          DebugLn(IfThen(Res, 'Ok', 'Failed!'));
-        end
-        else
-        begin
-          DebugLn('Skip deletion of not empty directory "%s"', [Dir]);
-          Break;
-        end;
-      end;
+      Dir := Str;
 
-      Dir := ParentDirectory(Dir);
+      while not Dir.IsEmpty do
+      begin
+        //DebugLn('dir=', Dir);
+        if DirectoryExists(Dir) then
+        begin
+          if DirectoryIsEmpty(Dir) then
+          begin
+            DebugLn('Try to delete empty directory "%s" ...', [Dir]);
+  {$IfDef SIMULATE_OLD_FILES_DELETION}
+            DebugLn('[ Simulation! ]');
+            Res := True;
+  {$Else}
+            Res := DeleteDirectory(Dir, False);
+  {$EndIf}
+            DebugLn(IfThen(Res, 'Ok', 'Failed!'));
+          end
+          else
+          begin
+            DebugLn('Skip deletion of not empty directory "%s"', [Dir]);
+            Break;
+          end;
+        end;
+
+        Dir := ParentDirectory(Dir);
+      end;
 
       UpdateUI; // To prevent form freezes if too many folders to delete
     end;
+  finally
+    DirList.Free;
   end;
-  DirList.Free;
+
 
 {$IfNDef SIMULATE_OLD_FILES_DELETION}
+  // Remove deleted file records from DB
   MainForm.FileJournal.RemoveBefore(CreatedBefore);
 {$EndIf}
 
   DebugLn('Old files cleaning finished');
-
-  FileList.free;
 end;
 
 constructor TOldScreenshotCleaner.Create;
