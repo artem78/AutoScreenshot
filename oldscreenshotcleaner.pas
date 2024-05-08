@@ -279,10 +279,6 @@ begin
     while not EOF do
     begin
       Result.Add(FieldByName('filename').AsString + #9 + FloatToStr(FieldByName('created').{AsDateTime}AsFloat));
-
-
-     //// UpdateUI; // To prevent form freezes if too many files to delete
-
       Next;
     end;
     Close;
@@ -305,9 +301,6 @@ begin
     while not EOF do
     begin
       Result.Add(FieldByName('directory').AsString (*+ #9 + FloatToStr(FieldByName('created').{AsDateTime}AsFloat)*));
-
-     //// UpdateUI; // To prevent form freezes if too many files to delete
-
       Next;
     end;
     Close;
@@ -371,9 +364,8 @@ var
   Res: Boolean;
   CreatedBefore: TDateTime; // Needs for prevent other time in second call to MaxDateTime property
 
-  sl: TStringList;
-  s, FileName, Created, Dir: String;
-  Dirs: TStringList;
+  FileList, DirList: TStringList;
+  Str, FileName, Created, Dir: String;
 begin
   CreatedBefore := MaxDateTime;
 
@@ -381,16 +373,15 @@ begin
          [DateTimeToStr(CreatedBefore), String(MaxAge)]);
 
 
-  sl := MainForm.FileJournal.GetFiles(CreatedBefore);
-  DebugLn('%d old screenshots found', [sl.Count]);
-  for s in sl do
+  FileList := MainForm.FileJournal.GetFiles(CreatedBefore);
+  DebugLn('%d old screenshots found', [FileList.Count]);
+  for Str in FileList do
   begin
-    FileName:=ExtractDelimited(1, s, [#9]);
-    Created:=DateTimeToStr(StrToFloat(ExtractDelimited(2, s, [#9])));
+    FileName := ExtractDelimited(1, Str, [#9]);
+    Created := DateTimeToStr(StrToFloat(ExtractDelimited(2, Str, [#9])));
 
     DebugLn('Try to delete "%s" created at %s ...',
-            [FileName,
-             created]);
+            [FileName, Created]);
 {$IfDef SIMULATE_OLD_FILES_DELETION}
     DebugLn('[ Simulation! ]');
     Res := True;
@@ -402,14 +393,14 @@ begin
     UpdateUI; // To prevent form freezes if too many files to delete
   end;
 
-  Dirs := MainForm.FileJournal.GetDirs(CreatedBefore);
-  for s in Dirs do
+  DirList := MainForm.FileJournal.GetDirs(CreatedBefore);
+  for Str in DirList do
   begin
-    Dir := s;
-    //DebugLn('dir=', Dir);
+    Dir := Str;
+
     while not Dir.IsEmpty do
     begin
-      DebugLn('dir=', Dir);
+      //DebugLn('dir=', Dir);
       if DirectoryExists(Dir) then
       begin
         if DirectoryIsEmpty(Dir) then
@@ -435,7 +426,7 @@ begin
       UpdateUI; // To prevent form freezes if too many folders to delete
     end;
   end;
-  Dirs.Free;
+  DirList.Free;
 
 {$IfNDef SIMULATE_OLD_FILES_DELETION}
   MainForm.FileJournal.RemoveBefore(CreatedBefore);
@@ -443,7 +434,7 @@ begin
 
   DebugLn('Old files cleaning finished');
 
-  sl.free;
+  FileList.free;
 end;
 
 constructor TOldScreenshotCleaner.Create;
