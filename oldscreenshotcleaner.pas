@@ -77,7 +77,6 @@ type
   operator - (ADateTime: TDateTime; AInterval: TInterval): TDateTime;
 
 
-
 implementation
 
 uses LazLoggerBase, FileUtil, uUtils, DateUtils, StrUtils, SQLite3Dyn, ctypes,
