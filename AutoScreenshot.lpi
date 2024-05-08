@@ -209,6 +209,7 @@ override_dh_auto_install:
             </Options>
           </Linking>
           <Other>
+            <CustomOptions Value="-dSIMULATE_OLD_FILES_DELETION"/>
             <OtherDefines Count="1">
               <Define0 Value="SIMULATE_OLD_FILES_DELETION"/>
             </OtherDefines>

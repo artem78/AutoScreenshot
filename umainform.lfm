@@ -105,7 +105,7 @@ object MainForm: TMainForm
     AnchorSideBottom.Side = asrBottom
     Left = 40
     Height = 28
-    Top = 537
+    Top = 509
     Width = 107
     Anchors = [akLeft, akBottom]
     AutoSize = True
@@ -153,7 +153,7 @@ object MainForm: TMainForm
     AnchorSideTop.Side = asrBottom
     Left = 251
     Height = 57
-    Top = 516
+    Top = 488
     Width = 220
     AutoSize = True
     BorderSpacing.Top = 24
@@ -585,9 +585,9 @@ object MainForm: TMainForm
     AnchorSideTop.Control = PlaySoundsCheckBox
     AnchorSideTop.Side = asrBottom
     Left = 192
-    Height = 22
-    Top = 470
-    Width = 240
+    Height = 19
+    Top = 433
+    Width = 213
     Caption = 'Minimize to tray when close window'
     OnChange = MinimizeInsteadOfCloseCheckBoxChange
     TabOrder = 15

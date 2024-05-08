@@ -640,11 +640,6 @@ begin
   XWatcher := TXRandREventWatcherThread.Create(RRScreenChangeNotifyMask, @OnScreenConfigurationChanged);
   {$EndIf}
 
-  /////////
-  {Sqlite3Dataset1.Open;
-  SQLite3Connection1.Connected:=True;}
-  //////////
-
   FileJournal := TJournal.Create;
 
   FormInitialized := True;
@@ -881,19 +876,6 @@ begin
     else
       Grabber.CaptureMonitor(ImageFileName, MonitorId);
   end;
-
-  /////////////////
-  {with SQLQuery1 do
-  begin
-    SQL.Clear;
-    SQL.Add('INSERT INTO `files` (`filename`, `created`) VALUES (:filename, :created);');
-    ParamByName('filename').AsString := ImageFileName;
-    ParamByName('created').{AsDateTime}AsFloat := Now;
-    ExecSQL;
-    SQLTransaction1.Commit;
-    Close;
-  end;}
-  /////////////////////
 
   FileJournal.AddFile(ImageFileName);
 
