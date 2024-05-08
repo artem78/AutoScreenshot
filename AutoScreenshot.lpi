@@ -105,7 +105,7 @@ Vcs-Browser: https://github.com/artem78/AutoScreenshot
 
 Package: ?PACKAGE_NAME?
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, openssl
+Depends: ${shlibs:Depends}, ${misc:Depends}, openssl, libsqlite3-0
 Description: ?DESCRIPTION?
  ?DESCRIPTION_LONG?
 "/>
