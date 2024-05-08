@@ -120,6 +120,7 @@
 			<then>
 				<copy file="${lazarus_dir}/libeay32.dll" todir="${build_dir}" preservelastmodified="true"/>
 				<copy file="${lazarus_dir}/ssleay32.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<copy file="sqlite3.dll" todir="${build_dir}" preservelastmodified="true"/>
 			</then>
 		</if>
 		<mkdir dir="${build_dir}/lang"/>

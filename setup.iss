@@ -42,6 +42,7 @@ Source: "lang\*"; DestDir: "{app}\lang"; Flags: ignoreversion recursesubdirs cre
 Source: "{#GetEnv("LazarusDir")}\ssleay32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#GetEnv("LazarusDir")}\libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "sounds\*.wav"; DestDir: "{app}\sounds"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
