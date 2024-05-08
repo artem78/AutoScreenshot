@@ -165,6 +165,10 @@ type
     KeyHook: TGlobalKeyHook;
     OldScreenshotCleaner: TOldScreenshotCleaner;
     FormInitialized: Boolean;
+
+    public
+    FileJournal: TFileJournal;
+    private
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -636,6 +640,8 @@ begin
   XWatcher := TXRandREventWatcherThread.Create(RRScreenChangeNotifyMask, @OnScreenConfigurationChanged);
   {$EndIf}
 
+  FileJournal := TFileJournal.Create;
+
   FormInitialized := True;
   DebugLn('Initializing finished');
 end;
@@ -684,6 +690,8 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  FileJournal.Free;
+
   {$IfDef Linux}
   //XWatcher.Terminate;
   //XWatcher.WaitFor;
@@ -868,6 +876,8 @@ begin
     else
       Grabber.CaptureMonitor(ImageFileName, MonitorId);
   end;
+
+  FileJournal.Add(ImageFileName);
 
 
   // Run user command
