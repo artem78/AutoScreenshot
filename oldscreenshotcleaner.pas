@@ -50,11 +50,11 @@ type
 
   TJournal = class
   private
-    SQLite3Connection1: TSQLite3Connection;
-    Sqlite3Dataset1: TSqlite3Dataset;
-    SQLQuery1: TSQLQuery;
-    SQLTransaction1: TSQLTransaction;
-    DataSource1: TDataSource;
+    SQLite3Connection: TSQLite3Connection;
+    Sqlite3Dataset: TSqlite3Dataset;
+    SQLQuery: TSQLQuery;
+    SQLTransaction: TSQLTransaction;
+    DataSource: TDataSource;
 
     procedure CreateTables;
   public
@@ -156,15 +156,15 @@ end;
 
 procedure TJournal.CreateTables;
 begin
-  with SQLQuery1 do
+  with SQLQuery do
   begin
     SQL.Clear;
-    SQL.Add('CREATE TABLE IF NOT EXISTS `' + Sqlite3Dataset1.TableName + '` (');
+    SQL.Add('CREATE TABLE IF NOT EXISTS `' + Sqlite3Dataset.TableName + '` (');
     SQL.Add('  `filename` TEXT,');
     SQL.Add('  `created` REAL');
     SQL.Add(');');
     ExecSQL;
-    SQLTransaction1.Commit;
+    SQLTransaction.Commit;
     Close;
   end;
 end;
@@ -181,42 +181,42 @@ begin
   DBFileName := ConcatPaths([DBFileName, 'db.db']);
 
 
-  Sqlite3Dataset1 := TSqlite3Dataset.Create(Nil);
-  with Sqlite3Dataset1 do
+  Sqlite3Dataset := TSqlite3Dataset.Create(Nil);
+  with Sqlite3Dataset do
   begin
     FileName :=  DBFileName;
     TableName := 'files';
   end;
 
-  SQLite3Connection1 := TSQLite3Connection.Create(Nil);
-  with SQLite3Connection1 do
+  SQLite3Connection := TSQLite3Connection.Create(Nil);
+  with SQLite3Connection do
   begin
     DatabaseName := DBFileName;
     CharSet := 'UTF8';
   end;
 
-  SQLTransaction1 := TSQLTransaction.Create(Nil);
-  SQLTransaction1.DataBase := SQLite3Connection1;
-  SQLite3Connection1.Transaction := SQLTransaction1;
+  SQLTransaction := TSQLTransaction.Create(Nil);
+  SQLTransaction.DataBase := SQLite3Connection;
+  SQLite3Connection.Transaction := SQLTransaction;
 
-  SQLQuery1 := TSQLQuery.Create(Nil);
-  with SQLQuery1 do
+  SQLQuery := TSQLQuery.Create(Nil);
+  with SQLQuery do
   begin
-    Database := SQLite3Connection1;
-    Transaction := SQLTransaction1;
+    Database := SQLite3Connection;
+    Transaction := SQLTransaction;
   end;
 
-  DataSource1 := TDataSource.Create(Nil);
-  DataSource1.DataSet := Sqlite3Dataset1;
+  DataSource := TDataSource.Create(Nil);
+  DataSource.DataSet := Sqlite3Dataset;
 
   CreateTables;
 
-  Sqlite3Dataset1.Open;
-  SQLite3Connection1.Connected := True;
+  Sqlite3Dataset.Open;
+  SQLite3Connection.Connected := True;
 
 
   //Register custom sqlite3 function
-  RC := sqlite3_create_function(SQLite3Connection1.Handle, PAnsiChar('DIR'), 1,
+  RC := sqlite3_create_function(SQLite3Connection.Handle, PAnsiChar('DIR'), 1,
      SQLITE_UTF8 or SQLITE_DETERMINISTIC, Nil, @DirCallback, Nil, Nil);
   if RC <> SQLITE_OK then
     raise Exception.Create('Failed to create sqlite3 function');
@@ -226,39 +226,39 @@ destructor TJournal.Destroy;
 begin
   inherited Destroy;
 
-  SQLite3Connection1.Connected := False;
-  Sqlite3Dataset1.Close;
+  SQLite3Connection.Connected := False;
+  Sqlite3Dataset.Close;
 
-  DataSource1.Free;
-  SQLQuery1.Free;
-  SQLTransaction1.Free;
-  SQLite3Connection1.Free;
-  Sqlite3Dataset1.Free;
+  DataSource.Free;
+  SQLQuery.Free;
+  SQLTransaction.Free;
+  SQLite3Connection.Free;
+  Sqlite3Dataset.Free;
 end;
 
 procedure TJournal.AddFile(const AFileName: String);
 begin
-  with SQLQuery1 do
+  with SQLQuery do
   begin
     SQL.Clear;
-    SQL.Add('INSERT INTO `' + Sqlite3Dataset1.TableName + '` (`filename`, `created`) VALUES (:filename, :created);');
+    SQL.Add('INSERT INTO `' + Sqlite3Dataset.TableName + '` (`filename`, `created`) VALUES (:filename, :created);');
     ParamByName('filename').AsString := AFileName;
     ParamByName('created').{AsDateTime}AsFloat := Now;
     ExecSQL;
-    SQLTransaction1.Commit;
+    SQLTransaction.Commit;
     Close;
   end;
 end;
 
 procedure TJournal.RemoveBefore(ADateTime: TDateTime);
 begin
-  with SQLQuery1 do
+  with SQLQuery do
   begin
     SQL.Clear;
-    SQL.Add('DELETE FROM `' + Sqlite3Dataset1.TableName + '` WHERE `created` < :created_before;');
+    SQL.Add('DELETE FROM `' + Sqlite3Dataset.TableName + '` WHERE `created` < :created_before;');
     ParamByName('created_before').{AsDateTime}AsFloat := ADateTime;
     ExecSQL;
-    SQLTransaction1.Commit;
+    SQLTransaction.Commit;
     Close;
   end;
 end;
@@ -267,10 +267,10 @@ function TJournal.GetBefore(ADateTime: TDateTime): TStringList;
 begin
   Result := TStringList.Create;
 
-  with SQLQuery1 do
+  with SQLQuery do
   begin
     SQL.Clear;
-    SQL.Add('SELECT `filename`, `created` FROM `' + Sqlite3Dataset1.TableName + '` WHERE `created` < :created_before;');
+    SQL.Add('SELECT `filename`, `created` FROM `' + Sqlite3Dataset.TableName + '` WHERE `created` < :created_before;');
     ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} ADateTime;
     Open;
     First;
@@ -291,10 +291,10 @@ function TJournal.GetDirsBefore(ADateTime: TDateTime): TStringList;
 begin
   Result := TStringList.Create;
 
-  with SQLQuery1 do
+  with SQLQuery do
   begin
     SQL.Clear;
-    SQL.Add('SELECT DISTINCT DIR(`filename`) AS `directory` FROM `' + Sqlite3Dataset1.TableName + '` WHERE `created` < :created_before ORDER BY `directory` ASC;');
+    SQL.Add('SELECT DISTINCT DIR(`filename`) AS `directory` FROM `' + Sqlite3Dataset.TableName + '` WHERE `created` < :created_before ORDER BY `directory` ASC;');
     ParamByName('created_before').{AsDateTime}AsFloat := {CreatedBefore} ADateTime;
     Open;
     First;
