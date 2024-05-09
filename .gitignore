@@ -53,6 +53,7 @@ lib/
 /*log.txt
 /screenshots/
 /ConverterBackup/
+/journal.dat
 
 # Linux executables:
 /AutoScreenshot
