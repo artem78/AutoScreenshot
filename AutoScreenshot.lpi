@@ -53,15 +53,22 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="15"/>
-      <RevisionNr Value="1"/>
-      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.15.1"/>
+      <MinorVersionNr Value="16"/>
+      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.16"/>
     </VersionInfo>
     <CustomData Count="13">
       <Item0 Name="lazpackager/copyright" Value="2020-2024, Artem Demin &lt;megabyte1024@ya.ru>"/>
       <Item1 Name="lazpackager/deb/ppa" Value="ppa:artem78/autoscreenshot"/>
       <Item2 Name="lazpackager/deb/series" Value="precise"/>
-      <Item3 Name="lazpackager/deb/tpl_changelog" Value="?PACKAGE_NAME? (1.15.1.0-1) precise; urgency=low
+      <Item3 Name="lazpackager/deb/tpl_changelog" Value="?PACKAGE_NAME? (1.16.0.0-1) precise; urgency=low
+
+  * Added icons for languages in menu
+  * Fixed many &apos;whoami&apos; child processes created in Linux
+  * Remade old screenshot autocleaning feature to protect other files against accidental deletion
+
+ -- ?MAINTAINER? &lt;?MAINTAINER_EMAIL?>  Thu, 09 May 2024 20:03:25 +0300
+
+?PACKAGE_NAME? (1.15.1.0-1) precise; urgency=low
 
   * Updated Chinese translation up to v1.15
 
@@ -249,6 +256,9 @@ override_dh_auto_install:
           </Linking>
           <Other>
             <CustomOptions Value="-B"/>
+            <OtherDefines Count="1">
+              <Define0 Value="SIMULATE_OLD_FILES_DELETION"/>
+            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item3>
