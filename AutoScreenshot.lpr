@@ -12,7 +12,7 @@ uses
   Forms,
   LCLIntf, LCLType, LMessages, SysUtils,
   Dialogs, Interfaces,
-  uAutoScreen in 'uAutoScreen.pas' {MainForm},
+  uMainForm in 'umainform.pas' {MainForm},
   uAbout in 'uAbout.pas' {AboutForm},
   uLocalization in 'uLocalization.pas',
   uUtils in 'uUtils.pas',

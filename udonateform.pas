@@ -27,10 +27,49 @@ var
 
 implementation
 
-uses StdCtrls, Clipbrd, LCLIntf, uLocalization, fpjson, opensslsockets,
-  fphttpclient;
+uses StdCtrls, Clipbrd, LCLIntf, ExtCtrls, uLocalization, fpjson,
+  opensslsockets, base64, StrUtils, fphttpclient;
 
 {$R *.lfm}
+
+type
+
+  { TPictureHelper }
+
+  TPictureHelper = class helper for TPicture
+    procedure LoadFromBase64(const AStr: String);
+  end;
+
+{ TPictureHelper }
+
+procedure TPictureHelper.LoadFromBase64(const AStr: String);
+  function Base64ToStream(const ABase64: String; var AStream: TMemoryStream): Boolean;
+  var
+    Str: String;
+  begin
+    Result := False;
+    if Length(Trim(ABase64)) = 0 then
+      Exit;
+
+    Str := DecodeStringBase64(ABase64);
+    AStream.Write(Pointer(Str)^, Length(Str) div SizeOf(Char));
+    AStream.Position := 0;
+    Result := True;
+  end;
+
+var
+  IconStrm: TMemoryStream;
+begin
+  IconStrm := TMemoryStream.Create;
+  try
+    if not Base64ToStream(AStr, IconStrm) then
+      raise Exception.Create('Can''t load picture from base64 string');
+
+    Self.LoadFromStream(IconStrm);
+  finally
+    IconStrm.Free;
+  end;
+end;
 
 { TDonateForm }
 
@@ -38,6 +77,7 @@ procedure TDonateForm.FormCreate(Sender: TObject);
 var
   Wallets: TStringList;
   I: Integer;
+  IconBase64: String;
 begin
   Caption := Localizer.I18N('Donate');
 
@@ -48,11 +88,33 @@ begin
 
       for I := 0 to Wallets.Count - 1 do
       begin
+        IconBase64 := ExtractWord(2, Wallets.ValueFromIndex[I], [#9]);
+        if not IconBase64.IsEmpty then
+        begin
+          with TImage.Create(Self) do
+          begin
+            Picture.LoadFromBase64(IconBase64);
+            BorderSpacing.CellAlignVertical := ccaCenter;
+            BorderSpacing.CellAlignHorizontal := {ccaCenter} ccaRightBottom;
+            Parent := Self;
+          end;
+        end
+        else
+        begin
+          // Create any dummy empty control to prevent layout broken when no icon
+          with TLabel.Create(Self) do
+          begin
+            Text := '';
+            AutoSize := True;
+            Parent := Self;
+          end;
+        end;
+
         with TLabel.Create(Self) do
         begin
           Caption := Wallets.Names[I] + ':';
           BorderSpacing.CellAlignVertical := ccaCenter;
-          BorderSpacing.CellAlignHorizontal := ccaRightBottom;
+          //BorderSpacing.CellAlignHorizontal := ccaRightBottom;
           Parent := Self;
         end;
 
@@ -60,7 +122,7 @@ begin
         begin
           Width := 300;
           Constraints.MinWidth := Width;
-          Text := Wallets.ValueFromIndex[I];
+          Text := ExtractWord(1, Wallets.ValueFromIndex[I], [#9]);
           ReadOnly := True;
           BorderSpacing.CellAlignVertical := ccaCenter;
           Parent := Self;
@@ -121,7 +183,7 @@ var
   Json: TJSONData;
   Str: String;
   Enumerator: TBaseJSONEnumerator;
-  PaymentMethod, WalletID: String;
+  PaymentMethod, WalletID, IconBase64: String;
 begin
   ASL.Clear;
 
@@ -147,8 +209,14 @@ begin
           begin
             PaymentMethod := Items[0].AsString;
             WalletID      := Items[1].AsString;
+            IconBase64 := '';
+            try
+              if Count > 2 then
+                IconBase64 := TJSONObject(Items[2]).Get('icon', '');
+            except
+            end;
           end;
-          ASL.AddPair(PaymentMethod, WalletID);
+          ASL.AddPair(PaymentMethod, WalletID + #9 + IconBase64);
         end;
       finally
         Enumerator.Free;

@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<project name="Auto Screenshot">
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+
+	<!-- Properties: -->
+	<!-- <property file="local.properties"/> -->
+	<loadproperties srcfile="local.properties" encoding="UTF-8">
+		<filterchain>
+			<escapeunicode />
+		</filterchain>
+	</loadproperties>
+	
+	
+	<condition property="os_family" value="Windows">
+		<os family="windows" />
+	</condition>
+	<condition property="os_family" value="Linux">
+		<os family="unix" />
+	</condition>
+	
+	<condition property="is_windows">
+		<os family="windows"/>
+	</condition>
+	<condition property="is_linux">
+		<os family="unix"/>
+	</condition>
+	
+	<!--<property name="build_dir" location="build"/>-->
+	<property name="build_dir" location="build/files"/>
+	<property name="releases_dir" location="releases"/>
+	<property name="zip_dir" location="build/zip"/>
+	<property name="test_dir" location="Test"/>
+	<property name="temp_dir" location="build/temp"/>
+	<!-- #ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreenshot.lpi) -->
+	<exec executable="git" outputproperty="version">
+		<arg value="describe"/>
+		<arg value="--dirty"/>
+		<!-- <arg value=" - - long"/> -->
+	</exec>
+	
+	<condition property="executable" value="AutoScreenshot.exe">
+		<os family="windows" />
+	</condition>
+	<condition property="executable" value="AutoScreenshot">
+		<os family="unix" />
+	</condition>
+	
+	<condition property="build_mode" value="Release (32bit)">
+		<os family="windows" />
+	</condition>
+	<condition property="build_mode" value="Release">
+		<os family="unix" />
+	</condition>
+	
+	<condition property="lazbuild_path" value="${lazarus_dir}/lazbuild.exe">
+		<os family="windows" />
+	</condition>
+	<condition property="lazbuild_path" value="lazbuild">
+		<os family="unix" />
+	</condition>
+	
+	<property name="libeay32_dll.sha1" value="be25d0575530aab50b0bb96571ea52124bdaaf77"/>
+	<property name="ssleay32_dll.sha1" value="61f6e4c18415a86e152d4f6453b513111866b505"/>
+	<property name="ssl_dlls.download_url" value="https://github.com/IndySockets/OpenSSL-Binaries/raw/master/Archive/openssl-1.0.2j-i386-win32.zip"/>
+	
+	
+	
+	<!-- Targets: -->
+	<target name="clean">
+		<delete dir="${build_dir}"/>
+		<delete dir="lib"/>
+		<delete file="${executable}"/>
+		<delete dir="${temp_dir}"/>
+	</target>
+	
+	<target name="init" depends="clean">
+		<!-- <echoproperties/> -->
+		<echo>Program version: ${version}</echo>
+		<mkdir dir="${build_dir}"/>
+		<mkdir dir="${releases_dir}"/>
+		<mkdir dir="${zip_dir}"/>
+		<mkdir dir="${temp_dir}"/>
+	</target>
+	
+	<target name="build" depends="init" description="Compile executable">
+		<echo>Compile executable</echo>
+		<exec executable="${lazbuild_path}">
+			<arg value="--build-mode=${build_mode}"/>
+			<!--<arg value="- - verbose"/>-->
+			<arg value="AutoScreenshot.lpi"/>
+		</exec>
+	</target>
+	
+	<target name="build_tests">
+		<echo>Compile tests</echo>
+		<exec executable="${lazbuild_path}" dir="${test_dir}">
+			<arg value="AutoScreenshotTest.lpi"/>
+		</exec>
+	</target>
+	
+	<target name="tests" depends="build_tests" description="Run all unit tests">
+		<echo>Run tests</echo>
+		<condition property="test_executable_filename" value="AutoScreenshotTest.exe">
+			<os family="windows" />
+		</condition>
+		<condition property="test_executable_filename" value="AutoScreenshotTest">
+			<os family="unix" />
+		</condition>
+		<!-- <exec executable="${test_executable_filename}" dir="${test_dir}" failonerror="true"> -->
+		<exec executable="${test_dir}/${test_executable_filename}" failonerror="true">
+			<arg value="--all"/>
+			<arg value="--format=plain"/>
+		</exec>
+	</target>
+	
+	<target name="zip" depends="download_ssl_dlls, build, tests" description="Pack all to ZIP archive">
+		<copy file="${executable}" todir="${build_dir}" preservelastmodified="true"/>
+		<if>
+			<equals arg1="${os_family}" arg2="Windows" />
+			<then>
+				<copy file="libeay32.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<copy file="ssleay32.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<copy file="sqlite3.dll" todir="${build_dir}" preservelastmodified="true"/>
+			</then>
+		</if>
+		<mkdir dir="${build_dir}/lang"/>
+		<copy todir="${build_dir}/lang" preservelastmodified="true">
+			<fileset dir="lang" includes="*.ini"/>
+		</copy>
+		<copy todir="${build_dir}/sounds" preservelastmodified="true">
+			<fileset dir="sounds" includes="*.wav"/>
+		</copy>
+		
+		<copy todir="${temp_dir}/AutoScreenshot_${version}" preservelastmodified="true">
+			<fileset dir="${build_dir}" includes="**"/>
+		</copy>
+		
+		<zip basedir="${temp_dir}" destfile="${zip_dir}/AutoScreenshot_${version}_${os_family}_portable.zip" level="9"/>
+	</target>
+	
+	<target name="installer" depends="download_ssl_dlls, build, tests" description="Make installer file (Windows only)" if="is_windows">
+		<!--<if>
+			<os family="windows"/>
+			<then>-->
+				<exec executable="${inno_setup_dir}/ISCC.exe" failonerror="true">
+					<!--<env key="LazarusDir" value="${lazarus_dir}"/>-->
+					<arg value="/DRevision=${version}"/>
+					<arg value="setup.iss"/>
+				</exec>
+			<!--</then>
+			<else>
+				<fail>Target not supported on this OS</fail>
+			</else>
+		</if>-->
+	</target>
+	
+	<target name="download_ssl_dlls" depends="check_ssl_dlls_checksum, init" unless="${ssl_dlls.checksum_is_ok}" if="is_windows">
+		<echo>Start download OpenSSL binaries archive</echo>
+		<tempfile property="zip_temp_file" prefix="openssl_" suffix=".zip" destdir="${temp_dir}" deleteonexit="true"/>
+		<echo>zip_temp_file: ${zip_temp_file}</echo>
+		<get src="${ssl_dlls.download_url}" dest="${zip_temp_file}" verbose="on"/>
+		<unzip src="${zip_temp_file}" dest="" overwrite="true">
+			<patternset>
+				<include name="libeay32.dll"/>
+				<include name="ssleay32.dll"/>
+			</patternset>
+		</unzip>
+		<!-- Todo: Check dll sums after download -->
+	</target>
+	
+	<target name="check_ssl_dlls_available">
+		<condition property="ssl_dlls.is_available">
+			<and>
+				<available file="libeay32.dll"/>
+				<available file="ssleay32.dll"/>
+			</and>
+		</condition>
+		<echo>SSL dlls exists: ${ssl_dlls.is_available}</echo>
+	</target>
+	
+	<target name="check_ssl_dlls_checksum" depends="check_ssl_dlls_available" if="ssl_dlls.is_available">
+		<checksum file="libeay32.dll" algorithm="SHA-1" property="${libeay32_dll.sha1}" verifyProperty="libeay32_dll.checksum_is_ok"/>
+		<checksum file="ssleay32.dll" algorithm="SHA-1" property="${ssleay32_dll.sha1}" verifyProperty="ssleay32_dll.checksum_is_ok"/>
+		<condition property="ssl_dlls.checksum_is_ok">
+			<and>
+				<equals arg1="${libeay32_dll.checksum_is_ok}" arg2="true" />
+				<equals arg1="${ssleay32_dll.checksum_is_ok}" arg2="true" />
+			</and>
+		</condition>
+		<echo>SSL dll checksums are valid: ${ssl_dlls.checksum_is_ok}</echo>
+	</target>
+</project>

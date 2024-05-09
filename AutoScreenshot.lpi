@@ -22,7 +22,7 @@
         <TextDesc Value="Automatic screenshot maker"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="13">
+      <Resources Count="22">
         <Resource_0 FileName="res\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
         <Resource_1 FileName="res\camera_flash1.ico" Type="ICON" ResourceName="_CAMERA_FLASH_1"/>
         <Resource_2 FileName="res\camera_flash2.ico" Type="ICON" ResourceName="_CAMERA_FLASH_2"/>
@@ -36,6 +36,15 @@
         <Resource_10 FileName="res\logo.png" Type="RCDATA" ResourceName="_LOGO"/>
         <Resource_11 FileName="res\logo_high_dpi.png" Type="RCDATA" ResourceName="_LOGO_HIGH_DPI"/>
         <Resource_12 FileName="res\camera.ico" Type="ICON" ResourceName="_CAMERA"/>
+        <Resource_13 FileName="libs/country-flags/country-flags/de_16.png" Type="RCDATA" ResourceName="FLAG_DE"/>
+        <Resource_14 FileName="libs/country-flags/country-flags/gb_16.png" Type="RCDATA" ResourceName="FLAG_EN"/>
+        <Resource_15 FileName="libs/country-flags/country-flags/es_16.png" Type="RCDATA" ResourceName="FLAG_ES"/>
+        <Resource_16 FileName="libs/country-flags/country-flags/fr_16.png" Type="RCDATA" ResourceName="FLAG_FR"/>
+        <Resource_17 FileName="libs/country-flags/country-flags/pt_16.png" Type="RCDATA" ResourceName="FLAG_PT"/>
+        <Resource_18 FileName="libs/country-flags/country-flags/ru_16.png" Type="RCDATA" ResourceName="FLAG_RU"/>
+        <Resource_19 FileName="libs/country-flags/country-flags/tr_16.png" Type="RCDATA" ResourceName="FLAG_TR"/>
+        <Resource_20 FileName="libs/country-flags/country-flags/ua_16.png" Type="RCDATA" ResourceName="FLAG_UK"/>
+        <Resource_21 FileName="libs/country-flags/country-flags/cn_16.png" Type="RCDATA" ResourceName="FLAG_ZH"/>
       </Resources>
     </General>
     <i18n>
@@ -49,7 +58,7 @@
       <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.15.1"/>
     </VersionInfo>
     <CustomData Count="13">
-      <Item0 Name="lazpackager/copyright" Value="2020-2023, Artem Demin &lt;megabyte1024@ya.ru>"/>
+      <Item0 Name="lazpackager/copyright" Value="2020-2024, Artem Demin &lt;megabyte1024@ya.ru>"/>
       <Item1 Name="lazpackager/deb/ppa" Value="ppa:artem78/autoscreenshot"/>
       <Item2 Name="lazpackager/deb/series" Value="precise"/>
       <Item3 Name="lazpackager/deb/tpl_changelog" Value="?PACKAGE_NAME? (1.15.1.0-1) precise; urgency=low
@@ -96,7 +105,7 @@ Vcs-Browser: https://github.com/artem78/AutoScreenshot
 
 Package: ?PACKAGE_NAME?
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, openssl
+Depends: ${shlibs:Depends}, ${misc:Depends}, openssl, libsqlite3-0
 Description: ?DESCRIPTION?
  ?DESCRIPTION_LONG?
 "/>
@@ -238,6 +247,9 @@ override_dh_auto_install:
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-B"/>
+          </Other>
         </CompilerOptions>
       </Item3>
       <Item4 Name="Release (32bit)">
@@ -272,6 +284,9 @@ override_dh_auto_install:
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-B"/>
+          </Other>
         </CompilerOptions>
       </Item4>
       <Item5 Name="Release (64bit)">
@@ -306,6 +321,9 @@ override_dh_auto_install:
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-B"/>
+          </Other>
         </CompilerOptions>
       </Item5>
     </BuildModes>
@@ -318,22 +336,28 @@ override_dh_auto_install:
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="5">
+    <RequiredPackages Count="7">
       <Item1>
-        <PackageName Value="playwavepackage"/>
+        <PackageName Value="FCL"/>
       </Item1>
       <Item2>
-        <PackageName Value="BGRABitmapPack"/>
+        <PackageName Value="sqlite3laz"/>
       </Item2>
       <Item3>
-        <PackageName Value="uniqueinstance_package"/>
+        <PackageName Value="playwavepackage"/>
       </Item3>
       <Item4>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="BGRABitmapPack"/>
       </Item4>
       <Item5>
-        <PackageName Value="LCL"/>
+        <PackageName Value="uniqueinstance_package"/>
       </Item5>
+      <Item6>
+        <PackageName Value="DateTimeCtrls"/>
+      </Item6>
+      <Item7>
+        <PackageName Value="LCL"/>
+      </Item7>
     </RequiredPackages>
     <Units Count="19">
       <Unit0>
@@ -341,11 +365,12 @@ override_dh_auto_install:
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="uAutoScreen.pas"/>
+        <Filename Value="umainform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uMainForm"/>
       </Unit1>
       <Unit2>
         <Filename Value="uAbout.pas"/>

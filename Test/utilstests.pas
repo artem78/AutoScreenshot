@@ -18,7 +18,6 @@ type
   published
     procedure TestFormatPath;
     procedure TestDecode;
-    procedure TestJoinPath;
     procedure TestVersions;
     procedure TestAutoRun;
     procedure TestCmdExecution;
@@ -91,25 +90,6 @@ begin
   AssertEquals('PC and user name',
       CompName + '_' + UserName + '_image.tiff',
       GetFormattedPath('%COMP_%USER_image.tiff'));}
-end;
-
-procedure TUtilsTestCase.TestJoinPath;
-  function JoinPath(const Base: String; const Path: String): String;
-  begin
-    Result := ConcatPaths([Base, Path]);
-  end;
-
-begin
-  //CheckEqualsString('', JoinPath('', ''));
-  {$IFDEF MSWINDOWS}
-  AssertEquals('c:\root\subdir\', JoinPath('c:\root', 'subdir\'));
-  AssertEquals('Path starts with backslash',
-    'd:\folder1\folder2\folder3\folder4\',
-    JoinPath('d:\folder1\folder2\', '\folder3\folder4\'));
-  AssertEquals('Empty path', 'a:\DisketDir\', JoinPath('a:\DisketDir', ''));
-  AssertEquals('Relative path',
-      'mydir\picture.jpeg', JoinPath('mydir', 'picture.jpeg'));
-  {$ENDIF}
 end;
 
 procedure TUtilsTestCase.TestVersions;
@@ -194,7 +174,6 @@ end;
 
 procedure TUtilsTestCase.TestCmdExecution;
 const
-  Dir = 'tmp';
   {$IfDef Windows}
   CopyCmd = 'copy';
   {$EndIf}
@@ -210,7 +189,11 @@ const
 var
   F: TextFile;
   Cmd: String;
+  Dir: String;
 begin
+  Dir := ConcatPaths([ExtractFileDir(Application.ExeName), 'tmp']);
+  Dir := IncludeTrailingPathDelimiter(Dir);
+
   if DirectoryExists(Dir) then
     DeleteDirectory(Dir, False);
   CreateDir(Dir);

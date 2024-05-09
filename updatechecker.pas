@@ -14,7 +14,7 @@ implementation
 
 uses
   Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls, uUtilsMore,
-  uLocalization, uUtils, uAutoScreen, LCLIntf, LazLoggerBase,
+  uLocalization, uUtils, umainform, LCLIntf, LazLoggerBase,
   fphttpclient, opensslsockets, fpjson, jsonparser, StrUtils;
 
 {$R *.lfm}

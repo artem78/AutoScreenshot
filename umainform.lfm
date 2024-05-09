@@ -652,6 +652,7 @@ object MainForm: TMainForm
       Caption = 'Options'
       object LanguageSubMenu: TMenuItem
         Caption = 'Language'
+        SubMenuImages = LangFlagImageList
       end
       object AutoCheckForUpdatesMenuItem: TMenuItem
         Caption = 'Auto check for updates'
@@ -704,5 +705,9 @@ object MainForm: TMainForm
     PlayCommand = 'aplay -q'
     Left = 567
     Top = 303
+  end
+  object LangFlagImageList: TImageList
+    Left = 558
+    Top = 478
   end
 end

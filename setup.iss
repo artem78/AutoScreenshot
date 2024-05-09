@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Auto Screenshot"
-#define MyAppVersion "1.15.1"
+#define MyAppVersion Copy(Revision, 2) ; Drop leading 'v'
 #define MyAppPublisher "Artem Demin"
 #define MyAppURL "https://github.com/artem78/AutoScreenshot#readme"
 #define MyAppExeName "AutoScreenshot.exe"
@@ -23,7 +23,7 @@ DefaultDirName={pf}\AutoScreenshot
 DisableProgramGroupPage=yes
 LicenseFile=LICENSE.txt
 OutputDir=build\setup
-OutputBaseFilename=AutoScreenshot_{#MyAppVersion}_Windows_setup
+OutputBaseFilename=AutoScreenshot_v{#MyAppVersion}_Windows_setup
 Compression=lzma
 SolidCompression=yes
 
@@ -39,9 +39,10 @@ Source: "AutoScreenshot.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "lang\*"; DestDir: "{app}\lang"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.bak"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 ; ToDo: Remove config.ini when uninstall or make this optional
-Source: "{#GetEnv("LazarusDir")}\ssleay32.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#GetEnv("LazarusDir")}\libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "ssleay32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "sounds\*.wav"; DestDir: "{app}\sounds"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

@@ -46,23 +46,22 @@ lib/
 
 /mydir
 /bak
-/build
 *.tmp
-*.bak
 *.backup
 /config.ini
-dunit.ini
-/backup/
 *.log
+/*log.txt
 /screenshots/
 /ConverterBackup/
+/journal.dat
 
 # Linux executables:
 /AutoScreenshot
 /Test/AutoScreenshotTest
 /Test/AutoScreenshotTestGUI
-/*log.txt
 
-# Linux build files
+# Build files
 /DEBUILD/
 /DEBUILD.sh
+/build
+/local.properties
