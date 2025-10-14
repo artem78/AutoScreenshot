@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, ZStream { for Tcompressionlevel };
 
 type
-  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF}, fmtTIFF, fmtWEBP);
+  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF}, fmtTIFF, fmtWEBP, fmtAVIF);
 
   TColorDepth = (cd8Bit=8, cd16Bit=16, cd24Bit=24, cd32Bit=32);
 
@@ -86,8 +86,16 @@ const
       HasCompressionLevel: False
     ),
     (
-      Name:         'WEBP';
+      Name:         'WebP';
       Extension:    'webp';
+      HasQuality:   False;
+      HasGrayscale: False;
+      ColorDepth:   [];
+      HasCompressionLevel: False
+    ),
+    (
+      Name:         'AVIF';
+      Extension:    'AVIF';
       HasQuality:   False;
       HasGrayscale: False;
       ColorDepth:   [];
@@ -103,7 +111,8 @@ uses
   windows,
   {$EndIf}
   Forms, LCLType, LCLIntf, BGRABitmap, BGRABitmapTypes, BGRAWriteWebP,
-  FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, FPWriteTiff, LazLoggerBase;
+  BGRAWriteAvif, libavif, FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage,
+  FPWriteTiff, LazLoggerBase;
 
 { TScreenGrabber }
 
@@ -221,6 +230,11 @@ begin
       fmtWEBP:
         begin
           Writer := TBGRAWriterWebP.Create;
+        end;
+
+      fmtAVIF:
+        begin
+          Writer := TBGRAWriterAvif.Create;
         end;
   end;
 
