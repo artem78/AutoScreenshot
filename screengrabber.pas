@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, ZStream { for Tcompressionlevel };
 
 type
-  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF}, fmtTIFF);
+  TImageFormat = (fmtPNG=0, fmtJPG, fmtBMP{, fmtGIF}, fmtTIFF, fmtWEBP);
 
   TColorDepth = (cd8Bit=8, cd16Bit=16, cd24Bit=24, cd32Bit=32);
 
@@ -84,6 +84,14 @@ const
       HasGrayscale: False;
       ColorDepth:   [];
       HasCompressionLevel: False
+    ),
+    (
+      Name:         'WEBP';
+      Extension:    'webp';
+      HasQuality:   False;
+      HasGrayscale: False;
+      ColorDepth:   [];
+      HasCompressionLevel: False
     )
   );
 
@@ -94,8 +102,8 @@ uses
   {$IfDef Windows}
   windows,
   {$EndIf}
-  Forms {for TMonitor}, LCLType, LCLIntf, BGRABitmap, BGRABitmapTypes, FPWriteJPEG, FPWriteBMP,
-  FPWritePNG, FPImage, FPWriteTiff, LazLoggerBase;
+  Forms, LCLType, LCLIntf, BGRABitmap, BGRABitmapTypes, BGRAWriteWebP,
+  FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage, FPWriteTiff, LazLoggerBase;
 
 { TScreenGrabber }
 
@@ -208,6 +216,11 @@ begin
       fmtTIFF:
         begin
           Writer := TFPWriterTiff.Create;
+        end;
+
+      fmtWEBP:
+        begin
+          Writer := TBGRAWriterWebP.Create;
         end;
   end;
 

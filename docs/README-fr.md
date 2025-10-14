@@ -18,7 +18,7 @@ Auto Screenshot
 ## Fonctionnalités
 
 * Sauvegarde automatique de captures en plein écran avec un intervalle de temps spécifié (de 1 seconde à 24 heures)
-* Sauvegarde d'images au format PNG, JPEG, BMP, TIFF `<!--ou GIF-->`
+* Sauvegarde d'images au format PNG, JPEG, BMP, TIFF, <!--ou GIF--> WEBP
 * Mettre en pause la capture d'écran lorsque l'utilisateur est inactif (en fonction des mouvements de la souris et des évènements du clavier)
 * Nom des fichiers de sortie modifiable avec des variables (date, temps, utilisateur, nom de l'hôte, numéro de séquence) and habilité de grouper par dossier (par exemple : par jour ou par mois)
 * Les captures peuvent être faites automatiquement au démarrage du système
