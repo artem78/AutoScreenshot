@@ -43,6 +43,13 @@ Source: "ssleay32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "sounds\*.wav"; DestDir: "{app}\sounds"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "libwebp32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "libaom.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "libavif.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "libdav1d.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "libgcc_s_dw2-1.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "rav1e.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

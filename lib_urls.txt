@@ -1,0 +1,2 @@
+libwebp - https://github.com/bgrabitmap/webp/blob/master/bgrawebp/libwebp32.dll
+libavif - https://objects.githubusercontent.com/github-production-repository-file-5c1aeb/73360658/8793166?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20251014%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251014T100901Z&X-Amz-Expires=300&X-Amz-Signature=69ae89e8235e117076f8dd0112ffa070d331922852e544ac97cd1e1d22edabcd&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3Bfilename%3DlibavifDlls_0.10.1-1.zip&response-content-type=application%2Fzip

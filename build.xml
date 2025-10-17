@@ -121,6 +121,14 @@
 				<copy file="libeay32.dll" todir="${build_dir}" preservelastmodified="true"/>
 				<copy file="ssleay32.dll" todir="${build_dir}" preservelastmodified="true"/>
 				<copy file="sqlite3.dll" todir="${build_dir}" preservelastmodified="true"/>
+				
+				<copy file="libwebp32.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<copy file="libaom.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<copy file="libavif.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<copy file="libdav1d.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<copy file="libgcc_s_dw2-1.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<copy file="libwinpthread-1.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<copy file="rav1e.dll" todir="${build_dir}" preservelastmodified="true"/>
 			</then>
 		</if>
 		<mkdir dir="${build_dir}/lang"/>
