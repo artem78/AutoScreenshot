@@ -14,7 +14,7 @@ type
 
   TImageFormatInfo = record
     Name: String[10];
-    Extension: String[3];
+    Extension: String[4];
     HasQuality: Boolean;
     HasGrayscale: Boolean;
     ColorDepth: Set of TColorDepth;
@@ -95,7 +95,7 @@ const
     ),
     (
       Name:         'AVIF';
-      Extension:    'AVIF';
+      Extension:    'avif';
       HasQuality:   False;
       HasGrayscale: False;
       ColorDepth:   [];
