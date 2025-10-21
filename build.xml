@@ -55,7 +55,7 @@
 	<condition property="lazbuild_path" value="${lazarus_dir}/lazbuild.exe">
 		<os family="windows" />
 	</condition>
-	<condition property="lazbuild_path" value="lazbuild">
+	<condition property="lazbuild_path" value="/home/user/fpcupdeluxe/lazarus/lazbuild">
 		<os family="unix" />
 	</condition>
 	
