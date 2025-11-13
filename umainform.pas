@@ -1670,13 +1670,14 @@ procedure TMainForm.RecalculateLabelWidths;
 var
   MaxWidth: Integer;
 begin
-  MaxWidth := 0;
-  MaxWidth := max(MaxWidth, OutputDirLabel.Width);
-  MaxWidth := max(MaxWidth, FileNameTemplateLabel.Width);
-  MaxWidth := max(MaxWidth, CaptureIntervalLabel.Width);
-  MaxWidth := max(MaxWidth, ImageFormatLabel.Width);
-  MaxWidth := max(MaxWidth, MonitorLabel.Width);
-  MaxWidth := max(MaxWidth, PostCmdLabel.Width);
+  MaxWidth := MaxValue([
+    OutputDirLabel.Width,
+    FileNameTemplateLabel.Width,
+    CaptureIntervalLabel.Width,
+    ImageFormatLabel.Width,
+    MonitorLabel.Width,
+    PostCmdLabel.Width
+  ]);
 
   OutputDirEdit.Left := MaxWidth + OutputDirEdit.Parent.ChildSizing.LeftRightSpacing
       + OutputDirEdit.Parent.ChildSizing.HorizontalSpacing;
@@ -1689,9 +1690,11 @@ procedure TMainForm.RecalculateLabelWidthsForSeqNumGroup;
 var
   MaxWidth: Integer;
 begin
-  MaxWidth := 0;
-  MaxWidth := max(MaxWidth, SeqNumberValueLabel.Width);
-  MaxWidth := max(MaxWidth, SeqNumberDigitsCountLabel.Width);
+  MaxWidth := MaxValue([
+    SeqNumberValueLabel.Width,
+    SeqNumberDigitsCountLabel.Width
+  ]);
+
   SeqNumberValueSpinEdit.Left := MaxWidth
       + SeqNumberGroup.ChildSizing.LeftRightSpacing
       + SeqNumberGroup.ChildSizing.HorizontalSpacing;
