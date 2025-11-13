@@ -119,6 +119,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure HomePageMenuItemClick(Sender: TObject);
     procedure SkipSimilarCheckBoxChange(Sender: TObject);
+    procedure HomePageMenuItemClick(Sender: TObject);
     procedure MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
     procedure OldScreenshotCleanerEnabledCheckBoxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
