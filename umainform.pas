@@ -1169,7 +1169,8 @@ end;
 procedure TMainForm.TranslateForm;
 const
   {$IfDef Windows}
-  PreCmdExample = '';
+  //PreCmdExample = 'msg "%username%" /time:4 "Screenshot will be taken after 5 seconds!" & timeout 5';
+  PreCmdExample = 'mshta vbscript:Execute("msgbox ""Press OK button to take screenshot"":close")';
   PostCmdExample = 'copy "%FILENAME%" "C:\dir\"';
   {$EndIf}
   {$IfDef Linux}
