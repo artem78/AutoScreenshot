@@ -71,7 +71,8 @@ function GetAlternativeLanguage(const ALangs: TLanguagesArray;
 procedure AutoRun(const FileName: String; const AppTitle: String;
     Enabled: Boolean = True);
 function CheckAutoRun(const FileName: String; const AppTitle: String): Boolean;
-procedure RunCmdInbackground(ACmd: String);
+procedure RunCmd(const ACmd: String; AInBackground: Boolean = False);
+procedure RunCmdInBackground(const ACmd: string);
 function IsPortable: Boolean;
 function GetUserPicturesDir: WideString;
 
@@ -181,7 +182,7 @@ end;
 //  end;
 //end;
 
-function GetProgramVersionStr: String;
+function GetProgramVersionStr: string;
 var
   FileVerInfo: TFileVersionInfo;
 begin
@@ -395,7 +396,12 @@ begin
   {$EndIf}
 end;
 
-procedure RunCmdInbackground(ACmd: String);
+procedure RunCmdInBackground(const ACmd: String);
+begin
+  RunCmd(ACmd, True);
+end;
+
+procedure RunCmd(const ACmd: String; AInBackground: Boolean);
 var
   proc: TProcess;
 begin
@@ -412,6 +418,10 @@ begin
     proc.Parameters.Add(ACmd);
     {$EndIf}
     proc.Options := proc.Options + [poNoConsole];
+    if AInBackground then
+      proc.Options := proc.Options - [poWaitOnExit]
+    else
+      proc.Options := proc.Options + [poWaitOnExit];
     proc.Execute;
   finally
     proc.Free;

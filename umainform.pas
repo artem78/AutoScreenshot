@@ -37,6 +37,8 @@ type
     MenuImageList: TImageList;
     LangFlagImageList: TImageList;
     HomePageMenuItem: TMenuItem;
+    PreCmdLabel: TLabel;
+    PreCmdEdit: TEdit;
     MinimizeInsteadOfCloseCheckBox: TCheckBox;
     Panel1: TPanel;
     SettingsPanel: TPanel;
@@ -123,6 +125,7 @@ type
     procedure CaptureIntervalDateTimePickerChange(Sender: TObject);
     procedure PlaySoundsCheckBoxChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
+    procedure PreCmdEditChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure ApplicationMinimize(Sender: TObject);
     procedure StartAutoCaptureButtonClick(Sender: TObject);
@@ -254,6 +257,9 @@ type
     procedure OnScreenConfigurationChanged(const AEvent: TXEvent);
     {$EndIf}
 
+    procedure SetPreCommand(ACmd: String);
+    function GetPreCommand: String;
+
 
     { Properties }
     property IsTimerEnabled: Boolean read GetTimerEnabled write SetTimerEnabled;
@@ -276,6 +282,7 @@ type
     property CompressionLevel: Tcompressionlevel read GetCompressionLevel write SetCompressionLevel;
     property Sounds: Boolean read GetSounds write SetSounds;
     property MinimizeInsteadOfClose: Boolean read GetMinimizeInsteadOfClose write SetMinimizeInsteadOfClose;
+    property PreCommand: String read GetPreCommand write SetPreCommand;
 
     // Messages
     {$IfDef Windows}
@@ -541,6 +548,7 @@ begin
   UpdateSeqNumGroupVisibility;
 
   // User command
+  PreCommand := Ini.ReadString(DefaultConfigIniSection, 'PreCmd', '');
   PostCommand := Ini.ReadString(DefaultConfigIniSection, 'PostCmd', '');
 
   // Auto checking for updates
@@ -811,6 +819,11 @@ begin
   Ini.WriteString(DefaultConfigIniSection, 'PostCmd', PostCommand);
 end;
 
+procedure TMainForm.PreCmdEditChange(Sender: TObject);
+begin
+  Ini.WriteString(DefaultConfigIniSection, 'PreCmd', PreCommand);
+end;
+
 procedure TMainForm.TimerTimer(Sender: TObject);
 begin
   if StopWhenInactive then
@@ -887,6 +900,28 @@ var
 begin
   ImageFileName := ImagePath; // Use local variable because ImagePath() result
                               // may be changed on next call
+  // Run user command before screenshot
+  try
+    Cmd := PreCommand;
+    if Cmd <> '' then
+    begin
+//      Cmd := StringReplace(Cmd, '%FILENAME%', ImageFileName, [rfReplaceAll{, rfIgnoreCase}]);
+      DebugLn('Execute command before screenshot: ', Cmd);
+      RunCmd{Inbackground}(Cmd);
+      //DebugLn('Execution success!'); // Not works
+    end;
+  except
+    on E: Exception do
+    begin
+      DebugLn('Execution failed: ', E.ToString);
+
+      if not Timer.Enabled then // Manual capture
+      begin
+        ErrMsg := {'Execution of custom command failed: ' +} E.Message;
+        MessageDlg('Auto Screenshot', ErrMsg, mtWarning, [mbOK], '');
+      end;
+    end;
+  end;
 
   PlaySound('camera_shutter.wav');
   TrayIconState := tisFlashAnimation;
@@ -904,13 +939,13 @@ begin
   FileJournal.Add(ImageFileName);
 
 
-  // Run user command
+  // Run user command after screenshot
   try
     Cmd := PostCommand;
     if Cmd <> '' then
     begin
       Cmd := StringReplace(Cmd, '%FILENAME%', ImageFileName, [rfReplaceAll{, rfIgnoreCase}]);
-      DebugLn('Execute command: ', Cmd);
+      DebugLn('Execute command after screenshot: ', Cmd);
       RunCmdInbackground(Cmd);
       //DebugLn('Execution success!'); // Not works
     end;
@@ -1134,10 +1169,12 @@ end;
 procedure TMainForm.TranslateForm;
 const
   {$IfDef Windows}
-  CmdExample = 'copy "%FILENAME%" "C:\dir\"';
+  PreCmdExample = '';
+  PostCmdExample = 'copy "%FILENAME%" "C:\dir\"';
   {$EndIf}
   {$IfDef Linux}
-  CmdExample = 'cp "%FILENAME%" "~/dir/"';
+  PreCmdExample = 'zenity --notification --text="Screenshot will be taken after 5 seconds!" & sleep 5';
+  PostCmdExample = 'cp "%FILENAME%" "~/dir/"';
   {$EndIf}
 begin
   DisableAutoSizing;
@@ -1185,7 +1222,7 @@ begin
     SeqNumberDigitsCountLabel.Caption := Localizer.I18N('Digits') + ':';
     PostCmdLabel.Caption := Localizer.I18N('RunCommand') + ':';
     PostCmdEdit.Hint := StringReplace(Localizer.I18N('RunCommandHelpText'),
-                                      '%s', CmdExample, []);
+                                      '%s', PostCmdExample, []);
 
     CompressionLevelLabel.Caption := Localizer.I18N('CompressionLevel') + ':';
     with CompressionLevelComboBox do
@@ -1216,6 +1253,9 @@ begin
     TakeScreenshotTrayMenuItem.Caption := Localizer.I18N('TakeScreenshot');
     ExitTrayMenuItem.Caption := Localizer.I18N('Exit');
 
+    PreCmdLabel.Caption := Localizer.I18N('RunCommandBefore') + ':';
+    PreCmdEdit.Hint := StringReplace(Localizer.I18N('RunCommandBeforeHelpText'),
+                                  '%s', PreCmdExample, []);
   finally
     EnableAutoSizing;
 
@@ -1676,7 +1716,8 @@ begin
     CaptureIntervalLabel.Width,
     ImageFormatLabel.Width,
     MonitorLabel.Width,
-    PostCmdLabel.Width
+    PostCmdLabel.Width,
+    PreCmdLabel.Width
   ]);
 
   OutputDirEdit.Left := MaxWidth + OutputDirEdit.Parent.ChildSizing.LeftRightSpacing
@@ -2053,6 +2094,16 @@ begin
   //end;
 end;
 {$EndIf}
+
+procedure TMainForm.SetPreCommand(ACmd: String);
+begin
+  PreCmdEdit.Text := ACmd;
+end;
+
+function TMainForm.GetPreCommand: String;
+begin
+  Result := PreCmdEdit.Text;
+end;
 
 {$IfDef Windows}
 procedure TMainForm.WMHotKey(var AMsg: TMessage);

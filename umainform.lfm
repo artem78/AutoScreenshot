@@ -56,7 +56,7 @@ object MainForm: TMainForm
       ChildSizing.ControlsPerLine = 999
       ClientHeight = 28
       ClientWidth = 856
-      TabOrder = 12
+      TabOrder = 14
       object OutputDirEdit: TDirectoryEdit
         Left = 0
         Height = 28
@@ -474,7 +474,7 @@ object MainForm: TMainForm
       Style = csDropDownList
       TabOrder = 7
     end
-    object PostCmdLabel: TLabel
+    object PreCmdLabel: TLabel
       AnchorSideTop.Side = asrCenter
       Left = 15
       Height = 16
@@ -482,7 +482,30 @@ object MainForm: TMainForm
       Width = 134
       Alignment = taRightJustify
       BorderSpacing.CellAlignVertical = ccaCenter
-      Caption = 'Run command:'
+      Caption = 'Run command before:'
+      ParentColor = False
+    end
+    object PreCmdEdit: TEdit
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Side = asrBottom
+      Left = 155
+      Height = 26
+      Top = 384
+      Width = 856
+      OnChange = PreCmdEditChange
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 8
+    end
+    object PostCmdLabel: TLabel
+      AnchorSideTop.Side = asrCenter
+      Left = 15
+      Height = 16
+      Top = 421
+      Width = 134
+      Alignment = taRightJustify
+      BorderSpacing.CellAlignVertical = ccaCenter
+      Caption = 'Run command after:'
       ParentColor = False
     end
     object PostCmdEdit: TEdit
@@ -490,17 +513,17 @@ object MainForm: TMainForm
       AnchorSideRight.Side = asrBottom
       Left = 155
       Height = 26
-      Top = 384
+      Top = 416
       Width = 856
       OnChange = PostCmdEditChange
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 8
+      TabOrder = 9
     end
     object EmptyLabel6: TLabel
       Left = 15
       Height = 30
-      Top = 416
+      Top = 448
       Width = 134
       ParentColor = False
     end
@@ -509,7 +532,7 @@ object MainForm: TMainForm
       AnchorSideRight.Side = asrBottom
       Left = 155
       Height = 30
-      Top = 416
+      Top = 448
       Width = 856
       AutoSize = True
       BevelOuter = bvNone
@@ -519,7 +542,7 @@ object MainForm: TMainForm
       ChildSizing.ControlsPerLine = 999
       ClientHeight = 30
       ClientWidth = 856
-      TabOrder = 9
+      TabOrder = 10
       object OldScreenshotCleanerEnabledCheckBox: TCheckBox
         Left = 0
         Height = 30
@@ -562,7 +585,7 @@ object MainForm: TMainForm
     object EmptyLabel7: TLabel
       Left = 15
       Height = 22
-      Top = 452
+      Top = 484
       Width = 134
       ParentColor = False
     end
@@ -570,16 +593,16 @@ object MainForm: TMainForm
       AnchorSideTop.Side = asrBottom
       Left = 155
       Height = 22
-      Top = 452
+      Top = 484
       Width = 856
       Caption = 'Play sounds'
       OnChange = PlaySoundsCheckBoxChange
-      TabOrder = 10
+      TabOrder = 11
     end
     object EmptyLabel8: TLabel
       Left = 15
       Height = 22
-      Top = 480
+      Top = 512
       Width = 134
       ParentColor = False
     end
@@ -587,11 +610,11 @@ object MainForm: TMainForm
       AnchorSideTop.Side = asrBottom
       Left = 155
       Height = 22
-      Top = 480
+      Top = 512
       Width = 856
       Caption = 'Minimize to tray when close window'
       OnChange = MinimizeInsteadOfCloseCheckBoxChange
-      TabOrder = 11
+      TabOrder = 12
     end
   end
   object ButtonsPanel: TPanel
