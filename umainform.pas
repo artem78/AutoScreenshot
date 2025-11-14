@@ -910,7 +910,7 @@ end;
 
 procedure TMainForm.MakeScreenshot;
 var
-  Cmd, ImageFileName, ErrMsg: String;
+  Cmd, ImageFileName, ErrMsg, LastImgFileName: String;
 begin
   ImageFileName := ImagePath; // Use local variable because ImagePath() result
                               // may be changed on next call
@@ -950,7 +950,21 @@ begin
       Grabber.CaptureMonitor(ImageFileName, MonitorId);
   end;
 
-  FileJournal.Add(ImageFileName);
+  LastImgFileName := FileJournal.LastAdded;
+  //FileJournal.Add(ImageFileName);
+
+  If SkipDuplicates and (LastImgFileName <> '') then
+  begin
+    if ImagesEqual(LastImgFileName, ImageFileName) then
+    begin
+      DeleteFile(ImageFileName);
+      DebugLn('Skip screenshot duplicate (%s = %s)', [LastImgFileName, ImageFileName]);
+    end
+    else
+      FileJournal.Add(ImageFileName);
+  end
+  else
+    FileJournal.Add(ImageFileName);
 
 
   // Run user command after screenshot

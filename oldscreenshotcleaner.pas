@@ -67,6 +67,10 @@ type
     procedure Remove(AMaxDateTime: TDateTime);
     function GetFiles(AMaxDateTime: TDateTime): TStringList;
     function GetDirs(AMaxDateTime: TDateTime): TStringList;
+
+    { Returns filename of last added file. Function returns empty string
+      if database is empty }
+    function LastAdded: String;
   end;
 
 
@@ -302,6 +306,25 @@ begin
       Result.Add(FieldByName('directory').AsString);
       Next;
     end;
+    Close;
+  end;
+end;
+
+function TFileJournal.LastAdded: String;
+begin
+  Result := '';
+
+  with SQLQuery do
+  begin
+    SQL.Clear;
+    SQL.Append('SELECT `filename`/*, `created`*/');
+    SQL.Append('FROM `' + Sqlite3Dataset.TableName + '`');
+    SQL.Append('ORDER BY `created` DESC');
+    SQL.Append('LIMIT 1;');
+    Open;
+    First;
+    if not EOF then
+      Result := FieldByName('filename').AsString;
     Close;
   end;
 end;

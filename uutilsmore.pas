@@ -51,10 +51,12 @@ type
     procedure AutoWidth;
   end;
 
+function {CompareImages} ImagesEqual(const AImgFilename1, AImgFilename2: String): Boolean;
+
 implementation
 
 uses
-  RegExpr, StrUtils, Menus  {for ShortCutToKey}, LCLProc, LCLType, Graphics, LCLIntf, Math;
+  RegExpr, StrUtils, Menus  {for ShortCutToKey}, LCLProc, LCLType, Graphics, LCLIntf, Math, BGRABitmap, BGRABitmapTypes;
 
 type
   { TJoinInteger }
@@ -138,6 +140,48 @@ begin
     Self{.Width}.Constraints.MinWidth := TextMaxWidth + Metr + SPACING;
   finally
     Bmp.Free;
+  end;
+end;
+
+function ImagesEqual(const AImgFilename1, AImgFilename2: String): Boolean;
+var
+  Bmp1, Bmp2: TBGRABitmap {= nil};
+  p1, p2: PBGRAPixel;
+  n: integer;
+begin
+  if (not FileExists(AImgFilename1)) or (not FileExists(AImgFilename2)) then
+    Exit(False);
+
+  Bmp1 := TBGRABitmap.Create();
+  Bmp2 := TBGRABitmap.Create();
+  try
+    try
+      Bmp1.LoadFromFile(AImgFilename1);
+      Bmp2.LoadFromFile(AImgFilename2);
+
+      if (Bmp1.Width <> Bmp2.Width) or (Bmp1.Height <> Bmp2.Height) then
+        Exit(False);
+
+      p1 := bmp1.Data;
+      p2 := bmp2.Data;
+      for n := bmp1.NbPixels-1 downto 0 do
+      begin
+        //if p1 <> p2 then
+        //if p1^ = p2^ then
+        if (p1^.red <> p2^.red) or (p1^.green <> p2^.green) or (p1^.blue <> p2^.blue) then
+          Exit(False);
+
+        inc(p1);
+        inc(p2);
+      end;
+
+      Exit(True);
+    finally
+      Bmp2.Free;
+      Bmp1.Free;
+    end;
+  except
+    Exit(False);
   end;
 end;
 
