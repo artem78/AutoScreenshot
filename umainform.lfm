@@ -618,22 +618,68 @@ object MainForm: TMainForm
     end
     object EmptyLabel9: TLabel
       Left = 15
-      Height = 22
+      Height = 26
       Top = 540
       Width = 134
       ParentColor = False
     end
-    object SkipDuplicatesCheckBox: TCheckBox
-      AnchorSideTop.Side = asrBottom
+    object SkipDuplicatesPanel: TPanel
       Left = 155
-      Height = 22
+      Height = 26
       Top = 540
       Width = 856
-      Caption = 'Skip duplicates'
-      OnChange = SkipDuplicatesCheckBoxChange
-      ParentShowHint = False
-      ShowHint = True
+      AutoSize = True
+      BevelOuter = bvNone
+      ChildSizing.HorizontalSpacing = 6
+      ChildSizing.VerticalSpacing = 6
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 999
+      ClientHeight = 26
+      ClientWidth = 856
       TabOrder = 15
+      object SkipDuplicatesCheckBox: TCheckBox
+        Left = 0
+        Height = 22
+        Top = 2
+        Width = 114
+        BorderSpacing.CellAlignVertical = ccaCenter
+        Caption = 'Skip duplicates'
+        OnChange = SkipDuplicatesCheckBoxChange
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+      end
+      object Label1: TLabel
+        Left = 144
+        Height = 16
+        Top = 5
+        Width = 41
+        BorderSpacing.Left = 30
+        BorderSpacing.CellAlignVertical = ccaCenter
+        Caption = 'Match:'
+        ParentColor = False
+      end
+      object SkipDuplicatesMatchPercentSpinEdit: TSpinEdit
+        Left = 191
+        Height = 26
+        Top = 0
+        Width = 50
+        BorderSpacing.CellAlignVertical = ccaCenter
+        MaxValue = 100
+        MinValue = 1
+        OnChange = SkipDuplicatesMatchPercentSpinEditChange
+        TabOrder = 1
+        Value = 1
+      end
+      object Label2: TLabel
+        Left = 247
+        Height = 16
+        Top = 5
+        Width = 11
+        BorderSpacing.CellAlignVertical = ccaCenter
+        Caption = '%'
+        ParentColor = False
+      end
     end
   end
   object ButtonsPanel: TPanel

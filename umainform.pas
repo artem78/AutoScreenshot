@@ -32,6 +32,9 @@ type
     EmptyLabel7: TLabel;
     EmptyLabel8: TLabel;
     EmptyLabel9: TLabel;
+    Label1: TLabel;
+    Label2: TLabel;
+    SkipDuplicatesPanel: TPanel;
     SkipDuplicatesCheckBox: TCheckBox;
     FileMenuItem: TMenuItem;
     ExitMenuItem: TMenuItem;
@@ -62,6 +65,7 @@ type
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
     OutputDirEdit: TDirectoryEdit;
+    SkipDuplicatesMatchPercentSpinEdit: TSpinEdit;
     Timer: TTimer;
     OutputDirLabel: TLabel;
     CaptureIntervalLabel: TLabel;
@@ -129,6 +133,7 @@ type
     procedure PlaySoundsCheckBoxChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
     procedure PreCmdEditChange(Sender: TObject);
+    procedure SkipDuplicatesMatchPercentSpinEditChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure ApplicationMinimize(Sender: TObject);
     procedure StartAutoCaptureButtonClick(Sender: TObject);
@@ -264,6 +269,8 @@ type
     function GetPreCommand: String;
     procedure SetSkipDuplicates(AVal: Boolean);
     function GetSkipDuplicates: Boolean;
+    procedure SetSkipDuplicatesMatchPercent(AVal: Integer);
+    function GetSkipDuplicatesMatchPercent: Integer;
 
 
     { Properties }
@@ -289,6 +296,8 @@ type
     property MinimizeInsteadOfClose: Boolean read GetMinimizeInsteadOfClose write SetMinimizeInsteadOfClose;
     property PreCommand: String read GetPreCommand write SetPreCommand;
     property SkipDuplicates: Boolean read GetSkipDuplicates write SetSkipDuplicates;
+    property SkipDuplicatesMatchPercent: Integer read GetSkipDuplicatesMatchPercent
+                                         write SetSkipDuplicatesMatchPercent;
 
     // Messages
     {$IfDef Windows}
@@ -429,6 +438,7 @@ const
     Val: 1;
     &Unit: iuMonths
   );
+  DefaultSkipDuplicatesMatchPercent = {95} 100;
   
   LogFileName = 'log.txt';
 var
@@ -578,7 +588,9 @@ begin
   MinimizeInsteadOfClose := Ini.ReadBool(DefaultConfigIniSection, 'MinimizeInsteadOfClose', False);
 
   // Ignore duplicated screenshots
-  SkipDuplicates := ini.ReadBool(DefaultConfigIniSection, 'SkipDuplicates', False)
+  SkipDuplicates := ini.ReadBool(DefaultConfigIniSection, 'SkipDuplicates', False);
+  SkipDuplicatesMatchPercent := ini.ReadInteger(DefaultConfigIniSection,
+               'SkipDuplicatesMatchPercent', DefaultSkipDuplicatesMatchPercent);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -838,6 +850,12 @@ begin
   Ini.WriteString(DefaultConfigIniSection, 'PreCmd', PreCommand);
 end;
 
+procedure TMainForm.SkipDuplicatesMatchPercentSpinEditChange(Sender: TObject);
+begin
+  ini.WriteInteger(DefaultConfigIniSection, 'SkipDuplicatesMatchPercent',
+                                                    SkipDuplicatesMatchPercent);
+end;
+
 procedure TMainForm.TimerTimer(Sender: TObject);
 begin
   if StopWhenInactive then
@@ -955,7 +973,7 @@ begin
 
   If SkipDuplicates and (LastImgFileName <> '') then
   begin
-    if ImagesEqual(LastImgFileName, ImageFileName) then
+    if ImagesEqual(LastImgFileName, ImageFileName, SkipDuplicatesMatchPercent) then
     begin
       DeleteFile(ImageFileName);
       DebugLn('Skip screenshot duplicate (%s = %s)', [LastImgFileName, ImageFileName]);
@@ -1288,6 +1306,8 @@ begin
 
     SkipDuplicatesCheckBox.Caption := Localizer.I18N('SkipDuplicates');
     SkipDuplicatesCheckBox.Hint := Localizer.I18N('SkipDuplicatesHint');
+
+    Label1.Caption := Localizer.I18N('Match');
   finally
     EnableAutoSizing;
 
@@ -2141,11 +2161,26 @@ procedure TMainForm.SetSkipDuplicates(AVal: Boolean);
 begin
   SkipDuplicatesCheckBox.Checked := AVal;
   ini.WriteBool(DefaultConfigIniSection, 'SkipDuplicates' ,AVal);
+
+  Label1.Enabled := AVal;
+  SkipDuplicatesMatchPercentSpinEdit.Enabled := AVal;
+  Label2.Enabled := AVal;
 end;
 
 function TMainForm.GetSkipDuplicates: Boolean;
 begin
   Result := SkipDuplicatesCheckBox.Checked;
+end;
+
+procedure TMainForm.SetSkipDuplicatesMatchPercent(AVal: Integer);
+begin
+  SkipDuplicatesMatchPercentSpinEdit.Value := AVal;
+  ini.WriteInteger(DefaultConfigIniSection, 'SkipDuplicatesMatchPercent', AVal);
+end;
+
+function TMainForm.GetSkipDuplicatesMatchPercent: Integer;
+begin
+  Result := SkipDuplicatesMatchPercentSpinEdit.Value;
 end;
 
 {$IfDef Windows}

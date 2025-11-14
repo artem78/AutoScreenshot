@@ -51,7 +51,9 @@ type
     procedure AutoWidth;
   end;
 
-function {CompareImages} ImagesEqual(const AImgFilename1, AImgFilename2: String): Boolean;
+  
+function {CompareImages} ImagesEqual(const AImgFilename1, AImgFilename2: String;
+              APercentThreshold: Integer = 100): Boolean;
 
 implementation
 
@@ -143,11 +145,13 @@ begin
   end;
 end;
 
-function ImagesEqual(const AImgFilename1, AImgFilename2: String): Boolean;
+function ImagesEqual(const AImgFilename1, AImgFilename2: String; APercentThreshold: Integer): Boolean;
 var
   Bmp1, Bmp2: TBGRABitmap {= nil};
   p1, p2: PBGRAPixel;
   n: integer;
+  EqualPixelCount: Integer = 0;
+  R: Boolean;
 begin
   if (not FileExists(AImgFilename1)) or (not FileExists(AImgFilename2)) then
     Exit(False);
@@ -168,14 +172,18 @@ begin
       begin
         //if p1 <> p2 then
         //if p1^ = p2^ then
-        if (p1^.red <> p2^.red) or (p1^.green <> p2^.green) or (p1^.blue <> p2^.blue) then
-          Exit(False);
+        if (p1^.red = p2^.red) and (p1^.green = p2^.green) and (p1^.blue = p2^.blue) then
+          Inc(EqualPixelCount);
 
         inc(p1);
         inc(p2);
       end;
 
-      Exit(True);
+      R := EqualPixelCount / bmp1.NbPixels >= APercentThreshold / 100;
+      DebugLn('pixel matches=%d/%d (%.2f%%) Threshold=%d%% result=%s', [EqualPixelCount,
+              bmp1.NbPixels, (EqualPixelCount / bmp1.NbPixels) * 100,
+              APercentThreshold, BoolToStr(r, 'TRUE', 'FALSE')]);
+      Exit(R);
     finally
       Bmp2.Free;
       Bmp1.Free;
