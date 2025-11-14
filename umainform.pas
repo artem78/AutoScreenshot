@@ -427,7 +427,7 @@ const
   DefaultCompressionLevel = cldefault;
   DefaultScreenshotCleanerMaxAge: TInterval = (
     Val: 1;
-    Unit_: iuMonths
+    &Unit: iuMonths
   );
   
   LogFileName = 'log.txt';
@@ -789,7 +789,7 @@ var
   Interval: TInterval;
 begin
   Interval := OldScreenshotCleaner.MaxAge;
-  Interval.Unit_:= TIntervalUnit(TComboBox(Sender).ItemIndex);
+  Interval.&Unit := TIntervalUnit(TComboBox(Sender).ItemIndex);
   OldScreenshotCleaner.MaxAge := Interval;
 end;
 
@@ -2111,7 +2111,7 @@ begin
   Ini.WriteBool(DefaultConfigIniSection, 'OldScreenshotCleanerEnabled', OldScreenshotCleaner.Active);
 
   OldScreenshotCleanerMaxAgeValueSpinEdit.Value := OldScreenshotCleaner.MaxAge.Val;
-  OldScreenshotCleanerMaxAgeUnitComboBox.ItemIndex := Ord(OldScreenshotCleaner.MaxAge.Unit_);
+  OldScreenshotCleanerMaxAgeUnitComboBox.ItemIndex := Ord(OldScreenshotCleaner.MaxAge.&Unit);
   Ini.WriteString(DefaultConfigIniSection, 'OldScreenshotCleanerMaxAge', String(OldScreenshotCleaner.MaxAge));
 
   OldScreenshotCleanerMaxAgeValueSpinEdit.Enabled := OldScreenshotCleaner.Active;

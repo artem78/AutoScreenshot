@@ -12,7 +12,7 @@ type
 
   TInterval = record
     Val: Cardinal;
-    Unit_: TIntervalUnit;
+    &Unit: TIntervalUnit;
   end;
 
   TOldScreenshotCleanerChangeCallback = procedure of object;
@@ -101,7 +101,7 @@ operator explicit (const AInterval: TInterval): String;
 var
   UnitShortName: Char;
 begin
-  case AInterval.Unit_ of
+  case AInterval.&Unit of
     iuHours:  UnitShortName := 'h';
     iuDays:   UnitShortName := 'd';
     iuWeeks:  UnitShortName := 'w';
@@ -120,10 +120,10 @@ begin
 
   UnitShortName := AStr[Length(AStr)];
   case UnitShortName of
-    'h': Result.Unit_ := iuHours;
-    'd': Result.Unit_ := iuDays;
-    'w': Result.Unit_ := iuWeeks;
-    'm': Result.Unit_ := iuMonths;
+    'h': Result.&Unit := iuHours;
+    'd': Result.&Unit := iuDays;
+    'w': Result.&Unit := iuWeeks;
+    'm': Result.&Unit := iuMonths;
     else raise Exception.CreateFmt('Unknown unit character ''%s''', [UnitShortName]);
   end;
   Result.Val := StrToInt(Copy(AStr, 1, Length(AStr) - 1));
@@ -131,7 +131,7 @@ end;
 
 operator - (ADateTime: TDateTime; AInterval: TInterval): TDateTime;
 begin
-  case AInterval.Unit_ of
+  case AInterval.&Unit of
     iuHours:  Result := IncHour(ADateTime, -AInterval.Val);
     iuDays:   Result := IncDay(ADateTime, -AInterval.Val);
     iuWeeks:  Result := IncDay(ADateTime, -AInterval.Val * 7);
@@ -334,7 +334,7 @@ end;
 
 procedure TOldScreenshotCleaner.SetMaxAge(AMaxAge: TInterval);
 begin
-  //if (FMaxAge.Unit_ = AMaxAge.Unit_) and (FMaxAge.Val = AMaxAge.Val) then
+  //if (FMaxAge.&Unit = AMaxAge.&Unit) and (FMaxAge.Val = AMaxAge.Val) then
   //  Exit;
 
   FMaxAge := AMaxAge;
