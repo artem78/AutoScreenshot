@@ -31,6 +31,8 @@ type
     EmptyLabel6: TLabel;
     EmptyLabel7: TLabel;
     EmptyLabel8: TLabel;
+    EmptyLabel9: TLabel;
+    SkipDuplicatesCheckBox: TCheckBox;
     FileMenuItem: TMenuItem;
     ExitMenuItem: TMenuItem;
     EmptyLabel1: TLabel;
@@ -112,6 +114,7 @@ type
     procedure ExitMenuItemClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure HomePageMenuItemClick(Sender: TObject);
+    procedure SkipDuplicatesCheckBoxChange(Sender: TObject);
     procedure MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
     procedure OldScreenshotCleanerEnabledCheckBoxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -259,6 +262,8 @@ type
 
     procedure SetPreCommand(ACmd: String);
     function GetPreCommand: String;
+    procedure SetSkipDuplicates(AVal: Boolean);
+    function GetSkipDuplicates: Boolean;
 
 
     { Properties }
@@ -283,6 +288,7 @@ type
     property Sounds: Boolean read GetSounds write SetSounds;
     property MinimizeInsteadOfClose: Boolean read GetMinimizeInsteadOfClose write SetMinimizeInsteadOfClose;
     property PreCommand: String read GetPreCommand write SetPreCommand;
+    property SkipDuplicates: Boolean read GetSkipDuplicates write SetSkipDuplicates;
 
     // Messages
     {$IfDef Windows}
@@ -570,6 +576,9 @@ begin
 
   // Minimize instead of close
   MinimizeInsteadOfClose := Ini.ReadBool(DefaultConfigIniSection, 'MinimizeInsteadOfClose', False);
+
+  // Ignore duplicated screenshots
+  SkipDuplicates := ini.ReadBool(DefaultConfigIniSection, 'SkipDuplicates', False)
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -708,6 +717,11 @@ end;
 procedure TMainForm.HomePageMenuItemClick(Sender: TObject);
 begin
   OpenURL('https://artem78.github.io/AutoScreenshot/?fromApp');
+end;
+
+procedure TMainForm.SkipDuplicatesCheckBoxChange(Sender: TObject);
+begin
+  SkipDuplicates := TCheckBox(Sender).Checked;
 end;
 
 procedure TMainForm.MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
@@ -1257,6 +1271,9 @@ begin
     PreCmdLabel.Caption := Localizer.I18N('RunCommandBefore') + ':';
     PreCmdEdit.Hint := StringReplace(Localizer.I18N('RunCommandBeforeHelpText'),
                                   '%s', PreCmdExample, []);
+
+    SkipDuplicatesCheckBox.Caption := Localizer.I18N('SkipDuplicates');
+    SkipDuplicatesCheckBox.Hint := Localizer.I18N('SkipDuplicatesHint');
   finally
     EnableAutoSizing;
 
@@ -2104,6 +2121,17 @@ end;
 function TMainForm.GetPreCommand: String;
 begin
   Result := PreCmdEdit.Text;
+end;
+
+procedure TMainForm.SetSkipDuplicates(AVal: Boolean);
+begin
+  SkipDuplicatesCheckBox.Checked := AVal;
+  ini.WriteBool(DefaultConfigIniSection, 'SkipDuplicates' ,AVal);
+end;
+
+function TMainForm.GetSkipDuplicates: Boolean;
+begin
+  Result := SkipDuplicatesCheckBox.Checked;
 end;
 
 {$IfDef Windows}

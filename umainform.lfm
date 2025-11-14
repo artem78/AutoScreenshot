@@ -616,6 +616,25 @@ object MainForm: TMainForm
       OnChange = MinimizeInsteadOfCloseCheckBoxChange
       TabOrder = 12
     end
+    object EmptyLabel9: TLabel
+      Left = 15
+      Height = 22
+      Top = 540
+      Width = 134
+      ParentColor = False
+    end
+    object SkipDuplicatesCheckBox: TCheckBox
+      AnchorSideTop.Side = asrBottom
+      Left = 155
+      Height = 22
+      Top = 540
+      Width = 856
+      Caption = 'Skip duplicates'
+      OnChange = SkipDuplicatesCheckBoxChange
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 15
+    end
   end
   object ButtonsPanel: TPanel
     Left = 0
