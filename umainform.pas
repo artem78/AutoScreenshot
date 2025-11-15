@@ -587,7 +587,7 @@ begin
   // Minimize instead of close
   MinimizeInsteadOfClose := Ini.ReadBool(DefaultConfigIniSection, 'MinimizeInsteadOfClose', False);
 
-  // Ignore duplicated screenshots
+  // Ignore similar screenshots
   SkipSimilar := ini.ReadBool(DefaultConfigIniSection, 'SkipSimilar', False);
   SkipSimilarMatchPercent := ini.ReadInteger(DefaultConfigIniSection,
                'SkipSimilarMatchPercent', DefaultSkipSimilarMatchPercent);
