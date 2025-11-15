@@ -623,7 +623,7 @@ object MainForm: TMainForm
       Width = 134
       ParentColor = False
     end
-    object SkipDuplicatesPanel: TPanel
+    object SkipSimilarPanel: TPanel
       Left = 155
       Height = 26
       Top = 540
@@ -637,20 +637,20 @@ object MainForm: TMainForm
       ClientHeight = 26
       ClientWidth = 856
       TabOrder = 15
-      object SkipDuplicatesCheckBox: TCheckBox
+      object SkipSimilarCheckBox: TCheckBox
         Left = 0
         Height = 22
         Top = 2
-        Width = 114
+        Width = 91
         BorderSpacing.CellAlignVertical = ccaCenter
-        Caption = 'Skip duplicates'
-        OnChange = SkipDuplicatesCheckBoxChange
+        Caption = 'Skip similar'
+        OnChange = SkipSimilarCheckBoxChange
         ParentShowHint = False
         ShowHint = True
         TabOrder = 0
       end
       object Label1: TLabel
-        Left = 144
+        Left = 121
         Height = 16
         Top = 5
         Width = 41
@@ -659,20 +659,20 @@ object MainForm: TMainForm
         Caption = 'Match:'
         ParentColor = False
       end
-      object SkipDuplicatesMatchPercentSpinEdit: TSpinEdit
-        Left = 191
+      object SkipSimilarMatchPercentSpinEdit: TSpinEdit
+        Left = 168
         Height = 26
         Top = 0
         Width = 50
         BorderSpacing.CellAlignVertical = ccaCenter
         MaxValue = 100
         MinValue = 1
-        OnChange = SkipDuplicatesMatchPercentSpinEditChange
+        OnChange = SkipSimilarMatchPercentSpinEditChange
         TabOrder = 1
         Value = 1
       end
       object Label2: TLabel
-        Left = 247
+        Left = 224
         Height = 16
         Top = 5
         Width = 11

@@ -34,8 +34,8 @@ type
     EmptyLabel9: TLabel;
     Label1: TLabel;
     Label2: TLabel;
-    SkipDuplicatesPanel: TPanel;
-    SkipDuplicatesCheckBox: TCheckBox;
+    SkipSimilarPanel: TPanel;
+    SkipSimilarCheckBox: TCheckBox;
     FileMenuItem: TMenuItem;
     ExitMenuItem: TMenuItem;
     EmptyLabel1: TLabel;
@@ -65,7 +65,7 @@ type
     PostCmdEdit: TEdit;
     CheckForUpdatesMenuItem: TMenuItem;
     OutputDirEdit: TDirectoryEdit;
-    SkipDuplicatesMatchPercentSpinEdit: TSpinEdit;
+    SkipSimilarMatchPercentSpinEdit: TSpinEdit;
     Timer: TTimer;
     OutputDirLabel: TLabel;
     CaptureIntervalLabel: TLabel;
@@ -118,7 +118,7 @@ type
     procedure ExitMenuItemClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure HomePageMenuItemClick(Sender: TObject);
-    procedure SkipDuplicatesCheckBoxChange(Sender: TObject);
+    procedure SkipSimilarCheckBoxChange(Sender: TObject);
     procedure MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
     procedure OldScreenshotCleanerEnabledCheckBoxChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -133,7 +133,7 @@ type
     procedure PlaySoundsCheckBoxChange(Sender: TObject);
     procedure PostCmdEditChange(Sender: TObject);
     procedure PreCmdEditChange(Sender: TObject);
-    procedure SkipDuplicatesMatchPercentSpinEditChange(Sender: TObject);
+    procedure SkipSimilarMatchPercentSpinEditChange(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure ApplicationMinimize(Sender: TObject);
     procedure StartAutoCaptureButtonClick(Sender: TObject);
@@ -267,10 +267,10 @@ type
 
     procedure SetPreCommand(ACmd: String);
     function GetPreCommand: String;
-    procedure SetSkipDuplicates(AVal: Boolean);
-    function GetSkipDuplicates: Boolean;
-    procedure SetSkipDuplicatesMatchPercent(AVal: Integer);
-    function GetSkipDuplicatesMatchPercent: Integer;
+    procedure SetSkipSimilar(AVal: Boolean);
+    function GetSkipSimilar: Boolean;
+    procedure SetSkipSimilarMatchPercent(AVal: Integer);
+    function GetSkipSimilarMatchPercent: Integer;
 
 
     { Properties }
@@ -295,9 +295,9 @@ type
     property Sounds: Boolean read GetSounds write SetSounds;
     property MinimizeInsteadOfClose: Boolean read GetMinimizeInsteadOfClose write SetMinimizeInsteadOfClose;
     property PreCommand: String read GetPreCommand write SetPreCommand;
-    property SkipDuplicates: Boolean read GetSkipDuplicates write SetSkipDuplicates;
-    property SkipDuplicatesMatchPercent: Integer read GetSkipDuplicatesMatchPercent
-                                         write SetSkipDuplicatesMatchPercent;
+    property SkipSimilar: Boolean read GetSkipSimilar write SetSkipSimilar;
+    property SkipSimilarMatchPercent: Integer read GetSkipSimilarMatchPercent
+                                         write SetSkipSimilarMatchPercent;
 
     // Messages
     {$IfDef Windows}
@@ -438,7 +438,7 @@ const
     Val: 1;
     &Unit: iuMonths
   );
-  DefaultSkipDuplicatesMatchPercent = {95} 100;
+  DefaultSkipSimilarMatchPercent = {95} 100;
   
   LogFileName = 'log.txt';
 var
@@ -588,9 +588,9 @@ begin
   MinimizeInsteadOfClose := Ini.ReadBool(DefaultConfigIniSection, 'MinimizeInsteadOfClose', False);
 
   // Ignore duplicated screenshots
-  SkipDuplicates := ini.ReadBool(DefaultConfigIniSection, 'SkipDuplicates', False);
-  SkipDuplicatesMatchPercent := ini.ReadInteger(DefaultConfigIniSection,
-               'SkipDuplicatesMatchPercent', DefaultSkipDuplicatesMatchPercent);
+  SkipSimilar := ini.ReadBool(DefaultConfigIniSection, 'SkipSimilar', False);
+  SkipSimilarMatchPercent := ini.ReadInteger(DefaultConfigIniSection,
+               'SkipSimilarMatchPercent', DefaultSkipSimilarMatchPercent);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -731,9 +731,9 @@ begin
   OpenURL('https://artem78.github.io/AutoScreenshot/?fromApp');
 end;
 
-procedure TMainForm.SkipDuplicatesCheckBoxChange(Sender: TObject);
+procedure TMainForm.SkipSimilarCheckBoxChange(Sender: TObject);
 begin
-  SkipDuplicates := TCheckBox(Sender).Checked;
+  SkipSimilar := TCheckBox(Sender).Checked;
 end;
 
 procedure TMainForm.MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
@@ -850,10 +850,10 @@ begin
   Ini.WriteString(DefaultConfigIniSection, 'PreCmd', PreCommand);
 end;
 
-procedure TMainForm.SkipDuplicatesMatchPercentSpinEditChange(Sender: TObject);
+procedure TMainForm.SkipSimilarMatchPercentSpinEditChange(Sender: TObject);
 begin
-  ini.WriteInteger(DefaultConfigIniSection, 'SkipDuplicatesMatchPercent',
-                                                    SkipDuplicatesMatchPercent);
+  ini.WriteInteger(DefaultConfigIniSection, 'SkipSimilarMatchPercent',
+                                                    SkipSimilarMatchPercent);
 end;
 
 procedure TMainForm.TimerTimer(Sender: TObject);
@@ -971,9 +971,9 @@ begin
   LastImgFileName := FileJournal.LastAdded;
   //FileJournal.Add(ImageFileName);
 
-  If SkipDuplicates and (LastImgFileName <> '') then
+  If SkipSimilar and (LastImgFileName <> '') then
   begin
-    if ImagesEqual(LastImgFileName, ImageFileName, SkipDuplicatesMatchPercent) then
+    if ImagesEqual(LastImgFileName, ImageFileName, SkipSimilarMatchPercent) then
     begin
       DeleteFile(ImageFileName);
       DebugLn('Skip similar screenshot (%s ~ %s)', [LastImgFileName, ImageFileName]);
@@ -1304,9 +1304,8 @@ begin
     PreCmdEdit.Hint := StringReplace(Localizer.I18N('RunCommandBeforeHelpText'),
                                   '%s', PreCmdExample, []);
 
-    SkipDuplicatesCheckBox.Caption := Localizer.I18N('SkipDuplicates');
-    SkipDuplicatesCheckBox.Hint := Localizer.I18N('SkipDuplicatesHint');
-
+    SkipSimilarCheckBox.Caption := Localizer.I18N('SkipSimilar');
+    SkipSimilarCheckBox.Hint := Localizer.I18N('SkipSimilarHint');
     Label1.Caption := Localizer.I18N('Match');
   finally
     EnableAutoSizing;
@@ -2157,30 +2156,30 @@ begin
   Result := PreCmdEdit.Text;
 end;
 
-procedure TMainForm.SetSkipDuplicates(AVal: Boolean);
+procedure TMainForm.SetSkipSimilar(AVal: Boolean);
 begin
-  SkipDuplicatesCheckBox.Checked := AVal;
-  ini.WriteBool(DefaultConfigIniSection, 'SkipDuplicates' ,AVal);
+  SkipSimilarCheckBox.Checked := AVal;
+  ini.WriteBool(DefaultConfigIniSection, 'SkipSimilar' ,AVal);
 
   Label1.Enabled := AVal;
-  SkipDuplicatesMatchPercentSpinEdit.Enabled := AVal;
+  SkipSimilarMatchPercentSpinEdit.Enabled := AVal;
   Label2.Enabled := AVal;
 end;
 
-function TMainForm.GetSkipDuplicates: Boolean;
+function TMainForm.GetSkipSimilar: Boolean;
 begin
-  Result := SkipDuplicatesCheckBox.Checked;
+  Result := SkipSimilarCheckBox.Checked;
 end;
 
-procedure TMainForm.SetSkipDuplicatesMatchPercent(AVal: Integer);
+procedure TMainForm.SetSkipSimilarMatchPercent(AVal: Integer);
 begin
-  SkipDuplicatesMatchPercentSpinEdit.Value := AVal;
-  ini.WriteInteger(DefaultConfigIniSection, 'SkipDuplicatesMatchPercent', AVal);
+  SkipSimilarMatchPercentSpinEdit.Value := AVal;
+  ini.WriteInteger(DefaultConfigIniSection, 'SkipSimilarMatchPercent', AVal);
 end;
 
-function TMainForm.GetSkipDuplicatesMatchPercent: Integer;
+function TMainForm.GetSkipSimilarMatchPercent: Integer;
 begin
-  Result := SkipDuplicatesMatchPercentSpinEdit.Value;
+  Result := SkipSimilarMatchPercentSpinEdit.Value;
 end;
 
 {$IfDef Windows}
