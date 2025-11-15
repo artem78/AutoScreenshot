@@ -976,7 +976,7 @@ begin
     if ImagesEqual(LastImgFileName, ImageFileName, SkipDuplicatesMatchPercent) then
     begin
       DeleteFile(ImageFileName);
-      DebugLn('Skip screenshot duplicate (%s = %s)', [LastImgFileName, ImageFileName]);
+      DebugLn('Skip similar screenshot (%s ~ %s)', [LastImgFileName, ImageFileName]);
     end
     else
       FileJournal.Add(ImageFileName);
