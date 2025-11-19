@@ -15,11 +15,15 @@ type
   TAboutForm = class(TForm)
     ButtonPanel: TButtonPanel;
     BuildDateValueLabel: TLabel;
-    AuthorValueLabel: TLabel;
+    AuthorValueLabel1: TLabel;
     CompillerTitleLabel: TLabel;
     CompillerValueLabel: TLabel;
     LinkTitleLabel: TLabel;
     LicenseValueLabel: TLabel;
+    AuthorMailLinkLabel: TLabel;
+    AuthorValueLabel2: TLabel;
+    AuthorPanel: TPanel;
+    RegisteredValueLabel: TLabel;
     LocalizationAuthorValueLabel: TLabel;
     VersionValueLabel: TLabel;
     LicenseTitleLabel: TLabel;
@@ -31,6 +35,9 @@ type
     Logo: TImage;
     BuildDateTitleLabel: TLabel;
     LocalizationAuthorTitleLabel: TLabel;
+    procedure AuthorMailLinkLabelClick(Sender: TObject);
+    procedure AuthorMailLinkLabelMouseEnter(Sender: TObject);
+    procedure AuthorMailLinkLabelMouseLeave(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LinkValueLabelClick(Sender: TObject);
     procedure LinkValueLabelMouseEnter(Sender: TObject);
@@ -53,6 +60,7 @@ uses uLocalization, uUtils, LazVersion, DateUtils, StrUtils;
 const
   ProjectURLTitle = 'https://artem78.github.io/AutoScreenshot/';
   ProjectURL = ProjectURLTitle + '?fromApp';
+  AuthorMail = 'megabyte1024@ya.ru';
 
 procedure TAboutForm.FormCreate(Sender: TObject);
 const
@@ -100,7 +108,9 @@ begin
   {$ENDIF}
 
   AuthorTitleLabel.Caption := Localizer.I18N('Author') + ':';
-  AuthorValueLabel.Caption := 'Artem Demin (artem78) <megabyte1024@ya.ru>';
+  AuthorValueLabel1.Caption := 'Artem Demin (artem78) <';
+  AuthorMailLinkLabel.Caption := AuthorMail;
+  AuthorValueLabel2.Caption := '>';
   with Localizer.LanguageInfo do
   begin
     if (Code <> 'en') and (Author <> '') then
@@ -134,6 +144,21 @@ begin
                                  [{$I %FPCVersion%}, laz_version]);
 
   // FixMe: Close button icon not hidden
+end;
+
+procedure TAboutForm.AuthorMailLinkLabelMouseEnter(Sender: TObject);
+begin
+  (Sender as TLabel).Font.Style := (Sender as TLabel).Font.Style + [fsUnderline];
+end;
+
+procedure TAboutForm.AuthorMailLinkLabelClick(Sender: TObject);
+begin
+  OpenURL('mailto:' + AuthorMail + '?subject=AutoScreenshot');
+end;
+
+procedure TAboutForm.AuthorMailLinkLabelMouseLeave(Sender: TObject);
+begin
+  (Sender as TLabel).Font.Style := (Sender as TLabel).Font.Style - [fsUnderline];
 end;
 
 procedure TAboutForm.LinkValueLabelClick(Sender: TObject);
