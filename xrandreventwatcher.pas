@@ -93,7 +93,7 @@ begin
   WaitFor;
   inherited Destroy;
 
-  DebugLn('Thread ', ClassName, 'destroyed');
+  DebugLn('Thread ', ClassName, ' destroyed');
 end;
 
 end.
