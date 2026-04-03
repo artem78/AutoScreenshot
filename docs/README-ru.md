@@ -91,5 +91,6 @@ Artem78 (электропочта для связи: [megabyte1024@ya.ru](mailto
 ## Вознаградить автора материально
 - PayPal: megabyte1024@yandex.com
 - ETH Ethereum / Tether USDT: 0xB14C877b2eAF7E3b4b49df25039122C0545edA74
-- Webmoney WMZ: Z598881055273
+- Webmoney WMZ: [Z598881055273](https://pay.web.money/d/kgfx)
 - Карта Сбербанка: 5469 4009 8490 5476
+- ЮMoney: [4100 1195 0619 6001](https://yoomoney.ru/to/4100119506196001)
