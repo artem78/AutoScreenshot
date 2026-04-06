@@ -22,7 +22,7 @@
         <TextDesc Value="Automatic screenshot maker"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="22">
+      <Resources Count="23">
         <Resource_0 FileName="res\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
         <Resource_1 FileName="res\camera_flash1.ico" Type="ICON" ResourceName="_CAMERA_FLASH_1"/>
         <Resource_2 FileName="res\camera_flash2.ico" Type="ICON" ResourceName="_CAMERA_FLASH_2"/>
@@ -45,6 +45,7 @@
         <Resource_19 FileName="libs/country-flags/country-flags/tr_16.png" Type="RCDATA" ResourceName="FLAG_TR"/>
         <Resource_20 FileName="libs/country-flags/country-flags/ua_16.png" Type="RCDATA" ResourceName="FLAG_UK"/>
         <Resource_21 FileName="libs/country-flags/country-flags/cn_16.png" Type="RCDATA" ResourceName="FLAG_ZH"/>
+        <Resource_22 FileName="libs/country-flags/country-flags/it_16.png" Type="RCDATA" ResourceName="FLAG_IT"/>
       </Resources>
     </General>
     <i18n>
