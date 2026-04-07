@@ -144,7 +144,7 @@ object MainForm: TMainForm
     end
     object StopWhenInactiveCheckBox: TCheckBox
       AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = ImageFormatOptionsPanel
+      AnchorSideTop.Control = StartCaptureOnStartUpCheckBox
       AnchorSideTop.Side = asrBottom
       Left = 192
       Height = 19
@@ -206,7 +206,7 @@ object MainForm: TMainForm
     end
     object StartCaptureOnStartUpCheckBox: TCheckBox
       AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = StopWhenInactiveCheckBox
+      AnchorSideTop.Control = StartMinimizedCheckBox
       AnchorSideTop.Side = asrBottom
       Left = 192
       Height = 19
@@ -218,7 +218,7 @@ object MainForm: TMainForm
     end
     object StartMinimizedCheckBox: TCheckBox
       AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = StartCaptureOnStartUpCheckBox
+      AnchorSideTop.Control = AutoRunCheckBox
       AnchorSideTop.Side = asrBottom
       Left = 192
       Height = 19
@@ -286,7 +286,7 @@ object MainForm: TMainForm
     end
     object AutoRunCheckBox: TCheckBox
       AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = StartMinimizedCheckBox
+      AnchorSideTop.Control = ImageFormatOptionsPanel
       AnchorSideTop.Side = asrBottom
       Left = 192
       Height = 19
@@ -298,7 +298,7 @@ object MainForm: TMainForm
     end
     object MonitorComboBox: TComboBox
       AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = AutoRunCheckBox
+      AnchorSideTop.Control = StopWhenInactiveCheckBox
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Control = OutputDirEdit
       AnchorSideRight.Side = asrBottom
