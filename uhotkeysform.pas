@@ -27,6 +27,7 @@ type
     function GetHotKey: THotKey;
 
     procedure FillKeyComboBox;
+    procedure AutoSizeComboBox;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -79,7 +80,7 @@ var
 implementation
 
 uses
-  LCLType, LCLProc, uLocalization;
+  LCLType, LCLProc, LCLIntf, Math, uLocalization;
 
 {$R *.lfm}
 
@@ -161,6 +162,30 @@ begin
   KeyComboBox.Items.EndUpdate;
 end;
 
+procedure THotKeyControl.AutoSizeComboBox;
+const
+  SPACING = {12} 20;
+var
+  I, TextMaxWidth, Metr: integer;
+  Bmp: TBitmap;
+begin
+  TextMaxWidth := 0;
+  Bmp := TBitmap.Create;
+  try
+    Bmp.Canvas.Font.Assign(KeyComboBox.Font);
+
+    for I := 0 to KeyComboBox.Items.Count - 1 do
+    begin
+      TextMaxWidth := Max(TextMaxWidth, {KeyComboBox}Bmp.Canvas.font.GetTextWidth(KeyComboBox.Items[I]));
+    end;
+
+    Metr := GetSystemMetrics(SM_CXVSCROLL);
+    KeyComboBox{.Width}.Constraints.MinWidth := TextMaxWidth + Metr + SPACING;
+  finally
+    Bmp.Free;
+  end;
+end;
+
 constructor THotKeyControl.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -203,9 +228,9 @@ begin
     Constraints.MinWidth := 120;
     //Name := '...';
     Style := csDropDownList;
-    //AutoSize := True; // ToDo: Do not work, fix
   end;
   FillKeyComboBox;
+  AutoSizeComboBox;
 
   ChildSizing.Layout := cclLeftToRightThenTopToBottom;
   ChildSizing.ControlsPerLine := 4;
