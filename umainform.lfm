@@ -64,7 +64,7 @@ object MainForm: TMainForm
         Width = 750
         ShowHidden = False
         ButtonWidth = 23
-        Constraints.MinWidth = 100
+        Constraints.MinWidth = 400
         NumGlyphs = 1
         Align = alClient
         BorderSpacing.CellAlignVertical = ccaCenter
