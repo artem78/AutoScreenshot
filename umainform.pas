@@ -366,6 +366,7 @@ begin
   // Fill combobox with image formats
   for Fmt in TImageFormat do
     ImageFormatComboBox.Items.Append(ImageFormatInfoArray[Fmt].Name);
+  ImageFormatComboBox.AutoWidth;
 
   // Set min/max values for JPEG quality
   JPEGQualitySpinEdit.MinValue := Low(TJPEGQualityRange);
@@ -1249,6 +1250,7 @@ begin
       Items[1] := Localizer.I18N('CompressionLevelFastest');
       Items[2] := Localizer.I18N('CompressionLevelDefault');
       Items[3] := Localizer.I18N('CompressionLevelMax');
+      AutoWidth;
     end;
 
     OldScreenshotCleanerEnabledCheckBox.Caption := Localizer.I18N('DeleteScreenshotsOlderThan');
@@ -1258,6 +1260,7 @@ begin
       Items[Ord(iuDays)]   := Localizer.I18N('Days');
       Items[Ord(iuWeeks)]  := Localizer.I18N('Weeks');
       Items[Ord(iuMonths)] := Localizer.I18N('Months');
+      AutoWidth;
     end;
 
     PlaySoundsCheckBox.Caption := Localizer.I18N('PlaySounds');
@@ -1592,6 +1595,9 @@ begin
     //MonitorId := SelId;
     MonitorComboBox.ItemIndex := SelIdx;
   end;
+
+  // Adjust width
+  MonitorComboBox.AutoWidth;
 end;
 
 function TMainForm.GetMonitorId: Integer;

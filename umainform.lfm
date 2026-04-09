@@ -461,8 +461,10 @@ object MainForm: TMainForm
       Left = 155
       Height = 26
       Top = 352
-      Width = 150
-      Constraints.MaxWidth = 150
+      Width = 200
+      AutoSize = False
+      BorderSpacing.CellAlignHorizontal = ccaLeftTop
+      Constraints.MinWidth = 200
       ItemHeight = 0
       Items.Strings = (
         ''
