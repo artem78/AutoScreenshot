@@ -16,7 +16,7 @@ object MainForm: TMainForm
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '2.2.4.0'
-  object Panel3: TPanel
+  object SettingsPanel: TPanel
     Left = 0
     Height = 514
     Top = 0
@@ -592,7 +592,7 @@ object MainForm: TMainForm
       TabOrder = 11
     end
   end
-  object Panel2: TPanel
+  object ProAdvPanel: TPanel
     Left = 0
     Height = 52
     Top = 601
@@ -715,9 +715,9 @@ object MainForm: TMainForm
     end
   end
   object Button1: TButton
-    AnchorSideTop.Control = Panel2
+    AnchorSideTop.Control = ProAdvPanel
     AnchorSideTop.Side = asrCenter
-    AnchorSideRight.Control = Panel2
+    AnchorSideRight.Control = ProAdvPanel
     AnchorSideRight.Side = asrBottom
     Left = 665
     Height = 28

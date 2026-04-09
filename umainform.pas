@@ -46,8 +46,8 @@ type
     HomePageMenuItem: TMenuItem;
     MinimizeInsteadOfCloseCheckBox: TCheckBox;
     Panel1: TPanel;
-    Panel2: TPanel;
-    Panel3: TPanel;
+    ProAdvPanel: TPanel;
+    SettingsPanel: TPanel;
     OutputDirPanel: TPanel;
     FileNameTemplatePanel: TPanel;
     ButtonsPanel: TPanel;
@@ -586,7 +586,7 @@ begin
       Ini.WriteBool(DefaultConfigIniSection, 'ProBannerVisible', ProBannerVisible);
     end;
   end;
-  Panel2.Visible := ProBannerVisible;
+  ProAdvPanel.Visible := ProBannerVisible;
   Button1.Visible := ProBannerVisible;
 end;
 
@@ -698,7 +698,7 @@ end;
 
 procedure TMainForm.Button1Click(Sender: TObject);
 begin
-  Panel2.Visible:=False;
+  ProAdvPanel.Visible:=False;
   (Sender as TButton).Visible:=False;
   ini.WriteBool(DefaultConfigIniSection, 'ProBannerVisible', False);
   ini.WriteDate(DefaultConfigIniSection, 'ProBannerClosedDate', Now);
