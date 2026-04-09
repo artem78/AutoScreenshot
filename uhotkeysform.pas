@@ -131,7 +131,7 @@ end;
 procedure THotKeyControl.FillKeyComboBox;
 var
   Key: Word;
-  KeyName: String;
+  KeyIdentifier, KeyName: String;
 begin
   KeyComboBox.Clear;
   KeyComboBox.Items.BeginUpdate;
@@ -141,6 +141,11 @@ begin
   for Key := VK_BACK to VK_SCROLL do
   // VK_BROWSER_BACK to VK_OEM_CLEAR
   begin
+    KeyIdentifier := KeyAndShiftStateToKeyString(Key, []);
+    if KeyStringIsIrregular(KeyIdentifier) then
+      Continue; // Skip unknown (unused) key codes
+
+    KeyName := KeyIdentifier; // Default value
     case Key of
       VK_BACK: KeyName        := 'Backspace';
       VK_NUMPAD0..VK_NUMPAD9: KeyName := 'Numpad ' + IntToStr(Key - VK_NUMPAD0);
@@ -151,12 +156,16 @@ begin
       VK_DECIMAL: KeyName     := 'Numpad . (Del)';
       VK_DIVIDE: KeyName      := 'Numpad /';
       VK_RETURN: KeyName      := 'Numpad Enter'
-
-      else KeyName := KeyAndShiftStateToKeyString(Key, []);
     end;
 
-    if not KeyStringIsIrregular(KeyName) then
-      KeyComboBox.Items.AddObject(KeyName, TObject({Integer}PtrUInt(Key)));
+    // Try to find translation for key if possible
+    KeyName := Localizer.I18N('Key' + KeyIdentifier, KeyName);
+
+    {// just for test
+    KeyComboBox.Items.AddObject(KeyName + ' | ' + KeyIdentifier + ' | #'
+             + IntToStr(key), TObject({Integer}PtrUInt(Key)));}
+
+    KeyComboBox.Items.AddObject(KeyName, TObject({Integer}PtrUInt(Key)));
   end;
 
   KeyComboBox.Items.EndUpdate;
