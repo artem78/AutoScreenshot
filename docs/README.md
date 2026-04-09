@@ -73,6 +73,10 @@ sudo apt-get install openssl libssl-dev
 ```
 -->
 
+## Building from sources
+
+Described in [/docs/build.md](/docs/build.md)
+
 ## How can I help?
 * [Report about found bug](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
 * [Suggest new idea or feature](https://github.com/artem78/AutoScreenshot/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)
