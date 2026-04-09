@@ -13,9 +13,9 @@ uses
   {$EndIf}
   {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
-  Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf,
-  ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
-  UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
+  Menus, Buttons, EditBtn, uLocalization, DateTimePicker,
+  LCLIntf, ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook,
+  OldScreenshotCleaner, UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
 
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
@@ -25,10 +25,18 @@ type
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
     Button1: TButton;
+    EmptyLabel2: TLabel;
+    EmptyLabel3: TLabel;
+    EmptyLabel4: TLabel;
+    EmptyLabel5: TLabel;
+    EmptyLabel6: TLabel;
+    EmptyLabel7: TLabel;
+    EmptyLabel8: TLabel;
     FileMenuItem: TMenuItem;
     ExitMenuItem: TMenuItem;
     Image1: TImage;
     Label4: TLabel;
+    EmptyLabel1: TLabel;
     MenuImageList: TImageList;
     Label1: TLabel;
     Label2: TLabel;
@@ -40,6 +48,9 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
+    OutputDirPanel: TPanel;
+    FileNameTemplatePanel: TPanel;
+    ButtonsPanel: TPanel;
     PlaySoundsCheckBox: TCheckBox;
     CompressionLevelComboBox: TComboBox;
     OldScreenshotCleanerEnabledCheckBox: TCheckBox;
@@ -1796,6 +1807,7 @@ end;
 procedure TMainForm.UpdateSeqNumGroupVisibility;
 begin
   SeqNumberGroup.Visible := Pos('%NUM', FileNameTemplateComboBox.Text) <> 0;
+  EmptyLabel1.Visible := SeqNumberGroup.Visible;
   if SeqNumberGroup.Visible then
     RecalculateLabelWidthsForSeqNumGroup;
 

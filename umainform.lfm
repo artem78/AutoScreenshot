@@ -18,7 +18,7 @@ object MainForm: TMainForm
   LCLVersion = '2.2.4.0'
   object Panel3: TPanel
     Left = 0
-    Height = 601
+    Height = 514
     Top = 0
     Width = 723
     Align = alClient
@@ -27,303 +27,132 @@ object MainForm: TMainForm
     ChildSizing.TopBottomSpacing = 15
     ChildSizing.HorizontalSpacing = 6
     ChildSizing.VerticalSpacing = 6
-    ClientHeight = 601
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 2
+    ClientHeight = 514
     ClientWidth = 723
     TabOrder = 0
     object OutputDirLabel: TLabel
-      AnchorSideTop.Control = OutputDirEdit
       AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = OutputDirEdit
-      Left = 86
+      Left = 15
       Height = 16
-      Top = 20
-      Width = 100
+      Top = 21
+      Width = 134
       Alignment = taRightJustify
-      Anchors = [akTop, akRight]
+      BorderSpacing.CellAlignVertical = ccaCenter
       Caption = 'Saving directory:'
       ParentColor = False
     end
-    object CaptureIntervalLabel: TLabel
-      AnchorSideTop.Control = CaptureIntervalDateTimePicker
-      AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = CaptureIntervalDateTimePicker
-      Left = 51
-      Height = 16
-      Top = 166
-      Width = 135
-      Alignment = taRightJustify
-      Anchors = [akTop, akRight]
-      Caption = 'Saving interval (h:m:s):'
-      ParentColor = False
-    end
-    object ImageFormatLabel: TLabel
-      AnchorSideTop.Control = ImageFormatOptionsPanel
-      AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = ImageFormatOptionsPanel
-      Left = 139
-      Height = 16
-      Top = 199
-      Width = 47
-      Alignment = taRightJustify
-      Anchors = [akTop, akRight]
-      Caption = 'Format:'
-      ParentColor = False
-    end
-    object FileNameTemplateLabel: TLabel
-      AnchorSideTop.Control = FileNameTemplateComboBox
-      AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = FileNameTemplateComboBox
-      Left = 70
-      Height = 16
-      Top = 50
-      Width = 116
-      Alignment = taRightJustify
-      Anchors = [akTop, akRight]
-      Caption = 'Filename template:'
-      ParentColor = False
-    end
-    object MonitorLabel: TLabel
-      AnchorSideTop.Control = MonitorComboBox
-      AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = MonitorComboBox
-      Left = 101
-      Height = 16
-      Top = 326
-      Width = 85
-      Alignment = taRightJustify
-      Anchors = [akTop, akRight]
-      Caption = 'Used monitor:'
-      ParentColor = False
-    end
-    object OutputDirEdit: TDirectoryEdit
-      AnchorSideTop.Control = Owner
-      Left = 192
-      Height = 26
+    object OutputDirPanel: TPanel
+      Left = 155
+      Height = 28
       Top = 15
-      Width = 265
-      ShowHidden = False
-      ButtonWidth = 23
-      NumGlyphs = 1
-      MaxLength = 0
-      TabOrder = 0
-      OnChange = OutputDirEditChange
-    end
-    object TakeScreenshotButton: TButton
-      AnchorSideTop.Control = AutoCaptureControlGroup
-      AnchorSideTop.Side = asrCenter
-      AnchorSideBottom.Control = AutoCaptureControlGroup
-      AnchorSideBottom.Side = asrBottom
-      Left = 40
-      Height = 28
-      Top = 594
-      Width = 107
-      Anchors = [akLeft, akBottom]
+      Width = 856
       AutoSize = True
-      BorderSpacing.Bottom = 8
-      Caption = 'Take screenshot'
-      Constraints.MinWidth = 100
-      OnClick = TakeScreenshotButtonClick
-      TabOrder = 16
-    end
-    object OpenOutputDirButton: TButton
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = OutputDirEdit
-      AnchorSideTop.Side = asrCenter
-      Left = 463
-      Height = 28
-      Top = 14
-      Width = 100
-      AutoSize = True
-      Caption = 'Open directory'
-      Constraints.MinWidth = 100
-      OnClick = OpenOutputDirButtonClick
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 1
-    end
-    object StopWhenInactiveCheckBox: TCheckBox
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = StartCaptureOnStartUpCheckBox
-      AnchorSideTop.Side = asrBottom
-      Left = 192
-      Height = 22
-      Top = 221
-      Width = 236
-      Caption = 'Pause taking screenshots while idle'
-      OnClick = StopWhenInactiveCheckBoxClick
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 10
-    end
-    object AutoCaptureControlGroup: TGroupBox
-      AnchorSideLeft.Control = Owner
-      AnchorSideLeft.Side = asrCenter
-      AnchorSideTop.Control = MinimizeInsteadOfCloseCheckBox
-      AnchorSideTop.Side = asrBottom
-      Left = 250
-      Height = 57
-      Top = 476
-      Width = 220
-      AutoSize = True
-      BorderSpacing.Top = 24
-      Caption = 'Automatic capture'
-      ChildSizing.LeftRightSpacing = 6
-      ChildSizing.TopBottomSpacing = 6
+      BevelOuter = bvNone
       ChildSizing.HorizontalSpacing = 6
-      ChildSizing.VerticalSpacing = 6
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
-      ChildSizing.ControlsPerLine = 2
-      ClientHeight = 40
-      ClientWidth = 218
-      TabOrder = 17
-      object StartAutoCaptureButton: TBitBtn
-        Left = 6
+      ChildSizing.ControlsPerLine = 999
+      ClientHeight = 28
+      ClientWidth = 856
+      TabOrder = 12
+      object OutputDirEdit: TDirectoryEdit
+        Left = 0
         Height = 28
-        Top = 6
-        Width = 100
-        AutoSize = True
-        Caption = 'Enable'
+        Top = 0
+        Width = 750
+        ShowHidden = False
+        ButtonWidth = 23
         Constraints.MinWidth = 100
-        NumGlyphs = 2
-        OnClick = StartAutoCaptureButtonClick
-        Spacing = 8
+        NumGlyphs = 1
+        Align = alClient
+        BorderSpacing.CellAlignVertical = ccaCenter
+        MaxLength = 0
         TabOrder = 0
+        OnChange = OutputDirEditChange
       end
-      object StopAutoCaptureButton: TBitBtn
-        Left = 112
+      object OpenOutputDirButton: TButton
+        Left = 756
         Height = 28
-        Top = 6
+        Top = 0
         Width = 100
+        Align = alRight
         AutoSize = True
-        Caption = 'Disable'
+        BorderSpacing.CellAlignVertical = ccaCenter
+        Caption = 'Open directory'
         Constraints.MinWidth = 100
-        NumGlyphs = 2
-        OnClick = StopAutoCaptureButtonClick
-        Spacing = 8
+        OnClick = OpenOutputDirButtonClick
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 1
       end
     end
-    object StartCaptureOnStartUpCheckBox: TCheckBox
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = StartMinimizedCheckBox
-      AnchorSideTop.Side = asrBottom
-      Left = 192
-      Height = 22
-      Top = 246
-      Width = 262
-      Caption = 'Start auto capture when program starts'
-      OnClick = StartCaptureOnStartUpCheckBoxClick
-      TabOrder = 9
-    end
-    object StartMinimizedCheckBox: TCheckBox
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = AutoRunCheckBox
-      AnchorSideTop.Side = asrBottom
-      Left = 192
-      Height = 22
-      Top = 271
-      Width = 161
-      Caption = 'Start minimized to tray'
-      OnClick = StartMinimizedCheckBoxClick
-      TabOrder = 8
-    end
-    object FileNameTemplateComboBox: TComboBox
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = OutputDirEdit
-      AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = OutputDirEdit
-      AnchorSideRight.Side = asrBottom
-      Left = 192
-      Height = 28
-      Top = 44
-      Width = 265
-      Anchors = [akTop, akLeft, akRight]
-      ItemHeight = 0
-      OnChange = FileNameTemplateComboBoxChange
-      TabOrder = 2
-    end
-    object FileNameTemplateHelpButton: TButton
-      AnchorSideLeft.Control = FileNameTemplateComboBox
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = FileNameTemplateComboBox
+    object FileNameTemplateLabel: TLabel
       AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Side = asrBottom
-      Left = 463
+      Left = 15
+      Height = 16
+      Top = 55
+      Width = 134
+      Alignment = taRightJustify
+      BorderSpacing.CellAlignVertical = ccaCenter
+      Caption = 'Filename template:'
+      ParentColor = False
+    end
+    object FileNameTemplatePanel: TPanel
+      Left = 155
       Height = 28
-      Top = 44
-      Width = 15
+      Top = 49
+      Width = 856
       AutoSize = True
-      Caption = '?'
-      OnClick = FileNameTemplateHelpButtonClick
-      TabOrder = 3
+      BevelOuter = bvNone
+      ChildSizing.HorizontalSpacing = 6
+      ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+      ChildSizing.ShrinkHorizontal = crsHomogenousChildResize
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 999
+      ClientHeight = 28
+      ClientWidth = 856
+      TabOrder = 13
+      object FileNameTemplateComboBox: TComboBox
+        Left = 0
+        Height = 28
+        Top = 0
+        Width = 835
+        Align = alClient
+        BorderSpacing.CellAlignVertical = ccaCenter
+        ItemHeight = 0
+        OnChange = FileNameTemplateComboBoxChange
+        TabOrder = 0
+      end
+      object FileNameTemplateHelpButton: TButton
+        AnchorSideLeft.Side = asrBottom
+        Left = 841
+        Height = 28
+        Top = 0
+        Width = 15
+        Align = alRight
+        AutoSize = True
+        BorderSpacing.CellAlignHorizontal = ccaCenter
+        BorderSpacing.CellAlignVertical = ccaCenter
+        Caption = '?'
+        OnClick = FileNameTemplateHelpButtonClick
+        TabOrder = 1
+      end
     end
-    object CaptureIntervalDateTimePicker: TDateTimePicker
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = SeqNumberGroup
-      AnchorSideTop.Side = asrBottom
-      Left = 192
-      Height = 22
-      Top = 163
-      Width = 75
-      CenturyFrom = 1941
-      MaxDate = 2958465
-      MinDate = -53780
-      TabOrder = 5
-      TrailingSeparator = False
-      TextForNullDate = 'NULL'
-      LeadingZeros = False
-      Kind = dtkTime
-      TimeFormat = tf24
-      TimeDisplay = tdHMS
-      DateMode = dmComboBox
-      Date = 44009
-      Time = 0.00347222221898846
-      UseDefaultSeparators = True
-      HideDateTimeParts = []
-      MonthNames = 'Long'
-      OnChange = CaptureIntervalDateTimePickerChange
-    end
-    object AutoRunCheckBox: TCheckBox
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = ImageFormatOptionsPanel
-      AnchorSideTop.Side = asrBottom
-      Left = 192
-      Height = 22
-      Top = 296
-      Width = 226
-      Caption = 'Run application at system startup'
-      OnClick = AutoRunCheckBoxClick
-      TabOrder = 7
-    end
-    object MonitorComboBox: TComboBox
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = StopWhenInactiveCheckBox
-      AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = OutputDirEdit
-      AnchorSideRight.Side = asrBottom
-      Left = 192
-      Height = 26
-      Top = 321
-      Width = 265
-      Anchors = [akTop, akLeft, akRight]
-      ItemHeight = 0
-      Items.Strings = (
-        ''
-        ''
-      )
-      OnChange = MonitorComboBoxChange
-      Style = csDropDownList
-      TabOrder = 11
+    object EmptyLabel1: TLabel
+      Left = 15
+      Height = 87
+      Top = 83
+      Width = 134
+      ParentColor = False
     end
     object SeqNumberGroup: TGroupBox
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = FileNameTemplateComboBox
       AnchorSideTop.Side = asrBottom
-      Left = 192
+      Left = 155
       Height = 87
-      Top = 73
-      Width = 123
+      Top = 83
+      Width = 856
       AutoSize = True
       Caption = 'Sequential number'
       ChildSizing.LeftRightSpacing = 6
@@ -331,13 +160,13 @@ object MainForm: TMainForm
       ChildSizing.HorizontalSpacing = 6
       ChildSizing.VerticalSpacing = 6
       ClientHeight = 70
-      ClientWidth = 121
-      TabOrder = 4
+      ClientWidth = 854
+      TabOrder = 0
       object SeqNumberValueLabel: TLabel
         AnchorSideTop.Control = SeqNumberValueSpinEdit
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = SeqNumberValueSpinEdit
-        Left = 27
+        Left = 857
         Height = 16
         Top = 11
         Width = 68
@@ -350,7 +179,7 @@ object MainForm: TMainForm
         AnchorSideTop.Control = SeqNumberDigitsCountSpinEdit
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = SeqNumberDigitsCountSpinEdit
-        Left = 57
+        Left = 887
         Height = 16
         Top = 43
         Width = 38
@@ -361,7 +190,7 @@ object MainForm: TMainForm
       end
       object SeqNumberValueSpinEdit: TSpinEdit
         AnchorSideTop.Control = SeqNumberGroup
-        Left = 101
+        Left = 931
         Height = 26
         Top = 6
         Width = 73
@@ -374,7 +203,7 @@ object MainForm: TMainForm
         AnchorSideLeft.Control = SeqNumberValueSpinEdit
         AnchorSideTop.Control = SeqNumberValueSpinEdit
         AnchorSideTop.Side = asrBottom
-        Left = 101
+        Left = 931
         Height = 26
         Top = 38
         Width = 49
@@ -382,51 +211,68 @@ object MainForm: TMainForm
         TabOrder = 1
       end
     end
-    object PostCmdEdit: TEdit
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = MonitorComboBox
-      AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = OutputDirEdit
-      AnchorSideRight.Side = asrBottom
-      Left = 192
-      Height = 26
-      Top = 350
-      Width = 265
-      Anchors = [akTop, akLeft, akRight]
-      OnChange = PostCmdEditChange
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 12
-    end
-    object PostCmdLabel: TLabel
-      AnchorSideTop.Control = PostCmdEdit
+    object CaptureIntervalLabel: TLabel
       AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = PostCmdEdit
-      Left = 95
+      Left = 15
       Height = 16
-      Top = 355
-      Width = 91
-      Anchors = [akTop, akRight]
-      Caption = 'Run command:'
+      Top = 179
+      Width = 134
+      Alignment = taRightJustify
+      BorderSpacing.CellAlignVertical = ccaCenter
+      Caption = 'Saving interval (h:m:s):'
+      ParentColor = False
+    end
+    object CaptureIntervalDateTimePicker: TDateTimePicker
+      AnchorSideTop.Side = asrBottom
+      Left = 155
+      Height = 22
+      Top = 176
+      Width = 100
+      CenturyFrom = 1941
+      MaxDate = 2958465
+      MinDate = -53780
+      TabOrder = 1
+      TrailingSeparator = False
+      TextForNullDate = 'NULL'
+      LeadingZeros = False
+      Constraints.MaxWidth = 100
+      Kind = dtkTime
+      TimeFormat = tf24
+      TimeDisplay = tdHMS
+      DateMode = dmComboBox
+      Date = 44009
+      Time = 0.00347222221898846
+      UseDefaultSeparators = True
+      HideDateTimeParts = []
+      MonthNames = 'Long'
+      OnChange = CaptureIntervalDateTimePickerChange
+    end
+    object ImageFormatLabel: TLabel
+      AnchorSideTop.Side = asrCenter
+      Left = 15
+      Height = 16
+      Top = 211
+      Width = 134
+      Alignment = taRightJustify
+      BorderSpacing.CellAlignVertical = ccaCenter
+      Caption = 'Format:'
       ParentColor = False
     end
     object ImageFormatOptionsPanel: TPanel
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = CaptureIntervalDateTimePicker
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Side = asrBottom
-      Left = 192
+      Left = 155
       Height = 30
-      Top = 192
-      Width = 858
+      Top = 204
+      Width = 856
       AutoSize = True
       BevelOuter = bvNone
       ChildSizing.HorizontalSpacing = 6
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 99
       ClientHeight = 30
-      ClientWidth = 858
-      TabOrder = 6
+      ClientWidth = 856
+      TabOrder = 2
       object ImageFormatComboBox: TComboBox
         Left = 0
         Height = 30
@@ -443,14 +289,14 @@ object MainForm: TMainForm
         Left = 130
         Height = 16
         Top = 7
-        Width = 114
+        Width = 113
         BorderSpacing.Left = 30
         BorderSpacing.CellAlignVertical = ccaCenter
         Caption = 'Compression level:'
         ParentColor = False
       end
       object CompressionLevelComboBox: TComboBox
-        Left = 250
+        Left = 249
         Height = 26
         Top = 2
         Width = 100
@@ -467,17 +313,17 @@ object MainForm: TMainForm
         TabOrder = 1
       end
       object JPEGQualityLabel: TLabel
-        Left = 380
+        Left = 379
         Height = 16
         Top = 7
-        Width = 82
+        Width = 81
         BorderSpacing.Left = 30
         BorderSpacing.CellAlignVertical = ccaCenter
         Caption = 'Compression:'
         ParentColor = False
       end
       object JPEGQualitySpinEdit: TSpinEdit
-        Left = 468
+        Left = 466
         Height = 26
         Top = 2
         Width = 50
@@ -486,7 +332,7 @@ object MainForm: TMainForm
         TabOrder = 2
       end
       object JPEGQualityPercentLabel: TLabel
-        Left = 524
+        Left = 522
         Height = 16
         Top = 7
         Width = 11
@@ -495,7 +341,7 @@ object MainForm: TMainForm
         ParentColor = False
       end
       object ColorDepthLabel: TLabel
-        Left = 565
+        Left = 563
         Height = 16
         Top = 7
         Width = 75
@@ -505,7 +351,7 @@ object MainForm: TMainForm
         ParentColor = False
       end
       object ColorDepthComboBox: TComboBox
-        Left = 646
+        Left = 644
         Height = 30
         Top = 0
         Width = 100
@@ -517,7 +363,7 @@ object MainForm: TMainForm
         TabOrder = 3
       end
       object GrayscaleCheckBox: TCheckBox
-        Left = 776
+        Left = 774
         Height = 22
         Top = 4
         Width = 82
@@ -528,16 +374,141 @@ object MainForm: TMainForm
         TabOrder = 4
       end
     end
-    object OldScreenshotCleanerPanel: TPanel
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = PostCmdEdit
+    object EmptyLabel2: TLabel
+      Left = 15
+      Height = 22
+      Top = 240
+      Width = 134
+      ParentColor = False
+    end
+    object AutoRunCheckBox: TCheckBox
       AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = Owner
+      Left = 155
+      Height = 22
+      Top = 240
+      Width = 856
+      Caption = 'Run application at system startup'
+      OnClick = AutoRunCheckBoxClick
+      TabOrder = 3
+    end
+    object EmptyLabel3: TLabel
+      Left = 15
+      Height = 22
+      Top = 268
+      Width = 134
+      ParentColor = False
+    end
+    object StartMinimizedCheckBox: TCheckBox
+      AnchorSideTop.Side = asrBottom
+      Left = 155
+      Height = 22
+      Top = 268
+      Width = 856
+      Caption = 'Start minimized to tray'
+      OnClick = StartMinimizedCheckBoxClick
+      TabOrder = 4
+    end
+    object EmptyLabel4: TLabel
+      Left = 15
+      Height = 22
+      Top = 296
+      Width = 134
+      ParentColor = False
+    end
+    object StartCaptureOnStartUpCheckBox: TCheckBox
+      AnchorSideTop.Side = asrBottom
+      Left = 155
+      Height = 22
+      Top = 296
+      Width = 856
+      Caption = 'Start auto capture when program starts'
+      OnClick = StartCaptureOnStartUpCheckBoxClick
+      TabOrder = 5
+    end
+    object EmptyLabel5: TLabel
+      Left = 15
+      Height = 22
+      Top = 324
+      Width = 134
+      ParentColor = False
+    end
+    object StopWhenInactiveCheckBox: TCheckBox
+      AnchorSideTop.Side = asrBottom
+      Left = 155
+      Height = 22
+      Top = 324
+      Width = 856
+      Caption = 'Pause taking screenshots while idle'
+      OnClick = StopWhenInactiveCheckBoxClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 6
+    end
+    object MonitorLabel: TLabel
+      AnchorSideTop.Side = asrCenter
+      Left = 15
+      Height = 16
+      Top = 357
+      Width = 134
+      Alignment = taRightJustify
+      BorderSpacing.CellAlignVertical = ccaCenter
+      Caption = 'Used monitor:'
+      ParentColor = False
+    end
+    object MonitorComboBox: TComboBox
+      AnchorSideTop.Side = asrBottom
       AnchorSideRight.Side = asrBottom
-      Left = 192
+      Left = 155
+      Height = 26
+      Top = 352
+      Width = 150
+      Constraints.MaxWidth = 150
+      ItemHeight = 0
+      Items.Strings = (
+        ''
+        ''
+      )
+      OnChange = MonitorComboBoxChange
+      Style = csDropDownList
+      TabOrder = 7
+    end
+    object PostCmdLabel: TLabel
+      AnchorSideTop.Side = asrCenter
+      Left = 15
+      Height = 16
+      Top = 389
+      Width = 134
+      Alignment = taRightJustify
+      BorderSpacing.CellAlignVertical = ccaCenter
+      Caption = 'Run command:'
+      ParentColor = False
+    end
+    object PostCmdEdit: TEdit
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Side = asrBottom
+      Left = 155
+      Height = 26
+      Top = 384
+      Width = 856
+      OnChange = PostCmdEditChange
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 8
+    end
+    object EmptyLabel6: TLabel
+      Left = 15
       Height = 30
-      Top = 379
-      Width = 374
+      Top = 416
+      Width = 134
+      ParentColor = False
+    end
+    object OldScreenshotCleanerPanel: TPanel
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Side = asrBottom
+      Left = 155
+      Height = 30
+      Top = 416
+      Width = 856
       AutoSize = True
       BevelOuter = bvNone
       ChildSizing.HorizontalSpacing = 6
@@ -545,8 +516,8 @@ object MainForm: TMainForm
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 999
       ClientHeight = 30
-      ClientWidth = 374
-      TabOrder = 13
+      ClientWidth = 856
+      TabOrder = 9
       object OldScreenshotCleanerEnabledCheckBox: TCheckBox
         Left = 0
         Height = 30
@@ -586,29 +557,39 @@ object MainForm: TMainForm
         TabOrder = 3
       end
     end
-    object PlaySoundsCheckBox: TCheckBox
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = OldScreenshotCleanerPanel
-      AnchorSideTop.Side = asrBottom
-      Left = 192
+    object EmptyLabel7: TLabel
+      Left = 15
       Height = 22
-      Top = 408
-      Width = 97
+      Top = 452
+      Width = 134
+      ParentColor = False
+    end
+    object PlaySoundsCheckBox: TCheckBox
+      AnchorSideTop.Side = asrBottom
+      Left = 155
+      Height = 22
+      Top = 452
+      Width = 856
       Caption = 'Play sounds'
       OnChange = PlaySoundsCheckBoxChange
-      TabOrder = 14
+      TabOrder = 10
+    end
+    object EmptyLabel8: TLabel
+      Left = 15
+      Height = 22
+      Top = 480
+      Width = 134
+      ParentColor = False
     end
     object MinimizeInsteadOfCloseCheckBox: TCheckBox
-      AnchorSideLeft.Control = OutputDirEdit
-      AnchorSideTop.Control = PlaySoundsCheckBox
       AnchorSideTop.Side = asrBottom
-      Left = 192
+      Left = 155
       Height = 22
-      Top = 433
-      Width = 241
+      Top = 480
+      Width = 856
       Caption = 'Minimize to tray when close window'
       OnChange = MinimizeInsteadOfCloseCheckBoxChange
-      TabOrder = 15
+      TabOrder = 11
     end
   end
   object Panel2: TPanel
@@ -711,7 +692,7 @@ object MainForm: TMainForm
       Left = 302
       Height = 16
       Top = 17
-      Width = 74
+      Width = 73
       BorderSpacing.CellAlignVertical = ccaCenter
       Caption = 'Read more...'
       Font.CharSet = RUSSIAN_CHARSET
@@ -725,7 +706,7 @@ object MainForm: TMainForm
       OnMouseLeave = Label3MouseLeave
     end
     object Label4: TLabel
-      Left = 376
+      Left = 375
       Height = 20
       Top = 15
       Width = 87
@@ -749,6 +730,82 @@ object MainForm: TMainForm
     Caption = 'Close'
     OnClick = Button1Click
     TabOrder = 2
+  end
+  object ButtonsPanel: TPanel
+    Left = 0
+    Height = 87
+    Top = 514
+    Width = 723
+    Align = alBottom
+    AutoSize = True
+    BevelOuter = bvNone
+    ChildSizing.TopBottomSpacing = 15
+    ClientHeight = 87
+    ClientWidth = 723
+    TabOrder = 3
+    object TakeScreenshotButton: TButton
+      AnchorSideLeft.Control = ButtonsPanel
+      AnchorSideTop.Side = asrCenter
+      AnchorSideBottom.Control = AutoCaptureControlGroup
+      AnchorSideBottom.Side = asrBottom
+      Left = 50
+      Height = 28
+      Top = 36
+      Width = 107
+      Anchors = [akLeft, akBottom]
+      AutoSize = True
+      BorderSpacing.Left = 50
+      BorderSpacing.Bottom = 8
+      Caption = 'Take screenshot'
+      Constraints.MinWidth = 100
+      OnClick = TakeScreenshotButtonClick
+      TabOrder = 0
+    end
+    object AutoCaptureControlGroup: TGroupBox
+      AnchorSideLeft.Control = ButtonsPanel
+      AnchorSideLeft.Side = asrCenter
+      Left = 251
+      Height = 57
+      Top = 15
+      Width = 220
+      AutoSize = True
+      Caption = 'Automatic capture'
+      ChildSizing.LeftRightSpacing = 6
+      ChildSizing.TopBottomSpacing = 6
+      ChildSizing.HorizontalSpacing = 6
+      ChildSizing.VerticalSpacing = 6
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 2
+      ClientHeight = 40
+      ClientWidth = 218
+      TabOrder = 1
+      object StartAutoCaptureButton: TBitBtn
+        Left = 6
+        Height = 28
+        Top = 6
+        Width = 100
+        AutoSize = True
+        Caption = 'Enable'
+        Constraints.MinWidth = 100
+        NumGlyphs = 2
+        OnClick = StartAutoCaptureButtonClick
+        Spacing = 8
+        TabOrder = 0
+      end
+      object StopAutoCaptureButton: TBitBtn
+        Left = 112
+        Height = 28
+        Top = 6
+        Width = 100
+        AutoSize = True
+        Caption = 'Disable'
+        Constraints.MinWidth = 100
+        NumGlyphs = 2
+        OnClick = StopAutoCaptureButtonClick
+        Spacing = 8
+        TabOrder = 1
+      end
+    end
   end
   object Timer: TTimer
     Enabled = False
