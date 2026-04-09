@@ -38,7 +38,7 @@ type
 
     //procedure LoadByCode(ALang: TLanguageCode);
     procedure LoadFromFile(AFileName: String);
-    function I18N(StrID: String): WideString;
+    function I18N(StrID: String; ADefaultVal: string = ''): WideString;
     procedure GetLanguages(var LangsArr: TLanguagesArray);
 
     property LanguageInfo: TLanguageInfo read GetLanguageInfo;
@@ -159,14 +159,19 @@ begin
   end;
 end;
 
-function TLocalizer.I18N(StrID: String): WideString;
+function TLocalizer.I18N(StrID: String; ADefaultVal: string): WideString;
 begin
   if LangInfo.Code = '' then
     raise ELocalizerException.Create('No localization loaded');
 
   Result := Strings.Values[StrID];
   if Result = '' then
-    Result := '<unknown>';
+  begin
+    if ADefaultVal <> '' then
+      Result := ADefaultVal
+    else
+      Result := '<unknown>';
+  end;
 
   Result := DecodeControlCharacters(Result);
 end;

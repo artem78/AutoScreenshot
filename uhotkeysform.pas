@@ -198,7 +198,7 @@ begin
   begin
     Parent := Self;
     //SetSubComponent(true);
-    Caption := 'Alt';
+    Caption := Localizer.I18N('KeyAlt', 'Alt');
     //Name := '...';
   end;
 
@@ -207,7 +207,7 @@ begin
   begin
     Parent := Self;
     //SetSubComponent(true);
-    Caption := 'Ctrl';
+    Caption := Localizer.I18N('KeyCtrl', 'Ctrl');
     //Name := '...';
   end;
 
@@ -216,7 +216,7 @@ begin
   begin
     Parent := Self;
     //SetSubComponent(true);
-    Caption := 'Shift';
+    Caption := Localizer.I18N('KeyShift', 'Shift');
     //Name := '...';
   end;
 
