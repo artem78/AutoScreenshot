@@ -7,7 +7,7 @@ unit uUtilsMore;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, StdCtrls;
 
 type
 
@@ -43,10 +43,18 @@ type
 operator = (HotKey1, Hotkey2: THotKey): Boolean;
 operator <> (HotKey1, Hotkey2: THotKey): Boolean;
 
+type
+
+  { TComboBoxHelper }
+
+  TComboBoxHelper = class helper for TComboBox
+    procedure AutoWidth;
+  end;
+
 implementation
 
 uses
-  RegExpr, StrUtils, Menus {for ShortCutToKey}, LCLProc, LCLType;
+  RegExpr, StrUtils, Menus  {for ShortCutToKey}, LCLProc, LCLType, Graphics, LCLIntf, Math;
 
 type
   { TJoinInteger }
@@ -105,6 +113,32 @@ end;
 operator<>(HotKey1, Hotkey2: THotKey): Boolean;
 begin
   Result := not (HotKey1 = Hotkey2);
+end;
+
+{ TComboBoxHelper }
+
+procedure TComboBoxHelper.AutoWidth;
+const
+  SPACING = {12} 20;
+var
+  I, TextMaxWidth, Metr: integer;
+  Bmp: TBitmap;
+begin
+  TextMaxWidth := 0;
+  Bmp := TBitmap.Create;
+  try
+    Bmp.Canvas.Font.Assign(Self.Font);
+
+    for I := 0 to Self.Items.Count - 1 do
+    begin
+      TextMaxWidth := Max(TextMaxWidth, {Self}Bmp.Canvas.font.GetTextWidth(self.Items[I]));
+    end;
+
+    Metr := GetSystemMetrics(SM_CXVSCROLL);
+    Self{.Width}.Constraints.MinWidth := TextMaxWidth + Metr + SPACING;
+  finally
+    Bmp.Free;
+  end;
 end;
 
 { THotKey }
