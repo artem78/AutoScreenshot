@@ -4,7 +4,6 @@
 #define MyAppName      "Auto Screenshot"
 #define MyAppExeName   "AutoScreenshot.exe"
 #define MyAppVersion    GetFileProductVersion("AutoScreenshot.exe")
-;#define MyAppVersion   Copy(Revision, 2) ; Drop leading 'v'
 #define MyAppPublisher "Artem Demin"
 #define MyAppURL       "https://github.com/artem78/AutoScreenshot#readme"
 #define CurrentYear    GetDateTimeString('yyyy','','')
