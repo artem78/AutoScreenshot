@@ -154,7 +154,7 @@ begin
       VK_SUBTRACT: KeyName    := 'Numpad -';
       VK_DECIMAL: KeyName     := 'Numpad . (Del)';
       VK_DIVIDE: KeyName      := 'Numpad /';
-      VK_RETURN: KeyName      := 'Numpad Enter'
+      VK_RETURN: KeyName      := {'Numpad Enter'} 'Enter'
     end;
 
     // Try to find translation for key if possible
