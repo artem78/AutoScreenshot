@@ -13,9 +13,9 @@ uses
   {$EndIf}
   {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
-  Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf,
-  ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
-  UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
+  Menus, Buttons, EditBtn, uLocalization, DateTimePicker,
+  LCLIntf, ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook,
+  OldScreenshotCleaner, UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
 
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation);
@@ -25,10 +25,18 @@ type
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
     Button1: TButton;
+    EmptyLabel2: TLabel;
+    EmptyLabel3: TLabel;
+    EmptyLabel4: TLabel;
+    EmptyLabel5: TLabel;
+    EmptyLabel6: TLabel;
+    EmptyLabel7: TLabel;
+    EmptyLabel8: TLabel;
     FileMenuItem: TMenuItem;
     ExitMenuItem: TMenuItem;
     Image1: TImage;
     Label4: TLabel;
+    EmptyLabel1: TLabel;
     MenuImageList: TImageList;
     Label1: TLabel;
     Label2: TLabel;
@@ -38,8 +46,11 @@ type
     HomePageMenuItem: TMenuItem;
     MinimizeInsteadOfCloseCheckBox: TCheckBox;
     Panel1: TPanel;
-    Panel2: TPanel;
-    Panel3: TPanel;
+    ProAdvPanel: TPanel;
+    SettingsPanel: TPanel;
+    OutputDirPanel: TPanel;
+    FileNameTemplatePanel: TPanel;
+    ButtonsPanel: TPanel;
     PlaySoundsCheckBox: TCheckBox;
     CompressionLevelComboBox: TComboBox;
     OldScreenshotCleanerEnabledCheckBox: TCheckBox;
@@ -355,6 +366,7 @@ begin
   // Fill combobox with image formats
   for Fmt in TImageFormat do
     ImageFormatComboBox.Items.Append(ImageFormatInfoArray[Fmt].Name);
+  ImageFormatComboBox.AutoWidth;
 
   // Set min/max values for JPEG quality
   JPEGQualitySpinEdit.MinValue := Low(TJPEGQualityRange);
@@ -575,7 +587,7 @@ begin
       Ini.WriteBool(DefaultConfigIniSection, 'ProBannerVisible', ProBannerVisible);
     end;
   end;
-  Panel2.Visible := ProBannerVisible;
+  ProAdvPanel.Visible := ProBannerVisible;
   Button1.Visible := ProBannerVisible;
 end;
 
@@ -687,7 +699,7 @@ end;
 
 procedure TMainForm.Button1Click(Sender: TObject);
 begin
-  Panel2.Visible:=False;
+  ProAdvPanel.Visible:=False;
   (Sender as TButton).Visible:=False;
   ini.WriteBool(DefaultConfigIniSection, 'ProBannerVisible', False);
   ini.WriteDate(DefaultConfigIniSection, 'ProBannerClosedDate', Now);
@@ -1238,6 +1250,7 @@ begin
       Items[1] := Localizer.I18N('CompressionLevelFastest');
       Items[2] := Localizer.I18N('CompressionLevelDefault');
       Items[3] := Localizer.I18N('CompressionLevelMax');
+      AutoWidth;
     end;
 
     OldScreenshotCleanerEnabledCheckBox.Caption := Localizer.I18N('DeleteScreenshotsOlderThan');
@@ -1247,6 +1260,7 @@ begin
       Items[Ord(iuDays)]   := Localizer.I18N('Days');
       Items[Ord(iuWeeks)]  := Localizer.I18N('Weeks');
       Items[Ord(iuMonths)] := Localizer.I18N('Months');
+      AutoWidth;
     end;
 
     PlaySoundsCheckBox.Caption := Localizer.I18N('PlaySounds');
@@ -1581,6 +1595,9 @@ begin
     //MonitorId := SelId;
     MonitorComboBox.ItemIndex := SelIdx;
   end;
+
+  // Adjust width
+  MonitorComboBox.AutoWidth;
 end;
 
 function TMainForm.GetMonitorId: Integer;
@@ -1796,6 +1813,7 @@ end;
 procedure TMainForm.UpdateSeqNumGroupVisibility;
 begin
   SeqNumberGroup.Visible := Pos('%NUM', FileNameTemplateComboBox.Text) <> 0;
+  EmptyLabel1.Visible := SeqNumberGroup.Visible;
   if SeqNumberGroup.Visible then
     RecalculateLabelWidthsForSeqNumGroup;
 
