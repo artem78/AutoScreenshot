@@ -55,8 +55,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="16"/>
-      <RevisionNr Value="1"/>
-      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.16.1"/>
+      <RevisionNr Value="2"/>
+      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.16.2"/>
     </VersionInfo>
     <CustomData Count="13">
       <Item0 Name="lazpackager/copyright" Value="2020-2024, Artem Demin &lt;megabyte1024@ya.ru>"/>
@@ -219,9 +219,6 @@ override_dh_auto_install:
           </Linking>
           <Other>
             <CustomOptions Value="-dSIMULATE_OLD_FILES_DELETION"/>
-            <OtherDefines Count="1">
-              <Define0 Value="SIMULATE_OLD_FILES_DELETION"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
