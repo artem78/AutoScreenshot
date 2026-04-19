@@ -31,29 +31,155 @@
 <tr>
 <th>License type</th>
 <th>Price</th>
-<th>Purchase link</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>1 month</td>
 <td>1 USD</td>
-<td><a href="https://pay.web.money/259743495078/56cRcv8">link</a></td>
 </tr>
 <tr>
 <td>1 year</td>
 <td>3 USD</td>
-<td><a href="https://pay.web.money/259743495078/21ZU5cr">link</a></td>
 </tr>
 <tr>
 <td>Lifetime*</td>
 <td>5 USD</td>
-<td><a href="https://pay.web.money/259743495078/90rbLPS">link</a></td>
 </tr>
 </tbody>
 </table>
 <p>*Lifetime means that all future updates will be absolutely free.</p>
-<p><strong>After payment <a href="mailto:megabyte1024@ya.ru?subject=AutoScreenshot">contact us</a> to recieve your key!</strong></p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript">
+    (function() {
+        // https://dashboard.emailjs.com/admin/account
+        emailjs.init({
+          publicKey: "-ftrGzvyLrLZBnlw2",
+        });
+    })();
+</script>
+<p><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xxjapp/xdialog@3/xdialog.min.css"></p>
+<script src="https://cdn.jsdelivr.net/gh/xxjapp/xdialog@3/xdialog.min.js"></script>
+
+<script>
+function show_purchase_form()
+{
+    ym(104787348,'reachGoal','show_purchase_form');
+    xdialog.open({
+        title: 'Purchase details',
+        body: '\
+        <style>\
+            .demo1-mb-1 { margin-bottom: 1em; }\
+            .demo1-row { text-align: center; }\
+            .demo1-row label { min-width: 6em; display: inline-block; text-align: right; margin-right: 0.5em; }\
+            .demo1-row input { padding: 0.3em; outline: none; min-width: 12em; }\
+            .demo1-row select { padding: 0.3em; outline: none; min-width: 12em; max-width: 12em; display: inline-block; }\
+            .demo1-validated input { border: green 2px solid; }\
+            .demo1-validated input:invalid { border: red 2px solid; }\
+            .demo4-items {display:flex;flex-direction:column;align-items:center;}\
+            .demo4-item {display:block;height:30px;width:80%;margin:3px;padding:1px;}\
+        </style>\
+        <form id="purchase_form" method="post" name="purchase_forms"><div id="demo1-form">\
+            <div class="demo1-row demo1-mb-1"><label for="name">Your name:</label><input type="text" id="name" name="name"></div>\
+            <div class="demo1-row"><label for="email">Your email:</label><input type="text" id="email" name="email" required></div>\
+            <div class="demo1-row"><label for="lictype">License type:</label>\
+               <select class="demo4-item" name="lictype" id="lictype" required>\
+                      <option value="1m">1 month</option>\
+                      <option value="1y">1 year</option>\
+                      <option value="lt">Lifetime</option>\
+               </select>\
+            </div>\
+            <div class="demo1-row"><label for="paymeth">Payment method:</label>\
+               <select class="demo4-item" name="paymeth" id="paymeth" required>\
+                      <option value="webmoney">Webmoney</option>\
+                      <option value="yoomoney">Yoomoney.ru</option>\
+                    </select>\
+               </select>\
+            </div>\
+        </div></form>',
+        buttons: { ok: 'Submit', cancel: 'Cancel' },
+        //effect: '3d_rotate_bottom',
+        style: 'width: 25em;',
+        //style: 'width: 400px;',
+        onok: function() {
+            document.getElementById('demo1-form').classList.add('demo1-validated');
+
+            let name = document.getElementById('name').value;
+            let email = document.getElementById('email').value;
+
+            if (!email) {
+                return false;
+            }
+
+            purchase_url = '';
+            var paymeth_elem = document.getElementById("paymeth");
+            var paymeth_value = paymeth_elem.value;
+            //var text = paymeth_elem.options[paymeth_elem.selectedIndex].text;
+
+            var lictype_elem = document.getElementById("lictype");
+            var lictype_value = lictype_elem.value;
+
+            //alert(lictype_value + ' ' + paymeth_value);
+
+            if (paymeth_value=='webmoney')
+            {
+                if (lictype_value=='1m')
+                {
+                    purchase_url = 'https://pay.web.money/259743495078/56cRcv8';
+                }
+
+                if (lictype_value=='1y')
+                {
+                    purchase_url = 'https://pay.web.money/259743495078/21ZU5cr';
+                }
+
+                if (lictype_value=='lt')
+                {
+                    purchase_url = 'https://pay.web.money/259743495078/90rbLPS';
+                }
+            }
+
+            if (paymeth_value=='yoomoney')
+            {
+                if (lictype_value=='1m')
+                {
+                    purchase_url = 'https://yoomoney.ru/bill/pay/1H84SU3QRI6.260419';
+                }
+
+                if (lictype_value=='1y')
+                {
+                    purchase_url = ''; // todo !!!
+                }
+
+                if (lictype_value=='lt')
+                {
+                    purchase_url = ''; // todo !!!
+                }
+            }
+
+
+
+            ym(104787348,'reachGoal','submit_purchase_form');
+            emailjs.sendForm('service_pehepme', 'template_rgu3ul5', "#purchase_form")
+                .then(() => {
+                    console.log('SUCCESS!');
+                     //window.location.replace(purchase_url);
+                   //window.open(purchase_url, "_self");
+                    window.location.href =purchase_url;
+                }, (error) => {
+                    console.log('FAILED...', error);
+                });
+
+            //e.preventDefault();    //stop form from submitting
+            return false;
+        }
+    });
+}
+//show_purchase_form();
+</script>
+<center>
+<img src="https://artem78.github.io/AutoScreenshot/images/buy_now.jpg" title="Buy now" alt="Buy now" onclick="show_purchase_form();" style="cursor: pointer;" />
+</center>
   </section>
                 <section id="extras" class="body">
                 </section><!-- /#extras -->
