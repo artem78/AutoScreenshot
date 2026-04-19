@@ -101,6 +101,9 @@ function show_purchase_form()
         //effect: '3d_rotate_bottom',
         style: 'width: 25em;',
         //style: 'width: 400px;',
+        oncancel: function() {
+            ym(104787348,'reachGoal','cancel_purchase_form');
+        },
         onok: function() {
             document.getElementById('demo1-form').classList.add('demo1-validated');
 
