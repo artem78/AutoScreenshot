@@ -45,7 +45,6 @@ type
     PreCmdLabel: TLabel;
     PreCmdEdit: TEdit;
     MinimizeInsteadOfCloseCheckBox: TCheckBox;
-    Panel1: TPanel;
     SettingsPanel: TPanel;
     OutputDirPanel: TPanel;
     FileNameTemplatePanel: TPanel;

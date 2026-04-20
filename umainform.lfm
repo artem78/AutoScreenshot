@@ -573,14 +573,6 @@ object MainForm: TMainForm
         Style = csDropDownList
         TabOrder = 2
       end
-      object Panel1: TPanel
-        Left = 373
-        Height = 30
-        Top = 0
-        Width = 1
-        Caption = 'Panel1'
-        TabOrder = 3
-      end
     end
     object EmptyLabel7: TLabel
       Left = 15
