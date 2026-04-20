@@ -56,7 +56,7 @@ object MainForm: TMainForm
       ChildSizing.ControlsPerLine = 999
       ClientHeight = 28
       ClientWidth = 856
-      TabOrder = 14
+      TabOrder = 0
       object OutputDirEdit: TDirectoryEdit
         Left = 0
         Height = 28
@@ -113,7 +113,7 @@ object MainForm: TMainForm
       ChildSizing.ControlsPerLine = 999
       ClientHeight = 28
       ClientWidth = 856
-      TabOrder = 13
+      TabOrder = 1
       object FileNameTemplateComboBox: TComboBox
         Left = 0
         Height = 28
@@ -161,7 +161,7 @@ object MainForm: TMainForm
       ChildSizing.VerticalSpacing = 6
       ClientHeight = 70
       ClientWidth = 854
-      TabOrder = 0
+      TabOrder = 2
       object SeqNumberValueLabel: TLabel
         AnchorSideTop.Control = SeqNumberValueSpinEdit
         AnchorSideTop.Side = asrCenter
@@ -231,7 +231,7 @@ object MainForm: TMainForm
       CenturyFrom = 1941
       MaxDate = 2958465
       MinDate = -53780
-      TabOrder = 1
+      TabOrder = 3
       TrailingSeparator = False
       TextForNullDate = 'NULL'
       LeadingZeros = False
@@ -272,7 +272,7 @@ object MainForm: TMainForm
       ChildSizing.ControlsPerLine = 99
       ClientHeight = 30
       ClientWidth = 856
-      TabOrder = 2
+      TabOrder = 4
       object ImageFormatComboBox: TComboBox
         Left = 0
         Height = 30
@@ -389,7 +389,7 @@ object MainForm: TMainForm
       Width = 856
       Caption = 'Run application at system startup'
       OnClick = AutoRunCheckBoxClick
-      TabOrder = 3
+      TabOrder = 5
     end
     object EmptyLabel3: TLabel
       Left = 15
@@ -406,7 +406,7 @@ object MainForm: TMainForm
       Width = 856
       Caption = 'Start minimized to tray'
       OnClick = StartMinimizedCheckBoxClick
-      TabOrder = 4
+      TabOrder = 6
     end
     object EmptyLabel4: TLabel
       Left = 15
@@ -423,7 +423,7 @@ object MainForm: TMainForm
       Width = 856
       Caption = 'Start auto capture when program starts'
       OnClick = StartCaptureOnStartUpCheckBoxClick
-      TabOrder = 5
+      TabOrder = 7
     end
     object EmptyLabel5: TLabel
       Left = 15
@@ -442,7 +442,7 @@ object MainForm: TMainForm
       OnClick = StopWhenInactiveCheckBoxClick
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 6
+      TabOrder = 8
     end
     object MonitorLabel: TLabel
       AnchorSideTop.Side = asrCenter
@@ -472,7 +472,7 @@ object MainForm: TMainForm
       )
       OnChange = MonitorComboBoxChange
       Style = csDropDownList
-      TabOrder = 7
+      TabOrder = 9
     end
     object PreCmdLabel: TLabel
       AnchorSideTop.Side = asrCenter
@@ -495,7 +495,7 @@ object MainForm: TMainForm
       OnChange = PreCmdEditChange
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 8
+      TabOrder = 10
     end
     object PostCmdLabel: TLabel
       AnchorSideTop.Side = asrCenter
@@ -518,7 +518,7 @@ object MainForm: TMainForm
       OnChange = PostCmdEditChange
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 9
+      TabOrder = 11
     end
     object EmptyLabel6: TLabel
       Left = 15
@@ -542,7 +542,7 @@ object MainForm: TMainForm
       ChildSizing.ControlsPerLine = 999
       ClientHeight = 30
       ClientWidth = 856
-      TabOrder = 10
+      TabOrder = 12
       object OldScreenshotCleanerEnabledCheckBox: TCheckBox
         Left = 0
         Height = 30
@@ -597,7 +597,7 @@ object MainForm: TMainForm
       Width = 856
       Caption = 'Play sounds'
       OnChange = PlaySoundsCheckBoxChange
-      TabOrder = 11
+      TabOrder = 13
     end
     object EmptyLabel8: TLabel
       Left = 15
@@ -614,7 +614,7 @@ object MainForm: TMainForm
       Width = 856
       Caption = 'Minimize to tray when close window'
       OnChange = MinimizeInsteadOfCloseCheckBoxChange
-      TabOrder = 12
+      TabOrder = 14
     end
     object EmptyLabel9: TLabel
       Left = 15
