@@ -145,7 +145,7 @@ begin
       begin
         with TButton.Create(Self) do
         begin
-          Caption := Localizer.I18N('Donate');
+          Caption := Localizer.I18N('TransferMoney');
           OnClick := @OpenDonateUrl;
           BorderSpacing.CellAlignVertical := ccaCenter;
           Parent := Self;
