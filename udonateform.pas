@@ -9,14 +9,20 @@ uses
 
 type
 
+  TDonateEntry = record
+    Title, WalletID, IconBase64, Url: String;
+  end;
+
   { TDonateForm }
 
   TDonateForm = class(TForm)
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
+    Entries: array of TDonateEntry;
     procedure CopyWalletToClipboard(ASender: TObject);
-    class procedure LoadWalletsData(ASL: TStringList); static;
+    procedure LoadData();
     class procedure OpenWebPage; static;
   public
 
@@ -75,73 +81,72 @@ end;
 
 procedure TDonateForm.FormCreate(Sender: TObject);
 var
-  Wallets: TStringList;
   I: Integer;
   IconBase64: String;
 begin
   Caption := Localizer.I18N('Donate');
 
-  Wallets := TStringList.Create;
   try
-    try
-      LoadWalletsData(Wallets);
+    LoadData();
 
-      for I := 0 to Wallets.Count - 1 do
+    for I := 0 to Length(Entries) - 1 do
+    begin
+      IconBase64 := Entries[I].IconBase64;
+      if not IconBase64.IsEmpty then
       begin
-        IconBase64 := ExtractWord(2, Wallets.ValueFromIndex[I], [#9]);
-        if not IconBase64.IsEmpty then
+        with TImage.Create(Self) do
         begin
-          with TImage.Create(Self) do
-          begin
-            Picture.LoadFromBase64(IconBase64);
-            BorderSpacing.CellAlignVertical := ccaCenter;
-            BorderSpacing.CellAlignHorizontal := {ccaCenter} ccaRightBottom;
-            Parent := Self;
-          end;
-        end
-        else
-        begin
-          // Create any dummy empty control to prevent layout broken when no icon
-          with TLabel.Create(Self) do
-          begin
-            Text := '';
-            AutoSize := True;
-            Parent := Self;
-          end;
+          Picture.LoadFromBase64(IconBase64);
+          BorderSpacing.CellAlignVertical := ccaCenter;
+          BorderSpacing.CellAlignHorizontal := {ccaCenter} ccaRightBottom;
+          Parent := Self;
         end;
-
+      end
+      else
+      begin
+        // Create any dummy empty control to prevent layout broken when no icon
         with TLabel.Create(Self) do
         begin
-          Caption := Wallets.Names[I] + ':';
-          BorderSpacing.CellAlignVertical := ccaCenter;
-          //BorderSpacing.CellAlignHorizontal := ccaRightBottom;
-          Parent := Self;
-        end;
-
-        with TEdit.Create(Self) do
-        begin
-          Width := 300;
-          Constraints.MinWidth := Width;
-          Text := ExtractWord(1, Wallets.ValueFromIndex[I], [#9]);
-          ReadOnly := True;
-          BorderSpacing.CellAlignVertical := ccaCenter;
-          Parent := Self;
-        end;
-
-        with TButton.Create(Self) do
-        begin
-          Caption := Localizer.I18N('Copy');
-          OnClick := @CopyWalletToClipboard;
-          BorderSpacing.CellAlignVertical := ccaCenter;
+          Text := '';
+          AutoSize := True;
           Parent := Self;
         end;
       end;
-    finally
-      Wallets.Free;
+
+      with TLabel.Create(Self) do
+      begin
+        Caption := Entries[I].Title + ':';
+        BorderSpacing.CellAlignVertical := ccaCenter;
+        //BorderSpacing.CellAlignHorizontal := ccaRightBottom;
+        Parent := Self;
+      end;
+
+      with TEdit.Create(Self) do
+      begin
+        Width := 300;
+        Constraints.MinWidth := Width;
+        Text := Entries[I].WalletID;
+        ReadOnly := True;
+        BorderSpacing.CellAlignVertical := ccaCenter;
+        Parent := Self;
+      end;
+
+      with TButton.Create(Self) do
+      begin
+        Caption := Localizer.I18N('Copy');
+        OnClick := @CopyWalletToClipboard;
+        BorderSpacing.CellAlignVertical := ccaCenter;
+        Parent := Self;
+      end;
     end;
   except
     // No action needed there
   end;
+end;
+
+procedure TDonateForm.FormDestroy(Sender: TObject);
+begin
+  SetLength(Entries, 0);
 end;
 
 procedure TDonateForm.FormShow(Sender: TObject);
@@ -175,7 +180,7 @@ begin
   Clipboard.AsText := Component.Text;
 end;
 
-class procedure TDonateForm.LoadWalletsData(ASL: TStringList);
+procedure TDonateForm.LoadData();
 const
   ApiUrl = 'https://api.github.com/gists/6c79ab382865da9b598927194c52eb09';
 var
@@ -184,8 +189,9 @@ var
   Str: String;
   Enumerator: TBaseJSONEnumerator;
   PaymentMethod, WalletID, IconBase64: String;
+  I: Integer = 0;
 begin
-  ASL.Clear;
+  SetLength(Entries, 0);
 
   Http := TFPHttpClient.Create(Nil);
   try
@@ -216,7 +222,13 @@ begin
             except
             end;
           end;
-          ASL.AddPair(PaymentMethod, WalletID + #9 + IconBase64);
+
+          SetLength(Entries, Length(Entries) + 1); // +1 item
+          Entries[I].Title := PaymentMethod;
+          Entries[I].WalletID := WalletID;
+          Entries[I].IconBase64 := IconBase64;
+
+          Inc(i);
         end;
       finally
         Enumerator.Free;
