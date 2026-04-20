@@ -24,6 +24,7 @@ type
     procedure CopyWalletToClipboard(ASender: TObject);
     procedure LoadData();
     class procedure OpenWebPage; static;
+    procedure OpenDonateUrl(ASender: TObject);
   public
 
   end;
@@ -82,7 +83,7 @@ end;
 procedure TDonateForm.FormCreate(Sender: TObject);
 var
   I: Integer;
-  IconBase64: String;
+  IconBase64, DonateUrl: String;
 begin
   Caption := Localizer.I18N('Donate');
 
@@ -138,6 +139,29 @@ begin
         BorderSpacing.CellAlignVertical := ccaCenter;
         Parent := Self;
       end;
+
+      DonateUrl := Entries[I].Url;
+      if not DonateUrl.IsEmpty then
+      begin
+        with TButton.Create(Self) do
+        begin
+          Caption := Localizer.I18N('Donate');
+          OnClick := @OpenDonateUrl;
+          BorderSpacing.CellAlignVertical := ccaCenter;
+          Parent := Self;
+          Name := 'OpenDonateUrlButton_' + IntToStr(I);
+        end;
+      end
+      else
+      begin
+        // Create any dummy empty control to prevent layout broken when no item
+        with TLabel.Create(Self) do
+        begin
+          Text := '';
+          AutoSize := True;
+          Parent := Self;
+        end;
+      end;
     end;
   except
     // No action needed there
@@ -188,7 +212,7 @@ var
   Json: TJSONData;
   Str: String;
   Enumerator: TBaseJSONEnumerator;
-  PaymentMethod, WalletID, IconBase64: String;
+  PaymentMethod, WalletID, IconBase64, DonateUrl: String;
   I: Integer = 0;
 begin
   SetLength(Entries, 0);
@@ -216,9 +240,13 @@ begin
             PaymentMethod := Items[0].AsString;
             WalletID      := Items[1].AsString;
             IconBase64 := '';
+            DonateUrl := '';
             try
               if Count > 2 then
+              begin
                 IconBase64 := TJSONObject(Items[2]).Get('icon', '');
+                DonateUrl     := TJSONObject(Items[2]).Get('url', '');;
+              end;
             except
             end;
           end;
@@ -227,6 +255,7 @@ begin
           Entries[I].Title := PaymentMethod;
           Entries[I].WalletID := WalletID;
           Entries[I].IconBase64 := IconBase64;
+          Entries[I].Url := DonateUrl;
 
           Inc(i);
         end;
@@ -255,6 +284,16 @@ begin
       Url := 'https://github.com/artem78/AutoScreenshot/tree/master#donate';
   end;
 
+  OpenURL(Url);
+end;
+
+procedure TDonateForm.OpenDonateUrl(ASender: TObject);
+var
+  Url: string;
+  Idx: Integer = -1;
+begin
+  Idx := StrToInt(ExtractWord(2, (ASender as TComponent).Name, ['_']));
+  Url := Entries[Idx].Url;
   OpenURL(Url);
 end;
 
