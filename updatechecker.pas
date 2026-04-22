@@ -78,7 +78,7 @@ const
 {$IFOPT D+}
     'https://eo873h2zv0emseb.m.pipedream.net/'
 {$ELSE}
-    'https://api.github.com/repos/artem78/AutoScreenshot/releases'
+    'https://api.github.com/repos/artem78/AutoScreenshot/releases?per_page=100'
 {$ENDIF}
   ;
 
@@ -171,12 +171,13 @@ var
   JsonData: TJSONData;
   JsonArrayEnum: TBaseJSONEnumerator;
   TagName: String;
-  Version: TProgramVersion;
+  Version, CurrentVersion: TProgramVersion;
   IsPreRelease: Boolean;
 begin
   LatestVersion := TProgramVersion.Create();
   DownloadUrl := '';
   ChangeLog := '';
+  CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
 
   DebugLn('Start update checking...');
 
@@ -190,7 +191,7 @@ begin
 
       JsonData := GetJSON(ResponseStr);
       try
-        JsonArrayEnum := TJSONArray(JsonData).GetEnumerator;
+        JsonArrayEnum := TJSONArray(JsonData).GetEnumerator; // from new to old
         //DebugLnEnter;
         try
           while JsonArrayEnum.MoveNext do
@@ -229,11 +230,18 @@ begin
 
             Version := TProgramVersion.Create(ExtractDelimited(1, TagName, ['-']));
             DebugLn('Version %s', [Version.ToString()]);
+            if Version > CurrentVersion then
+            begin
+              ChangeLog := ChangeLog + sLineBreak + sLineBreak
+                         + '===== ' + TagName + ' =====' + sLineBreak + sLineBreak
+                         + JsonArrayEnum.Current.Value.GetPath('body').AsString + sLineBreak + ' ' + sLineBreak;
+            end;
+
             if Version > LatestVersion then
             begin
               LatestVersion := Version;
               DownloadUrl   := JsonArrayEnum.Current.Value.GetPath('html_url').AsString;
-              ChangeLog     := JsonArrayEnum.Current.Value.GetPath('body').AsString;
+              //ChangeLog     := JsonArrayEnum.Current.Value.GetPath('body').AsString;
             end;
           end;
         finally
