@@ -279,7 +279,7 @@ end;
 
 procedure TUpdateCheckerForm.FormCreate(Sender: TObject);
 begin
-  Caption := Localizer.I18N('CheckForUpdates');
+  Caption := 'Auto Screenshot ' + #8211 + ' ' + Localizer.I18N('CheckForUpdates');
   with ButtonPanel1 do
   begin
     CloseButton.Caption  := Localizer.I18N('Close');
