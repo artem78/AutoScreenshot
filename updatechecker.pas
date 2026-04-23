@@ -82,11 +82,11 @@ type
 
 const
   ApiUrl =
-{$IFOPT D+}
-    'https://eo873h2zv0emseb.m.pipedream.net/'
-{$ELSE}
+//{$IFOPT D+}
+//    'https://eo873h2zv0emseb.m.pipedream.net/'
+//{$ELSE}
     'https://api.github.com/repos/artem78/AutoScreenshot/releases?per_page=100'
-{$ENDIF}
+//{$ENDIF}
   ;
 
 var
