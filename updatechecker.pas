@@ -245,7 +245,7 @@ begin
                 ChangeLogPart := Localizer.I18N('NoData');
 
               ChangeLog := ChangeLog
-                         + '=====   ' + TagName + '   =====' + sLineBreak + sLineBreak
+                         + '=====   ' + TagName + ' (' + ISO8601ToReadableDate(JsonArrayEnum.Current.Value.GetPath({'published_at'} 'created_at').AsString) + ')   =====' + sLineBreak + sLineBreak
                          + ChangeLogPart + sLineBreak + ' ' + sLineBreak;
             end;
 

@@ -80,6 +80,8 @@ function GetUserPicturesDir: WideString;
 function DirectoryIsEmpty(const ADir: String): Boolean;
 function ParentDirectory(const ADir: String): String;
 
+function ISO8601ToReadableDate(const AStr: string): string;
+
 implementation
 
 uses
@@ -495,6 +497,14 @@ function ParentDirectory(const ADir: String): String;
 // https://stackoverflow.com/a/30811944/4108542
 begin
    Result := ExtractFilePath(ExcludeTrailingPathDelimiter(ADir));
+end;
+
+function ISO8601ToReadableDate(const AStr: string): string; // without time
+var
+  dt: TDate;
+begin
+  dt := ISO8601ToDate(AStr);
+  Result := DateToStr(dt);
 end;
 
 {$IfDef Windows}
