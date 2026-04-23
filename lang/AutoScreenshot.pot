@@ -1,0 +1,257 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: tmainform.aboutmenuitem.caption
+msgid "About..."
+msgstr ""
+
+#: tmainform.autocapturecontrolgroup.caption
+msgid "Automatic capture"
+msgstr ""
+
+#: tmainform.autocheckforupdatesmenuitem.caption
+msgid "Auto check for updates"
+msgstr ""
+
+#: tmainform.autoruncheckbox.caption
+msgid "Run application at system startup"
+msgstr ""
+
+#: tmainform.caption
+msgid "Auto Screenshot"
+msgstr ""
+
+#: tmainform.captureintervaldatetimepicker.textfornulldate
+msgid "NULL"
+msgstr ""
+
+#: tmainform.captureintervallabel.caption
+msgid "Saving interval (h:m:s):"
+msgstr ""
+
+#: tmainform.checkforupdatesmenuitem.caption
+msgctxt "tmainform.checkforupdatesmenuitem.caption"
+msgid "Check for updates"
+msgstr ""
+
+#: tmainform.colordepthlabel.caption
+msgid "Color depth:"
+msgstr ""
+
+#: tmainform.compressionlevellabel.caption
+msgid "Compression level:"
+msgstr ""
+
+#: tmainform.donatemenuitem.caption
+msgid "Donate"
+msgstr ""
+
+#: tmainform.exitmenuitem.caption
+msgid "Exit"
+msgstr ""
+
+#: tmainform.exittraymenuitem.caption
+msgid "Quit"
+msgstr ""
+
+#: tmainform.filemenuitem.caption
+msgid "File"
+msgstr ""
+
+#: tmainform.filenametemplatehelpbutton.caption
+msgid "?"
+msgstr ""
+
+#: tmainform.filenametemplatelabel.caption
+msgid "Filename template:"
+msgstr ""
+
+#: tmainform.grayscalecheckbox.caption
+msgid "Grayscale"
+msgstr ""
+
+#: tmainform.helpsubmenu.caption
+msgid "Help"
+msgstr ""
+
+#: tmainform.homepagemenuitem.caption
+msgid "Homepage"
+msgstr ""
+
+#: tmainform.hotketssettingsmenuitem.caption
+msgid "Edit hotkeys..."
+msgstr ""
+
+#: tmainform.imageformatlabel.caption
+msgid "Format:"
+msgstr ""
+
+#: tmainform.jpegqualitylabel.caption
+msgid "Compression:"
+msgstr ""
+
+#: tmainform.jpegqualitypercentlabel.caption
+msgctxt "tmainform.jpegqualitypercentlabel.caption"
+msgid "%"
+msgstr ""
+
+#: tmainform.label1.caption
+msgid "Match:"
+msgstr ""
+
+#: tmainform.label2.caption
+msgctxt "tmainform.label2.caption"
+msgid "%"
+msgstr ""
+
+#: tmainform.languagesubmenu.caption
+msgid "Language"
+msgstr ""
+
+#: tmainform.minimizeinsteadofclosecheckbox.caption
+msgid "Minimize to tray when close window"
+msgstr ""
+
+#: tmainform.monitorlabel.caption
+msgid "Used monitor:"
+msgstr ""
+
+#: tmainform.oldscreenshotcleanerenabledcheckbox.caption
+msgid "Delete screenshots older than"
+msgstr ""
+
+#: tmainform.openoutputdirbutton.caption
+msgid "Open directory"
+msgstr ""
+
+#: tmainform.optionssubmenu.caption
+msgid "Options"
+msgstr ""
+
+#: tmainform.outputdirlabel.caption
+msgid "Saving directory:"
+msgstr ""
+
+#: tmainform.playsoundscheckbox.caption
+msgid "Play sounds"
+msgstr ""
+
+#: tmainform.postcmdlabel.caption
+msgid "Run command after:"
+msgstr ""
+
+#: tmainform.precmdlabel.caption
+msgid "Run command before:"
+msgstr ""
+
+#: tmainform.restorewindowtraymenuitem.caption
+msgid "Restore"
+msgstr ""
+
+#: tmainform.seqnumberdigitscountlabel.caption
+msgid "Digits:"
+msgstr ""
+
+#: tmainform.seqnumbergroup.caption
+msgid "Sequential number"
+msgstr ""
+
+#: tmainform.seqnumbervaluelabel.caption
+msgid "Next value:"
+msgstr ""
+
+#: tmainform.skipsimilarcheckbox.caption
+msgid "Skip similar"
+msgstr ""
+
+#: tmainform.startautocapturebutton.caption
+msgid "Enable"
+msgstr ""
+
+#: tmainform.startcaptureonstartupcheckbox.caption
+msgid "Start auto capture when program starts"
+msgstr ""
+
+#: tmainform.startminimizedcheckbox.caption
+msgid "Start minimized to tray"
+msgstr ""
+
+#: tmainform.stopautocapturebutton.caption
+msgid "Disable"
+msgstr ""
+
+#: tmainform.stopwheninactivecheckbox.caption
+msgid "Pause taking screenshots while idle"
+msgstr ""
+
+#: tmainform.takescreenshotbutton.caption
+msgctxt "tmainform.takescreenshotbutton.caption"
+msgid "Take screenshot"
+msgstr ""
+
+#: tmainform.takescreenshottraymenuitem.caption
+msgctxt "tmainform.takescreenshottraymenuitem.caption"
+msgid "Take screenshot"
+msgstr ""
+
+#: tmainform.toggleautocapturetraymenuitem.caption
+msgid "Enable automatic capture"
+msgstr ""
+
+#: tupdatecheckerform.askdownloadupdatelabel.caption
+msgctxt "tupdatecheckerform.askdownloadupdatelabel.caption"
+msgid "Open web page for download?"
+msgstr ""
+
+#: tupdatecheckerform.changeloglabel.caption
+msgid "Changelog:"
+msgstr ""
+
+#: tupdatecheckerform.changelogpanel.caption
+msgid "ChangeLogPanel"
+msgstr ""
+
+#: tupdatecheckerform.msglabel.caption
+msgctxt "tupdatecheckerform.msglabel.caption"
+msgid "Checking for updates, please wait..."
+msgstr ""
+
+#: updatechecker.rscheckforupdates
+msgctxt "updatechecker.rscheckforupdates"
+msgid "Check for updates"
+msgstr ""
+
+#: updatechecker.rscheckingforupdates
+msgctxt "updatechecker.rscheckingforupdates"
+msgid "Checking for updates, please wait..."
+msgstr ""
+
+#: updatechecker.rsclose
+msgid "Close"
+msgstr ""
+
+#: updatechecker.rsno
+msgid "No"
+msgstr ""
+
+#: updatechecker.rsnodata
+msgid "(empty)"
+msgstr ""
+
+#: updatechecker.rsnoupdatesfound
+msgid "No updates found. You have latest version."
+msgstr ""
+
+#: updatechecker.rsupdatecheckfailed
+msgid "Failed checking for updates"
+msgstr ""
+
+#: updatechecker.rsupdatefound
+#, object-pascal-format
+msgid "Version %s is available! Current version: %s."
+msgstr ""
+
+#: updatechecker.rsyes
+msgid "Yes"
+msgstr ""
+

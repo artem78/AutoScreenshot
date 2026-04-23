@@ -17,7 +17,7 @@ type
   TUpdateCheckerForm = class(TForm)
     ChangeLogMemo: TMemo;
     ChangeLogLabel: TLabel;
-    ChangeLogLabelBottom: TLabel;
+    AskDownloadUpdateLabel: TLabel;
     MsgLabel: TLabel;
     ChangeLogPanel: TPanel;
     MainPanel: TPanel;
@@ -45,7 +45,7 @@ implementation
 
 uses
   Controls, Graphics, Dialogs,
-  uLocalization, uUtils, umainform, LCLIntf, LazLoggerBase,
+  uUtils, umainform, LCLIntf, LCLTranslator, LazLoggerBase,
   fphttpclient, opensslsockets, fpjson, jsonparser, StrUtils;
 
 {$R *.lfm}
@@ -88,6 +88,20 @@ const
     'https://api.github.com/repos/artem78/AutoScreenshot/releases?per_page=100'
 //{$ENDIF}
   ;
+
+resourcestring
+  RSNoUpdatesFound = 'No updates found. You have latest version.';
+  RSUpdateFound = 'Version %s is available! Current version: %s.';
+  //RSAskDownloadUpdate = 'Open web page for download?';
+  RSUpdateCheckFailed = 'Failed checking for updates';
+  RSCheckingForUpdates = 'Checking for updates, please wait...';
+  RSCheckForUpdates = 'Check for updates';
+  RSNoData = '(empty)';
+  //RSChangelog = 'Changelog';
+
+  RSClose = 'Close';
+  RSYes = 'Yes';
+  RSNo = 'No';
 
 var
   UpdateCheckerForm: TUpdateCheckerForm;
@@ -242,7 +256,7 @@ begin
             begin
               ChangeLogPart := Trim(JsonArrayEnum.Current.Value.GetPath('body').AsString);
               if ChangeLogPart.IsEmpty then
-                ChangeLogPart := Localizer.I18N('NoData');
+                ChangeLogPart := RSNoData;
 
               ChangeLog := ChangeLog
                          + '=====   ' + TagName + ' (' + ISO8601ToReadableDate(JsonArrayEnum.Current.Value.GetPath({'published_at'} 'created_at').AsString) + ')   =====' + sLineBreak + sLineBreak
@@ -299,16 +313,18 @@ end;
 
 procedure TUpdateCheckerForm.FormCreate(Sender: TObject);
 begin
-  Caption := 'Auto Screenshot ' + #8211 + ' ' + Localizer.I18N('CheckForUpdates');
+  SetDefaultLang('ru', 'lang');
+
+  Caption := 'Auto Screenshot ' + #8211 + ' ' + RSCheckForUpdates;
   with ButtonPanel1 do
   begin
-    CloseButton.Caption  := Localizer.I18N('Close');
-    OKButton.Caption     := Localizer.I18N('Yes');
-    CancelButton.Caption := Localizer.I18N('No');
+    CloseButton.Caption  := RSClose;
+    OKButton.Caption     := RSYes;
+    CancelButton.Caption := RSNo;
   end;
   State := ufsHidden;
-  ChangeLogLabel.Caption := Localizer.I18N('Changelog') + ':';
-  ChangeLogLabelBottom.Caption := Localizer.I18N('AskDownloadUpdate');
+  //ChangeLogLabel.Caption := RSChangelog + ':';
+  //AskDownloadUpdateLabel.Caption := RSAskDownloadUpdate;
 end;
 
 procedure TUpdateCheckerForm.CancelButtonClick(Sender: TObject);
@@ -345,7 +361,7 @@ begin
     case FState of
       ufsFetchingData:
         begin
-          Msg.Append(Localizer.I18N('CheckingForUpdates'));
+          Msg.Append(RSCheckingForUpdates);
 
           ChangeLogPanel.Hide;
           ButtonPanel1.Hide;
@@ -353,7 +369,7 @@ begin
 
       ufsNoUpdates:
         begin
-          Msg.Append(Localizer.I18N('NoUpdatesFound'));
+          Msg.Append(RSNoUpdatesFound);
 
           ChangeLogPanel.Hide;
           ButtonPanel1.ShowButtons := [pbClose];
@@ -363,7 +379,7 @@ begin
       ufsHasUpdates:
         begin
           CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
-          Msg.AppendFormat(Localizer.I18N('UpdateFound'),
+          Msg.AppendFormat(RSUpdateFound,
                    [LatestVersion.ToString(True), CurrentVersion.ToString(True)])
              .AppendLine
              // Fix for GTK2 - https://forum.lazarus.freepascal.org/index.php/topic,63451.0.html
@@ -382,7 +398,7 @@ begin
 
       ufsError:
         begin
-          Msg.AppendLine(Localizer.I18N('UpdateCheckFailed'));
+          Msg.AppendLine(RSUpdateCheckFailed);
           if not ErrorMsg.IsEmpty then
           begin
              Msg.AppendLine{$If defined(Linux) and defined(LCLGTK2)}(' '){$EndIf}

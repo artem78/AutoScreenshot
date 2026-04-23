@@ -1,0 +1,6 @@
+{"version":1,"strings":[
+{"hash":230080222,"name":"tupdatecheckerform.msglabel.caption","sourcebytes":[67,104,101,99,107,105,110,103,32,102,111,114,32,117,112,100,97,116,101,115,44,32,112,108,101,97,115,101,32,119,97,105,116,46,46,46],"value":"Checking for updates, please wait..."},
+{"hash":188922492,"name":"tupdatecheckerform.changelogpanel.caption","sourcebytes":[67,104,97,110,103,101,76,111,103,80,97,110,101,108],"value":"ChangeLogPanel"},
+{"hash":81840938,"name":"tupdatecheckerform.changeloglabel.caption","sourcebytes":[67,104,97,110,103,101,108,111,103,58],"value":"Changelog:"},
+{"hash":106391135,"name":"tupdatecheckerform.askdownloadupdatelabel.caption","sourcebytes":[79,112,101,110,32,119,101,98,32,112,97,103,101,32,102,111,114,32,100,111,119,110,108,111,97,100,63],"value":"Open web page for download?"}
+]}

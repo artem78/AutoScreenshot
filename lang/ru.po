@@ -1,0 +1,69 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: artem78 <megabyte1024@ya.ru>\n"
+"Language-Team: \n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: tupdatecheckerform.askdownloadupdatelabel.caption
+msgctxt "tupdatecheckerform.askdownloadupdatelabel.caption"
+msgid "Open web page for download?"
+msgstr "Перейти на сайт для загрузки?"
+
+#: tupdatecheckerform.changeloglabel.caption
+msgid "Changelog:"
+msgstr "Журнал изменений:"
+
+#: tupdatecheckerform.changelogpanel.caption
+msgid "ChangeLogPanel"
+msgstr ""
+
+#: tupdatecheckerform.msglabel.caption
+msgctxt "tupdatecheckerform.msglabel.caption"
+msgid "Checking for updates, please wait..."
+msgstr "Выполняется проверка наличия обновлений, подождите..."
+
+#: updatechecker.rscheckforupdates
+msgid "Check for updates"
+msgstr "Проверка обновлений"
+
+#: updatechecker.rscheckingforupdates
+msgctxt "updatechecker.rscheckingforupdates"
+msgid "Checking for updates, please wait..."
+msgstr "Выполняется проверка наличия обновлений, подождите..."
+
+#: updatechecker.rsclose
+msgid "Close"
+msgstr "Закрыть"
+
+#: updatechecker.rsno
+msgid "No"
+msgstr "Нет"
+
+#: updatechecker.rsnodata
+msgid "(empty)"
+msgstr "(нет данных)"
+
+#: updatechecker.rsnoupdatesfound
+msgid "No updates found. You have latest version."
+msgstr "Обновлений не найдено. У вас установлена самая последняя версия программы."
+
+#: updatechecker.rsupdatecheckfailed
+msgid "Failed checking for updates"
+msgstr "Ошибка проверки обновлений"
+
+#: updatechecker.rsupdatefound
+#, object-pascal-format
+msgid "Version %s is available! Current version: %s."
+msgstr "Доступна новая версия %s! Текущая: %s."
+
+#: updatechecker.rsyes
+msgid "Yes"
+msgstr "Да"

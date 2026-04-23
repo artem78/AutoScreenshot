@@ -35,7 +35,7 @@ object UpdateCheckerForm: TUpdateCheckerForm
       Height = 16
       Top = 0
       Width = 300
-      Caption = 'Checking for updates...'
+      Caption = 'Checking for updates, please wait...'
       Constraints.MinWidth = 300
       ParentColor = False
       WordWrap = True
@@ -81,13 +81,13 @@ object UpdateCheckerForm: TUpdateCheckerForm
         ScrollBars = ssVertical
         TabOrder = 0
       end
-      object ChangeLogLabelBottom: TLabel
+      object AskDownloadUpdateLabel: TLabel
         Left = 0
         Height = 16
         Top = 337
         Width = 500
         BorderSpacing.Top = 15
-        Caption = 'ChangeLogLabelBottom'
+        Caption = 'Open web page for download?'
         ParentColor = False
       end
     end
