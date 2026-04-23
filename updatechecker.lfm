@@ -1,8 +1,8 @@
 object UpdateCheckerForm: TUpdateCheckerForm
   Left = 347
-  Height = 150
+  Height = 395
   Top = 250
-  Width = 306
+  Width = 421
   AutoSize = True
   BorderIcons = []
   BorderStyle = bsDialog
@@ -12,38 +12,93 @@ object UpdateCheckerForm: TUpdateCheckerForm
   ChildSizing.VerticalSpacing = 6
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 1
-  ClientHeight = 150
-  ClientWidth = 306
-  Constraints.MaxWidth = 500
+  ClientHeight = 395
+  ClientWidth = 421
+  Constraints.MinWidth = 400
   OnCreate = FormCreate
+  OnResize = FormResize
   Position = poOwnerFormCenter
   LCLVersion = '2.2.4.0'
-  object MsgLabel: TLabel
+  object MainPanel: TPanel
     Left = 15
-    Height = 15
+    Height = 302
     Top = 15
-    Width = 300
-    Caption = 'Checking for updates...'
-    Constraints.MinWidth = 300
-    ParentColor = False
-    WordWrap = True
-  end
-  object ProgressBar: TProgressBar
-    Left = 15
-    Height = 20
-    Top = 36
-    Width = 300
-    Style = pbstMarquee
-    TabOrder = 0
+    Width = 391
+    Align = alClient
+    AutoSize = True
+    BevelOuter = bvNone
+    ClientHeight = 302
+    ClientWidth = 391
+    TabOrder = 1
+    object MsgLabel: TLabel
+      Left = 0
+      Height = 16
+      Top = 0
+      Width = 300
+      Caption = 'Checking for updates...'
+      Constraints.MinWidth = 300
+      ParentColor = False
+      WordWrap = True
+    end
+    object ProgressBar: TProgressBar
+      Left = 0
+      Height = 20
+      Top = 22
+      Width = 500
+      Style = pbstMarquee
+      TabOrder = 0
+    end
+    object ChangeLogPanel: TPanel
+      Left = 0
+      Height = 353
+      Top = 48
+      Width = 500
+      AutoSize = True
+      BevelOuter = bvNone
+      Caption = 'ChangeLogPanel'
+      ChildSizing.VerticalSpacing = 6
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 1
+      ClientHeight = 353
+      ClientWidth = 500
+      TabOrder = 1
+      object ChangeLogLabel: TLabel
+        Left = 0
+        Height = 16
+        Top = 0
+        Width = 500
+        Caption = 'Changelog:'
+        ParentColor = False
+      end
+      object ChangeLogMemo: TMemo
+        Left = 0
+        Height = 300
+        Top = 22
+        Width = 500
+        Constraints.MinHeight = 300
+        Constraints.MinWidth = 500
+        ReadOnly = True
+        ScrollBars = ssVertical
+        TabOrder = 0
+      end
+      object ChangeLogLabelBottom: TLabel
+        Left = 0
+        Height = 16
+        Top = 337
+        Width = 500
+        BorderSpacing.Top = 15
+        Caption = 'ChangeLogLabelBottom'
+        ParentColor = False
+      end
+    end
   end
   object ButtonPanel1: TButtonPanel
-    AnchorSideTop.Control = MsgLabel
+    AnchorSideTop.Control = ChangeLogPanel
     AnchorSideTop.Side = asrBottom
     Left = 15
-    Height = 84
-    Top = 51
-    Width = 276
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Height = 42
+    Top = 338
+    Width = 391
     BorderSpacing.Top = 15
     OKButton.Name = 'OKButton'
     OKButton.DefaultCaption = True
@@ -55,7 +110,7 @@ object UpdateCheckerForm: TUpdateCheckerForm
     CancelButton.Name = 'CancelButton'
     CancelButton.DefaultCaption = True
     CancelButton.OnClick = CancelButtonClick
-    TabOrder = 1
+    TabOrder = 0
     ShowButtons = [pbOK, pbCancel, pbClose]
     ShowGlyphs = [pbOK, pbCancel]
   end
