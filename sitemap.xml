@@ -6,42 +6,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://artem78.github.io/AutoScreenshot/</loc>
-<lastmod>2026-04-25T22:36:43-00:00</lastmod>
+<lastmod>2026-04-28T16:21:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://artem78.github.io/AutoScreenshot/archives.html</loc>
-<lastmod>2026-04-25T22:36:43-00:00</lastmod>
+<lastmod>2026-04-28T16:21:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://artem78.github.io/AutoScreenshot/author/artem-demin.html</loc>
-<lastmod>2026-04-25T22:36:43-00:00</lastmod>
+<lastmod>2026-04-28T16:21:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://artem78.github.io/AutoScreenshot/authors.html</loc>
-<lastmod>2026-04-25T22:36:43-00:00</lastmod>
+<lastmod>2026-04-28T16:21:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://artem78.github.io/AutoScreenshot/categories.html</loc>
-<lastmod>2026-04-25T22:36:43-00:00</lastmod>
+<lastmod>2026-04-28T16:21:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://artem78.github.io/AutoScreenshot/category/news.html</loc>
-<lastmod>2026-04-25T22:36:43-00:00</lastmod>
+<lastmod>2026-04-28T16:21:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -55,7 +55,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://artem78.github.io/AutoScreenshot/pages/download.html</loc>
-<lastmod>2025-11-20T10:48:00+03:00</lastmod>
+<lastmod>2026-04-28T16:10:00+03:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -90,7 +90,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://artem78.github.io/AutoScreenshot/tags.html</loc>
-<lastmod>2026-04-25T22:36:43-00:00</lastmod>
+<lastmod>2026-04-28T16:21:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -119,6 +119,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://artem78.github.io/AutoScreenshot/version-120-released.html</loc>
 <lastmod>2025-11-20T10:48:00+03:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://artem78.github.io/AutoScreenshot/version-121-released.html</loc>
+<lastmod>2026-04-28T16:00:00+03:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
