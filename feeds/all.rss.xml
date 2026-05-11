@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Auto Screenshot</title><link>https://artem78.github.io/AutoScreenshot/</link><description/><atom:link href="https://artem78.github.io/AutoScreenshot/feeds/all.rss.xml" rel="self"/><lastBuildDate>Fri, 08 May 2026 16:00:00 +0300</lastBuildDate><item><title>Version 1.22.1 released</title><link>https://artem78.github.io/AutoScreenshot/version-1221-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Updated italian translation&lt;/li&gt;
+&lt;li&gt;Updated russian translation (key names)&lt;/li&gt;
+&lt;li&gt;Fixed program data files deletion in uninstaller&lt;/li&gt;
+&lt;li&gt;Added program version to window title&lt;/li&gt;
+&lt;li&gt;Fixed output directory text moved left (issue #67)&lt;/li&gt;
+&lt;li&gt;Updated Readme&lt;/li&gt;
+&lt;/ul&gt;</description><pubDate>Fri, 08 May 2026 16:00:00 +0300</pubDate><guid>tag:artem78.github.io,2026-05-08:/AutoScreenshot/version-1221-released.html</guid><category>News</category></item><item><title>Version 1.22 released</title><link>https://artem78.github.io/AutoScreenshot/version-122-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added show different tray icon when autocapture paused due to user inactivity&lt;/li&gt;
+&lt;li&gt;Added show remaining time to the next automatic shot in tray icon hint&lt;/li&gt;
+&lt;li&gt;Added 64-bit build for Windows&lt;/li&gt;
+&lt;/ul&gt;</description><pubDate>Thu, 07 May 2026 16:00:00 +0300</pubDate><guid>tag:artem78.github.io,2026-05-07:/AutoScreenshot/version-122-released.html</guid><category>News</category></item><item><title>Version 1.21 released</title><link>https://artem78.github.io/AutoScreenshot/version-121-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added program title in the update window (issue #45)&lt;/li&gt;
+&lt;li&gt;Improved change log in update window&lt;/li&gt;
+&lt;li&gt;Added remaining time indicator for next automatic shot&lt;/li&gt;
+&lt;li&gt;Added show hint when automatic capture paused due to user inactivity&lt;/li&gt;
+&lt;/ul&gt;</description><pubDate>Tue, 28 Apr 2026 16:00:00 +0300</pubDate><guid>tag:artem78.github.io,2026-04-28:/AutoScreenshot/version-121-released.html</guid><category>News</category></item><item><title>Version 1.20 released</title><link>https://artem78.github.io/AutoScreenshot/version-120-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Some fixes saving in avif format for Windows&lt;/li&gt;
+&lt;/ul&gt;</description><pubDate>Thu, 20 Nov 2025 10:48:00 +0300</pubDate><guid>tag:artem78.github.io,2025-11-20:/AutoScreenshot/version-120-released.html</guid><category>News</category></item><item><title>Version 1.19 released</title><link>https://artem78.github.io/AutoScreenshot/version-119-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added option for skip similar screenshot with adjustable match percent (issue #53)&lt;/li&gt;
+&lt;/ul&gt;</description><pubDate>Sat, 15 Nov 2025 11:05:00 +0300</pubDate><guid>tag:artem78.github.io,2025-11-15:/AutoScreenshot/version-119-released.html</guid><category>News</category></item><item><title>Version 1.18 released</title><link>https://artem78.github.io/AutoScreenshot/version-118-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added custom command execution before screenshot taken&lt;/li&gt;
+&lt;/ul&gt;</description><pubDate>Thu, 13 Nov 2025 22:17:00 +0300</pubDate><guid>tag:artem78.github.io,2025-11-13:/AutoScreenshot/version-118-released.html</guid><category>News</category></item><item><title>Version 1.17 released</title><link>https://artem78.github.io/AutoScreenshot/version-117-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added support for WebP and AVIF image formats (issue #51)&lt;/li&gt;
+&lt;/ul&gt;</description><pubDate>Tue, 21 Oct 2025 21:49:00 +0300</pubDate><guid>tag:artem78.github.io,2025-10-21:/AutoScreenshot/version-117-released.html</guid><category>News</category></item></channel></rss>
