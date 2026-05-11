@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Auto Screenshot - News</title><link href="https://artem78.github.io/AutoScreenshot/" rel="alternate"/><link href="https://artem78.github.io/AutoScreenshot/feeds/news.atom.xml" rel="self"/><id>https://artem78.github.io/AutoScreenshot/</id><updated>2026-05-08T16:00:00+03:00</updated><entry><title>Version 1.22.1 released</title><link href="https://artem78.github.io/AutoScreenshot/version-1221-released.html" rel="alternate"/><published>2026-05-08T16:00:00+03:00</published><updated>2026-05-08T16:00:00+03:00</updated><author><name/></author><id>tag:artem78.github.io,2026-05-08:/AutoScreenshot/version-1221-released.html</id><content type="html">&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Updated italian translation&lt;/li&gt;
+&lt;li&gt;Updated russian translation (key names)&lt;/li&gt;
+&lt;li&gt;Fixed program data files deletion in uninstaller&lt;/li&gt;
+&lt;li&gt;Added program version to window title&lt;/li&gt;
+&lt;li&gt;Fixed output directory text moved left (issue #67)&lt;/li&gt;
+&lt;li&gt;Updated Readme&lt;/li&gt;
+&lt;/ul&gt;</content><category term="News"/></entry><entry><title>Version 1.22 released</title><link href="https://artem78.github.io/AutoScreenshot/version-122-released.html" rel="alternate"/><published>2026-05-07T16:00:00+03:00</published><updated>2026-05-07T16:00:00+03:00</updated><author><name/></author><id>tag:artem78.github.io,2026-05-07:/AutoScreenshot/version-122-released.html</id><content type="html">&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added show different tray icon when autocapture paused due to user inactivity&lt;/li&gt;
+&lt;li&gt;Added show remaining time to the next automatic shot in tray icon hint&lt;/li&gt;
+&lt;li&gt;Added 64-bit build for Windows&lt;/li&gt;
+&lt;/ul&gt;</content><category term="News"/></entry><entry><title>Version 1.21 released</title><link href="https://artem78.github.io/AutoScreenshot/version-121-released.html" rel="alternate"/><published>2026-04-28T16:00:00+03:00</published><updated>2026-04-28T16:00:00+03:00</updated><author><name/></author><id>tag:artem78.github.io,2026-04-28:/AutoScreenshot/version-121-released.html</id><content type="html">&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added program title in the update window (issue #45)&lt;/li&gt;
+&lt;li&gt;Improved change log in update window&lt;/li&gt;
+&lt;li&gt;Added remaining time indicator for next automatic shot&lt;/li&gt;
+&lt;li&gt;Added show hint when automatic capture paused due to user inactivity&lt;/li&gt;
+&lt;/ul&gt;</content><category term="News"/></entry><entry><title>Version 1.20 released</title><link href="https://artem78.github.io/AutoScreenshot/version-120-released.html" rel="alternate"/><published>2025-11-20T10:48:00+03:00</published><updated>2025-11-20T10:48:00+03:00</updated><author><name/></author><id>tag:artem78.github.io,2025-11-20:/AutoScreenshot/version-120-released.html</id><content type="html">&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Some fixes saving in avif format for Windows&lt;/li&gt;
+&lt;/ul&gt;</content><category term="News"/></entry><entry><title>Version 1.19 released</title><link href="https://artem78.github.io/AutoScreenshot/version-119-released.html" rel="alternate"/><published>2025-11-15T11:05:00+03:00</published><updated>2025-11-15T11:05:00+03:00</updated><author><name/></author><id>tag:artem78.github.io,2025-11-15:/AutoScreenshot/version-119-released.html</id><content type="html">&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added option for skip similar screenshot with adjustable match percent (issue #53)&lt;/li&gt;
+&lt;/ul&gt;</content><category term="News"/></entry><entry><title>Version 1.18 released</title><link href="https://artem78.github.io/AutoScreenshot/version-118-released.html" rel="alternate"/><published>2025-11-13T22:17:00+03:00</published><updated>2025-11-13T22:17:00+03:00</updated><author><name/></author><id>tag:artem78.github.io,2025-11-13:/AutoScreenshot/version-118-released.html</id><content type="html">&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added custom command execution before screenshot taken&lt;/li&gt;
+&lt;/ul&gt;</content><category term="News"/></entry><entry><title>Version 1.17 released</title><link href="https://artem78.github.io/AutoScreenshot/version-117-released.html" rel="alternate"/><published>2025-10-21T21:49:00+03:00</published><updated>2025-10-21T21:49:00+03:00</updated><author><name/></author><id>tag:artem78.github.io,2025-10-21:/AutoScreenshot/version-117-released.html</id><content type="html">&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added support for WebP and AVIF image formats (issue #51)&lt;/li&gt;
+&lt;/ul&gt;</content><category term="News"/></entry></feed>
