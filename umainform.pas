@@ -32,9 +32,11 @@ type
     EmptyLabel7: TLabel;
     EmptyLabel8: TLabel;
     EmptyLabel9: TLabel;
+    BannerImage: TImage;
     Label1: TLabel;
     Label2: TLabel;
     HelpWithTranslationMenuItem: TMenuItem;
+    BannerPanel: TPanel;
     ReportIssueMenuItem: TMenuItem;
     SkipSimilarPanel: TPanel;
     SkipSimilarCheckBox: TCheckBox;
@@ -115,6 +117,7 @@ type
     SeqNumberDigitsCountLabel: TLabel;
     UniqueInstance1: TUniqueInstance;
     procedure AutoCaptureUpdaterTimerTimer(Sender: TObject);
+    procedure BannerImageClick(Sender: TObject);
     procedure CheckForUpdatesMenuItemClick(Sender: TObject);
     procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure CompressionLevelComboBoxChange(Sender: TObject);
@@ -278,6 +281,7 @@ type
 
     procedure UpdateStatusBarAndTrayIconText;
     procedure ShowNotificationInStatusBar(AMsg: string);
+    procedure InitBanner;
 
 
     { Properties }
@@ -334,7 +338,7 @@ var
 
 implementation
 
-uses uAbout, DateUtils, StrUtils, uUtils, Math,
+uses uAbout, DateUtils, StrUtils, uUtils, Math, fphttpclient, opensslsockets,
   uFileNameTemplateHelpForm, uIniHelper, UpdateChecker, FileUtil, LCLType, Idle,
   uDonateForm, LazLogger;
 
@@ -437,6 +441,8 @@ begin
     to prevent directory name be moved and truncated
     https://github.com/artem78/AutoScreenshot/issues/67 }
   ActiveControl:=AutoCaptureControlGroup;
+
+  InitBanner;
 end;
 
 procedure TMainForm.ReadSettings;
@@ -737,6 +743,13 @@ begin
   // reset update interval to defaut value
   if (Sender as TTimer).Interval <> DefaultTimeout then
     (Sender as TTimer).Interval := DefaultTimeout;
+end;
+
+procedure TMainForm.BannerImageClick(Sender: TObject);
+const
+  GotoURL = 'http://example.com';
+begin
+  OpenURL(GotoURL);
 end;
 
 procedure TMainForm.AutoCheckForUpdatesMenuItemClick(Sender: TObject);
@@ -2236,6 +2249,28 @@ procedure TMainForm.ShowNotificationInStatusBar(AMsg: string);
 begin
   StatusBar1.SimpleText:=amsg;
   AutoCaptureUpdaterTimer.Interval:=3000; // prevent immediately text rewrite by timer
+end;
+
+procedure TMainForm.InitBanner;
+const
+  ImgURL = {'https://placehold.co/728x90/png'}
+    'https://i.ibb.co/TBT9mMSD/ezgif-com-animated-gif-maker.gif';
+var
+  MS : TMemoryStream;
+begin
+  ms := TMemoryStream.Create;
+  try
+    try
+      TFPHTTPClient.SimpleGet(ImgURL, ms);
+      ms.Position:=0;
+      BannerImage.Picture.LoadFromStream(ms);
+
+      BannerPanel.Visible:=true;
+    finally
+      ms.Free;
+    end;
+  except
+  end;
 end;
 
 {$IfDef Windows}

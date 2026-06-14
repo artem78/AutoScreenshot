@@ -15,10 +15,38 @@ object MainForm: TMainForm
   OnDestroy = FormDestroy
   Position = poScreenCenter
   LCLVersion = '2.2.4.0'
+  object BannerPanel: TPanel
+    Left = 0
+    Height = 102
+    Top = 0
+    Width = 723
+    Align = alTop
+    AutoSize = True
+    BevelOuter = bvNone
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.TopBottomSpacing = 6
+    ChildSizing.HorizontalSpacing = 6
+    ChildSizing.VerticalSpacing = 6
+    ClientHeight = 102
+    ClientWidth = 723
+    TabOrder = 3
+    Visible = False
+    object BannerImage: TImage
+      AnchorSideLeft.Control = BannerPanel
+      AnchorSideLeft.Side = asrCenter
+      Cursor = crHandPoint
+      Left = -3
+      Height = 90
+      Top = 6
+      Width = 728
+      Center = True
+      OnClick = BannerImageClick
+    end
+  end
   object SettingsPanel: TPanel
     Left = 0
-    Height = 542
-    Top = 0
+    Height = 440
+    Top = 102
     Width = 723
     Align = alClient
     BevelOuter = bvNone
@@ -28,7 +56,7 @@ object MainForm: TMainForm
     ChildSizing.VerticalSpacing = 6
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 2
-    ClientHeight = 542
+    ClientHeight = 440
     ClientWidth = 723
     TabOrder = 0
     object OutputDirLabel: TLabel
