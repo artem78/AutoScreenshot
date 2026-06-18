@@ -117,6 +117,11 @@ Artem78 (email: [megabyte1024@ya.ru](mailto:megabyte1024@ya.ru?subject=AutoScree
 - Sberbank card: 5469 4009 8490 5476
 - ЮMoney (yoomoney): [4100 1195 0619 6001](https://yoomoney.ru/to/4100119506196001)
 
+### Sponsors
+| Date      | Name          | Amount |
+|-----------|---------------|--------|
+| oct. 2021 | Jonas Herdick | 45 EUR |
+
 ## Links
 - [Auto Screenshot website](https://artem78.github.io/AutoScreenshot/)
 - [Auto Screenshot - Translation files on Transiflex](https://app.transifex.com/--334/autoscreenshot/dashboard/)
