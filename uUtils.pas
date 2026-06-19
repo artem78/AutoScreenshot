@@ -85,6 +85,8 @@ function ISO8601ToReadableDate(const AStr: string): string;
 // 3723 => 01:02:03
 function SecondsToHMS(ASecs: Integer): string;
 
+function AddCustomParamsToUrl(const AUrl: String): string;
+
 implementation
 
 uses
@@ -517,6 +519,11 @@ begin
   DT := IncSecond(Now, ASecs);
   TDiff:=DT-Now;
   Result:=TimeToStr(TDiff);
+end;
+
+function AddCustomParamsToUrl(const AUrl: String): string;
+begin
+  Result := AUrl + '?fromApp=' + GetProgramVersionStr;
 end;
 
 {$IfDef Windows}

@@ -773,7 +773,7 @@ end;
 
 procedure TMainForm.HomePageMenuItemClick(Sender: TObject);
 begin
-  OpenURL('https://artem78.github.io/AutoScreenshot/?fromApp');
+  OpenURL(AddCustomParamsToUrl('https://artem78.github.io/AutoScreenshot/'));
 end;
 
 procedure TMainForm.ReportIssueMenuItemClick(Sender: TObject);
