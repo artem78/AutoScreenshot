@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+**NOTE: Write issue text only in English! No Chinese, Arabic, etc... please.**
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
