@@ -87,11 +87,13 @@ function SecondsToHMS(ASecs: Integer): string;
 
 function AddCustomParamsToUrl(const AUrl: String): string;
 
+function OSInfo: string;
+
 implementation
 
 uses
   {$IfDef Windows}
-  WinDirs {???}, Registry,
+  WinDirs {???}, Registry, Win32Proc,
   {$EndIf}
   {$IfDef Linux}
   Unix, LazUTF8, LazFileUtils,
@@ -524,6 +526,71 @@ end;
 function AddCustomParamsToUrl(const AUrl: String): string;
 begin
   Result := AUrl + '?fromApp=' + GetProgramVersionStr;
+end;
+
+function OSInfo: string;
+{$IfDef Windows}
+  function WindowsVersionName: string;
+  begin
+    case WindowsVersion of
+      wv95:     Result:= 'Windows 95';
+      wvNT4:    Result:= 'Windows NT v.4';
+      wv98:     Result:= 'Windows 98';
+      wvMe:     Result:= 'Windows Me';
+      wv2000:   Result:= 'Windows 2000';
+      wvXP:     Result:= 'Windows XP';
+      wvServer2003: Result:= 'Windows Server 2003';
+      wvVista:  Result:= 'Windows Vista';
+      wv7:      Result:= 'Windows 7';
+      wv8:      Result:= 'Windows 8';
+      wv8_1:    Result:= 'Windows 8.1';
+      wv10:     Result:= 'Windows 10';
+      wv11:     Result:= 'Windows 11';
+      else      Result:= '?';
+      //See possible values in the unit "win32proc" in "lcl/interfaces/win32/win32proc.pp"
+    end;
+  end.
+{$EndIf}
+{$IfDef Linux}
+Var P: TProcess;
+
+  Function ExecParam(Param: String): String;
+  Begin
+    P.Parameters[0]:= '-' + Param;
+    P.Execute;
+    SetLength(Result, 1000);
+    SetLength(Result, P.Output.Read(Result[1], Length(Result)));
+    While (Length(Result) > 0) And (Result[Length(Result)] In [#8..#13,#32]) Do
+      SetLength(Result, Length(Result) - 1);
+  End;
+{$EndIf}
+begin
+{$IfDef Windows}
+   Result := format('%s (%d.%d build %d %s)', [WindowsVersionName(), Win32MajorVersion,
+                             Win32MinorVersion, Win32BuildNumber, Win32CSDVersion]);
+{$EndIf}
+{$IfDef Linux}
+  P:= TProcess.Create(Nil);
+  try
+    P.Options:= [poWaitOnExit, poUsePipes];
+    P.Executable:= 'uname';
+    P.Parameters.Add('');
+    {WriteLn('Operating System: ', ExecParam('o'));
+    WriteLn('Kernel Name: ', ExecParam('s'));
+    WriteLn('Kernel Release: ', ExecParam('r'));
+    WriteLn('Kernel Version: ', ExecParam('v'));
+    WriteLn('Network Node: ', ExecParam('n'));
+    WriteLn('Architecture: ', ExecParam('m'));}
+
+    Result := Format('%s (%s %s %s %s)', [ExecParam('o'), ExecParam('s'),
+                ExecParam('r'), ExecParam('v'), ExecParam('m')]);
+
+  finally
+    P.Free;
+  end;
+
+{$EndIf}
+
 end;
 
 {$IfDef Windows}

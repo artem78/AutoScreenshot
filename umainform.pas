@@ -667,6 +667,7 @@ begin
 
   DebugLn('Program started at ', DateTimeToStr(Now));
   DebugLn('Version: ', GetProgramVersionStr);
+  DebugLn('OS:', OSInfo);
   DebugLn('Initializing...');
 
   //if FindCmdLineSwitch('autorun') then
