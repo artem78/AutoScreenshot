@@ -619,6 +619,26 @@ begin
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
+  procedure DebugMonitors;
+  var
+    I:integer;
+  begin
+    DebugLn('Monitor count: ', inttostr(screen.MonitorCount));
+    DebugLn('Monitors list:');
+    DebugLnEnter();
+    for i := 0 to screen.MonitorCount -1 do
+    begin
+      DebugLnEnter('- Monitor #%d %dx%dpx %s', [i,
+               Screen.Monitors[i].width, Screen.Monitors[i].height,
+               BoolToStr(Screen.Monitors[i].Primary, 'primary', '')]);
+      DebugLn('BoundsRect=', DbgS(Screen.Monitors[i].BoundsRect));
+      DebugLn('WorkareaRect=', DbgS(Screen.Monitors[i].WorkareaRect));
+      DebugLn('PixelsPerInch=%d', [Screen.Monitors[i].PixelsPerInch]);
+      DebugLnExit();
+    end;
+    DebugLnExit();
+  end;
+
 const
   NoHotKey: THotKey = (
     ShiftState: [];
@@ -667,6 +687,8 @@ begin
   DebugLn('Program started at ', DateTimeToStr(Now));
   DebugLn('Version: ', GetProgramVersionStr);
   DebugLn('OS:', OSInfo);
+  DebugMonitors();
+  debugln();
   DebugLn('Initializing...');
 
   //if FindCmdLineSwitch('autorun') then

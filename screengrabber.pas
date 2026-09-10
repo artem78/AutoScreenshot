@@ -121,6 +121,8 @@ var
   Rect: TRect;
   UsedMonitor: TMonitor;
 begin
+  debugln();
+  debugln('begin CaptureMonitor()');
   DebugLn(['Monitor id=', AMonitorId]);
 
   UsedMonitor := Screen.Monitors[AMonitorId];
@@ -135,6 +137,9 @@ procedure TScreenGrabber.CaptureAllMonitors(AFileName: String);
 var
   Rect: TRect;
 begin
+  DebugLn('');
+  debugln('begin CaptureAllMonitors()');
+
   Rect.Left   := GetSystemMetrics(SM_XVIRTUALSCREEN);
   Rect.Top    := GetSystemMetrics(SM_YVIRTUALSCREEN);
   Rect.Width  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
