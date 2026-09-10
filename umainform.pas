@@ -6,7 +6,7 @@ interface
 
 uses
   {$IfDef Windows}
-  Windows, ShellApi,
+  Windows, ShellApi, uMonitorInfo,
   {$EndIf}
   {$IfDef Linux}
   xlib, xrandr, XRandREventWatcher,
@@ -1708,6 +1708,10 @@ var
   Str: WideString;
   IsLocalizationLoaded: Boolean;
 
+ MonInfo: TMonitorInfos;
+    MonLen: Integer;
+    //i: Integer;
+
 begin
   IsLocalizationLoaded := True;
   try
@@ -1734,15 +1738,18 @@ begin
 
     Items.Append(Localizer.I18N('MonitorWithCursor'));
 
-    for Idx := 0 to Screen.MonitorCount - 1 do
+    GetMonitorsInfo(MonInfo, MonLen);
+    //for Idx := 0 to Screen.MonitorCount - 1 do
+    for idx:=0 to MonLen-1 do
     begin
       Str := WideFormat(Localizer.I18N('MonitorInfo'),
-          [Screen.Monitors[Idx].MonitorNum + 1, // Start numeration from 1
-           Screen.Monitors[Idx].Width,
-           Screen.Monitors[Idx].Height]
+          [{Screen.Monitors[Idx].MonitorNum}idx + 1, // Start numeration from 1
+           {Screen.Monitors[Idx].Width} MonInfo[idx].ResolutionH,
+           {Screen.Monitors[Idx].Height} MonInfo[idx].ResolutionV]
       );
-      // ToDo: Also may show screen model, diagonal size
-      if Screen.Monitors[Idx].Primary then
+      str := str + MonInfo[idx].Manufacturer + ' ' + floattostr(MonInfo[idx].Diagonal) + {'″'} 'inch';
+
+      if Screen.Monitors[Idx]{??}.Primary then
         Str := Str + ' - ' + Localizer.I18N('Primary');
 
       Items.Append(Str);
