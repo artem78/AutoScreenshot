@@ -6,7 +6,7 @@ interface
 
 uses
   {$IfDef Windows}
-  Windows,
+  Windows, ShellApi,
   {$EndIf}
   {$IfDef Linux}
   xlib, xrandr, XRandREventWatcher,
@@ -791,7 +791,12 @@ end;
 
 procedure TMainForm.LocateLogFileMenuItemClick(Sender: TObject);
 begin
-  OpenDocument(ExtractFileDir(LogFilePath));
+  {$IfDef Windows}
+      ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+LogFilePath)), nil, SW_SHOWNORMAL);
+  {$EndIf}
+  {$IfDef Linux}
+      OpenDocument(ExtractFileDir(LogFilePath));
+  {$EndIf}
 end;
 
 procedure TMainForm.OpenLogMenuItemClick(Sender: TObject);
