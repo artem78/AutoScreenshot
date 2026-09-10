@@ -37,6 +37,7 @@ type
     HelpWithTranslationMenuItem: TMenuItem;
     EnableLoggingMenuItem: TMenuItem;
     LocateLogFileMenuItem: TMenuItem;
+    OpenLogMenuItem: TMenuItem;
     ReportIssueMenuItem: TMenuItem;
     SkipSimilarPanel: TPanel;
     SkipSimilarCheckBox: TCheckBox;
@@ -126,6 +127,7 @@ type
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
     procedure HomePageMenuItemClick(Sender: TObject);
     procedure LocateLogFileMenuItemClick(Sender: TObject);
+    procedure OpenLogMenuItemClick(Sender: TObject);
     procedure ReportIssueMenuItemClick(Sender: TObject);
     procedure SkipSimilarCheckBoxChange(Sender: TObject);
     procedure MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
@@ -790,6 +792,11 @@ end;
 procedure TMainForm.LocateLogFileMenuItemClick(Sender: TObject);
 begin
   OpenDocument(ExtractFileDir(LogFilePath));
+end;
+
+procedure TMainForm.OpenLogMenuItemClick(Sender: TObject);
+begin
+  OpenDocument(LogFilePath);
 end;
 
 procedure TMainForm.ReportIssueMenuItemClick(Sender: TObject);
