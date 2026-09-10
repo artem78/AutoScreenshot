@@ -6,7 +6,7 @@ interface
 
 uses
   {$IfDef Windows}
-  Windows, ShellApi,
+  Windows, ShellApi, uMonitorInfo,
   {$EndIf}
   {$IfDef Linux}
   xlib, xrandr, XRandREventWatcher,
@@ -1724,10 +1724,72 @@ begin
 end;
 
 procedure TMainForm.FillMonitorList;
+{$IfDef Windows}
+var
+  MonInfos: TMonitorInfos;
+{$EndIf}
+
+  function GetMonitorInfoStr(AMonitorIdx: integer): {string} WideString;
+  var
+    Strs: TStringList;
+{$IfDef Windows}
+    MonInfo: uMonitorInfo.TMonitorInfo;
+{$EndIf}
+    FallbackMonName: string;
+  begin
+    Result := '';
+{$IfDef Windows}
+    MonInfo := MonInfos[AMonitorIdx];
+{$EndIf}
+    FallbackMonName := Format('Monitor #%d',
+                [Screen.Monitors[AMonitorIdx].MonitorNum + 1]  // Start numeration from 1
+    );
+    Strs := TStringList.Create;
+    try
+{$IfDef Windows}
+      { MonInfos может содержать пустые значения (например, если запущено
+        в вирт. машине)  }
+
+      // производитель
+      if not MonInfo.Manufacturer.IsEmpty then
+        Strs.Append(MonInfo.Manufacturer)
+      else
+        Strs.Append(FallbackMonName);
+
+      // todo: добавить модель
+      // ...
+
+      // диагональ
+      if MonInfo.Diagonal > 0 then
+        Strs.Append(Format('%.1f"', [MonInfo.Diagonal]));
+{$EndIf}
+{$IfDef Linux}
+      // todo: для linux тоже добавить модель и диагональ
+
+      Strs.Append(FallbackMonName);
+{$endif}
+
+      // пиксели
+      //Strs.Append(Format('(%d x %d)', [MonInfo.ResolutionH, MonInfo.ResolutionV]));
+      strs.Append(Format('(%d x %d)', [Screen.Monitors[AMonitorIdx].Width, Screen.Monitors[AMonitorIdx].Height]));
+
+      // основной или нет
+      if Screen.Monitors[AMonitorIdx].Primary then
+        Strs.append('- ' + Localizer.I18N('Primary'));
+
+      Result := {wide}string.Join(' ', Strs.ToStringArray);
+    finally
+      Strs.Free;
+    end;
+  end;
+
 var
   Idx, SelIdx: Integer;
-  Str: WideString;
   IsLocalizationLoaded: Boolean;
+
+{$IfDef Windows}
+  MonLen: Integer;
+{$EndIf}
 
 begin
   IsLocalizationLoaded := True;
@@ -1755,18 +1817,13 @@ begin
 
     Items.Append(Localizer.I18N('MonitorWithCursor'));
 
+{$IfDef Windows}
+    GetMonitorsInfo(MonInfos, MonLen);
+    //for idx:=0 to MonLen-1 do
+{$EndIf}
     for Idx := 0 to Screen.MonitorCount - 1 do
     begin
-      Str := WideFormat(Localizer.I18N('MonitorInfo'),
-          [Screen.Monitors[Idx].MonitorNum + 1, // Start numeration from 1
-           Screen.Monitors[Idx].Width,
-           Screen.Monitors[Idx].Height]
-      );
-      // ToDo: Also may show screen model, diagonal size
-      if Screen.Monitors[Idx].Primary then
-        Str := Str + ' - ' + Localizer.I18N('Primary');
-
-      Items.Append(Str);
+      Items.Append(GetMonitorInfoStr(idx));
     end;
 
     // Restore previous selected item after strings updated
