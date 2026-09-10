@@ -123,7 +123,6 @@ type
     procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure CompressionLevelComboBoxChange(Sender: TObject);
     procedure EnableLoggingMenuItemClick(Sender: TObject);
-    procedure EnableLoggingMenuItemOldClick(Sender: TObject);
     procedure ExitMenuItemClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
@@ -761,16 +760,9 @@ end;
 
 procedure TMainForm.EnableLoggingMenuItemClick(Sender: TObject);
 begin
-    EnableLogging:=not EnableLogging;
-
-  MessageDlg('Please restart application!', mtInformation,[mbok],0);
-end;
-
-procedure TMainForm.EnableLoggingMenuItemOldClick(Sender: TObject);
-begin
   EnableLogging:=not EnableLogging;
 
-  MessageDlg('Please restart application!', mtInformation,[mbok],0);
+  MessageDlg('Restart application for apply changes!', mtInformation,[mbok],0);
 end;
 
 procedure TMainForm.ExitMenuItemClick(Sender: TObject);
@@ -822,7 +814,10 @@ end;
 
 procedure TMainForm.OpenLogMenuItemClick(Sender: TObject);
 begin
-    OpenDocument(LogFilePath);
+  if FileExists(LogFilePath) then
+    OpenDocument(LogFilePath)
+  else
+    MessageDlg('Log file not exist', mtWarning, [mbok],0);
 end;
 
 procedure TMainForm.OpenLogMenuItemOldClick(Sender: TObject);
