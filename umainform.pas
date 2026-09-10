@@ -35,9 +35,10 @@ type
     Label1: TLabel;
     Label2: TLabel;
     HelpWithTranslationMenuItem: TMenuItem;
+    DebugMenuItem: TMenuItem;
     EnableLoggingMenuItem: TMenuItem;
-    LocateLogFileMenuItem: TMenuItem;
     OpenLogMenuItem: TMenuItem;
+    LocateLogFileMenuItem: TMenuItem;
     ReportIssueMenuItem: TMenuItem;
     SkipSimilarPanel: TPanel;
     SkipSimilarCheckBox: TCheckBox;
@@ -122,12 +123,15 @@ type
     procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure CompressionLevelComboBoxChange(Sender: TObject);
     procedure EnableLoggingMenuItemClick(Sender: TObject);
+    procedure EnableLoggingMenuItemOldClick(Sender: TObject);
     procedure ExitMenuItemClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
     procedure HomePageMenuItemClick(Sender: TObject);
     procedure LocateLogFileMenuItemClick(Sender: TObject);
+    procedure LocateLogFileMenuItemOldClick(Sender: TObject);
     procedure OpenLogMenuItemClick(Sender: TObject);
+    procedure OpenLogMenuItemOldClick(Sender: TObject);
     procedure ReportIssueMenuItemClick(Sender: TObject);
     procedure SkipSimilarCheckBoxChange(Sender: TObject);
     procedure MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
@@ -757,6 +761,13 @@ end;
 
 procedure TMainForm.EnableLoggingMenuItemClick(Sender: TObject);
 begin
+    EnableLogging:=not EnableLogging;
+
+  MessageDlg('Please restart application!', mtInformation,[mbok],0);
+end;
+
+procedure TMainForm.EnableLoggingMenuItemOldClick(Sender: TObject);
+begin
   EnableLogging:=not EnableLogging;
 
   MessageDlg('Please restart application!', mtInformation,[mbok],0);
@@ -799,7 +810,22 @@ begin
   {$EndIf}
 end;
 
+procedure TMainForm.LocateLogFileMenuItemOldClick(Sender: TObject);
+begin
+  {$IfDef Windows}
+      ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+LogFilePath)), nil, SW_SHOWNORMAL);
+  {$EndIf}
+  {$IfDef Linux}
+      OpenDocument(ExtractFileDir(LogFilePath));
+  {$EndIf}
+end;
+
 procedure TMainForm.OpenLogMenuItemClick(Sender: TObject);
+begin
+    OpenDocument(LogFilePath);
+end;
+
+procedure TMainForm.OpenLogMenuItemOldClick(Sender: TObject);
 begin
   OpenDocument(LogFilePath);
 end;
