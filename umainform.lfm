@@ -818,6 +818,10 @@ object MainForm: TMainForm
         Caption = 'Edit hotkeys...'
         OnClick = HotKetsSettingsMenuItemClick
       end
+      object EnableLoggingMenuItem: TMenuItem
+        Caption = 'Enable logging'
+        OnClick = EnableLoggingMenuItemClick
+      end
     end
     object HelpSubMenu: TMenuItem
       Caption = 'Help'

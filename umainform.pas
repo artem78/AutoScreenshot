@@ -35,6 +35,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     HelpWithTranslationMenuItem: TMenuItem;
+    EnableLoggingMenuItem: TMenuItem;
     ReportIssueMenuItem: TMenuItem;
     SkipSimilarPanel: TPanel;
     SkipSimilarCheckBox: TCheckBox;
@@ -118,6 +119,7 @@ type
     procedure CheckForUpdatesMenuItemClick(Sender: TObject);
     procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure CompressionLevelComboBoxChange(Sender: TObject);
+    procedure EnableLoggingMenuItemClick(Sender: TObject);
     procedure ExitMenuItemClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
@@ -196,6 +198,7 @@ type
     KeyHook: TGlobalKeyHook;
     OldScreenshotCleaner: TOldScreenshotCleaner;
     FormInitialized: Boolean;
+    function GetEnableLogging: Boolean;
 
     public
     FileJournal: TFileJournal;
@@ -259,6 +262,8 @@ type
     procedure SetMinimizeInsteadOfClose(AEnabled: Boolean);
     function GetMinimizeInsteadOfClose: Boolean;
     function ConfirmExit: Boolean;
+    procedure SetEnableLogging(AEnabled: boolean);
+    function GetEnabledLogging:boolean;
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
@@ -305,6 +310,7 @@ type
     property SkipSimilar: Boolean read GetSkipSimilar write SetSkipSimilar;
     property SkipSimilarMatchPercent: Integer read GetSkipSimilarMatchPercent
                                          write SetSkipSimilarMatchPercent;
+    property EnableLogging: Boolean read GetEnableLogging write SetEnableLogging;
 
     // Messages
     {$IfDef Windows}
@@ -468,8 +474,9 @@ var
   ProBannerVisible: Boolean;
   DT: TDate;
 begin
-  // Logging
-  if Ini.ReadBool(DefaultConfigIniSection, 'Logging', False) then
+  // Логи
+  EnableLogging:=ini.ReadBool(DefaultConfigIniSection,'Logging', false);
+  if EnableLogging then
   begin
     if IsPortable then
       LogFilePath := ConcatPaths([ProgramDirectory, LogFileName])
@@ -747,6 +754,13 @@ end;
 procedure TMainForm.CompressionLevelComboBoxChange(Sender: TObject);
 begin
   CompressionLevel := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
+end;
+
+procedure TMainForm.EnableLoggingMenuItemClick(Sender: TObject);
+begin
+  EnableLogging:=not EnableLogging;
+
+  MessageDlg('Please restart application!', mtInformation,[mbok],0);
 end;
 
 procedure TMainForm.ExitMenuItemClick(Sender: TObject);
@@ -2071,6 +2085,17 @@ begin
             0) = mrYes;
 end;
 
+procedure TMainForm.SetEnableLogging(AEnabled: boolean);
+begin
+  ini.WriteBool(DefaultConfigIniSection,'Logging',AEnabled);
+  EnableLoggingMenuItem.Checked:=AEnabled;
+end;
+
+function TMainForm.GetEnabledLogging: boolean;
+begin
+  Result:=EnableLoggingMenuItem.Checked;
+end;
+
 procedure TMainForm.OnHotKeyEvent(const AHotKeyId: String);
 begin
   case AHotKeyId of
@@ -2269,6 +2294,11 @@ procedure TMainForm.UniqueInstance1OtherInstance(Sender: TObject;
   ParamCount: Integer; const Parameters: array of String);
 begin
   RestoreFromTray;
+end;
+
+function TMainForm.GetEnableLogging: Boolean;
+begin
+  Result:=EnableLoggingMenuItem.Checked;
 end;
 
 end.
