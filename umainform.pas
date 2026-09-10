@@ -478,7 +478,6 @@ var
   FmtStr: String;
   Seconds: Integer;
   CleanerActive: Boolean;
-  ProBannerVisible: Boolean;
   DT: TDate;
 begin
   // Логи
