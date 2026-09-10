@@ -36,6 +36,7 @@ type
     Label2: TLabel;
     HelpWithTranslationMenuItem: TMenuItem;
     EnableLoggingMenuItem: TMenuItem;
+    LocateLogFileMenuItem: TMenuItem;
     ReportIssueMenuItem: TMenuItem;
     SkipSimilarPanel: TPanel;
     SkipSimilarCheckBox: TCheckBox;
@@ -124,6 +125,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
     procedure HomePageMenuItemClick(Sender: TObject);
+    procedure LocateLogFileMenuItemClick(Sender: TObject);
     procedure ReportIssueMenuItemClick(Sender: TObject);
     procedure SkipSimilarCheckBoxChange(Sender: TObject);
     procedure MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
@@ -283,6 +285,8 @@ type
 
     procedure UpdateStatusBarAndTrayIconText;
     procedure ShowNotificationInStatusBar(AMsg: string);
+
+    function LogFilePath: string;
 
 
     { Properties }
@@ -462,14 +466,11 @@ const
     &Unit: iuMonths
   );
   DefaultSkipSimilarMatchPercent = {95} 100;
-  
-  LogFileName = 'log.txt';
 var
   DefaultOutputDir, BaseDir: String;
   CfgLang, SysLang, AltLang: TLanguageCode;
   FmtStr: String;
   Seconds: Integer;
-  LogFilePath: String;
   CleanerActive: Boolean;
   ProBannerVisible: Boolean;
   DT: TDate;
@@ -478,10 +479,6 @@ begin
   EnableLogging:=ini.ReadBool(DefaultConfigIniSection,'Logging', false);
   if EnableLogging then
   begin
-    if IsPortable then
-      LogFilePath := ConcatPaths([ProgramDirectory, LogFileName])
-    else
-      LogFilePath := ConcatPaths([GetAppConfigDir(False), LogFileName]);
     DeleteFile(LogFilePath); // Overwrite log file
     DebugLogger.LogName := LogFilePath;
     //{$Define LAZLOGGER_FLUSH}
@@ -788,6 +785,11 @@ end;
 procedure TMainForm.HomePageMenuItemClick(Sender: TObject);
 begin
   OpenURL(AddCustomParamsToUrl('https://artem78.github.io/AutoScreenshot/'));
+end;
+
+procedure TMainForm.LocateLogFileMenuItemClick(Sender: TObject);
+begin
+  OpenDocument(ExtractFileDir(LogFilePath));
 end;
 
 procedure TMainForm.ReportIssueMenuItemClick(Sender: TObject);
@@ -2261,6 +2263,16 @@ procedure TMainForm.ShowNotificationInStatusBar(AMsg: string);
 begin
   StatusBar1.SimpleText:=amsg;
   AutoCaptureUpdaterTimer.Interval:=3000; // prevent immediately text rewrite by timer
+end;
+
+function TMainForm.LogFilePath: string;
+const
+LogFileName = 'log.txt';
+begin
+  if IsPortable then
+      Exit(ConcatPaths([ProgramDirectory, LogFileName]) )
+  else
+      Exit(ConcatPaths([GetAppConfigDir(False), LogFileName]));
 end;
 
 {$IfDef Windows}

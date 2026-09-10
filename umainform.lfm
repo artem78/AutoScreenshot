@@ -822,6 +822,10 @@ object MainForm: TMainForm
         Caption = 'Enable logging'
         OnClick = EnableLoggingMenuItemClick
       end
+      object LocateLogFileMenuItem: TMenuItem
+        Caption = 'Open log file directory'
+        OnClick = LocateLogFileMenuItemClick
+      end
     end
     object HelpSubMenu: TMenuItem
       Caption = 'Help'
