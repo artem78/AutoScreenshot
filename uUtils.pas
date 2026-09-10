@@ -545,11 +545,15 @@ function OSInfo: string;
       wv8:      Result:= 'Windows 8';
       wv8_1:    Result:= 'Windows 8.1';
       wv10:     Result:= 'Windows 10';
-      wv11:     Result:= 'Windows 11';
-      else      Result:= '?';
+      //{$IF laz_fullversion >= 2020400}
+      //wv11:     Result:= 'Windows 11';
+      //{$else}
+      wvLater:  Result:='Windows 11 or later';
+      //{$endif}
+      else      Result:= {'?'} 'Unknown Windows';
       //See possible values in the unit "win32proc" in "lcl/interfaces/win32/win32proc.pp"
     end;
-  end.
+  end;
 {$EndIf}
 {$IfDef Linux}
 Var P: TProcess;
