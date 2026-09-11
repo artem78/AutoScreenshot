@@ -98,6 +98,9 @@ uses
   {$IfDef Linux}
   Unix, LazUTF8, LazFileUtils,
   {$EndIf}
+  {$IFOPT D+}
+  inifiles,
+{$ENDIF}
   SysUtils, Classes, DateUtils, StrUtils, uLanguages, Forms {???}, FileInfo, process,
   FileUtil, LazLogger;
 
@@ -194,7 +197,18 @@ end;
 function GetProgramVersionStr: string;
 var
   FileVerInfo: TFileVersionInfo;
+{$IFOPT D+}
+  ini:tinifile;
+{$ENDIF}
 begin
+{$IFOPT D+}
+    ini:=TIniFile.create('config.ini');
+   result:=ini.ReadString('debug','ProgramVersion','');
+   ini.free;
+
+   if result <> '' then exit(result);
+{$ENDIF}
+
   FileVerInfo := TFileVersionInfo.Create(Nil);
   try
     FileVerInfo.ReadFileInfo;
