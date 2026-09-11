@@ -15,7 +15,7 @@ uses
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
   Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf, ComCtrls,
   ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
-  uDataModule, UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
+  UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
 
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation, tisUserIdle);
