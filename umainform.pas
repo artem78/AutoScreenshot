@@ -720,6 +720,7 @@ begin
 
     UpdateCheckOnStartupTimer.Interval:=RandomRange(30,100)*1000;
     UpdateCheckOnStartupTimer.Enabled:=true;;
+    DebugLnEnter('Update check delay=%f sec', [UpdateCheckOnStartupTimer.Interval/1000]);
   end;
 
   // Enable global hotkeys
