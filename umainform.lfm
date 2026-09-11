@@ -910,4 +910,11 @@ object MainForm: TMainForm
     Left = 281
     Top = 133
   end
+  object UpdateCheckOnStartupTimer: TTimer
+    Enabled = False
+    Interval = 9999999
+    OnTimer = UpdateCheckOnStartupTimerTimer
+    Left = 413
+    Top = 136
+  end
 end

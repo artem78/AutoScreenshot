@@ -13,9 +13,9 @@ uses
   {$EndIf}
   {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
-  Menus, Buttons, EditBtn, uLocalization, DateTimePicker,
-  LCLIntf, ComCtrls, ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook,
-  OldScreenshotCleaner, UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
+  Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf, ComCtrls,
+  ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
+  uDataModule, UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
 
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation, tisUserIdle);
@@ -75,6 +75,7 @@ type
     CaptureIntervalLabel: TLabel;
     AutoCaptureUpdaterTimer: TTimer;
     StatusBar1: TStatusBar;
+    UpdateCheckOnStartupTimer: TTimer;
     TrayIcon: TTrayIcon;
     ImageFormatLabel: TLabel;
     TakeScreenshotButton: TButton;
@@ -175,6 +176,7 @@ type
     procedure SeqNumberDigitsCountSpinEditChange(Sender: TObject);
     procedure UniqueInstance1OtherInstance(Sender: TObject;
       ParamCount: Integer; const Parameters: array of String);
+    procedure UpdateCheckOnStartupTimerTimer(Sender: TObject);
   private
     { Private declarations }
 
@@ -711,7 +713,14 @@ begin
     DebugLn('Last update check: %s (%d hours ago)', [DateTimeToStr(LastUpdateCheck), HoursBetween(Now, LastUpdateCheck)]);
   end;
   if AutoCheckForUpdates and (SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds) then
-    CheckForUpdates(True);
+  //  CheckForUpdates(True);
+  begin
+    // без этой хуйни при запуске программы вместе с системой часто пояляются ебанутые ошибки
+    // вроде этой: https://github.com/artem78/AutoScreenshot/issues/78
+
+    UpdateCheckOnStartupTimer.Interval:=RandomRange(30,100)*1000;
+    UpdateCheckOnStartupTimer.Enabled:=true;;
+  end;
 
   // Enable global hotkeys
   KeyHook := TGlobalKeyHook.Create({$IfDef Windows}Handle, 'AutoScreenshot'{$EndIf}
@@ -2361,6 +2370,12 @@ procedure TMainForm.UniqueInstance1OtherInstance(Sender: TObject;
   ParamCount: Integer; const Parameters: array of String);
 begin
   RestoreFromTray;
+end;
+
+procedure TMainForm.UpdateCheckOnStartupTimerTimer(Sender: TObject);
+begin
+      CheckForUpdates(True);
+  (Sender as TTimer).Enabled:=false;
 end;
 
 function TMainForm.GetEnableLogging: Boolean;
