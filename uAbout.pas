@@ -67,7 +67,6 @@ uses uLocalization, uUtils, LazVersion, DateUtils, StrUtils;
 
 const
   ProjectURLTitle = 'https://artem78.github.io/AutoScreenshot/';
-  ProjectURL = ProjectURLTitle + '?fromApp';
   AuthorMail = 'megabyte1024@ya.ru';
   ProjectGithubUrl = 'https://github.com/artem78/AutoScreenshot';
   LicenseUrl = ProjectGithubUrl + '/blob/master/LICENSE.txt';
@@ -205,7 +204,7 @@ end;
 
 procedure TAboutForm.LinkValueLabelClick(Sender: TObject);
 begin
-  OpenURL(ProjectURL);
+  OpenURL(AddCustomParamsToUrl(ProjectURLTitle));
 end;
 
 procedure TAboutForm.LinkValueLabelMouseEnter(Sender: TObject);

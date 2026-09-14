@@ -121,6 +121,8 @@ var
   Rect: TRect;
   UsedMonitor: TMonitor;
 begin
+  debugln();
+  debugln('begin CaptureMonitor()');
   DebugLn(['Monitor id=', AMonitorId]);
 
   UsedMonitor := Screen.Monitors[AMonitorId];
@@ -135,6 +137,9 @@ procedure TScreenGrabber.CaptureAllMonitors(AFileName: String);
 var
   Rect: TRect;
 begin
+  DebugLn('');
+  debugln('begin CaptureAllMonitors()');
+
   Rect.Left   := GetSystemMetrics(SM_XVIRTUALSCREEN);
   Rect.Top    := GetSystemMetrics(SM_YVIRTUALSCREEN);
   Rect.Width  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
@@ -164,8 +169,12 @@ begin
   {$IfDef Windows}
   // https://github.com/artem78/AutoScreenshot/issues/35
   // and https://github.com/bgrabitmap/bgrabitmap/issues/200
-  BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
-           ScreenDC, ARect.Left, ARect.Top, SRCCOPY);
+  if BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
+           ScreenDC, ARect.Left, ARect.Top, SRCCOPY) then
+    DebugLn('BitBlt call success')
+  else
+    DebugLn('BitBlt call failed with code %d', [GetLastError]);
+
   {$EndIf}
   {$IfDef Linux}
   // ToDo: Check bug #35 in Linux

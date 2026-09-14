@@ -819,6 +819,21 @@ object MainForm: TMainForm
         OnClick = HotKetsSettingsMenuItemClick
       end
     end
+    object DebugMenuItem: TMenuItem
+      Caption = 'Debug'
+      object EnableLoggingMenuItem: TMenuItem
+        Caption = 'Enable logging'
+        OnClick = EnableLoggingMenuItemClick
+      end
+      object OpenLogMenuItem: TMenuItem
+        Caption = 'Open log file'
+        OnClick = OpenLogMenuItemClick
+      end
+      object LocateLogFileMenuItem: TMenuItem
+        Caption = 'Open log file directory'
+        OnClick = LocateLogFileMenuItemClick
+      end
+    end
     object HelpSubMenu: TMenuItem
       Caption = 'Help'
       SubMenuImages = MenuImageList
@@ -894,5 +909,12 @@ object MainForm: TMainForm
     OnTimer = AutoCaptureUpdaterTimerTimer
     Left = 281
     Top = 133
+  end
+  object UpdateCheckOnStartupTimer: TTimer
+    Enabled = False
+    Interval = 9999999
+    OnTimer = UpdateCheckOnStartupTimerTimer
+    Left = 413
+    Top = 136
   end
 end

@@ -36,7 +36,7 @@ var
 
 implementation
 
-uses Clipbrd, LCLIntf, uLocalization, fpjson,
+uses Clipbrd, LCLIntf, uLocalization, uUtils, fpjson,
   opensslsockets, base64, StrUtils, fphttpclient, Buttons;
 
 {$R *.lfm}
@@ -309,7 +309,7 @@ begin
     else
       Url := 'https://github.com/artem78/AutoScreenshot/tree/master#donate';
   end;}
-  Url:='https://artem78.github.io/AutoScreenshot/pages/donate.html?fromApp';
+  Url := AddCustomParamsToUrl('https://artem78.github.io/AutoScreenshot/pages/donate.html');
 
   OpenURL(Url);
 end;

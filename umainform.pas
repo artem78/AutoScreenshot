@@ -6,16 +6,16 @@ interface
 
 uses
   {$IfDef Windows}
-  Windows,
+  Windows, ShellApi,
   {$EndIf}
   {$IfDef Linux}
   xlib, xrandr, XRandREventWatcher,
   {$EndIf}
   {Messages,} SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, {ComCtrls,} ExtCtrls, StdCtrls, inifiles, Spin, {FileCtrl,}
-  Menus, Buttons, EditBtn, uLocalization, DateTimePicker,
-  LCLIntf, ComCtrls, ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook,
-  OldScreenshotCleaner, UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
+  Menus, Buttons, EditBtn, uLocalization, DateTimePicker, LCLIntf, ComCtrls,
+  ScreenGrabber, uHotKeysForm, uUtilsMore, GlobalKeyHook, OldScreenshotCleaner,
+  UniqueInstance, uplaysound, ZStream { for Tcompressionlevel };
 
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation, tisUserIdle);
@@ -35,6 +35,10 @@ type
     Label1: TLabel;
     Label2: TLabel;
     HelpWithTranslationMenuItem: TMenuItem;
+    DebugMenuItem: TMenuItem;
+    EnableLoggingMenuItem: TMenuItem;
+    OpenLogMenuItem: TMenuItem;
+    LocateLogFileMenuItem: TMenuItem;
     ReportIssueMenuItem: TMenuItem;
     SkipSimilarPanel: TPanel;
     SkipSimilarCheckBox: TCheckBox;
@@ -71,6 +75,7 @@ type
     CaptureIntervalLabel: TLabel;
     AutoCaptureUpdaterTimer: TTimer;
     StatusBar1: TStatusBar;
+    UpdateCheckOnStartupTimer: TTimer;
     TrayIcon: TTrayIcon;
     ImageFormatLabel: TLabel;
     TakeScreenshotButton: TButton;
@@ -118,10 +123,15 @@ type
     procedure CheckForUpdatesMenuItemClick(Sender: TObject);
     procedure AutoCheckForUpdatesMenuItemClick(Sender: TObject);
     procedure CompressionLevelComboBoxChange(Sender: TObject);
+    procedure EnableLoggingMenuItemClick(Sender: TObject);
     procedure ExitMenuItemClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
     procedure HomePageMenuItemClick(Sender: TObject);
+    procedure LocateLogFileMenuItemClick(Sender: TObject);
+    procedure LocateLogFileMenuItemOldClick(Sender: TObject);
+    procedure OpenLogMenuItemClick(Sender: TObject);
+    procedure OpenLogMenuItemOldClick(Sender: TObject);
     procedure ReportIssueMenuItemClick(Sender: TObject);
     procedure SkipSimilarCheckBoxChange(Sender: TObject);
     procedure MinimizeInsteadOfCloseCheckBoxChange(Sender: TObject);
@@ -166,6 +176,7 @@ type
     procedure SeqNumberDigitsCountSpinEditChange(Sender: TObject);
     procedure UniqueInstance1OtherInstance(Sender: TObject;
       ParamCount: Integer; const Parameters: array of String);
+    procedure UpdateCheckOnStartupTimerTimer(Sender: TObject);
   private
     { Private declarations }
 
@@ -196,6 +207,7 @@ type
     KeyHook: TGlobalKeyHook;
     OldScreenshotCleaner: TOldScreenshotCleaner;
     FormInitialized: Boolean;
+    function GetEnableLogging: Boolean;
 
     public
     FileJournal: TFileJournal;
@@ -259,6 +271,8 @@ type
     procedure SetMinimizeInsteadOfClose(AEnabled: Boolean);
     function GetMinimizeInsteadOfClose: Boolean;
     function ConfirmExit: Boolean;
+    procedure SetEnableLogging(AEnabled: boolean);
+    function GetEnabledLogging:boolean;
 
     procedure OnHotKeyEvent(const AHotKeyId: String);
     procedure OnDebugLnEvent(Sender: TObject; S: string; var Handled: Boolean);
@@ -278,6 +292,8 @@ type
 
     procedure UpdateStatusBarAndTrayIconText;
     procedure ShowNotificationInStatusBar(AMsg: string);
+
+    function LogFilePath: string;
 
 
     { Properties }
@@ -305,6 +321,7 @@ type
     property SkipSimilar: Boolean read GetSkipSimilar write SetSkipSimilar;
     property SkipSimilarMatchPercent: Integer read GetSkipSimilarMatchPercent
                                          write SetSkipSimilarMatchPercent;
+    property EnableLogging: Boolean read GetEnableLogging write SetEnableLogging;
 
     // Messages
     {$IfDef Windows}
@@ -456,25 +473,18 @@ const
     &Unit: iuMonths
   );
   DefaultSkipSimilarMatchPercent = {95} 100;
-  
-  LogFileName = 'log.txt';
 var
   DefaultOutputDir, BaseDir: String;
   CfgLang, SysLang, AltLang: TLanguageCode;
   FmtStr: String;
   Seconds: Integer;
-  LogFilePath: String;
   CleanerActive: Boolean;
-  ProBannerVisible: Boolean;
   DT: TDate;
 begin
-  // Logging
-  if Ini.ReadBool(DefaultConfigIniSection, 'Logging', False) then
+  // Логи
+  EnableLogging:=ini.ReadBool(DefaultConfigIniSection,'Logging', false);
+  if EnableLogging then
   begin
-    if IsPortable then
-      LogFilePath := ConcatPaths([ProgramDirectory, LogFileName])
-    else
-      LogFilePath := ConcatPaths([GetAppConfigDir(False), LogFileName]);
     DeleteFile(LogFilePath); // Overwrite log file
     DebugLogger.LogName := LogFilePath;
     //{$Define LAZLOGGER_FLUSH}
@@ -611,6 +621,26 @@ begin
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
+  procedure DebugMonitors;
+  var
+    I:integer;
+  begin
+    DebugLn('Monitor count: ', inttostr(screen.MonitorCount));
+    DebugLn('Monitors list:');
+    DebugLnEnter();
+    for i := 0 to screen.MonitorCount -1 do
+    begin
+      DebugLnEnter('- Monitor #%d %dx%dpx %s', [i,
+               Screen.Monitors[i].width, Screen.Monitors[i].height,
+               BoolToStr(Screen.Monitors[i].Primary, 'primary', '')]);
+      DebugLn('BoundsRect=', DbgS(Screen.Monitors[i].BoundsRect));
+      DebugLn('WorkareaRect=', DbgS(Screen.Monitors[i].WorkareaRect));
+      DebugLn('PixelsPerInch=%d', [Screen.Monitors[i].PixelsPerInch]);
+      DebugLnExit();
+    end;
+    DebugLnExit();
+  end;
+
 const
   NoHotKey: THotKey = (
     ShiftState: [];
@@ -658,6 +688,9 @@ begin
 
   DebugLn('Program started at ', DateTimeToStr(Now));
   DebugLn('Version: ', GetProgramVersionStr);
+  DebugLn('OS:', OSInfo);
+  DebugMonitors();
+  debugln();
   DebugLn('Initializing...');
 
   //if FindCmdLineSwitch('autorun') then
@@ -680,7 +713,15 @@ begin
     DebugLn('Last update check: %s (%d hours ago)', [DateTimeToStr(LastUpdateCheck), HoursBetween(Now, LastUpdateCheck)]);
   end;
   if AutoCheckForUpdates and (SecondsBetween(Now, LastUpdateCheck) > UpdateCheckIntervalInSeconds) then
-    CheckForUpdates(True);
+  //  CheckForUpdates(True);
+  begin
+    // без этой хуйни при запуске программы вместе с системой часто пояляются ебанутые ошибки
+    // вроде этой: https://github.com/artem78/AutoScreenshot/issues/78
+
+    UpdateCheckOnStartupTimer.Interval:=RandomRange(30,100)*1000;
+    UpdateCheckOnStartupTimer.Enabled:=true;;
+    DebugLnEnter('Update check delay=%f sec', [UpdateCheckOnStartupTimer.Interval/1000]);
+  end;
 
   // Enable global hotkeys
   KeyHook := TGlobalKeyHook.Create({$IfDef Windows}Handle, 'AutoScreenshot'{$EndIf}
@@ -749,6 +790,13 @@ begin
   CompressionLevel := Tcompressionlevel(CompressionLevelComboBox.ItemIndex);
 end;
 
+procedure TMainForm.EnableLoggingMenuItemClick(Sender: TObject);
+begin
+  EnableLogging:=not EnableLogging;
+
+  MessageDlg('Restart application for apply changes!', mtInformation,[mbok],0);
+end;
+
 procedure TMainForm.ExitMenuItemClick(Sender: TObject);
 begin
   if ConfirmExit then
@@ -773,7 +821,40 @@ end;
 
 procedure TMainForm.HomePageMenuItemClick(Sender: TObject);
 begin
-  OpenURL('https://artem78.github.io/AutoScreenshot/?fromApp');
+  OpenURL(AddCustomParamsToUrl('https://artem78.github.io/AutoScreenshot/'));
+end;
+
+procedure TMainForm.LocateLogFileMenuItemClick(Sender: TObject);
+begin
+  {$IfDef Windows}
+      ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+LogFilePath)), nil, SW_SHOWNORMAL);
+  {$EndIf}
+  {$IfDef Linux}
+      OpenDocument(ExtractFileDir(LogFilePath));
+  {$EndIf}
+end;
+
+procedure TMainForm.LocateLogFileMenuItemOldClick(Sender: TObject);
+begin
+  {$IfDef Windows}
+      ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+LogFilePath)), nil, SW_SHOWNORMAL);
+  {$EndIf}
+  {$IfDef Linux}
+      OpenDocument(ExtractFileDir(LogFilePath));
+  {$EndIf}
+end;
+
+procedure TMainForm.OpenLogMenuItemClick(Sender: TObject);
+begin
+  if FileExists(LogFilePath) then
+    OpenDocument(LogFilePath)
+  else
+    MessageDlg('Log file not exist', mtWarning, [mbok],0);
+end;
+
+procedure TMainForm.OpenLogMenuItemOldClick(Sender: TObject);
+begin
+  OpenDocument(LogFilePath);
 end;
 
 procedure TMainForm.ReportIssueMenuItemClick(Sender: TObject);
@@ -2071,6 +2152,17 @@ begin
             0) = mrYes;
 end;
 
+procedure TMainForm.SetEnableLogging(AEnabled: boolean);
+begin
+  ini.WriteBool(DefaultConfigIniSection,'Logging',AEnabled);
+  EnableLoggingMenuItem.Checked:=AEnabled;
+end;
+
+function TMainForm.GetEnabledLogging: boolean;
+begin
+  Result:=EnableLoggingMenuItem.Checked;
+end;
+
 procedure TMainForm.OnHotKeyEvent(const AHotKeyId: String);
 begin
   case AHotKeyId of
@@ -2238,6 +2330,16 @@ begin
   AutoCaptureUpdaterTimer.Interval:=3000; // prevent immediately text rewrite by timer
 end;
 
+function TMainForm.LogFilePath: string;
+const
+LogFileName = 'log.txt';
+begin
+  if IsPortable then
+      Exit(ConcatPaths([ProgramDirectory, LogFileName]) )
+  else
+      Exit(ConcatPaths([GetAppConfigDir(False), LogFileName]));
+end;
+
 {$IfDef Windows}
 procedure TMainForm.WMHotKey(var AMsg: TMessage);
 var
@@ -2269,6 +2371,17 @@ procedure TMainForm.UniqueInstance1OtherInstance(Sender: TObject;
   ParamCount: Integer; const Parameters: array of String);
 begin
   RestoreFromTray;
+end;
+
+procedure TMainForm.UpdateCheckOnStartupTimerTimer(Sender: TObject);
+begin
+      CheckForUpdates(True);
+  (Sender as TTimer).Enabled:=false;
+end;
+
+function TMainForm.GetEnableLogging: Boolean;
+begin
+  Result:=EnableLoggingMenuItem.Checked;
 end;
 
 end.

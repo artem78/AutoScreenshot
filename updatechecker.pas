@@ -187,7 +187,7 @@ begin
   ChangeLog := '';
   CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
 
-  DebugLn('Start update checking...');
+  DebugLnEnter('Start update checking...');
 
   Client := TFPHTTPClient.Create(Nil);
   try
@@ -276,6 +276,8 @@ begin
     end;
   finally
     Client.Free;
+
+    DebugLnExit();
   end;
 end;
 
