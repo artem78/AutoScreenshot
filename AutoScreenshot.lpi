@@ -404,6 +404,7 @@ end;"/>
       </Item3>
       <Item4>
         <PackageName Value="BGRABitmapPack"/>
+        <MinVersion Major="11" Minor="6" Release="6" Valid="True"/>
       </Item4>
       <Item5>
         <PackageName Value="uniqueinstance_package"/>
