@@ -246,10 +246,10 @@ begin
 
       fmtAVIF:
         begin
-          {$IfDef Windows}
+          (*{$IfDef Windows}
           // flipped image fix
           Bitmap.VerticalFlip();
-          {$EndIf}
+          {$EndIf}*)
           Writer := TBGRAWriterAvif.Create;
         end;
   end;
