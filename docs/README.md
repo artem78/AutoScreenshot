@@ -54,6 +54,12 @@ Auto Screenshot
 
 ![Windows XP still supports](images/main_window_xp.png "Windows XP still supports")
 
+## Videos
+
+Grabbing from two displays:
+
+https://github.com/user-attachments/assets/f1d40348-61a2-4eef-a2fb-343d43f03fd5
+
 ## Languages
 * English
 * [Russian](README-ru.md)
