@@ -688,6 +688,7 @@ begin
 
   DebugLn('Program started at ', DateTimeToStr(Now));
   DebugLn('Version: ', GetProgramVersionStr);
+  debugln('type:',ifthen(IsPortable,'portable','installed')) ;
   DebugLn('OS:', OSInfo);
   DebugMonitors();
   debugln();
