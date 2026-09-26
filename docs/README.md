@@ -25,11 +25,12 @@ Auto Screenshot
 * Automatic capture can be started on system startup
 * Multiple screens support
 * High DPI support
-* Can execute custom command before and after screenshot was taken
+* Custom command execution before/after screenshot was taken
 * Clearing old screenshots
 * Play sound when screenshot taken
 * Hotkeys
 * Works on Windows and Linux
+* Outdated Windows versions (started from XP) are still supported
 * Absolutely free and open source
 
 ## Screenshots
