@@ -830,8 +830,19 @@ object MainForm: TMainForm
         OnClick = OpenLogMenuItemClick
       end
       object LocateLogFileMenuItem: TMenuItem
-        Caption = 'Open log file directory'
+        Caption = 'Select log file in file manager'
         OnClick = LocateLogFileMenuItemClick
+      end
+      object Separator1: TMenuItem
+        Caption = '-'
+      end
+      object OpenCfgFileMenuItem: TMenuItem
+        Caption = 'Open config file'
+        OnClick = OpenCfgFileMenuItemClick
+      end
+      object LocateCfgFileMenuItem: TMenuItem
+        Caption = 'Select config file in file manager'
+        OnClick = LocateCfgFileMenuItemClick
       end
     end
     object HelpSubMenu: TMenuItem
