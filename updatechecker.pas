@@ -403,7 +403,7 @@ begin
 
     MoveToDefaultPosition;
     if not Visible then
-      Show;
+      ShowModal;
 
   finally
     Msg.Free;
