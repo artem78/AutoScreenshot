@@ -38,6 +38,7 @@ type
     DebugMenuItem: TMenuItem;
     EnableLoggingMenuItem: TMenuItem;
     LocateCfgFileMenuItem: TMenuItem;
+    DonateMenuItem: TMenuItem;
     OpenCfgFileMenuItem: TMenuItem;
     OpenLogMenuItem: TMenuItem;
     LocateLogFileMenuItem: TMenuItem;
@@ -64,7 +65,6 @@ type
     HotKetsSettingsMenuItem: TMenuItem;
     CompressionLevelLabel: TLabel;
     ImageFormatOptionsPanel: TPanel;
-    DonateMenuItem: TMenuItem;
     OldScreenshotCleanerPanel: TPanel;
     OldScreenshotCleanerMaxAgeUnitComboBox: TComboBox;
     OldScreenshotCleanerMaxAgeValueSpinEdit: TSpinEdit;
@@ -133,6 +133,7 @@ type
     procedure HomePageMenuItemClick(Sender: TObject);
     procedure LocateCfgFileMenuItemClick(Sender: TObject);
     procedure LocateLogFileMenuItemClick(Sender: TObject);
+    procedure DonateMenuItemClick(Sender: TObject);
     procedure OpenCfgFileMenuItemClick(Sender: TObject);
     procedure OpenLogMenuItemClick(Sender: TObject);
     procedure OpenLogMenuItemOldClick(Sender: TObject);
@@ -143,7 +144,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure HotKetsSettingsMenuItemClick(Sender: TObject);
-    procedure DonateMenuItemClick(Sender: TObject);
     procedure OldScreenshotCleanerMaxAgeUnitComboBoxChange(Sender: TObject);
     procedure OldScreenshotCleanerMaxAgeValueSpinEditChange(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
