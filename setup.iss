@@ -107,6 +107,7 @@ Source: "{#X86Dir}\rav1e.dll";           DestDir: "{app}"; Flags: ignoreversion;
 ; Place all common files here, first one should be marked 'solidbreak'
 Source: "lang\*.ini";   DestDir: "{app}\lang";   Flags: ignoreversion recursesubdirs createallsubdirs solidbreak; Excludes: "*.bak"
 Source: "sounds\*.wav"; DestDir: "{app}\sounds"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

@@ -37,9 +37,13 @@ type
     HelpWithTranslationMenuItem: TMenuItem;
     DebugMenuItem: TMenuItem;
     EnableLoggingMenuItem: TMenuItem;
+    LocateCfgFileMenuItem: TMenuItem;
+    DonateMenuItem: TMenuItem;
+    OpenCfgFileMenuItem: TMenuItem;
     OpenLogMenuItem: TMenuItem;
     LocateLogFileMenuItem: TMenuItem;
     ReportIssueMenuItem: TMenuItem;
+    Separator1: TMenuItem;
     SkipSimilarPanel: TPanel;
     SkipSimilarCheckBox: TCheckBox;
     FileMenuItem: TMenuItem;
@@ -61,7 +65,6 @@ type
     HotKetsSettingsMenuItem: TMenuItem;
     CompressionLevelLabel: TLabel;
     ImageFormatOptionsPanel: TPanel;
-    DonateMenuItem: TMenuItem;
     OldScreenshotCleanerPanel: TPanel;
     OldScreenshotCleanerMaxAgeUnitComboBox: TComboBox;
     OldScreenshotCleanerMaxAgeValueSpinEdit: TSpinEdit;
@@ -128,8 +131,10 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
     procedure HomePageMenuItemClick(Sender: TObject);
+    procedure LocateCfgFileMenuItemClick(Sender: TObject);
     procedure LocateLogFileMenuItemClick(Sender: TObject);
-    procedure LocateLogFileMenuItemOldClick(Sender: TObject);
+    procedure DonateMenuItemClick(Sender: TObject);
+    procedure OpenCfgFileMenuItemClick(Sender: TObject);
     procedure OpenLogMenuItemClick(Sender: TObject);
     procedure OpenLogMenuItemOldClick(Sender: TObject);
     procedure ReportIssueMenuItemClick(Sender: TObject);
@@ -139,7 +144,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure HotKetsSettingsMenuItemClick(Sender: TObject);
-    procedure DonateMenuItemClick(Sender: TObject);
     procedure OldScreenshotCleanerMaxAgeUnitComboBoxChange(Sender: TObject);
     procedure OldScreenshotCleanerMaxAgeValueSpinEditChange(Sender: TObject);
     procedure OutputDirEditChange(Sender: TObject);
@@ -294,6 +298,7 @@ type
     procedure ShowNotificationInStatusBar(AMsg: string);
 
     function LogFilePath: string;
+    function CfgFilePath:string;
 
 
     { Properties }
@@ -688,6 +693,7 @@ begin
 
   DebugLn('Program started at ', DateTimeToStr(Now));
   DebugLn('Version: ', GetProgramVersionStr);
+  debugln('type:',ifthen(IsPortable,'portable','installed')) ;
   DebugLn('OS:', OSInfo);
   DebugMonitors();
   debugln();
@@ -824,6 +830,16 @@ begin
   OpenURL(AddCustomParamsToUrl('https://artem78.github.io/AutoScreenshot/'));
 end;
 
+procedure TMainForm.LocateCfgFileMenuItemClick(Sender: TObject);
+begin
+  {$IfDef Windows}
+      ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+CfgFilePath)), nil, SW_SHOWNORMAL);
+  {$EndIf}
+  {$IfDef Linux}
+      OpenDocument(ExtractFileDir(CfgFilePath));
+  {$EndIf}
+end;
+
 procedure TMainForm.LocateLogFileMenuItemClick(Sender: TObject);
 begin
   {$IfDef Windows}
@@ -834,14 +850,9 @@ begin
   {$EndIf}
 end;
 
-procedure TMainForm.LocateLogFileMenuItemOldClick(Sender: TObject);
+procedure TMainForm.OpenCfgFileMenuItemClick(Sender: TObject);
 begin
-  {$IfDef Windows}
-      ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+LogFilePath)), nil, SW_SHOWNORMAL);
-  {$EndIf}
-  {$IfDef Linux}
-      OpenDocument(ExtractFileDir(LogFilePath));
-  {$EndIf}
+  OpenDocument(CfgFilePath);
 end;
 
 procedure TMainForm.OpenLogMenuItemClick(Sender: TObject);
@@ -2338,6 +2349,16 @@ begin
       Exit(ConcatPaths([ProgramDirectory, LogFileName]) )
   else
       Exit(ConcatPaths([GetAppConfigDir(False), LogFileName]));
+end;
+
+function TMainForm.CfgFilePath: string;
+const
+  CfgFileName='config.ini';
+begin
+  if IsPortable then
+      Exit(ConcatPaths([ProgramDirectory, CfgFileName]) )
+  else
+      Exit(ConcatPaths([GetAppConfigDir(False), CfgFileName]));
 end;
 
 {$IfDef Windows}

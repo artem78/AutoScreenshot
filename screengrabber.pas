@@ -110,7 +110,7 @@ uses
   {$IfDef Windows}
   windows,
   {$EndIf}
-  Forms, LCLType, LCLIntf, BGRABitmap, BGRABitmapTypes, BGRAWriteWebP,
+  Forms, LCLType, LCLIntf, Graphics, BGRABitmap, BGRABitmapTypes, BGRAWriteWebP,
   BGRAWriteAvif, libavif, FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage,
   FPWriteTiff, LazLoggerBase;
 
@@ -154,6 +154,7 @@ const
 {$EndIf}
 var
   Bitmap: TBGRABitmap;
+  bitmap2:Graphics.TBitmap;
   Writer: TFPCustomImageWriter;
   //GIF: TGIFImage;
   ScreenDC: {$IfDef Windows}Windows.{$EndIf}HDC;
@@ -166,22 +167,49 @@ begin
   //Bitmap.TakeScreenshot(Rect); // Not supports multiply monitors
   ScreenDC := GetDC(HWND_DESKTOP); // Get DC for all monitors
   DebugLn('ScreenDC=', DbgS(ScreenDC));
-  {$IfDef Windows}
-  // https://github.com/artem78/AutoScreenshot/issues/35
-  // and https://github.com/bgrabitmap/bgrabitmap/issues/200
-  if BitBlt(Bitmap.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
-           ScreenDC, ARect.Left, ARect.Top, SRCCOPY) then
-    DebugLn('BitBlt call success')
+  if ScreenDC <> 0 then
+  begin
+    try
+      {$IfDef Windows}
+      bitmap2:=Graphics.TBitmap.Create;
+      try
+        bitmap2.SetSize(ARect.Width, ARect.Height);
+        bitmap2.Canvas.Brush.Color:=clBlack;
+        bitmap2.Canvas.FillRect(ARect);
+
+        // https://github.com/artem78/AutoScreenshot/issues/35
+        // and https://github.com/bgrabitmap/bgrabitmap/issues/200
+        if BitBlt(Bitmap2.Canvas.Handle, 0, 0, ARect.Width, ARect.Height,
+                 ScreenDC, ARect.Left, ARect.Top, SRCCOPY) then
+          DebugLn('BitBlt call success')
+        else
+          DebugLn('BitBlt call failed with code %d', [GetLastError]);
+
+       // Bitmap.Assign(bitmap2);
+       Bitmap.Canvas.Draw(0,0,Bitmap2);
+       //без этого костыля вот такая хуйня творится,если bitblt будет писать сразу в TBGRABitmap
+       // https://github.com/artem78/AutoScreenshot/issues/37
+       //https://forum.lazarus.freepascal.org/index.php/topic,74800.0.html
+
+      finally
+        bitmap2.Free;
+      end;
+
+      {$EndIf}
+      {$IfDef Linux}
+      // ToDo: Check bug #35 in Linux
+      Bitmap.LoadFromDevice(ScreenDC, ARect);
+      {$EndIf}
+    finally
+      ReleaseDC(0, ScreenDC);
+    end;
+  end
   else
-    DebugLn('BitBlt call failed with code %d', [GetLastError]);
+  begin
+    DebugLn('ScreenDC is NULL !!!');
+    exit;
+  end;
 
-  {$EndIf}
-  {$IfDef Linux}
-  // ToDo: Check bug #35 in Linux
-  Bitmap.LoadFromDevice(ScreenDC, ARect);
-  {$EndIf}
-
-  ReleaseDC(0, ScreenDC);
 
   case ImageFormat of
     fmtPNG:      // PNG
@@ -243,10 +271,10 @@ begin
 
       fmtAVIF:
         begin
-          {$IfDef Windows}
+          (*{$IfDef Windows}
           // flipped image fix
           Bitmap.VerticalFlip();
-          {$EndIf}
+          {$EndIf}*)
           Writer := TBGRAWriterAvif.Create;
         end;
   end;

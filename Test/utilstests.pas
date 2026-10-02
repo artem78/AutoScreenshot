@@ -21,6 +21,7 @@ type
     procedure TestVersions;
     procedure TestAutoRun;
     procedure TestCmdExecution;
+    procedure TestSecondsToHMS;
   end;
 
 implementation
@@ -223,6 +224,26 @@ begin
   AssertFalse(FileExists(ConcatPaths([Dir, 'my_file.txt'])));
 
   //AssertException(EProcess, @RunCmdWithError);
+end;
+
+procedure TUtilsTestCase.TestSecondsToHMS;
+begin
+  AssertEquals({'0' +} '0:00:00', SecondsToHMS(0));
+  AssertEquals({'0' +} '0:01:01', SecondsToHMS(60 + 1));
+  AssertEquals({'0' +} '1:23:45', SecondsToHMS(1*60*60 + 23*60 + 45));
+  AssertEquals({'0' +} '9:59:59', SecondsToHMS(10*60*60 - 1));
+
+  //12-часовой формат влиять не должен!
+  DefaultFormatSettings.TimeSeparator := '-';
+  DefaultFormatSettings.ShortTimeFormat := 'hh:mm:ssAM/PM';
+
+  AssertEquals('15:33:22', SecondsToHMS(15*60*60 + 33*60 + 22));
+  AssertEquals('23:59:59', SecondsToHMS(24*60*60 - 1));
+
+  // >= 24ч
+  AssertEquals('24:00:00', SecondsToHMS(24*60*60));
+  AssertEquals('33:22:11', SecondsToHMS(33*60*60 + 22*60 + 11));
+  AssertEquals('765:43:21', SecondsToHMS(765*60*60 + 43*60 + 21));
 end;
 
 initialization

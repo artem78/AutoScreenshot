@@ -530,11 +530,14 @@ end;
 
 function SecondsToHMS(ASecs: Integer): string;
 var
-  DT, TDiff: TDateTime;
+  h,m,s:integer;
 begin
-  DT := IncSecond(Now, ASecs);
-  TDiff:=DT-Now;
-  Result:=TimeToStr(TDiff);
+  s:=asecs mod 60;
+  asecs:=asecs div 60;
+  m:=asecs mod 60;
+  asecs:=asecs div 60;
+  h:=asecs;
+  result := format('%d:%.2d:%.2d', [h,m,s]);
 end;
 
 function AddCustomParamsToUrl(const AUrl: String): string;

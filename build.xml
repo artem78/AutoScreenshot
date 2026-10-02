@@ -202,6 +202,8 @@
 			<fileset dir="sounds" includes="*.wav"/>
 		</copy>
 		
+		<copy file="LICENSE.txt" todir="${build_dir}" preservelastmodified="true"/>
+		
 		<copy todir="${temp_dir}/AutoScreenshot_${version}" preservelastmodified="true">
 			<fileset dir="${build_dir}" includes="**"/>
 		</copy>
