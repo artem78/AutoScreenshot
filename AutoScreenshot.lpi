@@ -202,6 +202,11 @@ end;
 if TargetCPU=&apos;x86_64&apos; then
 begin
   Arch := &apos;x64&apos;;
+end;
+
+if (TargetOS=&apos;win32&apos;) or (TargetOS=&apos;win64&apos;) then
+begin
+  RunCmdAfter := &apos;ant.bat -Darch=&apos; + Arch + &apos; copy_dlls_to_proj_root -debug&apos;;
 end;"/>
           <Parsing>
             <SyntaxOptions>
@@ -231,7 +236,7 @@ end;"/>
           <Other>
             <CustomOptions Value="-dSIMULATE_OLD_FILES_DELETION"/>
             <ExecuteAfter>
-              <Command Value="ant.bat -Darch=$(Arch) copy_dlls_to_proj_root -debug"/>
+              <Command Value="$(RunCmdAfter)"/>
             </ExecuteAfter>
           </Other>
         </CompilerOptions>
@@ -257,6 +262,11 @@ end;
 if TargetCPU=&apos;x86_64&apos; then
 begin
   Arch := &apos;x64&apos;;
+end;
+
+if (TargetOS=&apos;win32&apos;) or (TargetOS=&apos;win64&apos;) then
+begin
+  RunCmdAfter := &apos;ant.bat -Darch=&apos; + Arch + &apos; copy_dlls_to_proj_root&apos;;
 end;"/>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
@@ -279,7 +289,7 @@ end;"/>
           <Other>
             <CustomOptions Value="-B"/>
             <ExecuteAfter>
-              <Command Value="ant.bat -Darch=$(Arch) copy_dlls_to_proj_root"/>
+              <Command Value="$(RunCmdAfter)"/>
             </ExecuteAfter>
           </Other>
         </CompilerOptions>
@@ -305,6 +315,11 @@ end;
 if TargetCPU=&apos;x86_64&apos; then
 begin
   Arch := &apos;x64&apos;;
+end;
+
+if (TargetOS=&apos;win32&apos;) or (TargetOS=&apos;win64&apos;) then
+begin
+  RunCmdAfter := &apos;ant.bat -Darch=&apos; + Arch + &apos; copy_dlls_to_proj_root&apos;;
 end;"/>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
@@ -328,7 +343,7 @@ end;"/>
           <Other>
             <CustomOptions Value="-B"/>
             <ExecuteAfter>
-              <Command Value="ant.bat -Darch=$(Arch) copy_dlls_to_proj_root"/>
+              <Command Value="$(RunCmdAfter)"/>
             </ExecuteAfter>
           </Other>
         </CompilerOptions>
@@ -354,6 +369,11 @@ end;
 if TargetCPU=&apos;x86_64&apos; then
 begin
   Arch := &apos;x64&apos;;
+end;
+
+if (TargetOS=&apos;win32&apos;) or (TargetOS=&apos;win64&apos;) then
+begin
+  RunCmdAfter := &apos;ant.bat -Darch=&apos; + Arch + &apos; copy_dlls_to_proj_root&apos;;
 end;"/>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
@@ -377,7 +397,7 @@ end;"/>
           <Other>
             <CustomOptions Value="-B"/>
             <ExecuteAfter>
-              <Command Value="ant.bat -Darch=$(Arch) copy_dlls_to_proj_root"/>
+              <Command Value="$(RunCmdAfter)"/>
             </ExecuteAfter>
           </Other>
         </CompilerOptions>
@@ -545,6 +565,11 @@ end;
 if TargetCPU=&apos;x86_64&apos; then
 begin
   Arch := &apos;x64&apos;;
+end;
+
+if (TargetOS=&apos;win32&apos;) or (TargetOS=&apos;win64&apos;) then
+begin
+  RunCmdAfter := &apos;ant.bat -Darch=&apos; + Arch + &apos; copy_dlls_to_proj_root&apos;;
 end;"/>
     <Linking>
       <Options>
@@ -555,7 +580,7 @@ end;"/>
     </Linking>
     <Other>
       <ExecuteAfter>
-        <Command Value="ant.bat -Darch=$(Arch) copy_dlls_to_proj_root"/>
+        <Command Value="$(RunCmdAfter)"/>
       </ExecuteAfter>
     </Other>
   </CompilerOptions>
