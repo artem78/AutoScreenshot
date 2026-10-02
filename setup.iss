@@ -61,15 +61,7 @@ ArchitecturesInstallIn64BitMode=x64
 ; installation to run on all architectures (including Itanium,
 ; since it's capable of running 32-bit code too).
 
-[Languages]
-Name: "english";   MessagesFile: "compiler:Default.isl"
-Name: "french";    MessagesFile: "compiler:Languages\French.isl"
-Name: "german";    MessagesFile: "compiler:Languages\German.isl"
-Name: "italian";   MessagesFile: "compiler:Languages\Italian.isl"
-Name: "spanish";   MessagesFile: "compiler:Languages\Spanish.isl"
-Name: "turkish";   MessagesFile: "compiler:Languages\Turkish.isl"
-Name: "russian";   MessagesFile: "compiler:Languages\Russian.isl"
-Name: "Ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
+#include "setup_languages.iss"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
