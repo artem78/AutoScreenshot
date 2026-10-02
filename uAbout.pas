@@ -69,7 +69,8 @@ const
   ProjectURLTitle = 'https://artem78.github.io/AutoScreenshot/';
   AuthorMail = 'megabyte1024@ya.ru';
   ProjectGithubUrl = 'https://github.com/artem78/AutoScreenshot';
-  LicenseUrl = ProjectGithubUrl + '/blob/master/LICENSE.txt';
+  LicenseFileName = 'LICENSE.' + {'rtf'} 'txt';
+  LicenseUrl = ProjectGithubUrl + '/blob/master/' + LicenseFileName;
 
 procedure TAboutForm.FormCreate(Sender: TObject);
 const
@@ -174,7 +175,10 @@ end;
 
 procedure TAboutForm.LicenseValueLabelClick(Sender: TObject);
 begin
-  OpenURL(LicenseUrl);
+  if FileExists(LicenseFileName) then
+    OpenDocument(LicenseFileName)
+  else
+    OpenURL(LicenseUrl);
 end;
 
 procedure TAboutForm.LicenseValueLabelMouseEnter(Sender: TObject);
