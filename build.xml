@@ -350,8 +350,8 @@
 		<echo>Temp dir: ${temp.zip}</echo>
 		
 		<!-- SQLite -->
-		<get src="https://sqlite.org/2024/sqlite-dll-win-${arch}-3450300.zip" dest="${temp.zip}" verbose="true"/>
-		<!--<get src="https://sqlite.org/2026/sqlite-dll-win-${arch}-3530000.zip" dest="${temp.zip}" verbose="true"/>-->
+		<!-- https://sqlite.org/download.html -->
+		<get src="https://sqlite.org/2026/sqlite-dll-win-${arch}-3530400.zip" dest="${temp.zip}" verbose="true"/>
 		<unzip src="${temp.zip}" dest="${dest_dir}">
 			<patternset>
 				<include name="/sqlite3.dll"/>
