@@ -81,8 +81,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 ; Place all x64 files here
 Source: "{#X64Dir}\AutoScreenshot.exe";  DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
-Source: "{#X64Dir}\ssleay32.dll";        DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
-Source: "{#X64Dir}\libeay32.dll";        DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
+Source: "{#X64Dir}\libssl-1_1-x64.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
+Source: "{#X64Dir}\libcrypto-1_1-x64.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
 Source: "{#X64Dir}\sqlite3.dll";         DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
 Source: "{#X64Dir}\libwebp64.dll";       DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
 Source: "{#X64Dir}\libgcc_s_seh-1.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
@@ -94,8 +94,8 @@ Source: "{#X64Dir}\rav1e.dll";           DestDir: "{app}"; Flags: ignoreversion;
 
 ; Place all x86 files here, first one should be marked 'solidbreak'
 Source: "{#X86Dir}\AutoScreenshot.exe";  DestDir: "{app}"; Flags: ignoreversion solidbreak; Check: not Is64BitInstallMode;
-Source: "{#X86Dir}\ssleay32.dll";        DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
-Source: "{#X86Dir}\libeay32.dll";        DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
+Source: "{#X86Dir}\libssl-1_1.dll";      DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
+Source: "{#X86Dir}\libcrypto-1_1.dll";   DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
 Source: "{#X86Dir}\sqlite3.dll";         DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
 Source: "{#X86Dir}\libwebp32.dll";       DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
 Source: "{#X86Dir}\libgcc_s_dw2-1.dll";  DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
