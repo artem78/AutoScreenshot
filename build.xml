@@ -207,6 +207,17 @@
 				
 				<copy file="${dll_dir}/libwinpthread-1.dll" todir="${build_dir}" preservelastmodified="true"/>
 				<copy file="${dll_dir}/rav1e.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<copy file="${dll_dir}/libjpeg-8.dll" todir="${build_dir}" preservelastmodified="true" />
+				<if>
+					<equals arg1="${arch}" arg2="x64" />
+					<then>
+						<copy file="${dll_dir}/libsharpyuv-0.dll" todir="${build_dir}" preservelastmodified="true"/>
+						<copy file="${dll_dir}/libSvtAv1Dec.dll" todir="${build_dir}" preservelastmodified="true"/>
+						<copy file="${dll_dir}/libSvtAv1Enc.dll" todir="${build_dir}" preservelastmodified="true"/>
+					</then>
+				</if>
+				<copy file="${dll_dir}/libstdc++-6.dll" todir="${build_dir}" preservelastmodified="true" />
+				<copy file="${dll_dir}/libyuv.dll" todir="${build_dir}" preservelastmodified="true" />
 			</then>
 		</if>
 		<mkdir dir="${build_dir}/lang"/>
@@ -291,6 +302,9 @@
 				<available file="${build_x86_dir}/libdav1d.dll"/>
 				<available file="${build_x86_dir}/libavif.dll"/>
 				<available file="${build_x86_dir}/libaom.dll"/>
+				<available file="${build_x86_dir}/libjpeg-8.dll" />
+				<available file="${build_x86_dir}/libstdc++-6.dll" />
+				<available file="${build_x86_dir}/libyuv.dll" />
 			</and>
 			<then>
 				<echo>Ok!</echo>
@@ -317,6 +331,12 @@
 				<available file="${build_x64_dir}/libdav1d.dll"/>
 				<available file="${build_x64_dir}/libavif.dll"/>
 				<available file="${build_x64_dir}/libaom.dll"/>
+				<available file="${build_x64_dir}/libjpeg-8.dll" />
+				<available file="${build_x64_dir}/libsharpyuv-0.dll" />
+				<available file="${build_x64_dir}/libstdc++-6.dll" />
+				<available file="${build_x64_dir}/libSvtAv1Dec.dll" />
+				<available file="${build_x64_dir}/libSvtAv1Enc.dll" />
+				<available file="${build_x64_dir}/libyuv.dll" />
 			</and>
 			<then>
 				<echo>Ok!</echo>
@@ -418,7 +438,6 @@
 		</get>
 		
 		<!-- AVIF -->
-		<!-- todo: upgrade up to 1.0.1-->
 		<!-- https://github.com/bgrabitmap/bgrabitmap/tree/master?tab=readme-ov-file -->
 		<if>
 			<equals arg1="${arch}" arg2="x86" />
@@ -432,10 +451,9 @@
 				<var name="a" value="64"/>
 			</then>
 		</if>
-		<get src="https://github.com/bgrabitmap/bgrabitmap/files/8793166/libavifDlls_0.10.1-1.zip" dest="${temp.zip}" verbose="true">
+		<get src="https://github.com/bgrabitmap/bgrabitmap/files/12566323/libavif_windows_dlls_ver_1_0_1-1.zip" dest="${temp.zip}" verbose="true">
 			<!--<header name="Authorization" value="token ${github_api_token}" />-->
 		</get>
-		<!--<get src="https://github.com/bgrabitmap/bgrabitmap/files/12566323/libavif_windows_dlls_ver_1_0_1-1.zip" dest="${temp.zip}" verbose="true"/>-->
 		<unzip src="${temp.zip}" dest="${dest_dir}">
 			<patternset>
 				<!--<include name="/windows${a}bits/*.dll"/>-->
@@ -446,6 +464,12 @@
 				<include name="/windows${a}bits/libdav1d.dll"/>
 				<include name="/windows${a}bits/libavif.dll"/>
 				<include name="/windows${a}bits/libaom.dll"/>
+				<include name="/windows${a}bits/libjpeg-8.dll" />
+				<include name="/windows${a}bits/libsharpyuv-0.dll" />	<!-- только 64бита -->
+				<include name="/windows${a}bits/libstdc++-6.dll" />
+				<include name="/windows${a}bits/libSvtAv1Dec.dll" />	<!-- только 64бита -->
+				<include name="/windows${a}bits/libSvtAv1Enc.dll" />	<!-- только 64бита -->
+				<include name="/windows${a}bits/libyuv.dll" />
 			</patternset>
 			<cutdirsmapper dirs="1" />
 		</unzip>

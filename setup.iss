@@ -91,6 +91,12 @@ Source: "{#X64Dir}\libavif.dll";         DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#X64Dir}\libdav1d.dll";        DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
 Source: "{#X64Dir}\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
 Source: "{#X64Dir}\rav1e.dll";           DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
+Source: "{#X64Dir}\libjpeg-8.dll";       DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
+Source: "{#X64Dir}\libsharpyuv-0.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
+Source: "{#X64Dir}\libstdc++-6.dll";     DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
+Source: "{#X64Dir}\libSvtAv1Dec.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
+Source: "{#X64Dir}\libSvtAv1Enc.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
+Source: "{#X64Dir}\libyuv.dll";          DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode;
 
 ; Place all x86 files here, first one should be marked 'solidbreak'
 Source: "{#X86Dir}\AutoScreenshot.exe";  DestDir: "{app}"; Flags: ignoreversion solidbreak; Check: not Is64BitInstallMode;
@@ -104,6 +110,9 @@ Source: "{#X86Dir}\libavif.dll";         DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#X86Dir}\libdav1d.dll";        DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
 Source: "{#X86Dir}\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
 Source: "{#X86Dir}\rav1e.dll";           DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
+Source: "{#X86Dir}\libjpeg-8.dll";       DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
+Source: "{#X86Dir}\libstdc++-6.dll";     DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
+Source: "{#X86Dir}\libyuv.dll";          DestDir: "{app}"; Flags: ignoreversion;            Check: not Is64BitInstallMode;
 
 ; Place all common files here, first one should be marked 'solidbreak'
 Source: "lang\*.ini";   DestDir: "{app}\lang";   Flags: ignoreversion recursesubdirs createallsubdirs solidbreak; Excludes: "*.bak"
