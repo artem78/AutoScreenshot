@@ -26,11 +26,12 @@
 	</condition>
 	
 	<!-- #ProgramVersion=$(grep -Po '\<StringTable.+ ProductVersion="\K[0-9\.]+' AutoScreenshot.lpi) -->
-	<exec executable="git" outputproperty="version">
+	<exec executable="git" outputproperty="version" failifexecutionfails="false">
 		<arg value="describe"/>
 		<arg value="--dirty"/>
 		<!-- <arg value=" - - long"/> -->
 	</exec>
+	<property name="version" value="unknown" /><!--на случай если гит отсутвтует и предыдущая команда завершилась с ошибкой-->
 	
 	<!--<property name="build_dir" location="build"/>-->
 	<property name="build_dir" location="build/files"/>
