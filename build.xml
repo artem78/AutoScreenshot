@@ -418,6 +418,7 @@
 		</unzip>
 		
 		<!-- WebP -->
+		<!-- https://github.com/bgrabitmap/bgrabitmap/tree/master/libwebp -->
 		<if>
 			<equals arg1="${arch}" arg2="x86" />
 			<then>
