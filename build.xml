@@ -158,8 +158,21 @@
 					</then>
 				</if>
 				
-				<copy file="${dll_dir}/libeay32.dll" todir="${build_dir}" preservelastmodified="true"/>
-				<copy file="${dll_dir}/ssleay32.dll" todir="${build_dir}" preservelastmodified="true"/>
+				<if>
+					<equals arg1="${arch}" arg2="x86" />
+					<then>
+						<copy file="${dll_dir}/libssl-1_1.dll" todir="${build_dir}" preservelastmodified="true"/>
+						<copy file="${dll_dir}/libcrypto-1_1.dll" todir="${build_dir}" preservelastmodified="true"/>
+					</then>
+				</if>
+				<if>
+					<equals arg1="${arch}" arg2="x64" />
+					<then>
+						<copy file="${dll_dir}/libssl-1_1-x64.dll" todir="${build_dir}" preservelastmodified="true"/>
+						<copy file="${dll_dir}/libcrypto-1_1-x64.dll" todir="${build_dir}" preservelastmodified="true"/>
+					</then>
+				</if>
+				
 				<copy file="${dll_dir}/sqlite3.dll" todir="${build_dir}" preservelastmodified="true"/>
 				
 				<if>
@@ -280,8 +293,8 @@
 		<if>
 			<and>
 				<available file="${build_x86_dir}/sqlite3.dll"/>
-				<available file="${build_x86_dir}/ssleay32.dll"/>
-				<available file="${build_x86_dir}/libeay32.dll"/>
+				<available file="${build_x86_dir}/libssl-1_1.dll"/>
+				<available file="${build_x86_dir}/libcrypto-1_1.dll"/>
 				<available file="${build_x86_dir}/libwebp32.dll"/>
 				<available file="${build_x86_dir}/rav1e.dll"/>
 				<available file="${build_x86_dir}/libwinpthread-1.dll"/>
@@ -309,8 +322,8 @@
 		<if>
 			<and>
 				<available file="${build_x64_dir}/sqlite3.dll"/>
-				<available file="${build_x64_dir}/ssleay32.dll"/>
-				<available file="${build_x64_dir}/libeay32.dll"/>
+				<available file="${build_x64_dir}/libssl-1_1-x64.dll"/>
+				<available file="${build_x64_dir}/libcrypto-1_1-x64.dll"/>
 				<available file="${build_x64_dir}/libwebp64.dll"/>
 				<available file="${build_x64_dir}/rav1e.dll"/>
 				<available file="${build_x64_dir}/libwinpthread-1.dll"/>
@@ -379,27 +392,28 @@
 		</unzip>
 		
 		<!-- OpenSSL -->
+		<!-- https://ekiwi-blog.de/en/70394/openssl-dlls-for-windows-a-collection-for-developers-eg-lazarus/ -->
+		<!-- https://forum.lazarus.freepascal.org/index.php/topic,65686.msg500773.html#msg500773 -->
+		<!-- https://wiki.overbyte.eu/wiki/index.php/ICS_Download -->
 		<if>
 			<equals arg1="${arch}" arg2="x86" />
 			<then>
-				<var name="a" value="i386-win32"/>
+				<var name="a" value="win32"/>
+				<var name="p" value="" />
 			</then>
 		</if>
 		<if>
 			<equals arg1="${arch}" arg2="x64" />
 			<then>
-				<var name="a" value="x64_86-win64"/>
+				<var name="a" value="win64"/>
+				<var name="p" value="-x64" />
 			</then>
 		</if>
-		<get src="https://api.github.com/repos/IndySockets/OpenSSL-Binaries/contents/Archive/openssl-1.0.2j-${a}.zip" dest="${temp.zip}" verbose="true">
-			<header name="Accept" value="application/vnd.github.v3.raw" />
-			<!--<header name="Authorization" value="token ${github_api_token}" />-->
-		</get>
-		<!--<get src="https://github.com/IndySockets/OpenSSL-Binaries/raw/refs/heads/master/openssl-1.0.2u-${a}.zip" dest="${temp.zip}" verbose="true"/>-->
+		<get src="https://wiki.overbyte.eu/arch/openssl-1.1.1w-${a}.zip" dest="${temp.zip}" verbose="true" />
 		<unzip src="${temp.zip}" dest="${dest_dir}">
 			<patternset>
-				<include name="/ssleay32.dll"/>
-				<include name="/libeay32.dll"/>
+				<include name="/libssl-1_1${p}.dll"/>
+				<include name="/libcrypto-1_1${p}.dll"/>
 			</patternset>
 		</unzip>
 		
