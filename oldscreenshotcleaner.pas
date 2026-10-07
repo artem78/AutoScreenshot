@@ -84,6 +84,7 @@ type
 implementation
 
 uses LazLoggerBase, FileUtil, uUtils, DateUtils, StrUtils, SQLite3Dyn, ctypes,
+  Settings,
   ///////////
   umainform, Forms
   ///////////
@@ -406,12 +407,15 @@ begin
 
       DebugLn('Try to delete "%s" created at %s ...',
               [FileName, Created]);
-  {$IfDef SIMULATE_OLD_FILES_DELETION}
-      DebugLn('[ Simulation! ]');
-      Res := True;
-  {$Else}
-      Res := DeleteFile(FileName);
-  {$EndIf}
+      if cfg.Debug_SimulateOldFilesDeletion then
+      begin
+        DebugLn('[ Simulation! ]');
+        Res := True;
+      end
+      else
+      begin
+        Res := DeleteFile(FileName);
+      end;
       DebugLn(IfThen(Res, 'Ok', 'Failed!'));
 
       UpdateUI; // To prevent form freezes if too many files to delete
@@ -436,12 +440,15 @@ begin
           if DirectoryIsEmpty(Dir) then
           begin
             DebugLn('Try to delete empty directory "%s" ...', [Dir]);
-  {$IfDef SIMULATE_OLD_FILES_DELETION}
-            DebugLn('[ Simulation! ]');
-            Res := True;
-  {$Else}
-            Res := DeleteDirectory(Dir, False);
-  {$EndIf}
+            if cfg.Debug_SimulateOldFilesDeletion then
+            begin
+              DebugLn('[ Simulation! ]');
+              Res := True;
+            end
+            else
+            begin
+              Res := DeleteDirectory(Dir, False);
+            end;
             DebugLn(IfThen(Res, 'Ok', 'Failed!'));
           end
           else
@@ -460,11 +467,11 @@ begin
     DirList.Free;
   end;
 
-
-{$IfNDef SIMULATE_OLD_FILES_DELETION}
-  // Remove deleted file records from DB
-  MainForm.FileJournal.Remove(CreatedBefore);
-{$EndIf}
+  if not Cfg.Debug_SimulateOldFilesDeletion then
+  begin
+    // Remove deleted file records from DB
+    MainForm.FileJournal.Remove(CreatedBefore);
+  end;
 
   DebugLn('Old files cleaning finished');
 end;

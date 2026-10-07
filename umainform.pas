@@ -337,7 +337,7 @@ type
   end;
 
 const
-  DefaultConfigIniSection = 'main';
+  DefaultConfigIniSection = 'main' deprecated;
   HotKeysIniSection = 'hotkeys';
 
   MinCaptureIntervalInSeconds = 1;
@@ -352,13 +352,13 @@ const
 
 var
   MainForm: TMainForm;
-  Ini: TIniFile;
+  Ini: TIniFile deprecated 'использвать Cfg из settings.pas';
 
 implementation
 
 uses uAbout, DateUtils, StrUtils, uUtils, Math,
   uFileNameTemplateHelpForm, uIniHelper, UpdateChecker, FileUtil, LCLType, Idle,
-  uDonateForm, LazLogger;
+  uDonateForm, Settings, LazLogger;
 
 {$R *.lfm}
 
@@ -1431,6 +1431,9 @@ begin
     end;
 
     OldScreenshotCleanerEnabledCheckBox.Caption := Localizer.I18N('DeleteScreenshotsOlderThan');
+    if cfg.Debug_SimulateOldFilesDeletion then
+      OldScreenshotCleanerEnabledCheckBox.Caption := '[SIMULATION !!!] ' + OldScreenshotCleanerEnabledCheckBox.Caption;
+
     with OldScreenshotCleanerMaxAgeUnitComboBox do
     begin
       Items[Ord(iuHours)]  := Localizer.I18N('Hours');

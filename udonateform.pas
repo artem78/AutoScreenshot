@@ -36,7 +36,7 @@ var
 
 implementation
 
-uses Clipbrd, LCLIntf, uLocalization, uUtils, fpjson,
+uses Clipbrd, LCLIntf, uLocalization, uUtils, Settings, fpjson,
   opensslsockets, base64, StrUtils, fphttpclient, Buttons;
 
 {$R *.lfm}
@@ -226,13 +226,8 @@ end;
 
 procedure TDonateForm.LoadData();
 const
-  {$IFOPT D+}
-  ApiUrl = 'https://api.github.com/gists/f293c446c3f2e83900f5a1d7b5596755';
-  JsonFileName = 'test_wallets.json';
-  {$else}
-  ApiUrl = 'https://api.github.com/gists/6c79ab382865da9b598927194c52eb09';
-  JsonFileName = 'donate_wallets.json';
-  {$ENDIF}
+  API_URL = 'https://api.github.com/gists/6c79ab382865da9b598927194c52eb09';
+  JSON_FILE_NAME = 'donate_wallets.json';
 var
   Http: TFPHTTPClient;
   Json: TJSONData;
@@ -240,8 +235,19 @@ var
   Enumerator: TBaseJSONEnumerator;
   PaymentMethod, WalletID, IconBase64, DonateUrl: String;
   I: Integer = 0;
+  ApiUrl, JsonFileName: string;
 begin
   SetLength(Entries, 0);
+
+  ApiUrl := API_URL;
+  JsonFileName:=JSON_FILE_NAME;
+  {$ifopt D+}
+  if not cfg.Debug_WalletsApiUrl.IsEmpty then
+  begin
+    ApiUrl      :=ExtractWord(1, cfg.Debug_WalletsApiUrl, ['|']);
+    JsonFileName:=ExtractWord(2, cfg.Debug_WalletsApiUrl, ['|']);
+  end;
+  {$endif}
 
   Http := TFPHttpClient.Create(Nil);
   try
