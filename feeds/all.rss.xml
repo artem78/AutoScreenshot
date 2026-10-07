@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Auto Screenshot</title><link>https://artem78.github.io/AutoScreenshot/</link><description/><atom:link href="https://artem78.github.io/AutoScreenshot/feeds/all.rss.xml" rel="self"/><lastBuildDate>Fri, 08 May 2026 16:00:00 +0300</lastBuildDate><item><title>Version 1.22.1 released</title><link>https://artem78.github.io/AutoScreenshot/version-1221-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Auto Screenshot</title><link>https://artem78.github.io/AutoScreenshot/</link><description/><atom:link href="https://artem78.github.io/AutoScreenshot/feeds/all.rss.xml" rel="self"/><lastBuildDate>Fri, 02 Oct 2026 11:13:00 +0300</lastBuildDate><item><title>Version 1.22.3 released</title><link>https://artem78.github.io/AutoScreenshot/version-1223-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fixed black screenshots in Windows (issue #37)&lt;/li&gt;
+&lt;li&gt;Made update window modal (isuue #80)&lt;/li&gt;
+&lt;li&gt;Fixed improperly elapsed time text with 12-hours system time format&lt;/li&gt;
+&lt;li&gt;Upgraded BGRABitmap package&lt;/li&gt;
+&lt;/ul&gt;</description><pubDate>Fri, 02 Oct 2026 11:13:00 +0300</pubDate><guid>tag:artem78.github.io,2026-10-02:/AutoScreenshot/version-1223-released.html</guid><category>News</category></item><item><title>Version 1.22.2 released</title><link>https://artem78.github.io/AutoScreenshot/version-1222-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added logging enable option to GUI&lt;/li&gt;
+&lt;li&gt;Fixed errors for update checking when network connection not yet established when programs starts with OS (added delay before check) (issue #78)&lt;/li&gt;
+&lt;/ul&gt;</description><pubDate>Mon, 14 Sep 2026 13:40:00 +0300</pubDate><guid>tag:artem78.github.io,2026-09-14:/AutoScreenshot/version-1222-released.html</guid><category>News</category></item><item><title>Version 1.22.1 released</title><link>https://artem78.github.io/AutoScreenshot/version-1221-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Updated italian translation&lt;/li&gt;
 &lt;li&gt;Updated russian translation (key names)&lt;/li&gt;

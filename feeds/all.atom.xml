@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Auto Screenshot</title><link href="https://artem78.github.io/AutoScreenshot/" rel="alternate"/><link href="https://artem78.github.io/AutoScreenshot/feeds/all.atom.xml" rel="self"/><id>https://artem78.github.io/AutoScreenshot/</id><updated>2026-05-08T16:00:00+03:00</updated><entry><title>Version 1.22.1 released</title><link href="https://artem78.github.io/AutoScreenshot/version-1221-released.html" rel="alternate"/><published>2026-05-08T16:00:00+03:00</published><updated>2026-05-08T16:00:00+03:00</updated><author><name/></author><id>tag:artem78.github.io,2026-05-08:/AutoScreenshot/version-1221-released.html</id><content type="html">&lt;p&gt;Changes:&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Auto Screenshot</title><link href="https://artem78.github.io/AutoScreenshot/" rel="alternate"/><link href="https://artem78.github.io/AutoScreenshot/feeds/all.atom.xml" rel="self"/><id>https://artem78.github.io/AutoScreenshot/</id><updated>2026-10-02T11:13:00+03:00</updated><entry><title>Version 1.22.3 released</title><link href="https://artem78.github.io/AutoScreenshot/version-1223-released.html" rel="alternate"/><published>2026-10-02T11:13:00+03:00</published><updated>2026-10-02T11:13:00+03:00</updated><author><name/></author><id>tag:artem78.github.io,2026-10-02:/AutoScreenshot/version-1223-released.html</id><content type="html">&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fixed black screenshots in Windows (issue #37)&lt;/li&gt;
+&lt;li&gt;Made update window modal (isuue #80)&lt;/li&gt;
+&lt;li&gt;Fixed improperly elapsed time text with 12-hours system time format&lt;/li&gt;
+&lt;li&gt;Upgraded BGRABitmap package&lt;/li&gt;
+&lt;/ul&gt;</content><category term="News"/></entry><entry><title>Version 1.22.2 released</title><link href="https://artem78.github.io/AutoScreenshot/version-1222-released.html" rel="alternate"/><published>2026-09-14T13:40:00+03:00</published><updated>2026-09-14T13:40:00+03:00</updated><author><name/></author><id>tag:artem78.github.io,2026-09-14:/AutoScreenshot/version-1222-released.html</id><content type="html">&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Added logging enable option to GUI&lt;/li&gt;
+&lt;li&gt;Fixed errors for update checking when network connection not yet established when programs starts with OS (added delay before check) (issue #78)&lt;/li&gt;
+&lt;/ul&gt;</content><category term="News"/></entry><entry><title>Version 1.22.1 released</title><link href="https://artem78.github.io/AutoScreenshot/version-1221-released.html" rel="alternate"/><published>2026-05-08T16:00:00+03:00</published><updated>2026-05-08T16:00:00+03:00</updated><author><name/></author><id>tag:artem78.github.io,2026-05-08:/AutoScreenshot/version-1221-released.html</id><content type="html">&lt;p&gt;Changes:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Updated italian translation&lt;/li&gt;
 &lt;li&gt;Updated russian translation (key names)&lt;/li&gt;
