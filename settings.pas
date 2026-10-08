@@ -12,8 +12,10 @@ type
   { TSettings }
 
   TSettings = class
-  private
+  //private
+  public // todo потом сделать опять private
     Ini: TIniFile;
+  private
 
 
   public

@@ -352,7 +352,12 @@ const
 
 var
   MainForm: TMainForm;
-  Ini: TIniFile deprecated 'использвать Cfg из settings.pas';
+  //Ini: TIniFile deprecated 'использвать Cfg из settings.pas';
+
+/////////////
+function ini: TIniFile; deprecated 'использвать Cfg из settings.pas';
+//////////////
+
 
 implementation
 
@@ -683,7 +688,6 @@ begin
     IniFileName := ConcatPaths([ProgramDirectory, 'config.ini'])
   else
     IniFileName := ConcatPaths([GetAppConfigDir(False), 'config.ini']);
-  Ini := TIniFile.Create(IniFileName);
   Ini.WriteString(DefaultConfigIniSection, 'ProgramVersion', GetProgramVersionStr);
 
   OldScreenshotCleaner := TOldScreenshotCleaner.Create;
@@ -901,7 +905,6 @@ begin
   Grabber.Free;
   KeyHook.Free;
   OldScreenshotCleaner.Free;
-  Ini.Free;
 
   DebugLn('Program ended');
 end;
@@ -2407,5 +2410,12 @@ function TMainForm.GetEnableLogging: Boolean;
 begin
   Result:=EnableLoggingMenuItem.Checked;
 end;
+
+///////////////////////
+function ini: TIniFile;
+begin
+  result:=cfg.ini;
+end;
+///////////////////////
 
 end.

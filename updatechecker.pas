@@ -45,7 +45,7 @@ implementation
 
 uses
   Controls, Graphics, Dialogs,
-  uLocalization, uUtils, umainform, LCLIntf, LazLoggerBase,
+  uLocalization, uUtils, umainform, Settings, LCLIntf, LazLoggerBase,
   fphttpclient, opensslsockets, fpjson, jsonparser, StrUtils;
 
 {$R *.lfm}
@@ -138,7 +138,7 @@ begin
 
   CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
 
-  Ini.WriteDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', Now);
+  Cfg.Ini.WriteDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', Now);
 
   UserAgent := Format('%s v%s Update Checker',
           [Application.Title, CurrentVersion.ToString()]);
