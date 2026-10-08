@@ -717,7 +717,7 @@ begin
     Grayscale, CompressionLevel);
   
   // Check for updates when program starts
-  LastUpdateCheck := Ini.ReadDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', 0);
+  LastUpdateCheck := Cfg.LastCheckForUpdates;
   if AutoCheckForUpdates then
   begin
     DebugLn('Last update check: %s (%d hours ago)', [DateTimeToStr(LastUpdateCheck), HoursBetween(Now, LastUpdateCheck)]);

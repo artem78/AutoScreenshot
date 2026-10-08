@@ -16,6 +16,8 @@ type
   public // todo потом сделать опять private
     Ini: TIniFile;
   private
+    procedure SetLastCheckForUpdates(AVal: TDateTime);
+    function GetLastCheckForUpdates: TdateTime;
 
 
   public
@@ -24,6 +26,8 @@ type
 
     // todo: переместить сюда остальные настройки...
     //...
+
+    property LastCheckForUpdates: tdatetime read GetLastCheckForUpdates write SetLastCheckForUpdates;
 
     // debug, только чтение
     function Debug_ProgramVersion: string;
@@ -44,6 +48,16 @@ const
   DEBUG_INI_SECTION = 'debug';
 
 { TSettings }
+
+procedure TSettings.SetLastCheckForUpdates(AVal: TDateTime);
+begin
+  ini.WriteDateTime(DEFAULT_INI_SECTION, 'LastCheckForUpdates', AVal);
+end;
+
+function TSettings.GetLastCheckForUpdates: TdateTime;
+begin
+  ini.ReadDateTime(DEFAULT_INI_SECTION, 'LastCheckForUpdates', 0);
+end;
 
 constructor TSettings.Create;
 var

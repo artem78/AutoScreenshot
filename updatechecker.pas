@@ -138,7 +138,7 @@ begin
 
   CurrentVersion := TProgramVersion.Create(GetProgramVersionStr());
 
-  Cfg.Ini.WriteDateTime(DefaultConfigIniSection, 'LastCheckForUpdates', Now);
+  Cfg.LastCheckForUpdates := Now;
 
   UserAgent := Format('%s v%s Update Checker',
           [Application.Title, CurrentVersion.ToString()]);
