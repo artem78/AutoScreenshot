@@ -18,6 +18,8 @@ type
   private
     procedure SetLastCheckForUpdates(AVal: TDateTime);
     function GetLastCheckForUpdates: TdateTime;
+    procedure SetIncludeCursor(AVal: boolean);
+    function GetIncludeCursor: boolean;
 
 
   public
@@ -28,6 +30,8 @@ type
     //...
 
     property LastCheckForUpdates: tdatetime read GetLastCheckForUpdates write SetLastCheckForUpdates;
+
+    property IncludeCursor: boolean read GetIncludeCursor write SetIncludeCursor;
 
     // debug, только чтение
     function Debug_ProgramVersion: string;
@@ -57,6 +61,16 @@ end;
 function TSettings.GetLastCheckForUpdates: TdateTime;
 begin
   ini.ReadDateTime(DEFAULT_INI_SECTION, 'LastCheckForUpdates', 0);
+end;
+
+procedure TSettings.SetIncludeCursor(AVal: boolean);
+begin
+  ini.WriteBool(DEFAULT_INI_SECTION, 'IncludeCursor', aval);
+end;
+
+function TSettings.GetIncludeCursor: boolean;
+begin
+  ini.ReadBool(DEFAULT_INI_SECTION, 'IncludeCursor', False);
 end;
 
 constructor TSettings.Create;

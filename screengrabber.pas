@@ -27,7 +27,7 @@ type
 
   TScreenGrabber = class
   private
-    procedure CaptureRegion(AFileName: String; ARect: TRect);
+    procedure CaptureRegion(AFileName: String; ARect: TRect; AIncludeCursor: boolean);
 
   public
     ImageFormat: TImageFormat;
@@ -39,8 +39,10 @@ type
     constructor Create(AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
       AnQuality: Integer; AnIsGrayscale: Boolean; ACompressionLevel: Tcompressionlevel);
 
-    procedure CaptureMonitor(AFileName: String; AMonitorId: Integer);
-    procedure CaptureAllMonitors(AFileName: String);
+    procedure CaptureMonitor(AFileName: String; AMonitorId: Integer;
+      AIncludeCursor: boolean = False);
+    procedure CaptureAllMonitors(AFileName: String;
+      AIncludeCursor: boolean = False);
   end;
 
 const
@@ -116,7 +118,8 @@ uses
 
 { TScreenGrabber }
 
-procedure TScreenGrabber.CaptureMonitor(AFileName: String; AMonitorId: Integer);
+procedure TScreenGrabber.CaptureMonitor(AFileName: String; AMonitorId: Integer;
+  AIncludeCursor: boolean);
 var
   Rect: TRect;
   UsedMonitor: TMonitor;
@@ -130,10 +133,10 @@ begin
   Rect.Top    := UsedMonitor.Top;
   Rect.Width  := UsedMonitor.Width;
   Rect.Height := UsedMonitor.Height;
-  CaptureRegion(AFileName, Rect);
+  CaptureRegion(AFileName, Rect, AIncludeCursor);
 end;
 
-procedure TScreenGrabber.CaptureAllMonitors(AFileName: String);
+procedure TScreenGrabber.CaptureAllMonitors(AFileName: String; AIncludeCursor: boolean);
 var
   Rect: TRect;
 begin
@@ -144,10 +147,11 @@ begin
   Rect.Top    := GetSystemMetrics(SM_YVIRTUALSCREEN);
   Rect.Width  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
   Rect.Height := GetSystemMetrics(SM_CYVIRTUALSCREEN);
-  CaptureRegion(AFileName, Rect);
+  CaptureRegion(AFileName, Rect, AIncludeCursor);
 end;
 
-procedure TScreenGrabber.CaptureRegion(AFileName: String; ARect: TRect);
+procedure TScreenGrabber.CaptureRegion(AFileName: String; ARect: TRect;
+  AIncludeCursor: boolean);
 {$IfDef Linux}
 const
   HWND_DESKTOP = 0;
@@ -159,8 +163,11 @@ var
   //GIF: TGIFImage;
   ScreenDC: {$IfDef Windows}Windows.{$EndIf}HDC;
 begin
+  // todo: использовать AIncludeCursor
+
   DebugLn('Start taking screenshot...');
   DebugLn('Region: ', DbgS(ARect));
+  DebugLn('With cursor: ', dbgs(AIncludeCursor));
 
   Bitmap := TBGRABitmap.Create(ARect.Width, ARect.Height, BGRABlack);
 

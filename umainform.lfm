@@ -1,13 +1,13 @@
 object MainForm: TMainForm
   Left = 278
-  Height = 675
+  Height = 757
   Top = 37
   Width = 723
   AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Auto Screenshot'
-  ClientHeight = 653
+  ClientHeight = 735
   ClientWidth = 723
   Menu = MainMenu
   OnCloseQuery = FormCloseQuery
@@ -17,7 +17,7 @@ object MainForm: TMainForm
   LCLVersion = '2.2.4.0'
   object SettingsPanel: TPanel
     Left = 0
-    Height = 542
+    Height = 624
     Top = 0
     Width = 723
     Align = alClient
@@ -28,7 +28,7 @@ object MainForm: TMainForm
     ChildSizing.VerticalSpacing = 6
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 2
-    ClientHeight = 542
+    ClientHeight = 624
     ClientWidth = 723
     TabOrder = 0
     object OutputDirLabel: TLabel
@@ -668,11 +668,27 @@ object MainForm: TMainForm
         ParentColor = False
       end
     end
+    object EmptyLabel10: TLabel
+      Left = 15
+      Height = 22
+      Top = 572
+      Width = 134
+      ParentColor = False
+    end
+    object IncludeCursorCheckBox: TCheckBox
+      Left = 155
+      Height = 22
+      Top = 572
+      Width = 856
+      Caption = 'Include mouse pointer [НЕ РЕАЛИЗОВАНО !!!]'
+      OnChange = IncludeCursorCheckBoxChange
+      TabOrder = 16
+    end
   end
   object ButtonsPanel: TPanel
     Left = 0
     Height = 87
-    Top = 566
+    Top = 648
     Width = 723
     Align = alBottom
     AutoSize = True
@@ -750,7 +766,7 @@ object MainForm: TMainForm
   object StatusBar1: TStatusBar
     Left = 0
     Height = 24
-    Top = 542
+    Top = 624
     Width = 723
     Panels = <>
   end
