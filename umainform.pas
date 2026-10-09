@@ -1741,7 +1741,7 @@ var
 {$IfDef Windows}
     MonInfo := MonInfos[AMonitorIdx];
 {$EndIf}
-    FallbackMonName := Format('Monitor #%d',
+    FallbackMonName := Format(Localizer.I18N('MonitorWithNumber'),
                 [Screen.Monitors[AMonitorIdx].MonitorNum + 1]  // Start numeration from 1
     );
     Strs := TStringList.Create;
