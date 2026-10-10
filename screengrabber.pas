@@ -112,9 +112,30 @@ uses
   {$IfDef Windows}
   windows,
   {$EndIf}
+  {$IfDef Linux}
+  xlib,x,ctypes ,
+  //mouse,
+  controls {для mouse},
+  {$EndIf}
   Forms, LCLType, LCLIntf, Graphics, BGRABitmap, BGRABitmapTypes, BGRAWriteWebP,
   BGRAWriteAvif, libavif, FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage,
   FPWriteTiff, LazLoggerBase;
+
+{$IfDef Linux}
+type
+    PXFixesCursorImage = ^TXFixesCursorImage;
+  TXFixesCursorImage = record
+    x, y: cshort;
+    width, height: cushort;
+    xhot, yhot: cushort;
+    cursor_serial: culong;
+    pixels: Pculong;
+    atom: TAtom;                    { Version >= 2 only }
+    namer: PChar;                    { Version >= 2 only }
+  end;
+function XFixesGetCursorImage(dis:PDisplay):PXFixesCursorImage;cdecl;external 'libXfixes';
+{$EndIf}
+
 
 
 {$IfDef Windows}
@@ -222,9 +243,42 @@ end;
 {$EndIf}
 
 {$IfDef Linux}
-procedure DrawCursorOverBitmap(ABitmap: TBGRABitmap); unimplemented;
+// Спиздил отсюда: https://forum.lazarus.freepascal.org/index.php/topic,37057.msg259462.html#msg259462
+procedure DrawCursorOverBitmap(ABitmap: TBGRABitmap);
+var  display:PDisplay;
+hh:PXFixesCursorImage;
+      gg,tt,gf:Integer;
+      goog:TBitmap;
+      vv:pbyte;
+
+
 begin
- //...
+  display :=XOpenDisplay(nil);
+     goog:= TBitmap.Create;
+     goog.Transparent:=true;
+    hh:=XFixesGetCursorImage(display);
+
+
+    goog.Width:=hh^.width;
+    goog.Height:=hh^.height;
+      gf:=0;
+  for  gg := 0 to hh^.height-1 do
+     for  tt := 0 to hh^.width-1 do
+      begin
+         vv:= @hh^.pixels[gf];
+         goog.Canvas.Pixels[tt,gg]:=RGBToColor(vv[2],vv[1],vv[0]);
+         Inc(gf);
+        end;
+
+
+
+
+   //Canvas.Draw(0,0,goog);
+   abitmap.Canvas.draw(Mouse.CursorPos.X{getmousex},mouse.cursorpos.y{getmousey},goog);
+    goog.Free;
+     XCloseDisplay(display);
+
+
 end;
 {$EndIf}
 
