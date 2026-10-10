@@ -467,6 +467,10 @@ begin
     to prevent directory name be moved and truncated
     https://github.com/artem78/AutoScreenshot/issues/67 }
   ActiveControl:=AutoCaptureControlGroup;
+
+  ///////////////
+  {$IfDef Linux}IncludeCursorCheckBox.Caption:= IncludeCursorCheckBox.Caption+' [UNIMPLRMRNTED]';{$ENDIF}
+  ///////////////
 end;
 
 procedure TMainForm.ReadSettings;

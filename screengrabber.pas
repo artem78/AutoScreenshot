@@ -116,6 +116,118 @@ uses
   BGRAWriteAvif, libavif, FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage,
   FPWriteTiff, LazLoggerBase;
 
+
+{$IfDef Windows}
+{
+   спизжено отсюда:
+   https://forum.lazarus.freepascal.org/index.php/topic,37034.msg247634.html#msg247634
+}
+
+
+// 1. Get the handle to the current mouse-cursor and its position
+function GetCursorInfo2: TCursorInfo;
+var
+ hWindow: HWND;
+ pt: TPoint;
+ pIconInfo: TIconInfo;
+ dwThreadID, dwCurrentThreadID: DWORD;
+begin
+ Result.hCursor := 0;
+ ZeroMemory(@Result, SizeOf(Result));
+ // Find out which window owns the cursor
+ if GetCursorPos(pt) then
+ begin
+   Result.ptScreenPos := pt;
+   hWindow := WindowFromPoint(pt);
+   if IsWindow(hWindow) then
+   begin
+     // Get the thread ID for the cursor owner.
+     dwThreadID := GetWindowThreadProcessId(hWindow, nil);
+
+     // Get the thread ID for the current thread
+     dwCurrentThreadID := GetCurrentThreadId;
+
+     // If the cursor owner is not us then we must attach to
+     // the other thread in so that we can use GetCursor() to
+     // return the correct hCursor
+     if (dwCurrentThreadID <> dwThreadID) then
+     begin
+       if AttachThreadInput(dwCurrentThreadID, dwThreadID, True) then
+       begin
+         // Get the handle to the cursor
+         Result.hCursor := GetCursor;
+         AttachThreadInput(dwCurrentThreadID, dwThreadID, False)
+;
+       end;
+     end
+     else
+     begin
+       Result.hCursor := GetCursor;
+     end;
+   end;
+ end;
+end;
+
+procedure DrawCursorOverBitmap(ABitmap: {TBITMAP} TBGRABitmap);
+var
+ //DC: HDC;
+ //ABitmap: TBitmap;
+ MyCursor: TIcon;
+ CursorInfo: TCursorInfo;
+ IconInfo: Windows.TIconInfo;
+begin
+ {// Capture the Desktop screen
+ DC := GetDC(GetDesktopWindow);
+ ABitmap := TBitmap.Create;
+ try
+   ABitmap.Width  := GetDeviceCaps(DC, HORZRES);
+   ABitmap.Height := GetDeviceCaps(DC, VERTRES);
+   // BitBlt on our bitmap
+   BitBlt(ABitmap.Canvas.Handle,
+     0,
+     0,
+     ABitmap.Width,
+     ABitmap.Height,
+     DC,
+     0,
+     0,
+     SRCCOPY);      }
+   // Create temp. Icon
+   MyCursor := TIcon.Create;
+   try
+     // Retrieve Cursor info
+     CursorInfo := GetCursorInfo2;
+     DebugLn('CursorInfo.hCursor=', dbgs(CursorInfo.hCursor));
+     if CursorInfo.hCursor <> 0 then
+     begin
+       MyCursor.Handle := CursorInfo.hCursor;
+       // Get Hotspot information
+       Windows.GetIconInfo(CursorInfo.hCursor, IconInfo);
+       // Draw the Cursor on our bitmap
+       ABitmap.Canvas.Draw(CursorInfo.ptScreenPos.X - IconInfo.xHotspot,
+                           CursorInfo.ptScreenPos.Y - IconInfo.yHotspot, MyCursor);
+     end
+     else
+       DebugLn('Failed to get cursor! (CursorInfo.hCursor = 0)');
+   finally
+     // Clean up
+     MyCursor.ReleaseHandle;
+     MyCursor.Free;
+   end;
+ {finally
+   ReleaseDC(GetDesktopWindow, DC);
+ end;    }
+ //Result := ABitmap;
+end;
+{$EndIf}
+
+{$IfDef Linux}
+procedure DrawCursorOverBitmap(ABitmap: TBGRABitmap); unimplemented;
+begin
+ //...
+end;
+{$EndIf}
+
 { TScreenGrabber }
 
 procedure TScreenGrabber.CaptureMonitor(AFileName: String; AMonitorId: Integer;
@@ -163,8 +275,6 @@ var
   //GIF: TGIFImage;
   ScreenDC: {$IfDef Windows}Windows.{$EndIf}HDC;
 begin
-  // todo: использовать AIncludeCursor
-
   DebugLn('Start taking screenshot...');
   DebugLn('Region: ', DbgS(ARect));
   DebugLn('With cursor: ', dbgs(AIncludeCursor));
@@ -216,6 +326,11 @@ begin
     DebugLn('ScreenDC is NULL !!!');
     exit;
   end;
+
+
+  //cursor
+  if AIncludeCursor then
+    DrawCursorOverBitmap(bitmap);
 
 
   case ImageFormat of
