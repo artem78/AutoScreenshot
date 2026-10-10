@@ -1472,6 +1472,9 @@ begin
     SkipSimilarCheckBox.Caption := Localizer.I18N('SkipSimilar');
     SkipSimilarCheckBox.Hint := Localizer.I18N('SkipSimilarHint');
     Label1.Caption := Localizer.I18N('Match');
+
+
+    IncludeCursorCheckBox.Caption:=Localizer.I18N('IncludeCursor');
   finally
     EnableAutoSizing;
 
