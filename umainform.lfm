@@ -746,6 +746,23 @@ object MainForm: TMainForm
         TabOrder = 1
       end
     end
+    object Image1: TImage
+      AnchorSideTop.Control = ButtonsPanel
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = ButtonsPanel
+      AnchorSideRight.Side = asrBottom
+      Left = 605
+      Height = 23
+      Top = 32
+      Width = 98
+      Anchors = [akTop, akRight]
+      BorderSpacing.Right = 20
+      OnClick = Image1Click
+      OnMouseEnter = Image1MouseEnter
+      OnMouseLeave = Image1MouseLeave
+      ParentShowHint = False
+      ShowHint = True
+    end
   end
   object StatusBar1: TStatusBar
     Left = 0

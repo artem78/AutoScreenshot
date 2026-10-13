@@ -32,6 +32,7 @@ type
     EmptyLabel7: TLabel;
     EmptyLabel8: TLabel;
     EmptyLabel9: TLabel;
+    Image1: TImage;
     Label1: TLabel;
     Label2: TLabel;
     HelpWithTranslationMenuItem: TMenuItem;
@@ -131,6 +132,9 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
     procedure HomePageMenuItemClick(Sender: TObject);
+    procedure Image1Click(Sender: TObject);
+    procedure Image1MouseEnter(Sender: TObject);
+    procedure Image1MouseLeave(Sender: TObject);
     procedure LocateCfgFileMenuItemClick(Sender: TObject);
     procedure LocateLogFileMenuItemClick(Sender: TObject);
     procedure DonateMenuItemClick(Sender: TObject);
@@ -454,6 +458,9 @@ begin
     for I := Ord(Low(TIntervalUnit)) to Ord(High(TIntervalUnit)) do
       Append('');
   end;
+
+  Image1.Picture.LoadFromResourceName(HINSTANCE, 'DONBUT1');
+  Image1.AutoSize:=true;
 
   // Fix incorrect order for statusbar and panel with buttons
   // https://wiki.lazarus.freepascal.org/Autosize_/_Layout#Order_of_controls_with_same_Align
@@ -832,6 +839,21 @@ end;
 procedure TMainForm.HomePageMenuItemClick(Sender: TObject);
 begin
   OpenURL(AddCustomParamsToUrl('https://artem78.github.io/AutoScreenshot/'));
+end;
+
+procedure TMainForm.Image1Click(Sender: TObject);
+begin
+  showmessage('НАЖАЛИ!!!');
+end;
+
+procedure TMainForm.Image1MouseEnter(Sender: TObject);
+begin
+  (sender as timage).Picture.LoadFromResourceName(HINSTANCE, 'DONBUT2');
+end;
+
+procedure TMainForm.Image1MouseLeave(Sender: TObject);
+begin
+  (sender as timage).Picture.LoadFromResourceName(HINSTANCE, 'DONBUT1');
 end;
 
 procedure TMainForm.LocateCfgFileMenuItemClick(Sender: TObject);
@@ -1462,6 +1484,8 @@ begin
     SkipSimilarCheckBox.Caption := Localizer.I18N('SkipSimilar');
     SkipSimilarCheckBox.Hint := Localizer.I18N('SkipSimilarHint');
     Label1.Caption := Localizer.I18N('Match');
+
+    Image1.Hint:=Localizer.I18N('Donate');
   finally
     EnableAutoSizing;
 
