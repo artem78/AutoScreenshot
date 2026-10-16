@@ -4,3 +4,6 @@
 [submodule "libs/country-flags"]
 	path = libs/country-flags
 	url = https://github.com/luapower/country-flags.git
+[submodule "libs/Lazarus_GetMonitorsInfo"]
+	path = libs/Lazarus_GetMonitorsInfo
+	url = https://github.com/PascalVault/Lazarus_GetMonitorsInfo.git

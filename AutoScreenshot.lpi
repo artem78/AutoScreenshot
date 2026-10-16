@@ -191,7 +191,7 @@ override_dh_auto_install:
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -250,7 +250,7 @@ end;"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -303,7 +303,7 @@ end;"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -357,7 +357,7 @@ end;"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -436,7 +436,7 @@ end;"/>
         <PackageName Value="LCL"/>
       </Item7>
     </RequiredPackages>
-    <Units Count="20">
+    <Units Count="21">
       <Unit0>
         <Filename Value="AutoScreenshot.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -548,6 +548,10 @@ end;"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Settings"/>
       </Unit19>
+      <Unit20>
+        <Filename Value="libs\Lazarus_GetMonitorsInfo\uMonitorInfo.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit20>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -558,7 +562,7 @@ end;"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="libs;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot"/>
+      <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       <ObjectPath Value="libs\PNGImage"/>
     </SearchPaths>
