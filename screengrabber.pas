@@ -27,7 +27,7 @@ type
 
   TScreenGrabber = class
   private
-    procedure CaptureRegion(AFileName: String; ARect: TRect);
+    procedure CaptureRegion(AFileName: String; ARect: TRect; AIncludeCursor: boolean);
 
   public
     ImageFormat: TImageFormat;
@@ -39,8 +39,10 @@ type
     constructor Create(AnImageFormat: TImageFormat; AColorDepth: TColorDepth;
       AnQuality: Integer; AnIsGrayscale: Boolean; ACompressionLevel: Tcompressionlevel);
 
-    procedure CaptureMonitor(AFileName: String; AMonitorId: Integer);
-    procedure CaptureAllMonitors(AFileName: String);
+    procedure CaptureMonitor(AFileName: String; AMonitorId: Integer;
+      AIncludeCursor: boolean = False);
+    procedure CaptureAllMonitors(AFileName: String;
+      AIncludeCursor: boolean = False);
   end;
 
 const
@@ -110,13 +112,180 @@ uses
   {$IfDef Windows}
   windows,
   {$EndIf}
+  {$IfDef Linux}
+  xlib,x,ctypes ,
+  //mouse,
+  controls {для mouse},
+  {$EndIf}
   Forms, LCLType, LCLIntf, Graphics, BGRABitmap, BGRABitmapTypes, BGRAWriteWebP,
   BGRAWriteAvif, libavif, FPWriteJPEG, FPWriteBMP, FPWritePNG, FPImage,
   FPWriteTiff, LazLoggerBase;
 
+{$IfDef Linux}
+type
+    PXFixesCursorImage = ^TXFixesCursorImage;
+  TXFixesCursorImage = record
+    x, y: cshort;
+    width, height: cushort;
+    xhot, yhot: cushort;
+    cursor_serial: culong;
+    pixels: Pculong;
+    atom: TAtom;                    { Version >= 2 only }
+    namer: PChar;                    { Version >= 2 only }
+  end;
+function XFixesGetCursorImage(dis:PDisplay):PXFixesCursorImage;cdecl;external 'libXfixes';
+{$EndIf}
+
+
+
+{$IfDef Windows}
+{
+   спизжено отсюда:
+   https://forum.lazarus.freepascal.org/index.php/topic,37034.msg247634.html#msg247634
+}
+
+
+// 1. Get the handle to the current mouse-cursor and its position
+function GetCursorInfo2: TCursorInfo;
+var
+ hWindow: HWND;
+ pt: TPoint;
+ pIconInfo: TIconInfo;
+ dwThreadID, dwCurrentThreadID: DWORD;
+begin
+ Result.hCursor := 0;
+ ZeroMemory(@Result, SizeOf(Result));
+ // Find out which window owns the cursor
+ if GetCursorPos(pt) then
+ begin
+   Result.ptScreenPos := pt;
+   hWindow := WindowFromPoint(pt);
+   if IsWindow(hWindow) then
+   begin
+     // Get the thread ID for the cursor owner.
+     dwThreadID := GetWindowThreadProcessId(hWindow, nil);
+
+     // Get the thread ID for the current thread
+     dwCurrentThreadID := GetCurrentThreadId;
+
+     // If the cursor owner is not us then we must attach to
+     // the other thread in so that we can use GetCursor() to
+     // return the correct hCursor
+     if (dwCurrentThreadID <> dwThreadID) then
+     begin
+       if AttachThreadInput(dwCurrentThreadID, dwThreadID, True) then
+       begin
+         // Get the handle to the cursor
+         Result.hCursor := GetCursor;
+         AttachThreadInput(dwCurrentThreadID, dwThreadID, False)
+;
+       end;
+     end
+     else
+     begin
+       Result.hCursor := GetCursor;
+     end;
+   end;
+ end;
+end;
+
+procedure DrawCursorOverBitmap(ABitmap: {TBITMAP} TBGRABitmap);
+var
+ //DC: HDC;
+ //ABitmap: TBitmap;
+ MyCursor: TIcon;
+ CursorInfo: TCursorInfo;
+ IconInfo: Windows.TIconInfo;
+begin
+ {// Capture the Desktop screen
+ DC := GetDC(GetDesktopWindow);
+ ABitmap := TBitmap.Create;
+ try
+   ABitmap.Width  := GetDeviceCaps(DC, HORZRES);
+   ABitmap.Height := GetDeviceCaps(DC, VERTRES);
+   // BitBlt on our bitmap
+   BitBlt(ABitmap.Canvas.Handle,
+     0,
+     0,
+     ABitmap.Width,
+     ABitmap.Height,
+     DC,
+     0,
+     0,
+     SRCCOPY);      }
+   // Create temp. Icon
+   MyCursor := TIcon.Create;
+   try
+     // Retrieve Cursor info
+     CursorInfo := GetCursorInfo2;
+     DebugLn('CursorInfo.hCursor=', dbgs(CursorInfo.hCursor));
+     if CursorInfo.hCursor <> 0 then
+     begin
+       MyCursor.Handle := CursorInfo.hCursor;
+       // Get Hotspot information
+       Windows.GetIconInfo(CursorInfo.hCursor, IconInfo);
+       // Draw the Cursor on our bitmap
+       ABitmap.Canvas.Draw(CursorInfo.ptScreenPos.X - IconInfo.xHotspot,
+                           CursorInfo.ptScreenPos.Y - IconInfo.yHotspot, MyCursor);
+     end
+     else
+       DebugLn('Failed to get cursor! (CursorInfo.hCursor = 0)');
+   finally
+     // Clean up
+     MyCursor.ReleaseHandle;
+     MyCursor.Free;
+   end;
+ {finally
+   ReleaseDC(GetDesktopWindow, DC);
+ end;    }
+ //Result := ABitmap;
+end;
+{$EndIf}
+
+{$IfDef Linux}
+// Спиздил отсюда: https://forum.lazarus.freepascal.org/index.php/topic,37057.msg259462.html#msg259462
+procedure DrawCursorOverBitmap(ABitmap: TBGRABitmap);
+var  display:PDisplay;
+hh:PXFixesCursorImage;
+      gg,tt,gf:Integer;
+      goog:TBitmap;
+      vv:pbyte;
+
+
+begin
+  display :=XOpenDisplay(nil);
+     goog:= TBitmap.Create;
+     goog.Transparent:=true;
+    hh:=XFixesGetCursorImage(display);
+
+
+    goog.Width:=hh^.width;
+    goog.Height:=hh^.height;
+      gf:=0;
+  for  gg := 0 to hh^.height-1 do
+     for  tt := 0 to hh^.width-1 do
+      begin
+         vv:= @hh^.pixels[gf];
+         goog.Canvas.Pixels[tt,gg]:=RGBToColor(vv[2],vv[1],vv[0]);
+         Inc(gf);
+        end;
+
+
+
+
+   //Canvas.Draw(0,0,goog);
+   abitmap.Canvas.draw(Mouse.CursorPos.X{getmousex},mouse.cursorpos.y{getmousey},goog);
+    goog.Free;
+     XCloseDisplay(display);
+
+
+end;
+{$EndIf}
+
 { TScreenGrabber }
 
-procedure TScreenGrabber.CaptureMonitor(AFileName: String; AMonitorId: Integer);
+procedure TScreenGrabber.CaptureMonitor(AFileName: String; AMonitorId: Integer;
+  AIncludeCursor: boolean);
 var
   Rect: TRect;
   UsedMonitor: TMonitor;
@@ -130,10 +299,10 @@ begin
   Rect.Top    := UsedMonitor.Top;
   Rect.Width  := UsedMonitor.Width;
   Rect.Height := UsedMonitor.Height;
-  CaptureRegion(AFileName, Rect);
+  CaptureRegion(AFileName, Rect, AIncludeCursor);
 end;
 
-procedure TScreenGrabber.CaptureAllMonitors(AFileName: String);
+procedure TScreenGrabber.CaptureAllMonitors(AFileName: String; AIncludeCursor: boolean);
 var
   Rect: TRect;
 begin
@@ -144,10 +313,11 @@ begin
   Rect.Top    := GetSystemMetrics(SM_YVIRTUALSCREEN);
   Rect.Width  := GetSystemMetrics(SM_CXVIRTUALSCREEN);
   Rect.Height := GetSystemMetrics(SM_CYVIRTUALSCREEN);
-  CaptureRegion(AFileName, Rect);
+  CaptureRegion(AFileName, Rect, AIncludeCursor);
 end;
 
-procedure TScreenGrabber.CaptureRegion(AFileName: String; ARect: TRect);
+procedure TScreenGrabber.CaptureRegion(AFileName: String; ARect: TRect;
+  AIncludeCursor: boolean);
 {$IfDef Linux}
 const
   HWND_DESKTOP = 0;
@@ -161,6 +331,7 @@ var
 begin
   DebugLn('Start taking screenshot...');
   DebugLn('Region: ', DbgS(ARect));
+  DebugLn('With cursor: ', dbgs(AIncludeCursor));
 
   Bitmap := TBGRABitmap.Create(ARect.Width, ARect.Height, BGRABlack);
 
@@ -209,6 +380,11 @@ begin
     DebugLn('ScreenDC is NULL !!!');
     exit;
   end;
+
+
+  //cursor
+  if AIncludeCursor then
+    DrawCursorOverBitmap(bitmap);
 
 
   case ImageFormat of

@@ -24,6 +24,7 @@ type
 
   TMainForm = class(TForm)
     AutoCheckForUpdatesMenuItem: TMenuItem;
+    IncludeCursorCheckBox: TCheckBox;
     EmptyLabel2: TLabel;
     EmptyLabel3: TLabel;
     EmptyLabel4: TLabel;
@@ -37,6 +38,7 @@ type
     HelpWithTranslationMenuItem: TMenuItem;
     DebugMenuItem: TMenuItem;
     EnableLoggingMenuItem: TMenuItem;
+    EmptyLabel10: TLabel;
     LocateCfgFileMenuItem: TMenuItem;
     DonateMenuItem: TMenuItem;
     OpenCfgFileMenuItem: TMenuItem;
@@ -131,6 +133,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
     procedure HomePageMenuItemClick(Sender: TObject);
+    procedure IncludeCursorCheckBoxChange(Sender: TObject);
     procedure LocateCfgFileMenuItemClick(Sender: TObject);
     procedure LocateLogFileMenuItemClick(Sender: TObject);
     procedure DonateMenuItemClick(Sender: TObject);
@@ -629,6 +632,8 @@ begin
   SkipSimilar := ini.ReadBool(DefaultConfigIniSection, 'SkipSimilar', False);
   SkipSimilarMatchPercent := ini.ReadInteger(DefaultConfigIniSection,
                'SkipSimilarMatchPercent', DefaultSkipSimilarMatchPercent);
+
+  IncludeCursorCheckBox.Checked:=cfg.IncludeCursor;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -833,6 +838,11 @@ end;
 procedure TMainForm.HomePageMenuItemClick(Sender: TObject);
 begin
   OpenURL(AddCustomParamsToUrl('https://artem78.github.io/AutoScreenshot/'));
+end;
+
+procedure TMainForm.IncludeCursorCheckBoxChange(Sender: TObject);
+begin
+  Cfg.IncludeCursor:=TCheckBox(sender).Checked;
 end;
 
 procedure TMainForm.LocateCfgFileMenuItemClick(Sender: TObject);
@@ -1104,13 +1114,13 @@ begin
   TrayIconState := tisFlashAnimation;
 
   if MonitorId = NoMonitorId then
-    Grabber.CaptureAllMonitors(ImageFileName)
+    Grabber.CaptureAllMonitors(ImageFileName, cfg.IncludeCursor)
   else
   begin
     if MonitorId = MonitorWithCursor then
-      Grabber.CaptureMonitor(ImageFileName, GetMonitorWithCursor)
+      Grabber.CaptureMonitor(ImageFileName, GetMonitorWithCursor, cfg.IncludeCursor)
     else
-      Grabber.CaptureMonitor(ImageFileName, MonitorId);
+      Grabber.CaptureMonitor(ImageFileName, MonitorId, cfg.IncludeCursor);
   end;
 
   LastImgFileName := FileJournal.LastAdded;
@@ -1498,6 +1508,9 @@ begin
     SkipSimilarCheckBox.Caption := Localizer.I18N('SkipSimilar');
     SkipSimilarCheckBox.Hint := Localizer.I18N('SkipSimilarHint');
     Label1.Caption := Localizer.I18N('Match');
+
+
+    IncludeCursorCheckBox.Caption:=Localizer.I18N('IncludeCursor');
   finally
     EnableAutoSizing;
 
