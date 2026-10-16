@@ -72,6 +72,7 @@ https://github.com/user-attachments/assets/f1d40348-61a2-4eef-a2fb-343d43f03fd5
 * German
 * [French](README-fr.md)
 * [Italian](README-it.md)
+* Hebrew
 
 [(Help with new translations)](#Translation)
 
