@@ -1826,7 +1826,11 @@ var
 
       // пиксели
       //Strs.Append(Format('(%d x %d)', [MonInfo.ResolutionH, MonInfo.ResolutionV]));
-      strs.Append(Format('(%d x %d)', [Screen.Monitors[AMonitorIdx].Width, Screen.Monitors[AMonitorIdx].Height]));
+      strs.Append(Format('(%dx%d %s)', [
+                  Screen.Monitors[AMonitorIdx].Width,
+                  Screen.Monitors[AMonitorIdx].Height,
+                  Localizer.I18N('PixelsShort')
+      ]));
 
       // основной или нет
       if Screen.Monitors[AMonitorIdx].Primary then
@@ -1865,9 +1869,12 @@ begin
     SelIdx := MonitorComboBox.ItemIndex;
 
     Items.Clear;
-    Items.Append(WideFormat(Localizer.I18N('AllMonitorsInfo'),
-        [GetSystemMetrics(SM_CXVIRTUALSCREEN),
-         GetSystemMetrics(SM_CYVIRTUALSCREEN)]
+    Items.Append(WideFormat('%s (%dx%d %s)', [
+         Localizer.I18N('AllMonitors'),
+         GetSystemMetrics(SM_CXVIRTUALSCREEN),
+         GetSystemMetrics(SM_CYVIRTUALSCREEN),
+         Localizer.I18N('PixelsShort')
+      ]
     ));
 
     Items.Append(Localizer.I18N('MonitorWithCursor'));
