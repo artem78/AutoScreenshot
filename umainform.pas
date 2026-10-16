@@ -230,6 +230,7 @@ type
     procedure SetColorDepth(AColorDepth: TColorDepth);
     function GetColorDepth: TColorDepth;
     procedure SetTrayIconState(IconState: TTrayIconState);
+    procedure DoMakeScreenshot;
     procedure MakeScreenshot;
     procedure MinimizeToTray;
     procedure RestoreFromTray;
@@ -1069,7 +1070,7 @@ begin
   MinimizeToTray;
 end;
 
-procedure TMainForm.MakeScreenshot;
+procedure TMainForm.DoMakeScreenshot;
 var
   Cmd, ImageFileName, ErrMsg, LastImgFileName: String;
   SimilarSkipped: Boolean = false;
@@ -1161,6 +1162,41 @@ begin
   // Increment counter after successful capture
   //Inc(Counter);
   Counter := Counter + 1;
+end;
+
+procedure TMainForm.MakeScreenshot;
+var
+  ErrMsg:string;
+begin
+  // обёртка под DoMakeScreenshot (бывший MakeScreenshot) для отлова ошибок
+  //https://github.com/artem78/AutoScreenshot/issues/79#issuecomment-6212053002
+
+  try
+    DoMakeScreenshot;
+  except
+    on e: Exception do
+    begin
+      ErrMsg := Localizer.I18N('ScreenshotFail') + {' '} sLineBreak + e.ToString;
+      if MainForm.Visible then
+      begin
+        ShowNotificationInStatusBar(ErrMsg);
+      end
+      else
+      begin
+        with TrayIcon do
+        begin
+          BalloonHint:=errmsg;
+          BalloonTitle:='Auto Screenshot';
+          BalloonFlags := {bfWarning}bfError;
+          //BalloonTimeout:=1000;
+          ShowBalloonHint;
+        end;
+      end;
+      DebugLn('Taking screenshot error: ', e.ToString);
+
+      //exit;
+    end;
+  end;
 end;
 
 procedure TMainForm.TakeScreenshotButtonClick(Sender: TObject);
