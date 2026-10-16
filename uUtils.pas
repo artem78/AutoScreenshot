@@ -101,6 +101,9 @@ uses
   SysUtils, Classes, DateUtils, StrUtils, uLanguages, Settings, Forms {???}, FileInfo,
   process, FileUtil, LazLogger;
 
+var
+  IsPortableVar:boolean;
+
 {$IfDef Windows}
 const
   RegistryAutorunKey = 'Software\Microsoft\Windows\CurrentVersion\Run';
@@ -444,6 +447,12 @@ begin
 end;
 
 function IsPortable: Boolean;
+begin
+  // теперь устанавливаем внутреннюю переменную единожды, а не трахаем жёсткий диск при каждом вызове
+  result:=IsPortableVar;;
+end;
+
+procedure UpdatePortableVar;
 {$IfDef Windows}
 var
   UninstallerFileName: String;
@@ -451,10 +460,10 @@ var
 begin
   {$IfDef Windows}
   UninstallerFileName := ExtractFilePath(Application.ExeName) + 'unins000.exe';
-  Result := not FileExists(UninstallerFileName);
+  IsPortableVar := not FileExists(UninstallerFileName);
   {$EndIf}
   {$IfDef Linux}
-  Result := not Application.ExeName.StartsWith('/usr/bin/');
+  IsPortableVar := not Application.ExeName.StartsWith('/usr/bin/');
   {$EndIf}
 end;
 
@@ -624,4 +633,6 @@ begin
   Result := ASearchRec.TimeStamp;
 end;
 
+initialization
+  UpdatePortableVar;
 end.
