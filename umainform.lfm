@@ -880,6 +880,10 @@ object MainForm: TMainForm
         Caption = 'Homepage'
         OnClick = HomePageMenuItemClick
       end
+      object GithubMenuItem: TMenuItem
+        Caption = 'GitHub'
+        OnClick = GithubMenuItemClick
+      end
       object AboutMenuItem: TMenuItem
         Caption = 'About...'
         OnClick = AboutMenuItemClick

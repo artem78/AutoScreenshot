@@ -229,7 +229,7 @@ object AboutForm: TAboutForm
       Height = 16
       Top = 154
       Width = 89
-      Caption = 'Github:'
+      Caption = 'GitHub:'
       ParentColor = False
     end
     object GithubValueLabel: TLabel

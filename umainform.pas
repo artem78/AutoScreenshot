@@ -41,6 +41,7 @@ type
     EmptyLabel10: TLabel;
     LocateCfgFileMenuItem: TMenuItem;
     DonateMenuItem: TMenuItem;
+    GithubMenuItem: TMenuItem;
     OpenCfgFileMenuItem: TMenuItem;
     OpenLogMenuItem: TMenuItem;
     LocateLogFileMenuItem: TMenuItem;
@@ -131,6 +132,7 @@ type
     procedure EnableLoggingMenuItemClick(Sender: TObject);
     procedure ExitMenuItemClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure GithubMenuItemClick(Sender: TObject);
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
     procedure HomePageMenuItemClick(Sender: TObject);
     procedure IncludeCursorCheckBoxChange(Sender: TObject);
@@ -828,6 +830,11 @@ begin
 
   if CanClose then
     CanClose := ConfirmExit;
+end;
+
+procedure TMainForm.GithubMenuItemClick(Sender: TObject);
+begin
+  openurl('https://github.com/artem78/AutoScreenshot');
 end;
 
 procedure TMainForm.HelpWithTranslationMenuItemClick(Sender: TObject);
