@@ -41,6 +41,7 @@
 	<!--<property name="zip_dir" location="build/zip"/>-->
 	<property name="test_dir" location="Test"/>
 	<property name="temp_dir" location="build/temp"/>
+	<property name="dbg_filename" value="AutoScreenshot.dbg" />
 	
 	<condition property="executable" value="AutoScreenshot.exe">
 		<os family="windows" />
@@ -67,6 +68,7 @@
 		<delete dir="lib"/>
 		<delete file="${executable}"/>
 		<delete dir="${temp_dir}"/>
+		<delete file="${dbg_filename}" />
 	</target>
 	
 	<target name="init" depends="clean">
@@ -205,6 +207,7 @@
 		</copy>
 		
 		<copy file="LICENSE.txt" todir="${build_dir}" preservelastmodified="true"/>
+		<copy file="${dbg_filename}" todir="${build_dir}" preservelastmodified="true"/>
 		
 		<copy todir="${temp_dir}/AutoScreenshot_${version}" preservelastmodified="true">
 			<fileset dir="${build_dir}" includes="**"/>
@@ -231,6 +234,7 @@
 					<param name="arch" value="x86"/>
 				</antcall>
 				<copy file="${basedir}/AutoScreenshot.exe" todir="${build_x86_dir}" failonerror="true" />
+				<copy file="${basedir}/${dbg_filename}" todir="${build_x86_dir}" overwrite="true" />
 				
 				<!-- Prepare files for x64 -->
 <!--				<antcall target="download_dlls">
@@ -243,6 +247,7 @@
 					<param name="arch" value="x64"/>
 				</antcall>
 				<copy file="${basedir}/AutoScreenshot.exe" todir="${build_x64_dir}" failonerror="true" />
+				<copy file="${basedir}/${dbg_filename}" todir="${build_x64_dir}" overwrite="true" />
 		
 				<!-- Run Inno Setup script compiling -->
 				<exec executable="${inno_setup_dir}/ISCC.exe" failonerror="true">
