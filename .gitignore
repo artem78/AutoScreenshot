@@ -54,6 +54,7 @@ lib/
 /screenshots/
 /ConverterBackup/
 /journal.dat
+/bugreport.txt
 
 # Linux executables:
 /AutoScreenshot

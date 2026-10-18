@@ -17,7 +17,11 @@ uses
   uLocalization in 'uLocalization.pas',
   uUtils in 'uUtils.pas',
   uLanguages in 'uLanguages.pas',
-  UniqueInstanceRaw;
+  UniqueInstanceRaw,
+  fileutil {для ProgramDirectory}, UExceptionLogger;
+
+const
+  BUGREPORT_FILENAME = 'bugreport.txt';
 
 begin
   // heaptrc settings
@@ -36,6 +40,13 @@ begin
 
   Application.Scaled:=True;
   Application.Initialize;
+
+  exceptionLogger := TExceptionLogger.Create(Application);
+  if IsPortable then
+    exceptionLogger.LogFileName := ConcatPaths([ProgramDirectory, BUGREPORT_FILENAME])
+  else
+    exceptionLogger.LogFileName := ConcatPaths([GetAppConfigDir(False), BUGREPORT_FILENAME]);
+
   Application.HintHidePause := -1; // Do not hide hint
   Application.Title := 'Auto Screenshot';
   Application.CreateForm(TMainForm, MainForm);
