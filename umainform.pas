@@ -2318,7 +2318,7 @@ var
   Callback: {TLazLoggerWriteEvent} procedure(Sender: TObject; S: string; var Handled: Boolean) of object;
   IndentLevel: Integer;
 begin
-  S := Format('[%s]   %s', [FormatDateTime('hh:nn:ss.zzz', Now()), S]);
+  S := Format('[%s]   %s', [FormatDateTime('dd.mm.yyyy hh:nn:ss.zzz', Now()), S]);
   Callback := DebugLogger.OnDebugLn;
   IndentLevel := DebugLogger.NestLvlIndent;
   DebugLogger.OnDebugLn := Nil;
