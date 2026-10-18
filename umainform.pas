@@ -706,6 +706,7 @@ begin
   DebugLn('Program started at ', DateTimeToStr(Now));
   DebugLn('Version: ', GetProgramVersionStr);
   debugln('type:',ifthen(IsPortable,'portable','installed')) ;
+  debugln(['bits: ', {$IF defined(CPU64)}64{$ElseIf defined(CPU32)}32{$Else}'???'{$ENDIF}]);
   DebugLn('OS:', OSInfo);
   DebugMonitors();
   debugln();
