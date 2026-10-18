@@ -41,6 +41,7 @@
 	<!--<property name="zip_dir" location="build/zip"/>-->
 	<property name="test_dir" location="Test"/>
 	<property name="temp_dir" location="build/temp"/>
+	<property name="dbg_file" location="AutoScreenshot.dbg" />
 	
 	<condition property="executable" value="AutoScreenshot.exe">
 		<os family="windows" />
@@ -67,6 +68,7 @@
 		<delete dir="lib"/>
 		<delete file="${executable}"/>
 		<delete dir="${temp_dir}"/>
+		<delete file="${dbg_file}" />
 	</target>
 	
 	<target name="init" depends="clean">
@@ -140,6 +142,9 @@
 	</target>
 	
 	<target name="zip" depends="download_dlls_once, build, tests" description="Pack all to ZIP archive">
+		<property name="dist_type" value="portable" />
+		<antcall target="copy_dbg" />
+	
 		<copy file="${executable}" todir="${build_dir}" preservelastmodified="true"/>
 		
 		<if>
@@ -215,6 +220,8 @@
 	
 	<!--<target name="installer" depends="download_dlls_once, build, tests" description="Make installer file (Windows only)" if="is_windows">-->
 	<target name="installer" depends="download_dlls_once" description="Make installer file (Windows only)" if="is_windows">
+		<property name="dist_type" value="installer" />
+		
 		<!--<echoproperties/>-->
 		<!--<if>
 			<os family="windows"/>
@@ -230,6 +237,9 @@
 				<antcall target="build">
 					<param name="arch" value="x86"/>
 				</antcall>
+				<antcall target="copy_dbg">
+					<param name="arch" value="x86"/>
+				</antcall>
 				<copy file="${basedir}/AutoScreenshot.exe" todir="${build_x86_dir}" failonerror="true" />
 				
 				<!-- Prepare files for x64 -->
@@ -240,6 +250,9 @@
 					<fileset dir="${basedir}" includes="/*.dll"/>
 				</copy>-->
 				<antcall target="build">
+					<param name="arch" value="x64"/>
+				</antcall>
+				<antcall target="copy_dbg">
 					<param name="arch" value="x64"/>
 				</antcall>
 				<copy file="${basedir}/AutoScreenshot.exe" todir="${build_x64_dir}" failonerror="true" />
@@ -458,5 +471,11 @@
 				<include name="*.dll"/>
 			</fileset>
 		</copy>
+	</target>
+	
+	<target name="copy_dbg">
+		<!-- сразу после компиляции копируем отладочные символы в отдельную папку -->
+		<!--<copy file="${dbg_file}" todir="${release_dir}/debug symbols/${os_family}/${arch}/" overwrite="true" />-->
+		<copy file="${dbg_file}" todir="${release_dir}/debug symbols/${os_family} ${arch} ${dist_type}/" overwrite="true" />
 	</target>
 </project>
