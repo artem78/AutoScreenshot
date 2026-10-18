@@ -860,6 +860,13 @@ object MainForm: TMainForm
         Caption = 'Select config file in file manager'
         OnClick = LocateCfgFileMenuItemClick
       end
+      object __Separator2: TMenuItem
+        Caption = '-'
+      end
+      object __DbgRaiseExceptionMenuItem: TMenuItem
+        Caption = 'raise exception'
+        OnClick = __DbgRaiseExceptionMenuItemClick
+      end
     end
     object HelpSubMenu: TMenuItem
       Caption = 'Help'

@@ -42,11 +42,13 @@ type
     LocateCfgFileMenuItem: TMenuItem;
     DonateMenuItem: TMenuItem;
     GithubMenuItem: TMenuItem;
+    __DbgRaiseExceptionMenuItem: TMenuItem;
     OpenCfgFileMenuItem: TMenuItem;
     OpenLogMenuItem: TMenuItem;
     LocateLogFileMenuItem: TMenuItem;
     ReportIssueMenuItem: TMenuItem;
     Separator1: TMenuItem;
+    __Separator2: TMenuItem;
     SkipSimilarPanel: TPanel;
     SkipSimilarCheckBox: TCheckBox;
     FileMenuItem: TMenuItem;
@@ -186,6 +188,7 @@ type
     procedure UniqueInstance1OtherInstance(Sender: TObject;
       ParamCount: Integer; const Parameters: array of String);
     procedure UpdateCheckOnStartupTimerTimer(Sender: TObject);
+    procedure __DbgRaiseExceptionMenuItemClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -470,6 +473,15 @@ begin
     to prevent directory name be moved and truncated
     https://github.com/artem78/AutoScreenshot/issues/67 }
   ActiveControl:=AutoCaptureControlGroup;
+
+  // чисто для теста...
+  {$IFOPT D+}
+   __Separator2.Visible:=True;
+  __DbgRaiseExceptionMenuItem.Visible:=true;
+  {$else}
+  __Separator2.Visible:=false;
+ __DbgRaiseExceptionMenuItem.Visible:=false;
+  {$ENDIF}
 end;
 
 procedure TMainForm.ReadSettings;
@@ -2525,6 +2537,11 @@ procedure TMainForm.UpdateCheckOnStartupTimerTimer(Sender: TObject);
 begin
       CheckForUpdates(True);
   (Sender as TTimer).Enabled:=false;
+end;
+
+procedure TMainForm.__DbgRaiseExceptionMenuItemClick(Sender: TObject);
+begin
+  raise Exception.Create('my exception');
 end;
 
 function TMainForm.GetEnableLogging: Boolean;
