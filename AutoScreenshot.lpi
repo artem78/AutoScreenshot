@@ -191,7 +191,7 @@ override_dh_auto_install:
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo;libs\lazarus-exception-logger"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -250,7 +250,7 @@ end;"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo;libs\lazarus-exception-logger"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -303,7 +303,7 @@ end;"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo;libs\lazarus-exception-logger"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -357,7 +357,7 @@ end;"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="libs;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo"/>
+            <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo;libs\lazarus-exception-logger"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
             <ObjectPath Value="libs\PNGImage"/>
           </SearchPaths>
@@ -436,7 +436,7 @@ end;"/>
         <PackageName Value="LCL"/>
       </Item7>
     </RequiredPackages>
-    <Units Count="21">
+    <Units Count="22">
       <Unit0>
         <Filename Value="AutoScreenshot.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -552,6 +552,10 @@ end;"/>
         <Filename Value="libs\Lazarus_GetMonitorsInfo\uMonitorInfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit20>
+      <Unit21>
+        <Filename Value="libs\lazarus-exception-logger\UExceptionLogger.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit21>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -562,7 +566,7 @@ end;"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="libs;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo"/>
+      <OtherUnitFiles Value="libs\Cross.Codebot\source\codebot_controls;libs\Cross.Codebot\source\codebot;libs\Lazarus_GetMonitorsInfo;libs\lazarus-exception-logger"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       <ObjectPath Value="libs\PNGImage"/>
     </SearchPaths>

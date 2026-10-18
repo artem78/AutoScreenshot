@@ -7,3 +7,6 @@
 [submodule "libs/Lazarus_GetMonitorsInfo"]
 	path = libs/Lazarus_GetMonitorsInfo
 	url = https://github.com/PascalVault/Lazarus_GetMonitorsInfo.git
+[submodule "libs/lazarus-exception-logger"]
+	path = libs/lazarus-exception-logger
+	url = https://github.com/artem78/lazarus-exception-logger.git
