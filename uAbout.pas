@@ -113,7 +113,7 @@ begin
           GetProgramVersionStr(), Bitness,
           IfThen(IsPortable, Localizer.I18N('Portable'))
   ]);
-  {$IFOPT D+}
+  {$IFDEF DEBUG}
     VersionValueLabel.Caption := VersionValueLabel.Caption + '    [DEBUG BUILD]';
   {$ENDIF}
 

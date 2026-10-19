@@ -408,7 +408,7 @@ var
   I: Integer;
 begin
   MainForm.Caption := MainForm.Caption + ' v' + GetProgramVersionStr;
-  {$IFOPT D+}
+  {$IFDEF DEBUG}
     MainForm.Caption := MainForm.Caption + '    [DEBUG BUILD]';
   {$ENDIF}
 
@@ -475,7 +475,7 @@ begin
   ActiveControl:=AutoCaptureControlGroup;
 
   // чисто для теста...
-  {$IFOPT D+}
+  {$IFDEF DEBUG}
    __Separator2.Visible:=True;
   __DbgRaiseExceptionMenuItem.Visible:=true;
   {$else}
@@ -521,7 +521,7 @@ begin
   end
   else
   begin
-    {$IFOPT D-}
+    {$IFNDEF DEBUG}
     DebugLogger.LogName :=
                  {$IfDef Windows}'nul'{$EndIf}
                  {$IfDef Linux}'/dev/null'{$ENDIF}
@@ -2319,7 +2319,7 @@ begin
     'StartAutoCapture': IsTimerEnabled := True;
     'StopAutoCapture':  IsTimerEnabled := False;
     'SingleCapture':    MakeScreenshot;
-    (*{$IFOPT D+}
+    (*{$IFDEF DEBUG}
     else ShowMessage(Format('Unknown hotkey event! (wparam=%d, lparam=%d)', [AMsg.wParam, AMsg.lParam]));
     {$ENDIF}*)
   end;

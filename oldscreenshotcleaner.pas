@@ -92,7 +92,7 @@ uses LazLoggerBase, FileUtil, uUtils, DateUtils, StrUtils, SQLite3Dyn, ctypes,
 
 const
   RunInterval: Integer =
-  {$IFOPT D+}
+  {$IFDEF DEBUG}
     5 * MSecsPerSec; // 5 seconds
   {$Else}
     {30} 10 * MSecsPerSec * SecsPerMin; // 10 minutes

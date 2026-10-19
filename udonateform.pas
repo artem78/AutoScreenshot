@@ -241,7 +241,7 @@ begin
 
   ApiUrl := API_URL;
   JsonFileName:=JSON_FILE_NAME;
-  {$ifopt D+}
+  {$IFDEF DEBUG}
   if not cfg.Debug_WalletsApiUrl.IsEmpty then
   begin
     ApiUrl      :=ExtractWord(1, cfg.Debug_WalletsApiUrl, ['|']);

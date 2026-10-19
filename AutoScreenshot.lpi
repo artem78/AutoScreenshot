@@ -235,6 +235,10 @@ end;"/>
             </Options>
           </Linking>
           <Other>
+            <CustomOptions Value="-dDEBUG"/>
+            <OtherDefines Count="1">
+              <Define0 Value="DEBUG"/>
+            </OtherDefines>
             <ExecuteAfter>
               <Command Value="$(RunCmdAfter)"/>
             </ExecuteAfter>

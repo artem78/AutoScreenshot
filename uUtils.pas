@@ -198,7 +198,7 @@ function GetProgramVersionStr: string;
 var
   FileVerInfo: TFileVersionInfo;
 begin
-{$IFOPT D+}
+{$IFDEF DEBUG}
    Result := Cfg.Debug_ProgramVersion;
 
    if result <> '' then exit(result);
