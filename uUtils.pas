@@ -102,7 +102,7 @@ uses
   process, FileUtil, LazLogger;
 
 var
-  IsPortableVar:boolean;
+  IsPortableVar:{boolean} integer = -1{= хуй знает};
 
 {$IfDef Windows}
 const
@@ -446,25 +446,36 @@ begin
   end;
 end;
 
-function IsPortable: Boolean;
-begin
-  // теперь устанавливаем внутреннюю переменную единожды, а не трахаем жёсткий диск при каждом вызове
-  result:=IsPortableVar;;
-end;
-
 procedure UpdatePortableVar;
-{$IfDef Windows}
 var
+  val:boolean;
+{$IfDef Windows}
   UninstallerFileName: String;
 {$EndIf}
 begin
   {$IfDef Windows}
   UninstallerFileName := ExtractFilePath(Application.ExeName) + 'unins000.exe';
-  IsPortableVar := not FileExists(UninstallerFileName);
+  {IsPortableVar} val := not FileExists(UninstallerFileName);
   {$EndIf}
   {$IfDef Linux}
-  IsPortableVar := not Application.ExeName.StartsWith('/usr/bin/');
+  {IsPortableVar} val := not Application.ExeName.StartsWith('/usr/bin/');
   {$EndIf}
+
+  if val then
+    IsPortableVar:=1
+  else
+    IsPortableVar:=0;
+end;
+
+function IsPortable: Boolean;
+begin
+  // теперь устанавливаем внутреннюю переменную единожды, а не трахаем жёсткий диск при каждом вызове
+  if (IsPortableVar = -1) then
+    UpdatePortableVar;
+
+  //result:=IsPortableVar;;
+
+  Result := IsPortableVar = 1;
 end;
 
 function GetUserPicturesDir: WideString;
@@ -633,6 +644,6 @@ begin
   Result := ASearchRec.TimeStamp;
 end;
 
-initialization
-  UpdatePortableVar;
+//initialization
+  //UpdatePortableVar;   //неправильно ебашит...
 end.
