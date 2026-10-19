@@ -59,9 +59,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="22"/>
-      <RevisionNr Value="3"/>
-      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.22.3"/>
+      <MinorVersionNr Value="23"/>
+      <StringTable FileDescription="Automatic screenshot maker" ProductName="Auto Screenshot" ProductVersion="1.23"/>
     </VersionInfo>
     <CustomData Count="13">
       <Item0 Name="lazpackager/copyright" Value="2020-2024, Artem Demin &lt;megabyte1024@ya.ru>"/>
@@ -294,6 +293,9 @@ end;"/>
           </Linking>
           <Other>
             <CustomOptions Value="-B"/>
+            <OtherDefines Count="1">
+              <Define0 Value="DEBUG"/>
+            </OtherDefines>
             <ExecuteAfter>
               <Command Value="$(RunCmdAfter)"/>
             </ExecuteAfter>
