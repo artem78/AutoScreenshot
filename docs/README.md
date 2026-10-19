@@ -29,6 +29,7 @@ Auto Screenshot
 * Clearing old screenshots
 * Play sound when screenshot taken
 * Hotkeys
+* Include mouse pointer
 * Works on Windows and Linux
 * Outdated Windows versions (started from XP) are still supported
 * Absolutely free and open source
