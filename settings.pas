@@ -60,7 +60,7 @@ end;
 
 function TSettings.GetLastCheckForUpdates: TdateTime;
 begin
-  ini.ReadDateTime(DEFAULT_INI_SECTION, 'LastCheckForUpdates', 0);
+  result := ini.ReadDateTime(DEFAULT_INI_SECTION, 'LastCheckForUpdates', 0);
 end;
 
 procedure TSettings.SetIncludeCursor(AVal: boolean);
@@ -70,7 +70,7 @@ end;
 
 function TSettings.GetIncludeCursor: boolean;
 begin
-  ini.ReadBool(DEFAULT_INI_SECTION, 'IncludeCursor', False);
+  result := ini.ReadBool(DEFAULT_INI_SECTION, 'IncludeCursor', False);
 end;
 
 constructor TSettings.Create;
