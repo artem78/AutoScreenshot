@@ -45,7 +45,7 @@ var
 
 implementation
 
-uses uUtils, FileUtil;
+uses uUtils, FileUtil, LazLoggerBase;
 
 const
   DEFAULT_INI_SECTION = 'main';
@@ -81,6 +81,8 @@ begin
     IniFileName := ConcatPaths([ProgramDirectory, 'config.ini'])
   else
     IniFileName := ConcatPaths([GetAppConfigDir(False), 'config.ini']);
+
+  DebugLn('start to read config from ', IniFileName);
 
   Ini := TIniFile.Create(IniFileName);
 end;
