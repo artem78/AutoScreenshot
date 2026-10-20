@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="60"
-   height="50"
-   viewBox="0 0 15.874999 13.229166"
+   width="120"
+   height="100"
+   viewBox="0 0 31.749998 26.458332"
    version="1.1"
    id="svg1"
    inkscape:version="1.4.4 (1:1.4.4+202605061432+dcaf3e7d9e)"
@@ -27,15 +27,15 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="true"
-     inkscape:zoom="4"
-     inkscape:cx="31.25"
-     inkscape:cy="36.375"
+     inkscape:zoom="2"
+     inkscape:cx="79"
+     inkscape:cy="72.75"
      inkscape:window-width="1440"
      inkscape:window-height="849"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer2">
+     inkscape:current-layer="g5">
     <inkscape:grid
        id="grid1"
        units="px"
@@ -110,7 +110,159 @@
        x2="1.4882814"
        y2="1.5297022"
        gradientUnits="userSpaceOnUse" />
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Drop Shadow"
+       id="filter43"
+       x="-0.0084559731"
+       y="-0.045060199"
+       width="1.0333541"
+       height="1.1777374">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(70,138,51)"
+         id="feFlood42" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="0.300000"
+         id="feGaussianBlur42" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="1.400000"
+         dy="1.400000"
+         id="feOffset42" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite42" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite43" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Drop Shadow"
+       id="filter2"
+       x="-0.0089177107"
+       y="-0.09536124"
+       width="1.0447124"
+       height="1.2803236">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="1.000000"
+         flood-color="rgb(70,138,51)"
+         id="feFlood1" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="0.300000"
+         id="feGaussianBlur1" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="1.400000"
+         dy="1.400000"
+         id="feOffset1" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite1" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite2" />
+    </filter>
   </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="donbut2">
+    <rect
+       style="font-variation-settings:normal;fill:#76dd59;fill-opacity:1;fill-rule:evenodd;stroke:#60c444;stroke-width:0.29625;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+       id="rect53"
+       width="27.298155"
+       height="6.2663374"
+       x="4.6587405"
+       y="6.4981246"
+       ry="1.6895524"
+       rx="1.6895527"
+       inkscape:export-filename="donbut2.png"
+       inkscape:export-xdpi="131.59442"
+       inkscape:export-ydpi="131.59442"
+       transform="translate(-2.2989871,11.22532)" />
+    <g
+       id="g53"
+       style="filter:url(#filter43)"
+       transform="matrix(0.24999999,0,0,0.24999999,-4.5306454,-0.54241599)">
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:22.5778px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#58ca39;fill-opacity:1;stroke:#468a33;stroke-width:1.185;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         x="69.582954"
+         y="91.735916"
+         id="text53"><tspan
+           sodipodi:role="line"
+           id="tspan53"
+           style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-family:Timmana;-inkscape-font-specification:'Timmana Heavy';fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.185"
+           x="69.582954"
+           y="91.735916">Donate</tspan></text>
+      <path
+         id="path53"
+         style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#ffffff;fill-rule:evenodd;stroke-width:1;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         d="m 117.13641,77.527024 c -4.40334,-10e-7 -7.98835,3.585007 -7.98835,7.98835 0,4.403344 3.58501,7.990276 7.98835,7.990275 4.40334,10e-7 7.98643,-3.586931 7.98643,-7.990275 -1e-5,-4.403343 -3.58309,-7.988351 -7.98643,-7.98835 z m 0.27705,2.299151 h 1.49109 c -0.0569,0.227346 -0.0986,0.460697 -0.12699,0.702252 -0.0284,0.227346 -0.072,0.462621 -0.1289,0.704175 0.39785,0.02842 0.73242,0.07711 1.00239,0.148147 0.26997,0.05683 0.47551,0.107443 0.61759,0.15007 l -0.3617,1.535333 c -0.12789,-0.05683 -0.34925,-0.121352 -0.66185,-0.192398 -0.29839,-0.07105 -0.61712,-0.105818 -0.95814,-0.105818 -0.32681,0 -0.60381,0.06259 -0.83115,0.190474 -0.21314,0.127881 -0.33522,0.31255 -0.36364,0.554104 -0.0284,0.213137 0.0222,0.40476 0.15007,0.575269 0.14209,0.17051 0.31981,0.334314 0.53294,0.490615 0.22735,0.156299 0.46957,0.320104 0.72534,0.490614 0.25576,0.170509 0.48217,0.362132 0.68109,0.575269 0.21313,0.213135 0.37694,0.46232 0.49062,0.746502 0.12788,0.269973 0.16265,0.588704 0.10581,0.95814 -0.0853,0.625201 -0.31165,1.151389 -0.68108,1.577661 -0.36944,0.412064 -0.91649,0.689067 -1.64115,0.831158 l -0.15007,1.448754 h -1.51225 l 0.21356,-1.342935 c -0.53995,-0.04263 -0.98076,-0.126083 -1.32178,-0.253965 -0.3268,-0.127882 -0.55512,-0.229095 -0.683,-0.30014 l 0.53293,-1.448754 c 0.19893,0.07105 0.47594,0.16338 0.83116,0.277052 0.36944,0.113673 0.73182,0.171234 1.08705,0.171234 0.34102,0 0.59716,-0.07147 0.76766,-0.213561 0.18473,-0.156301 0.29793,-0.361834 0.34055,-0.617597 0.0142,-0.198928 -0.0414,-0.383596 -0.16931,-0.554105 -0.12788,-0.17051 -0.29864,-0.334314 -0.51177,-0.490614 -0.19894,-0.170509 -0.42726,-0.341269 -0.68302,-0.511778 -0.24155,-0.170509 -0.461,-0.362133 -0.65992,-0.575269 -0.19893,-0.213136 -0.36274,-0.455366 -0.49062,-0.725339 -0.11367,-0.284181 -0.14148,-0.616823 -0.0847,-1.000468 0.0853,-0.610991 0.32556,-1.10936 0.72341,-1.493006 0.39787,-0.383645 0.91014,-0.653694 1.53534,-0.809994 z" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="donbut1">
+    <rect
+       style="font-variation-settings:normal;fill:#58ca39;fill-opacity:1;fill-rule:evenodd;stroke:#468a33;stroke-width:0.29625;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+       id="rect51"
+       width="27.298155"
+       height="6.2663374"
+       x="-25.516457"
+       y="7.4485245"
+       ry="1.6895524"
+       rx="1.6895527"
+       inkscape:export-filename="donbut1.png"
+       inkscape:export-xdpi="131.59444"
+       inkscape:export-ydpi="131.59444"
+       transform="translate(27.87621,0.74835463)" />
+    <g
+       id="g52"
+       style="filter:url(#filter43)"
+       transform="matrix(0.24999999,0,0,0.24999999,-4.5306469,-10.068981)">
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:22.5778px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#58ca39;fill-opacity:1;stroke:#468a33;stroke-width:1.185;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         x="69.582954"
+         y="91.735916"
+         id="text51"><tspan
+           sodipodi:role="line"
+           id="tspan51"
+           style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-family:Timmana;-inkscape-font-specification:'Timmana Heavy';fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.185"
+           x="69.582954"
+           y="91.735916">Donate</tspan></text>
+      <path
+         id="circle51"
+         style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#ffffff;fill-rule:evenodd;stroke-width:1;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+         d="m 117.13641,77.527024 c -4.40334,-10e-7 -7.98835,3.585007 -7.98835,7.98835 0,4.403344 3.58501,7.990276 7.98835,7.990275 4.40334,10e-7 7.98643,-3.586931 7.98643,-7.990275 -1e-5,-4.403343 -3.58309,-7.988351 -7.98643,-7.98835 z m 0.27705,2.299151 h 1.49109 c -0.0569,0.227346 -0.0986,0.460697 -0.12699,0.702252 -0.0284,0.227346 -0.072,0.462621 -0.1289,0.704175 0.39785,0.02842 0.73242,0.07711 1.00239,0.148147 0.26997,0.05683 0.47551,0.107443 0.61759,0.15007 l -0.3617,1.535333 c -0.12789,-0.05683 -0.34925,-0.121352 -0.66185,-0.192398 -0.29839,-0.07105 -0.61712,-0.105818 -0.95814,-0.105818 -0.32681,0 -0.60381,0.06259 -0.83115,0.190474 -0.21314,0.127881 -0.33522,0.31255 -0.36364,0.554104 -0.0284,0.213137 0.0222,0.40476 0.15007,0.575269 0.14209,0.17051 0.31981,0.334314 0.53294,0.490615 0.22735,0.156299 0.46957,0.320104 0.72534,0.490614 0.25576,0.170509 0.48217,0.362132 0.68109,0.575269 0.21313,0.213135 0.37694,0.46232 0.49062,0.746502 0.12788,0.269973 0.16265,0.588704 0.10581,0.95814 -0.0853,0.625201 -0.31165,1.151389 -0.68108,1.577661 -0.36944,0.412064 -0.91649,0.689067 -1.64115,0.831158 l -0.15007,1.448754 h -1.51225 l 0.21356,-1.342935 c -0.53995,-0.04263 -0.98076,-0.126083 -1.32178,-0.253965 -0.3268,-0.127882 -0.55512,-0.229095 -0.683,-0.30014 l 0.53293,-1.448754 c 0.19893,0.07105 0.47594,0.16338 0.83116,0.277052 0.36944,0.113673 0.73182,0.171234 1.08705,0.171234 0.34102,0 0.59716,-0.07147 0.76766,-0.213561 0.18473,-0.156301 0.29793,-0.361834 0.34055,-0.617597 0.0142,-0.198928 -0.0414,-0.383596 -0.16931,-0.554105 -0.12788,-0.17051 -0.29864,-0.334314 -0.51177,-0.490614 -0.19894,-0.170509 -0.42726,-0.341269 -0.68302,-0.511778 -0.24155,-0.170509 -0.461,-0.362133 -0.65992,-0.575269 -0.19893,-0.213136 -0.36274,-0.455366 -0.49062,-0.725339 -0.11367,-0.284181 -0.14148,-0.616823 -0.0847,-1.000468 0.0853,-0.610991 0.32556,-1.10936 0.72341,-1.493006 0.39787,-0.383645 0.91014,-0.653694 1.53534,-0.809994 z" />
+    </g>
+  </g>
   <g
      inkscape:label="love"
      inkscape:groupmode="layer"
@@ -200,5 +352,21 @@
        xlink:href="#path11"
        id="use13"
        transform="rotate(-90,7.1437502,2.6458335)" />
+    <g
+       id="g1"
+       transform="translate(27.87621,0.74835463)"
+       inkscape:groupmode="layer" />
+    <g
+       inkscape:groupmode="layer"
+       id="layer1"
+       inkscape:label="Layer 1" />
+    <g
+       inkscape:groupmode="layer"
+       id="layer3"
+       inkscape:label="Layer 2" />
+    <g
+       id="g2"
+       transform="translate(-2.2989871,11.22532)"
+       inkscape:groupmode="layer" />
   </g>
 </svg>
