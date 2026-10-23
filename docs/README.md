@@ -19,20 +19,21 @@ Auto Screenshot
 
 ## Features
 * Automatic saving screenshots of full screen with specified time interval (from 1 second to 24 hours)
-* Saving images in PNG, JPEG, BMP, TIFF, WEBP or AVIF format
+* Saving images in PNG, JPEG, BMP, TIFF, <!--or GIF--> WebP or AVIF format
 * Pause capture when user is inactive (depending on mouse moves and keyboard events)
 * Customizable output filenames with variables (date, time, user, computer name, sequential number) and ability of grouping by folders (for example: by day or month)
 * Automatic capture can be started on system startup
 * Multiple screens support
 * High DPI support
-* Custom command execution before/after screenshot was taken
+* Custom command execution before/after screenshot taken
 * Clearing old screenshots
 * Play sound when screenshot taken
 * Hotkeys
+* Skip saving similar screenshots (duplicates) with adjustable match percent
 * Include mouse pointer
 * Works on Windows and Linux
 * Outdated Windows versions (started from XP) are still supported
-* Absolutely free and open source
+* Absolutely free and open source software
 
 ## Screenshots
 
