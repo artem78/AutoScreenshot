@@ -1277,7 +1277,7 @@ end;
 
 procedure TMainForm.JPEGQualitySpinEditChange(Sender: TObject);
 begin
-  if Ini = Nil then
+  if not FormInitialized then  //хуй знает, зачем надо... (без этого такая хуйня - https://github.com/artem78/AutoScreenshot/issues/86)
     Exit;
 
   try
@@ -2110,7 +2110,7 @@ end;
 
 procedure TMainForm.SeqNumberValueSpinEditChange(Sender: TObject);
 begin
-  if Ini = Nil then
+  if not FormInitialized then  //хуй знает, зачем надо... (без этого такая хуйня - https://github.com/artem78/AutoScreenshot/issues/86)
     Exit;
 
   try
@@ -2548,7 +2548,7 @@ end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
 begin
-  if Ini = Nil then
+  if not FormInitialized then  //хуй знает, зачем надо... (без этого такая хуйня - https://github.com/artem78/AutoScreenshot/issues/86)
     Exit;
 
   try
