@@ -1224,8 +1224,8 @@ begin
 end;
 
 procedure TMainForm.MakeScreenshot;
-var
-  ErrMsg:string;
+{var
+  ErrMsg:string;}
 begin
   // обёртка под DoMakeScreenshot (бывший MakeScreenshot) для отлова ошибок
   //https://github.com/artem78/AutoScreenshot/issues/79#issuecomment-6212053002
@@ -1235,18 +1235,18 @@ begin
   except
     on e: Exception do
     begin
-      ErrMsg := Localizer.I18N('ScreenshotFail') + {' '} sLineBreak + e.ToString;
+      //ErrMsg := Localizer.I18N('ScreenshotFail') + {' '} sLineBreak + e.ToString;
       if MainForm.Visible then
       begin
-        ShowNotificationInStatusBar(ErrMsg);
+        ShowNotificationInStatusBar( Localizer.I18N('ScreenshotFail') + ' '+ e.ToString);
       end
       else
       begin
         with TrayIcon do
         begin
-          BalloonHint:=errmsg;
-          BalloonTitle:='Auto Screenshot';
-          BalloonFlags := {bfWarning}bfError;
+          BalloonTitle:='Auto Screenshot - ' + Localizer.I18N('ScreenshotFail');
+          BalloonHint:=e.tostring;
+          BalloonFlags := bfWarning{bfError};
           //BalloonTimeout:=1000;
           ShowBalloonHint;
         end;
@@ -1277,7 +1277,7 @@ end;
 
 procedure TMainForm.JPEGQualitySpinEditChange(Sender: TObject);
 begin
-  if Ini = Nil then
+  if not FormInitialized then  //хуй знает, зачем надо... (без этого такая хуйня - https://github.com/artem78/AutoScreenshot/issues/86)
     Exit;
 
   try
@@ -2110,7 +2110,7 @@ end;
 
 procedure TMainForm.SeqNumberValueSpinEditChange(Sender: TObject);
 begin
-  if Ini = Nil then
+  if not FormInitialized then  //хуй знает, зачем надо... (без этого такая хуйня - https://github.com/artem78/AutoScreenshot/issues/86)
     Exit;
 
   try
@@ -2548,7 +2548,7 @@ end;
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
 begin
-  if Ini = Nil then
+  if not FormInitialized then  //хуй знает, зачем надо... (без этого такая хуйня - https://github.com/artem78/AutoScreenshot/issues/86)
     Exit;
 
   try
