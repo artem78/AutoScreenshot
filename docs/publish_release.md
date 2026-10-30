@@ -50,7 +50,7 @@
 9) Обновить информацию на сайте https://artem78.github.io/AutoScreenshot
 
     ```
-    cd Projects/Lazarus/AutoScreenshot/site
+    cd ~/Projects/Lazarus/AutoScreenshot/site
     cp content/1-23-1-released.md content/1-xx-x-released.md
     nano content/1-xx-x-released.md
    ```
