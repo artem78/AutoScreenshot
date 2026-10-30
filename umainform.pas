@@ -33,7 +33,7 @@ type
     EmptyLabel7: TLabel;
     EmptyLabel8: TLabel;
     EmptyLabel9: TLabel;
-    Image1: TImage;
+    DonateButtonImage: TImage;
     Label1: TLabel;
     Label2: TLabel;
     HelpWithTranslationMenuItem: TMenuItem;
@@ -139,9 +139,9 @@ type
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
     procedure HomePageMenuItemClick(Sender: TObject);
     procedure IncludeCursorCheckBoxChange(Sender: TObject);
-    procedure Image1Click(Sender: TObject);
-    procedure Image1MouseEnter(Sender: TObject);
-    procedure Image1MouseLeave(Sender: TObject);
+    procedure DonateButtonImageClick(Sender: TObject);
+    procedure DonateButtonImageMouseEnter(Sender: TObject);
+    procedure DonateButtonImageMouseLeave(Sender: TObject);
     procedure LocateCfgFileMenuItemClick(Sender: TObject);
     procedure LocateLogFileMenuItemClick(Sender: TObject);
     procedure DonateMenuItemClick(Sender: TObject);
@@ -468,8 +468,8 @@ begin
       Append('');
   end;
 
-  Image1.Picture.LoadFromResourceName(HINSTANCE, 'DONBUT1');
-  Image1.AutoSize:=true;
+  DonateButtonImage.Picture.LoadFromResourceName(HINSTANCE, 'DONBUT1');
+  DonateButtonImage.AutoSize:=true;
 
   // Fix incorrect order for statusbar and panel with buttons
   // https://wiki.lazarus.freepascal.org/Autosize_/_Layout#Order_of_controls_with_same_Align
@@ -657,7 +657,7 @@ begin
   IncludeCursorCheckBox.Checked:=cfg.IncludeCursor;
 
     // отрубаем попрошайничество, если указано в настройках
-  Image1.Visible:=Image1.Visible and (not cfg.HideDonate);
+  DonateButtonImage.Visible:=DonateButtonImage.Visible and (not cfg.HideDonate);
   DonateMenuItem.Visible:= DonateMenuItem.Visible and (not cfg.HideDonate);
 end;
 
@@ -876,7 +876,7 @@ begin
   Cfg.IncludeCursor:=TCheckBox(sender).Checked;
 end;
 
-procedure TMainForm.Image1Click(Sender: TObject);
+procedure TMainForm.DonateButtonImageClick(Sender: TObject);
 begin
   with TDonateForm.Create(Self) do
   begin
@@ -888,12 +888,12 @@ begin
   end;
 end;
 
-procedure TMainForm.Image1MouseEnter(Sender: TObject);
+procedure TMainForm.DonateButtonImageMouseEnter(Sender: TObject);
 begin
   (sender as timage).Picture.LoadFromResourceName(HINSTANCE, 'DONBUT2');
 end;
 
-procedure TMainForm.Image1MouseLeave(Sender: TObject);
+procedure TMainForm.DonateButtonImageMouseLeave(Sender: TObject);
 begin
   (sender as timage).Picture.LoadFromResourceName(HINSTANCE, 'DONBUT1');
 end;
@@ -1570,7 +1570,7 @@ begin
 
 
     IncludeCursorCheckBox.Caption:=Localizer.I18N('IncludeCursor');
-    Image1.Hint:=Localizer.I18N('Donate');
+    DonateButtonImage.Hint:=Localizer.I18N('Donate');
   finally
     EnableAutoSizing;
 

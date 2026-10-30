@@ -762,7 +762,7 @@ object MainForm: TMainForm
         TabOrder = 1
       end
     end
-    object Image1: TImage
+    object DonateButtonImage: TImage
       AnchorSideTop.Control = ButtonsPanel
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = ButtonsPanel
@@ -773,9 +773,9 @@ object MainForm: TMainForm
       Width = 98
       Anchors = [akTop, akRight]
       BorderSpacing.Right = 15
-      OnClick = Image1Click
-      OnMouseEnter = Image1MouseEnter
-      OnMouseLeave = Image1MouseLeave
+      OnClick = DonateButtonImageClick
+      OnMouseEnter = DonateButtonImageMouseEnter
+      OnMouseLeave = DonateButtonImageMouseLeave
       ParentShowHint = False
       ShowHint = True
     end
