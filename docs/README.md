@@ -42,6 +42,8 @@ Auto Screenshot
 ![Main program window in Windows 7](images/main_window_w7.png "Main program window in Windows 7")
 
 ![Tray icon](images/tray_icon_animation.gif "Tray icon")
+![Tray icon](images/w10_tray2.png "Tray icon")
+![Tray icon](images/w10_tray1.png "Tray icon")
 
 ![Main window in Linux Mint](images/main_window_in_linux_mint.png "Main window in Linux Mint")
 
