@@ -655,6 +655,10 @@ begin
                'SkipSimilarMatchPercent', DefaultSkipSimilarMatchPercent);
 
   IncludeCursorCheckBox.Checked:=cfg.IncludeCursor;
+
+    // отрубаем попрошайничество, если указано в настройках
+  Image1.Visible:=Image1.Visible and (not cfg.HideDonate);
+  DonateMenuItem.Visible:= DonateMenuItem.Visible and (not cfg.HideDonate);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);

@@ -20,6 +20,7 @@ type
     function GetLastCheckForUpdates: TdateTime;
     procedure SetIncludeCursor(AVal: boolean);
     function GetIncludeCursor: boolean;
+    function GetHideDonate: boolean;
 
 
   public
@@ -32,6 +33,7 @@ type
     property LastCheckForUpdates: tdatetime read GetLastCheckForUpdates write SetLastCheckForUpdates;
 
     property IncludeCursor: boolean read GetIncludeCursor write SetIncludeCursor;
+    property HideDonate: Boolean read GetHideDonate;
 
     // debug, только чтение
     function Debug_ProgramVersion: string;
@@ -71,6 +73,11 @@ end;
 function TSettings.GetIncludeCursor: boolean;
 begin
   result := ini.ReadBool(DEFAULT_INI_SECTION, 'IncludeCursor', False);
+end;
+
+function TSettings.GetHideDonate: boolean;
+begin
+  Result := ini.ReadBool(DEFAULT_INI_SECTION, 'HideDonate', False);
 end;
 
 constructor TSettings.Create;
