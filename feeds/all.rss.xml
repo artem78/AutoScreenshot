@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Auto Screenshot</title><link>https://artem78.github.io/AutoScreenshot/</link><description/><atom:link href="https://artem78.github.io/AutoScreenshot/feeds/all.rss.xml" rel="self"/><lastBuildDate>Wed, 28 Oct 2026 14:34:00 +0300</lastBuildDate><item><title>Version 1.23.1 released</title><link>https://artem78.github.io/AutoScreenshot/version-1231-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Auto Screenshot</title><link>https://artem78.github.io/AutoScreenshot/</link><description/><atom:link href="https://artem78.github.io/AutoScreenshot/feeds/all.rss.xml" rel="self"/><lastBuildDate>Fri, 30 Oct 2026 17:09:00 +0300</lastBuildDate><item><title>Version 1.23.2 released</title><link>https://artem78.github.io/AutoScreenshot/version-1232-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Updated Chinese language&lt;/li&gt;
+&lt;/ul&gt;</description><pubDate>Fri, 30 Oct 2026 17:09:00 +0300</pubDate><guid>tag:artem78.github.io,2026-10-30:/AutoScreenshot/version-1232-released.html</guid><category>News</category></item><item><title>Version 1.23.1 released</title><link>https://artem78.github.io/AutoScreenshot/version-1231-released.html</link><description>&lt;p&gt;Changes:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Fixed wrong values saved to config for some options (issue 86)&lt;/li&gt;
 &lt;li&gt;Updated Italian language&lt;/li&gt;
