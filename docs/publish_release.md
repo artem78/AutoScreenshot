@@ -15,6 +15,7 @@
    git commit -a -m 'vX.XX.X'
    git tag -a vX.XX.X
    git push
+   git push origin vX.XX.X
    ```
 
 4) Запустить сборку проекта: build.sh (linux) и build.bat (windows)
