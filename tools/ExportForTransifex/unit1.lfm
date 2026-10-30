@@ -54,7 +54,10 @@ object Form1: TForm1
     ParentColor = False
   end
   object IniPropStorage1: TIniPropStorage
-    StoredValues = <>
+    StoredValues = <    
+      item
+        Name = 'LastTfxImportDir'
+      end>
     IniFileName = 'config.ini'
     IniSection = 'main'
     OnRestoreProperties = IniPropStorage1RestoreProperties
