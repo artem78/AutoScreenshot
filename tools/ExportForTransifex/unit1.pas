@@ -33,15 +33,16 @@ var
 
 implementation
 
-uses StrUtils;
+uses StrUtils, htmlelements;
 
 {$R *.lfm}
+
+const
+  INI_SECTION='translation';
 
 { TForm1 }
 
 procedure TForm1.ExportToTransifexButtonClick(Sender: TObject);
-const
-  INI_SECTION='translation';
 var
   {langs,} files: TStringList;
   inFileName, outFileName: string;
@@ -99,8 +100,79 @@ begin
 end;
 
 procedure TForm1.ImportFromTransifexButtonClick(Sender: TObject);
+var
+  tfxFiles:TStringList;
+  tfxDir:string='';
+  tfxFileName,langCode:string;
+  p:integer;
+  s:string;
+  myIniFileName:string;
+  myIni, tfxIni: tinifile;
+  StrId, StrVal:string;
+  strs:TStringList;
+  i:integer;
 begin
-  ShowMessage('Not implemented!');
+  with TSelectDirectoryDialog.Create(nil) do
+  begin
+    InitialDir:={IniPropStorage1.ReadString('LastTfxImportDir', '')} IniPropStorage1.StoredValue['LastTfxImportDir'];
+    if Execute then
+    begin
+      tfxDir:=filename;
+      {IniPropStorage1.WriteString('LastTfxImportDir', filename);}
+      IniPropStorage1.StoredValue['LastTfxImportDir']:=filename;
+    end;
+    free;
+  end;
+
+  if tfxDir.IsEmpty then
+    exit;
+
+  tfxFiles:=TStringList.Create;
+  try
+     FindAllFiles(tfxFiles, tfxdir, '*.ini', False);
+     for tfxFileName in tfxFiles do
+     begin
+       writeln('');
+       WriteLn(tfxFileName);
+       s:=ExtractFileNameWithoutExt(extractfilename(tfxFilename))   ;
+       p:=pos('_', s);
+       langcode:=copy(s,p+1);
+       writeln(langcode);
+       myIniFileName:=ConcatPaths([DirectoryEdit1.Directory, 'lang', langCode+'.ini']);
+       writeln(myIniFileName);
+
+       tfxIni := TIniFile.Create(tfxFileName, [ifoStripComments]);
+       myIni := TIniFile.Create(myIniFileName);
+       strs := TStringList.Create;
+       try
+         tfxini.ReadSection(INI_SECTION, STRS);
+         for StrId in strs do
+         //for i := 0 to strs.Count - 1 do
+         begin
+           if StartsStr('#', strid) then continue;// нах закомментированное...
+           //writeln('strid:',strid);
+           strval := tfxIni.ReadString(INI_SECTION, strid, '');
+           if strval.IsEmpty then continue; // на всякий случай...
+
+           strval := UnescapeHtml(strval); // &quot;  -->  "  (и не только)
+           writeln(strid,' --> ',strval);
+
+
+
+           myIni.WriteString(INI_SECTION, strid, StrVal);
+         end;
+       finally
+         strs.free;
+         myIni.free;
+         tfxini.free;
+       end;
+     end;
+  finally
+    tfxFiles.free;
+  end;
+
+  showmessage('Готово!');
+
 end;
 
 procedure TForm1.IniPropStorage1RestoreProperties(Sender: TObject);
