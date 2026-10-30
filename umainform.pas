@@ -832,7 +832,7 @@ procedure TMainForm.EnableLoggingMenuItemClick(Sender: TObject);
 begin
   EnableLogging:=not EnableLogging;
 
-  MessageDlg('Restart application for apply changes!', mtInformation,[mbok],0);
+  MessageDlg(Localizer.I18N('RestartAppMsg'), mtInformation,[mbok],0);
 end;
 
 procedure TMainForm.ExitMenuItemClick(Sender: TObject);
@@ -924,7 +924,7 @@ begin
   if FileExists(LogFilePath) then
     OpenDocument(LogFilePath)
   else
-    MessageDlg('Log file not exist', mtWarning, [mbok],0);
+    MessageDlg(Localizer.I18N('NoLogMsg'), mtWarning, [mbok],0);
 end;
 
 procedure TMainForm.OpenLogMenuItemOldClick(Sender: TObject);
@@ -1488,6 +1488,12 @@ begin
     HomePageMenuItem.Caption := Localizer.I18N('VisitHomepage') + '...';
     HelpWithTranslationMenuItem.Caption := Localizer.I18N('HelpWithTranslation') + '...';
     ReportIssueMenuItem.Caption:=Localizer.I18N('ReportIssue')+'...';
+    DebugMenuItem.Caption         := Localizer.I18N('Debug');
+    EnableLoggingMenuItem.Caption := Localizer.I18N('EnableLog');
+    OpenLogMenuItem.Caption       := Localizer.I18N('OpenLog');
+    LocateLogFileMenuItem.Caption := Localizer.I18N('SelectLogInFM');
+    OpenCfgFileMenuItem.Caption   := Localizer.I18N('OpenConfig');
+    LocateCfgFileMenuItem.Caption := Localizer.I18N('SelectConfigInFM');
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
