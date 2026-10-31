@@ -900,22 +900,12 @@ end;
 
 procedure TMainForm.LocateCfgFileMenuItemClick(Sender: TObject);
 begin
-  {$IfDef Windows}
-      ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+CfgFilePath)), nil, SW_SHOWNORMAL);
-  {$EndIf}
-  {$IfDef Linux}
-      OpenDocument(ExtractFileDir(CfgFilePath));
-  {$EndIf}
+  OpenLocationInFileMan(CfgFilePath);
 end;
 
 procedure TMainForm.LocateLogFileMenuItemClick(Sender: TObject);
 begin
-  {$IfDef Windows}
-      ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+LogFilePath)), nil, SW_SHOWNORMAL);
-  {$EndIf}
-  {$IfDef Linux}
-      OpenDocument(ExtractFileDir(LogFilePath));
-  {$EndIf}
+  OpenLocationInFileMan(LogFilePath);
 end;
 
 procedure TMainForm.OpenCfgFileMenuItemClick(Sender: TObject);

@@ -88,6 +88,7 @@ function SecondsToHMS(ASecs: Integer): string;
 function AddCustomParamsToUrl(const AUrl: String): string;
 
 function OSInfo: string;
+procedure OpenLocationInFileMan(AFileName: string);
 
 implementation
 
@@ -98,8 +99,8 @@ uses
   {$IfDef Linux}
   Unix, LazUTF8, LazFileUtils,
   {$EndIf}
-  SysUtils, Classes, DateUtils, StrUtils, uLanguages, Settings, Forms {???}, FileInfo,
-  process, FileUtil, LazLogger;
+  SysUtils, Classes, DateUtils, StrUtils, uLanguages, Settings, Forms {???}, LCLIntf,
+  FileInfo, process, FileUtil, LazLogger;
 
 type
   Boolean3 = (b3Unknown=-1, b3False, b3True);
@@ -627,6 +628,17 @@ begin
 
 {$EndIf}
 
+end;
+
+// открывает папку с файлом в файл. менеджере (в windows ещё и выделяет файл)
+procedure OpenLocationInFileMan(AFileName: string);
+begin
+{$IfDef Windows}
+  ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+AFileName)), nil, SW_SHOWNORMAL);
+{$EndIf}
+{$IfDef Linux}
+  OpenDocument(ExtractFileDir(AFileName));
+{$EndIf}
 end;
 
 {$IfDef Windows}
