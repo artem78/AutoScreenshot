@@ -101,8 +101,11 @@ uses
   SysUtils, Classes, DateUtils, StrUtils, uLanguages, Settings, Forms {???}, FileInfo,
   process, FileUtil, LazLogger;
 
+type
+  Boolean3 = (b3Unknown=-1, b3False, b3True);
+
 var
-  IsPortableVar:{boolean} integer = -1{= хуй знает};
+  IsPortableVar: Boolean3 = b3Unknown;
 
 {$IfDef Windows}
 const
@@ -446,36 +449,36 @@ begin
   end;
 end;
 
-procedure UpdatePortableVar;
-var
-  val:boolean;
-{$IfDef Windows}
-  UninstallerFileName: String;
-{$EndIf}
-begin
-  {$IfDef Windows}
-  UninstallerFileName := ExtractFilePath(Application.ExeName) + 'unins000.exe';
-  {IsPortableVar} val := not FileExists(UninstallerFileName);
-  {$EndIf}
-  {$IfDef Linux}
-  {IsPortableVar} val := not Application.ExeName.StartsWith('/usr/bin/');
-  {$EndIf}
-
-  if val then
-    IsPortableVar:=1
-  else
-    IsPortableVar:=0;
-end;
-
 function IsPortable: Boolean;
+  procedure UpdatePortableVar;
+  var
+    val:boolean;
+  {$IfDef Windows}
+    UninstallerFileName: String;
+  {$EndIf}
+  begin
+    //debugln('check is portable?');
+    {$IfDef Windows}
+    UninstallerFileName := ExtractFilePath(Application.ExeName) + 'unins000.exe';
+    val := not FileExists(UninstallerFileName);
+    {$EndIf}
+    {$IfDef Linux}
+    val := not Application.ExeName.StartsWith('/usr/bin/');
+    {$EndIf}
+
+    if val then
+      IsPortableVar := b3True
+    else
+      IsPortableVar := b3False;
+  end;
+
 begin
   // теперь устанавливаем внутреннюю переменную единожды, а не трахаем жёсткий диск при каждом вызове
-  if (IsPortableVar = -1) then
+  if (IsPortableVar = b3Unknown) then
     UpdatePortableVar;
 
-  //result:=IsPortableVar;;
-
-  Result := IsPortableVar = 1;
+  Result := IsPortableVar = b3True;
+  //debugln('portable: ', dbgs(result));
 end;
 
 function GetUserPicturesDir: WideString;
