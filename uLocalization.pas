@@ -22,6 +22,8 @@ type
 
   ELocalizerException = class(Exception);
 
+  { TLocalizer }
+
   TLocalizer = class
   private
     LangInfo: TLanguageInfo;
@@ -39,6 +41,8 @@ type
     //procedure LoadByCode(ALang: TLanguageCode);
     procedure LoadFromFile(AFileName: String);
     function I18N(StrID: String; ADefaultVal: string = ''): WideString;
+    function I18NFromGroup(const AGroupName: string; const StrID: String;
+      const ADefaultVal: string = ''): WideString;
     procedure GetLanguages(var LangsArr: TLanguagesArray);
 
     property LanguageInfo: TLanguageInfo read GetLanguageInfo;
@@ -176,10 +180,63 @@ begin
   Result := DecodeControlCharacters(Result);
 end;
 
+function TLocalizer.I18NFromGroup(const AGroupName: string; const StrID: String;
+  const ADefaultVal: string): WideString;
+begin
+  Result := I18N(AGroupName + '___' + StrID, ADefaultVal);
+end;
+
 procedure TLocalizer.LoadFromFile(AFileName: String);
 // ToDo: Optimization needed - reduce the number of file reading operations
+
 const
-  TranslationIniSection = 'translation';
+  TRANSLATION_INI_SECTION = 'translation';
+
+  procedure ReadAllTranslations(AIni: TMemIniFile; AStrs: TStrings);
+  var
+    Section, GroupName, StrID: string; //мржно shortstring
+    StrVal:{string}{AnsiString}WideString;    //почему { $ H + } не включено?
+    Sections, TmpSL: TStringList;
+    I:integer;
+  begin
+    AStrs.Clear;
+
+    Sections := TStringList.Create;
+    TmpSL := TStringList.Create;
+    try
+      AIni.ReadSections(Sections);
+      for Section in Sections do
+      begin
+        if Section = TRANSLATION_INI_SECTION then
+          GroupName := ''
+        //else if Section.StartsWith(TRANSLATION_INI_SECTION + '.') then // группа переводов
+        else if StartsStr(TRANSLATION_INI_SECTION + '.', Section) then // группа переводов
+          GroupName := ExtractWord(2, Section, ['.'])
+        else
+          Continue;
+
+        TmpSL.Clear;
+
+        AIni.ReadSectionValues(Section, TmpSL);
+        for I := 0 to TmpSL.Count - 1 do
+        begin
+          StrID := TmpSL.Names[I];
+          StrVal := TmpSL.Values[StrID];
+
+          if {not GroupName.IsEmpty} GroupName <> '' then
+            StrID := GroupName + '___' + StrID;
+
+          AStrs.AddPair(StrID, StrVal);
+          //writeln('sect=', Section, #9, 'group=', GroupName, #9, 'strid=', StrID, #9, 'strval="', StrVal,'"');
+        end;
+      end;
+    finally
+      TmpSL.Free;
+      Sections.Free;
+    end;
+
+  end;
+
 var
   Ini: TMemIniFile;
   TmpStr: TStringList;
@@ -215,7 +272,7 @@ begin
     begin
       Ini := TMemIniFile.Create(LangsDir + 'en.ini');
       try
-        Ini.ReadSectionValues(TranslationIniSection, Strings);
+        ReadAllTranslations(Ini, Strings);
       finally
         FreeAndNil(Ini);
       end;
@@ -229,7 +286,7 @@ begin
       Ini := TMemIniFile.Create(LangsDir + AltLang + '.ini');
       TmpStr := TStringList.Create;
       try
-        Ini.ReadSectionValues(TranslationIniSection, TmpStr);
+        ReadAllTranslations(ini, TmpStr);
         CombineValues(Strings, TmpStr);
       finally
         FreeAndNil(TmpStr);
@@ -243,7 +300,7 @@ begin
     // Combine translation strings with defaults
     TmpStr := TStringList.Create;
     try
-      Ini.ReadSectionValues(TranslationIniSection, TmpStr);
+      ReadAllTranslations(ini, TmpStr);
       CombineValues(Strings, TmpStr);
     finally
       FreeAndNil(TmpStr);

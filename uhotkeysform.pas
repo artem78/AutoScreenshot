@@ -158,7 +158,7 @@ begin
     end;
 
     // Try to find translation for key if possible
-    KeyName := Localizer.I18N('Key' + KeyIdentifier, KeyName);
+    KeyName := Localizer.I18NFromGroup('keys', KeyIdentifier, KeyName);
 
     {// just for test
     KeyComboBox.Items.AddObject(KeyName + ' | ' + KeyIdentifier + ' | #'
@@ -182,7 +182,7 @@ begin
   begin
     Parent := Self;
     //SetSubComponent(true);
-    Caption := Localizer.I18N('KeyAlt', 'Alt');
+    Caption := Localizer.I18NFromGroup('keys', 'Alt', 'Alt');
     //Name := '...';
   end;
 
@@ -191,7 +191,7 @@ begin
   begin
     Parent := Self;
     //SetSubComponent(true);
-    Caption := Localizer.I18N('KeyCtrl', 'Ctrl');
+    Caption := Localizer.I18NFromGroup('keys', 'Ctrl', 'Ctrl');
     //Name := '...';
   end;
 
@@ -200,7 +200,7 @@ begin
   begin
     Parent := Self;
     //SetSubComponent(true);
-    Caption := Localizer.I18N('KeyShift', 'Shift');
+    Caption := Localizer.I18NFromGroup('keys', 'Shift', 'Shift');
     //Name := '...';
   end;
 
