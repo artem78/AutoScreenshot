@@ -20,6 +20,11 @@ uses
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation, tisUserIdle);
 
+  TClosedBy = (clsbUnknown, // по идее, должно быть при закрытии крестиком (возможно нужно свернуть окно в трей)
+               clsbWindows, // windows закрывает программу (не выводить подтверждение выхода)
+               clsbExitMenuItem // пользователь нажал "exit" в меню
+              );
+
   { TMainForm }
 
   TMainForm = class(TForm)
@@ -230,6 +235,8 @@ type
     private
 
     AutoCaptureTimer: TTimerV2;
+
+    ClosedBy: TClosedBy;
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -344,7 +351,10 @@ type
     // Messages
     {$IfDef Windows}
     procedure WMHotKey(var AMsg: TMessage); message WM_HOTKEY;
+    //procedure WMQueryEndSession(var AMsg: TMessage); message WM_QUERYENDSESSION;
     {$EndIf}
+
+    procedure OnEndSessionApp(Sender: TObject);
   public
     { Public declarations }
   end;
@@ -695,6 +705,9 @@ var
   HotKey: THotKey;
   IniFileName: String;
 begin
+  ClosedBy := clsbUnknown;
+  Application.OnEndSession:=@OnEndSessionApp;
+
   AutoCaptureTimer := TTimerV2.Create(Self);
   AutoCaptureTimer.Enabled:=False;
   AutoCaptureTimer.OnTimer:=@TimerTimer;
@@ -841,19 +854,40 @@ end;
 
 procedure TMainForm.ExitMenuItemClick(Sender: TObject);
 begin
-  if ConfirmExit then
-    //Close;
-    Application.Terminate;
+  ClosedBy := clsbExitMenuItem;
+  Close;
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
-  CanClose := not MinimizeInsteadOfClose;
-  if MinimizeInsteadOfClose then
-    MinimizeToTray;
+  debugln('TMainForm.FormCloseQuery   ClosedBy=', dbgs(ord(ClosedBy)));
 
-  if CanClose then
-    CanClose := ConfirmExit;
+  case ClosedBy of
+    clsbWindows: // система завершает программу
+      begin
+        DebugLn('Program exit requested by windows');
+        canclose:=true;
+      end;
+
+    clsbExitMenuItem: // пользователь выбрал "exit" в меню
+      begin
+        CanClose := ConfirmExit;
+        if CanClose then DebugLn('Program exit requested by user');
+      end;
+
+    //clsbUnknown;
+  else // пользователь щёлкнул крестик формы
+    if MinimizeInsteadOfClose then
+    begin
+      CanClose:=false;
+      MinimizeToTray;
+    end
+    else
+      CanClose := ConfirmExit;;
+  end;
+
+  DebugLn('CanClose=', dbgs(CanClose));
+
 end;
 
 procedure TMainForm.GithubMenuItemClick(Sender: TObject);
@@ -1380,9 +1414,8 @@ end;
 
 procedure TMainForm.ExitTrayMenuItemClick(Sender: TObject);
 begin
-  if ConfirmExit then
-    //Close;
-    Application.Terminate;
+  ClosedBy := clsbExitMenuItem;
+  close;
 end;
 
 procedure TMainForm.MinimizeToTray;
@@ -2544,6 +2577,23 @@ begin
 
   OnHotKeyEvent(StrId);
 end;
+
+procedure TMainForm.OnEndSessionApp(Sender: TObject);
+begin
+  ClosedBy := clsbWindows;
+end;
+
+// похоже, почему-то не вызывается
+{procedure TMainForm.WMQueryEndSession(var AMsg: TMessage);
+begin
+  DebugLn('Program exit requested by windows');
+
+  ClosedByWindows:=true;
+  AMsg.Result:=1;
+
+  inherited;
+end;    }
+
 {$EndIf}
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);
