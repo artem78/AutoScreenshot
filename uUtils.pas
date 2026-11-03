@@ -225,7 +225,7 @@ end;
 
 function GetLocalComputerName: string;
 {$IfDef Windows}
-// не правильно работает с кириллицей  !!!
+(* // не правильно работает с кириллицей  !!!
 var
   Size: dword;
   Buf: array [0..MAX_COMPUTERNAME_LENGTH + 1] of char;
@@ -237,7 +237,16 @@ begin
     Result := Buf
   else
     Result := '';
+end;    *)
+
+
+const
+  COMP_ENV_VAR: UnicodeString = 'COMPUTERNAME';
+begin
+  Result := SysUtils.GetEnvironmentVariable(COMP_ENV_VAR);
+  Result := LazUTF8.{UTF8ToWinCP}SysToUtf8(Result);
 end;
+
 {$EndIf}
 {$IfDef Linux}
 begin
