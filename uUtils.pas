@@ -94,7 +94,7 @@ implementation
 
 uses
   {$IfDef Windows}
-  WinDirs {???}, Registry, Win32Proc,
+  WinDirs {???}, Registry, Win32Proc, lazutf8,
   {$EndIf}
   {$IfDef Linux}
   Unix, LazUTF8, LazFileUtils,
@@ -225,6 +225,7 @@ end;
 
 function GetLocalComputerName: string;
 {$IfDef Windows}
+// не правильно работает с кириллицей  !!!
 var
   Size: dword;
   Buf: array [0..MAX_COMPUTERNAME_LENGTH + 1] of char;
@@ -247,6 +248,7 @@ end;
 
 function GetCurrentUserName: string;
 {$IfDef Windows}
+(*// не правильно работает с кириллицей  !!!
 const
   UNLEN = 256; // Not defined in windows.pas
 var
@@ -261,6 +263,47 @@ begin
     SetString(Result, {Buf} PChar(@Buf[0]), {Length(Buf)} Size - 1)
   else
     Result := '';
+end;   *)
+
+// решение №2 (лучшее)
+// https://stackoverflow.com/a/47588154
+const
+  MaxLen = 256;
+var
+  Len: DWORD;
+  WS: WideString;
+  Res: windows.BOOL;
+begin
+  Result := '';
+  {$IFDEF WINDOWS}
+  Len := MaxLen;
+  {$IFnDEF WINCE}
+  if Win32MajorVersion <= 4 then
+  begin
+    SetLength(Result,MaxLen);
+    Res := Windows.GetuserName(@Result[1], Len);
+    //writeln('GetUserNameA = ',Res);
+    if Res then
+    begin
+      SetLength(Result,Len-1);
+      Result := SysToUtf8(Result);
+    end
+    else SetLength(Result,0);
+  end
+  else
+  {$ENDIF NOT WINCE}
+  begin
+    SetLength(WS, MaxLen-1);
+    Res := Windows.GetUserNameW(@WS[1], Len);
+    //writeln('GetUserNameW = ',Res);
+    if Res then
+    begin
+      SetLength(WS, Len - 1);
+      Result := Utf16ToUtf8(WS);
+    end
+    else SetLength(Result,0);
+  end;
+  {$ENDIF WINDOWS}
 end;
 {$EndIf}
 {$IfDef Linux}
