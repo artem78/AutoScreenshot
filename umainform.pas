@@ -2577,12 +2577,14 @@ begin
 
   OnHotKeyEvent(StrId);
 end;
+{$endif Windows}
 
 procedure TMainForm.OnEndSessionApp(Sender: TObject);
 begin
   ClosedBy := clsbWindows;
 end;
 
+{$IfDef Windows}
 // похоже, почему-то не вызывается
 {procedure TMainForm.WMQueryEndSession(var AMsg: TMessage);
 begin
