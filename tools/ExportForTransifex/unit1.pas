@@ -33,7 +33,7 @@ var
 
 implementation
 
-uses StrUtils, htmlelements;
+uses StrUtils, htmlelements,myutils;
 
 {$R *.lfm}
 
@@ -68,6 +68,7 @@ begin
       try
         allKeys:=TStringList.Create;
         outIni:=TIniFile.Create(outFileName);
+        outIni.CacheUpdates:=true;
         inIni:=TIniFile.Create(inFileName);
         inIni.ReadSection(INI_SECTION, allKeys);
 
@@ -100,6 +101,29 @@ begin
 end;
 
 procedure TForm1.ImportFromTransifexButtonClick(Sender: TObject);
+  procedure FixNoEmptyLines(const afilename:string);
+  var sl:tstringlist;i:integer;
+  begin
+    sl:=TStringList.Create;
+    try
+      sl.LoadFromFile(afilename);
+      i:=0;
+      while i<sl.count do
+      begin
+        if (sl.Strings[i].StartsWith('; ===') or sl.Strings[i].StartsWith(';===')) and not sl.Strings[i-1].StartsWith('['){секция} then
+        begin
+          sl.Insert(i{-1}, '');
+          inc(i);
+        end;
+        inc(i);
+      end;
+      sl.SaveToFile(afilename);
+    finally
+      sl.free;
+    end;
+
+  end;
+
 var
   tfxFiles:TStringList;
   tfxDir:string='';
@@ -111,6 +135,7 @@ var
   StrId, StrVal:string;
   strs:TStringList;
   i:integer;
+  origLineEndings:string;
 begin
   with TSelectDirectoryDialog.Create(nil) do
   begin
@@ -141,10 +166,27 @@ begin
        myIniFileName:=ConcatPaths([DirectoryEdit1.Directory, 'lang', langCode+'.ini']);
        writeln(myIniFileName);
 
+       origLineEndings:=sLineBreak;
+       {if FileExists(myIniFileName) then
+         origLineEndings:= DetectLineEndingsInFile(myIniFileName);    // не хуярит падла... }
+       if tfxFileName.EndsWith('en.ini',true)
+       or tfxFileName.EndsWith('es.ini',true)
+       or tfxFileName.EndsWith('it.ini',true)
+       or tfxFileName.EndsWith('en.ini',true)
+       or tfxFileName.EndsWith('ru.ini',true)
+       or tfxFileName.EndsWith('pt.ini',true)
+       or tfxFileName.EndsWith('uk.ini',true)
+       or tfxFileName.EndsWith('zh.ini',true) then origLineEndings:=#13#10 // костыль, блядь!
+       else origLineEndings:=#10;
+
+       writeln('файл:', myIniFileName);
+       writeln('окончание строк:', DbgLineEndings(origLineEndings));
+
        tfxIni := TIniFile.Create(tfxFileName, [ifoStripComments]);
        myIni := TIniFile.Create(myIniFileName);
        strs := TStringList.Create;
        try
+          myIni.CacheUpdates:=true;
          tfxini.ReadSection(INI_SECTION, STRS);
          for StrId in strs do
          //for i := 0 to strs.Count - 1 do
@@ -155,16 +197,30 @@ begin
            if strval.IsEmpty then continue; // на всякий случай...
 
            strval := UnescapeHtml(strval); // &quot;  -->  "  (и не только)
-           writeln(strid,' --> ',strval);
+           //writeln(strid,' --> ',strval);
 
 
 
            myIni.WriteString(INI_SECTION, strid, StrVal);
          end;
+
+         myini.UpdateFile;
        finally
          strs.free;
          myIni.free;
          tfxini.free;
+       end;
+
+       // нахуй, если пустой
+       if FileSize(myIniFileName) = 0 then DeleteFile(myIniFileName);
+
+       if FileExists(myIniFileName) then
+       begin
+         // добавл. пустые строки
+         FixNoEmptyLines(myIniFileName);
+
+         // исправляем окончания строк
+         ChangeLineEndingsInFile(myIniFileName, origLineEndings);
        end;
      end;
   finally
