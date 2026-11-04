@@ -20,6 +20,11 @@ uses
 type
   TTrayIconState = (tisDefault, tisBlackWhite, tisFlashAnimation, tisUserIdle);
 
+  TClosedBy = (clsbUnknown, // по идее, должно быть при закрытии крестиком (возможно нужно свернуть окно в трей)
+               clsbWindows, // windows закрывает программу (не выводить подтверждение выхода)
+               clsbExitMenuItem // пользователь нажал "exit" в меню
+              );
+
   { TMainForm }
 
   TMainForm = class(TForm)
@@ -33,7 +38,7 @@ type
     EmptyLabel7: TLabel;
     EmptyLabel8: TLabel;
     EmptyLabel9: TLabel;
-    Image1: TImage;
+    DonateButtonImage: TImage;
     Label1: TLabel;
     Label2: TLabel;
     HelpWithTranslationMenuItem: TMenuItem;
@@ -139,9 +144,9 @@ type
     procedure HelpWithTranslationMenuItemClick(Sender: TObject);
     procedure HomePageMenuItemClick(Sender: TObject);
     procedure IncludeCursorCheckBoxChange(Sender: TObject);
-    procedure Image1Click(Sender: TObject);
-    procedure Image1MouseEnter(Sender: TObject);
-    procedure Image1MouseLeave(Sender: TObject);
+    procedure DonateButtonImageClick(Sender: TObject);
+    procedure DonateButtonImageMouseEnter(Sender: TObject);
+    procedure DonateButtonImageMouseLeave(Sender: TObject);
     procedure LocateCfgFileMenuItemClick(Sender: TObject);
     procedure LocateLogFileMenuItemClick(Sender: TObject);
     procedure DonateMenuItemClick(Sender: TObject);
@@ -230,6 +235,8 @@ type
     private
 
     AutoCaptureTimer: TTimerV2;
+
+    ClosedBy: TClosedBy;
     
     { Methods }
     procedure SetTimerEnabled(AEnabled: Boolean);
@@ -344,7 +351,10 @@ type
     // Messages
     {$IfDef Windows}
     procedure WMHotKey(var AMsg: TMessage); message WM_HOTKEY;
+    //procedure WMQueryEndSession(var AMsg: TMessage); message WM_QUERYENDSESSION;
     {$EndIf}
+
+    procedure OnEndSessionApp(Sender: TObject);
   public
     { Public declarations }
   end;
@@ -468,8 +478,8 @@ begin
       Append('');
   end;
 
-  Image1.Picture.LoadFromResourceName(HINSTANCE, 'DONBUT1');
-  Image1.AutoSize:=true;
+  DonateButtonImage.Picture.LoadFromResourceName(HINSTANCE, 'DONBUT1');
+  DonateButtonImage.AutoSize:=true;
 
   // Fix incorrect order for statusbar and panel with buttons
   // https://wiki.lazarus.freepascal.org/Autosize_/_Layout#Order_of_controls_with_same_Align
@@ -655,6 +665,10 @@ begin
                'SkipSimilarMatchPercent', DefaultSkipSimilarMatchPercent);
 
   IncludeCursorCheckBox.Checked:=cfg.IncludeCursor;
+
+    // отрубаем попрошайничество, если указано в настройках
+  DonateButtonImage.Visible:=DonateButtonImage.Visible and (not cfg.HideDonate);
+  DonateMenuItem.Visible:= DonateMenuItem.Visible and (not cfg.HideDonate);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -691,6 +705,9 @@ var
   HotKey: THotKey;
   IniFileName: String;
 begin
+  ClosedBy := clsbUnknown;
+  Application.OnEndSession:=@OnEndSessionApp;
+
   AutoCaptureTimer := TTimerV2.Create(Self);
   AutoCaptureTimer.Enabled:=False;
   AutoCaptureTimer.OnTimer:=@TimerTimer;
@@ -832,24 +849,45 @@ procedure TMainForm.EnableLoggingMenuItemClick(Sender: TObject);
 begin
   EnableLogging:=not EnableLogging;
 
-  MessageDlg('Restart application for apply changes!', mtInformation,[mbok],0);
+  MessageDlg(Localizer.I18N('RestartAppMsg'), mtInformation,[mbok],0);
 end;
 
 procedure TMainForm.ExitMenuItemClick(Sender: TObject);
 begin
-  if ConfirmExit then
-    //Close;
-    Application.Terminate;
+  ClosedBy := clsbExitMenuItem;
+  Close;
 end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
-  CanClose := not MinimizeInsteadOfClose;
-  if MinimizeInsteadOfClose then
-    MinimizeToTray;
+  debugln('TMainForm.FormCloseQuery   ClosedBy=', dbgs(ord(ClosedBy)));
 
-  if CanClose then
-    CanClose := ConfirmExit;
+  case ClosedBy of
+    clsbWindows: // система завершает программу
+      begin
+        DebugLn('Program exit requested by windows');
+        canclose:=true;
+      end;
+
+    clsbExitMenuItem: // пользователь выбрал "exit" в меню
+      begin
+        CanClose := ConfirmExit;
+        if CanClose then DebugLn('Program exit requested by user');
+      end;
+
+    //clsbUnknown;
+  else // пользователь щёлкнул крестик формы
+    if MinimizeInsteadOfClose then
+    begin
+      CanClose:=false;
+      MinimizeToTray;
+    end
+    else
+      CanClose := ConfirmExit;;
+  end;
+
+  DebugLn('CanClose=', dbgs(CanClose));
+
 end;
 
 procedure TMainForm.GithubMenuItemClick(Sender: TObject);
@@ -872,7 +910,7 @@ begin
   Cfg.IncludeCursor:=TCheckBox(sender).Checked;
 end;
 
-procedure TMainForm.Image1Click(Sender: TObject);
+procedure TMainForm.DonateButtonImageClick(Sender: TObject);
 begin
   with TDonateForm.Create(Self) do
   begin
@@ -884,34 +922,24 @@ begin
   end;
 end;
 
-procedure TMainForm.Image1MouseEnter(Sender: TObject);
+procedure TMainForm.DonateButtonImageMouseEnter(Sender: TObject);
 begin
   (sender as timage).Picture.LoadFromResourceName(HINSTANCE, 'DONBUT2');
 end;
 
-procedure TMainForm.Image1MouseLeave(Sender: TObject);
+procedure TMainForm.DonateButtonImageMouseLeave(Sender: TObject);
 begin
   (sender as timage).Picture.LoadFromResourceName(HINSTANCE, 'DONBUT1');
 end;
 
 procedure TMainForm.LocateCfgFileMenuItemClick(Sender: TObject);
 begin
-  {$IfDef Windows}
-      ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+CfgFilePath)), nil, SW_SHOWNORMAL);
-  {$EndIf}
-  {$IfDef Linux}
-      OpenDocument(ExtractFileDir(CfgFilePath));
-  {$EndIf}
+  OpenLocationInFileMan(CfgFilePath);
 end;
 
 procedure TMainForm.LocateLogFileMenuItemClick(Sender: TObject);
 begin
-  {$IfDef Windows}
-      ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+LogFilePath)), nil, SW_SHOWNORMAL);
-  {$EndIf}
-  {$IfDef Linux}
-      OpenDocument(ExtractFileDir(LogFilePath));
-  {$EndIf}
+  OpenLocationInFileMan(LogFilePath);
 end;
 
 procedure TMainForm.OpenCfgFileMenuItemClick(Sender: TObject);
@@ -924,7 +952,7 @@ begin
   if FileExists(LogFilePath) then
     OpenDocument(LogFilePath)
   else
-    MessageDlg('Log file not exist', mtWarning, [mbok],0);
+    MessageDlg(Localizer.I18N('NoLogMsg'), mtWarning, [mbok],0);
 end;
 
 procedure TMainForm.OpenLogMenuItemOldClick(Sender: TObject);
@@ -1386,9 +1414,8 @@ end;
 
 procedure TMainForm.ExitTrayMenuItemClick(Sender: TObject);
 begin
-  if ConfirmExit then
-    //Close;
-    Application.Terminate;
+  ClosedBy := clsbExitMenuItem;
+  close;
 end;
 
 procedure TMainForm.MinimizeToTray;
@@ -1488,6 +1515,12 @@ begin
     HomePageMenuItem.Caption := Localizer.I18N('VisitHomepage') + '...';
     HelpWithTranslationMenuItem.Caption := Localizer.I18N('HelpWithTranslation') + '...';
     ReportIssueMenuItem.Caption:=Localizer.I18N('ReportIssue')+'...';
+    DebugMenuItem.Caption         := Localizer.I18N('Debug');
+    EnableLoggingMenuItem.Caption := Localizer.I18N('EnableLog');
+    OpenLogMenuItem.Caption       := Localizer.I18N('OpenLog');
+    LocateLogFileMenuItem.Caption := Localizer.I18N('SelectLogInFM');
+    OpenCfgFileMenuItem.Caption   := Localizer.I18N('OpenConfig');
+    LocateCfgFileMenuItem.Caption := Localizer.I18N('SelectConfigInFM');
 
     // Main form components
     OutputDirLabel.Caption := Localizer.I18N('OutputDirectory') + ':';
@@ -1560,7 +1593,7 @@ begin
 
 
     IncludeCursorCheckBox.Caption:=Localizer.I18N('IncludeCursor');
-    Image1.Hint:=Localizer.I18N('Donate');
+    DonateButtonImage.Hint:=Localizer.I18N('Donate');
   finally
     EnableAutoSizing;
 
@@ -2544,6 +2577,23 @@ begin
 
   OnHotKeyEvent(StrId);
 end;
+
+procedure TMainForm.OnEndSessionApp(Sender: TObject);
+begin
+  ClosedBy := clsbWindows;
+end;
+
+// похоже, почему-то не вызывается
+{procedure TMainForm.WMQueryEndSession(var AMsg: TMessage);
+begin
+  DebugLn('Program exit requested by windows');
+
+  ClosedByWindows:=true;
+  AMsg.Result:=1;
+
+  inherited;
+end;    }
+
 {$EndIf}
 
 procedure TMainForm.SeqNumberDigitsCountSpinEditChange(Sender: TObject);

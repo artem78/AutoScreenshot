@@ -88,21 +88,25 @@ function SecondsToHMS(ASecs: Integer): string;
 function AddCustomParamsToUrl(const AUrl: String): string;
 
 function OSInfo: string;
+procedure OpenLocationInFileMan(AFileName: string);
 
 implementation
 
 uses
   {$IfDef Windows}
-  WinDirs {???}, Registry, Win32Proc,
+  WinDirs {???}, Registry, Win32Proc, lazutf8,
   {$EndIf}
   {$IfDef Linux}
   Unix, LazUTF8, LazFileUtils,
   {$EndIf}
-  SysUtils, Classes, DateUtils, StrUtils, uLanguages, Settings, Forms {???}, FileInfo,
-  process, FileUtil, LazLogger;
+  SysUtils, Classes, DateUtils, StrUtils, uLanguages, Settings, Forms {???}, LCLIntf,
+  FileInfo, process, FileUtil, LazLogger;
+
+type
+  Boolean3 = (b3Unknown=-1, b3False, b3True);
 
 var
-  IsPortableVar:{boolean} integer = -1{= хуй знает};
+  IsPortableVar: Boolean3 = b3Unknown;
 
 {$IfDef Windows}
 const
@@ -221,6 +225,7 @@ end;
 
 function GetLocalComputerName: string;
 {$IfDef Windows}
+(* // не правильно работает с кириллицей  !!!
 var
   Size: dword;
   Buf: array [0..MAX_COMPUTERNAME_LENGTH + 1] of char;
@@ -232,7 +237,16 @@ begin
     Result := Buf
   else
     Result := '';
+end;    *)
+
+
+const
+  COMP_ENV_VAR: UnicodeString = 'COMPUTERNAME';
+begin
+  Result := SysUtils.GetEnvironmentVariable(COMP_ENV_VAR);
+  Result := LazUTF8.{UTF8ToWinCP}SysToUtf8(Result);
 end;
+
 {$EndIf}
 {$IfDef Linux}
 begin
@@ -243,6 +257,7 @@ end;
 
 function GetCurrentUserName: string;
 {$IfDef Windows}
+(*// не правильно работает с кириллицей  !!!
 const
   UNLEN = 256; // Not defined in windows.pas
 var
@@ -257,6 +272,47 @@ begin
     SetString(Result, {Buf} PChar(@Buf[0]), {Length(Buf)} Size - 1)
   else
     Result := '';
+end;   *)
+
+// решение №2 (лучшее)
+// https://stackoverflow.com/a/47588154
+const
+  MaxLen = 256;
+var
+  Len: DWORD;
+  WS: WideString;
+  Res: windows.BOOL;
+begin
+  Result := '';
+  {$IFDEF WINDOWS}
+  Len := MaxLen;
+  {$IFnDEF WINCE}
+  if Win32MajorVersion <= 4 then
+  begin
+    SetLength(Result,MaxLen);
+    Res := Windows.GetuserName(@Result[1], Len);
+    //writeln('GetUserNameA = ',Res);
+    if Res then
+    begin
+      SetLength(Result,Len-1);
+      Result := SysToUtf8(Result);
+    end
+    else SetLength(Result,0);
+  end
+  else
+  {$ENDIF NOT WINCE}
+  begin
+    SetLength(WS, MaxLen-1);
+    Res := Windows.GetUserNameW(@WS[1], Len);
+    //writeln('GetUserNameW = ',Res);
+    if Res then
+    begin
+      SetLength(WS, Len - 1);
+      Result := Utf16ToUtf8(WS);
+    end
+    else SetLength(Result,0);
+  end;
+  {$ENDIF WINDOWS}
 end;
 {$EndIf}
 {$IfDef Linux}
@@ -446,36 +502,36 @@ begin
   end;
 end;
 
-procedure UpdatePortableVar;
-var
-  val:boolean;
-{$IfDef Windows}
-  UninstallerFileName: String;
-{$EndIf}
-begin
-  {$IfDef Windows}
-  UninstallerFileName := ExtractFilePath(Application.ExeName) + 'unins000.exe';
-  {IsPortableVar} val := not FileExists(UninstallerFileName);
-  {$EndIf}
-  {$IfDef Linux}
-  {IsPortableVar} val := not Application.ExeName.StartsWith('/usr/bin/');
-  {$EndIf}
-
-  if val then
-    IsPortableVar:=1
-  else
-    IsPortableVar:=0;
-end;
-
 function IsPortable: Boolean;
+  procedure UpdatePortableVar;
+  var
+    val:boolean;
+  {$IfDef Windows}
+    UninstallerFileName: String;
+  {$EndIf}
+  begin
+    //debugln('check is portable?');
+    {$IfDef Windows}
+    UninstallerFileName := ExtractFilePath(Application.ExeName) + 'unins000.exe';
+    val := not FileExists(UninstallerFileName);
+    {$EndIf}
+    {$IfDef Linux}
+    val := not Application.ExeName.StartsWith('/usr/bin/');
+    {$EndIf}
+
+    if val then
+      IsPortableVar := b3True
+    else
+      IsPortableVar := b3False;
+  end;
+
 begin
   // теперь устанавливаем внутреннюю переменную единожды, а не трахаем жёсткий диск при каждом вызове
-  if (IsPortableVar = -1) then
+  if (IsPortableVar = b3Unknown) then
     UpdatePortableVar;
 
-  //result:=IsPortableVar;;
-
-  Result := IsPortableVar = 1;
+  Result := IsPortableVar = b3True;
+  //debugln('portable: ', dbgs(result));
 end;
 
 function GetUserPicturesDir: WideString;
@@ -624,6 +680,17 @@ begin
 
 {$EndIf}
 
+end;
+
+// открывает папку с файлом в файл. менеджере (в windows ещё и выделяет файл)
+procedure OpenLocationInFileMan(AFileName: string);
+begin
+{$IfDef Windows}
+  ShellExecuteW(0, nil, 'explorer.exe', PWideChar(UTF8Decode('/select,'+AFileName)), nil, SW_SHOWNORMAL);
+{$EndIf}
+{$IfDef Linux}
+  OpenDocument(ExtractFileDir(AFileName));
+{$EndIf}
 end;
 
 {$IfDef Windows}
