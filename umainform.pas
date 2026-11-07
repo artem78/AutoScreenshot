@@ -230,9 +230,7 @@ type
     FormInitialized: Boolean;
     function GetEnableLogging: Boolean;
 
-    public
     FileJournal: TFileJournal;
-    private
 
     AutoCaptureTimer: TTimerV2;
 
@@ -734,7 +732,8 @@ begin
     IniFileName := ConcatPaths([GetAppConfigDir(False), 'config.ini']);
   Ini.WriteString(DefaultConfigIniSection, 'ProgramVersion', GetProgramVersionStr);
 
-  OldScreenshotCleaner := TOldScreenshotCleaner.Create;
+  FileJournal := TFileJournal.Create;
+  OldScreenshotCleaner := TOldScreenshotCleaner.Create(FileJournal);
   OldScreenshotCleaner.OnChangeCallback := @OnScreenshotCleanerChanged;
 
   ReadSettings;
@@ -804,8 +803,6 @@ begin
   // Enable monitor confuguration changed updates in Linux
   XWatcher := TXRandREventWatcherThread.Create(RRScreenChangeNotifyMask, @OnScreenConfigurationChanged);
   {$EndIf}
-
-  FileJournal := TFileJournal.Create;
 
   FormInitialized := True;
   DebugLn('Initializing finished');
@@ -982,8 +979,6 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-  FileJournal.Free;
-
   {$IfDef Linux}
   //XWatcher.Terminate;
   //XWatcher.WaitFor;
@@ -993,6 +988,7 @@ begin
   Grabber.Free;
   KeyHook.Free;
   OldScreenshotCleaner.Free;
+  FileJournal.Free;
 
   DebugLn('Program ended');
 end;

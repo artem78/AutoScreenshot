@@ -17,6 +17,8 @@ type
 
   TOldScreenshotCleanerChangeCallback = procedure of object;
 
+  TFileJournal = class;
+
   { TOldScreenshotCleaner }
 
   TOldScreenshotCleaner = class
@@ -25,6 +27,7 @@ type
     FOnChangeCallback: TOldScreenshotCleanerChangeCallback;
 
     Timer: TTimer;
+    FileJournal: TFileJournal; // not owned
 
     procedure SetMaxAge(AMaxAge: TInterval);
     procedure SetActive(AActive: Boolean);
@@ -36,7 +39,7 @@ type
     procedure DeleteOldFiles;
 
   public
-    constructor Create;
+    constructor Create(AFileJournal: TFileJournal);
     destructor Destroy; override;
 
     property MaxAge: TInterval read FMaxAge write SetMaxAge;
@@ -86,7 +89,7 @@ implementation
 uses LazLoggerBase, FileUtil, uUtils, DateUtils, StrUtils, SQLite3Dyn, ctypes,
   Settings,
   ///////////
-  umainform, Forms
+  Forms // для Application.ProcessMessages
   ///////////
   ;
 
@@ -397,7 +400,7 @@ begin
 
 
   // Delete files
-  FileList := MainForm.FileJournal.GetFiles(CreatedBefore);
+  FileList := FileJournal.GetFiles(CreatedBefore);
   try
     DebugLn('%d old screenshots found', [FileList.Count]);
     for Str in FileList do
@@ -426,7 +429,7 @@ begin
 
 
   // Recursively delete empty directories
-  DirList := MainForm.FileJournal.GetDirs(CreatedBefore);
+  DirList := FileJournal.GetDirs(CreatedBefore);
   try
     for Str in DirList do
     begin
@@ -470,14 +473,16 @@ begin
   if not Cfg.Debug_SimulateOldFilesDeletion then
   begin
     // Remove deleted file records from DB
-    MainForm.FileJournal.Remove(CreatedBefore);
+    FileJournal.Remove(CreatedBefore);
   end;
 
   DebugLn('Old files cleaning finished');
 end;
 
-constructor TOldScreenshotCleaner.Create;
+constructor TOldScreenshotCleaner.Create(AFileJournal: TFileJournal);
 begin
+  FileJournal:=AFileJournal;
+
   Timer := TTimer.Create(Nil);
   Timer.Enabled := False;
   Timer.OnTimer := @DoOnTimer;
