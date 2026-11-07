@@ -52,7 +52,7 @@
 8) Обновить переводы на transifex [здесь](https://app.transifex.com/--334/autoscreenshot/dashboard/) (**todo: написать как**)
 
 9) Обновить информацию на сайте https://artem78.github.io/AutoScreenshot
-
+   <!--
     ```
     cd ~/Projects/Lazarus/AutoScreenshot/site
     cp content/1-23-1-released.md content/1-xx-x-released.md
@@ -61,11 +61,21 @@
    
    Меняем `title`, `date`, `changes`, сохраняем.
    
-   Запускаем `update_current_version.py` (обновляет версию на странице `download`)
+   Запускаем `update_current_version.py` (обновляет версию на странице `download`) -->
+   
+   Запускаем `./update_current_version.py`
    
    Проверяем на локальной системе `./localtest.sh`
    
-   Отправляем на хостинг `build_and_publish_on_production.sh`, сохряняем в git `git commit -a -m 'v1.xx'` `git push`
+   Отправляем на хостинг `./build_and_publish_on_production.sh`
+   
+   Cохряняем в git
+   
+   ```
+   git add .
+   git commit -m 'v1.xx'`
+   git push
+   ```
 
 
 
