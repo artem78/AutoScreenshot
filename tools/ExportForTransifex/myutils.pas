@@ -9,7 +9,6 @@ uses
 
 procedure ChangeLineEndingsInFile(const AFileName:string; const ANewLineEnding: string);
 function DetectLineEndingsInFile(const AFileName:string):string;
-//function DetectLineEndings(const AStr:string):string;
 function DetectLineEndings(const s : AnsiString;  out LineEndings : AnsiString) : boolean;  // returns False if string is empty or ambiguous
 function DbgLineEndings(const s: string): string;
 
@@ -34,38 +33,20 @@ begin
 end;
 
 function DetectLineEndingsInFile(const AFileName: string): string;
-{var
-  s:string;
-  sl:TStringList;
-begin
-  sl:=TStringList.Create;
-  try
-    sl.LoadFromFile(AFileName);
-    s:=sl.Text;
-
-    if not DetectLineEndings(s, result) then
-      result := '';
-  finally
-    sl.free;
-  end;
-end;       }
 var
   f:file;
-  s:string;
   a: array[0..1023] of byte;
   cnt:integer;
   len:integer;
   i:integer;
 begin
   AssignFile(f, AFileName);
-  reset(f);
-  len:=  {min(SizeOf(a), FileSize(f))}1024;
+  reset(f,1);
+  len:=  {min(SizeOf(a), FileSize(f))} SizeOf(a);
   BlockRead(f, a, len, cnt);
-  {s := UTF8Decode(StringOf(a));
-  if not DetectLineEndings(s, result) then
-    result := '';  }
+
   result :='';
-  for i := 0 to cnt-1 do
+  for i := 0 to cnt-{1}2 do
   begin
     if (a[i] = 13) and ( a[i+1] = 10) then
       Result := #13#10
@@ -114,24 +95,6 @@ begin
         {$pop}
         Result := True;
 end;
-
-{function DetectLineEndings(const AStr:string):string;
-var
-regex: TRegexpr;
-begin
-  result:='';
-
-  regex:=TRegexpr.Create;
-  try
-    regex.expression:='([\r\n]{1,2})';
-    regex.ModifierS:=true;
-    regex.ModifierM:=true;
-    if regex.exec then
-      result := regex.match[1];
-  finally
-    regex.free;
-  end;
-end;  }
 
 function DbgLineEndings(const s: string): string;
 var tmp:string;

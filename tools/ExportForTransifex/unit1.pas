@@ -167,17 +167,8 @@ begin
        writeln(myIniFileName);
 
        origLineEndings:=sLineBreak;
-       {if FileExists(myIniFileName) then
-         origLineEndings:= DetectLineEndingsInFile(myIniFileName);    // не хуярит падла... }
-       if tfxFileName.EndsWith('en.ini',true)
-       or tfxFileName.EndsWith('es.ini',true)
-       or tfxFileName.EndsWith('it.ini',true)
-       or tfxFileName.EndsWith('en.ini',true)
-       or tfxFileName.EndsWith('ru.ini',true)
-       or tfxFileName.EndsWith('pt.ini',true)
-       or tfxFileName.EndsWith('uk.ini',true)
-       or tfxFileName.EndsWith('zh.ini',true) then origLineEndings:=#13#10 // костыль, блядь!
-       else origLineEndings:=#10;
+       if FileExists(myIniFileName) then
+         origLineEndings:= DetectLineEndingsInFile(myIniFileName);
 
        writeln('файл:', myIniFileName);
        writeln('окончание строк:', DbgLineEndings(origLineEndings));
