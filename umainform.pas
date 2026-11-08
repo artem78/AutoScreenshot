@@ -228,8 +228,6 @@ type
     KeyHook: TGlobalKeyHook;
     OldScreenshotCleaner: TOldScreenshotCleaner;
     FormInitialized: Boolean;
-    function GetEnableLogging: Boolean;
-
     FileJournal: TFileJournal;
 
     AutoCaptureTimer: TTimerV2;
@@ -237,6 +235,7 @@ type
     ClosedBy: TClosedBy;
     
     { Methods }
+    function GetEnableLogging: Boolean;
     procedure SetTimerEnabled(AEnabled: Boolean);
     function GetTimerEnabled: Boolean;
     function GetFinalOutputDir: String;
