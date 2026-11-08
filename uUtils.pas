@@ -239,7 +239,7 @@ begin
     Result := '';
 end;    *)
 
-
+// обрезает имя, если оно длиннее 15-ти символов
 const
   COMP_ENV_VAR: UnicodeString = 'COMPUTERNAME';
 begin
