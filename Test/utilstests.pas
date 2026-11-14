@@ -22,11 +22,12 @@ type
     procedure TestAutoRun;
     procedure TestCmdExecution;
     procedure TestSecondsToHMS;
+    procedure TestLongStringNotTruncated;
   end;
 
 implementation
 
-uses uUtils, {SysUtils} DateUtils, process, uUtilsMore, Forms, FileUtil;
+uses uUtils, {SysUtils} DateUtils, StrUtils, process, uUtilsMore, Forms, FileUtil;
 
 { TUtilsTestCase }
 
@@ -244,6 +245,21 @@ begin
   AssertEquals('24:00:00', SecondsToHMS(24*60*60));
   AssertEquals('33:22:11', SecondsToHMS(33*60*60 + 22*60 + 11));
   AssertEquals('765:43:21', SecondsToHMS(765*60*60 + 43*60 + 21));
+end;
+
+{ в модуле uUtils почему-то не включён флаг H+, поэтому проверяем,
+  что строки не обрезаются до 255 символов }
+procedure TUtilsTestCase.TestLongStringNotTruncated;
+var
+  s:string;
+begin
+  s:=DupeString('long\t', 999);
+  AssertEquals((5+1)*999, length(s));
+  AssertEquals(5*999, length(DecodeControlCharacters(s)));
+
+  s:=DupeString('very_', 999) + 'long_filename_%D_%M_%Y.jpeg';
+  AssertEquals(5*999 + 27, length(s));
+  AssertEquals(5*999 + 14 + 2 + 1 + 2 + 1 + 4 + 5, length(GetFormattedPath(s)));
 end;
 
 initialization
