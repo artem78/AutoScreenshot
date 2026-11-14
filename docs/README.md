@@ -71,7 +71,8 @@ https://github.com/user-attachments/assets/f1d40348-61a2-4eef-a2fb-343d43f03fd5
 * Chinese
 * Ukrainian
 * Portuguese
-* Spanish
+* Castilian/Spanish (Spain)
+* Spanish (Hispanoamérica)
 * Turkish
 * German
 * [French](README-fr.md)
