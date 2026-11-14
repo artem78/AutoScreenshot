@@ -8,7 +8,7 @@ uses
   IniFiles, SysUtils, Classes;
 
 type
-  TLanguageCode = String[2];
+  TLanguageCode = String{[2]};
 
   TLanguageInfo = record
     Code: TLanguageCode;

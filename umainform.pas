@@ -2017,6 +2017,24 @@ begin
 end;
 
 procedure TMainForm.UpdateLanguages;
+  function SanitizeComponentName(const AName: string): string;
+  var
+    i: integer;
+    c: char;
+  begin
+    Result := '';
+
+    for c in AName do
+    begin
+      case c of
+        'a'..'z', 'A'..'Z', '0'..'9': Result += c;
+      else
+        Result += '_';
+      end;
+    end;
+
+  end;
+
 {const
   GroupIdx = 1;}
 var
@@ -2025,6 +2043,7 @@ var
   LangsList: TStringList;
   Line: String;
   FlagResourceName: String;
+  LangName, LangCode: string;
 begin
   while LanguageSubMenu.Count > 0 do
     LanguageSubMenu.Items[0].Free;
@@ -2052,15 +2071,18 @@ begin
 
   for Line in LangsList do
   begin
+    LangName := ExtractDelimited(1, Line, [#9]);
+    LangCode := ExtractDelimited(2, Line, [#9]);
+
     MenuItem := TMenuItem.Create(LanguageSubMenu);
-    MenuItem.Caption := ExtractDelimited(1, Line, [#9]);
+    MenuItem.Caption := LangName;
     MenuItem.OnClick := @LanguageClick;
     MenuItem.RadioItem := True;
     //MenuItem.GroupIndex := GroupIdx;
-    MenuItem.Name := LanguageSubMenuItemNamePrefix + ExtractDelimited(2, Line, [#9]);
+    MenuItem.Name := SanitizeComponentName(LanguageSubMenuItemNamePrefix + LangCode);
 
     // Flag icon
-    FlagResourceName := 'FLAG_' + UpperCase(ExtractDelimited(2, Line, [#9]));
+    FlagResourceName := 'FLAG_' + LangCode;
     if system.FindResource(HINSTANCE, FlagResourceName, RT_RCDATA) <> 0 then
       MenuItem.ImageIndex := LangFlagImageList.AddResourceName(HINSTANCE, FlagResourceName)
     else
@@ -2104,8 +2126,11 @@ end;
 function TMainForm.GetLangCodeOfLangMenuItem(
   const LangItem: TMenuItem): TLanguageCode;
 begin
-  if Pos(LanguageSubMenuItemNamePrefix, LangItem.Name) = 1 then
-    Result := Copy(LangItem.Name, Length(LanguageSubMenuItemNamePrefix) + 1, 2)
+  if LangItem.Name.StartsWith(LanguageSubMenuItemNamePrefix) then
+  begin
+    Result := Copy(LangItem.Name, Length(LanguageSubMenuItemNamePrefix) + 1);
+    Result := StringReplace(Result, '_', '-', []);// es_419 --> es-419
+  end
   else
     raise Exception.CreateFmt('Can`t get language code from language menu item' +
         ' "%s" (name=%s)', [LangItem.Caption, LangItem.Name]);
