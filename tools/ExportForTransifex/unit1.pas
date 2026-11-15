@@ -33,7 +33,7 @@ var
 
 implementation
 
-uses StrUtils, htmlelements,myutils;
+uses StrUtils, htmlelements,myutils, lazlogger;
 
 {$R *.lfm}
 
@@ -59,10 +59,10 @@ begin
     FindAllFiles(files, ConcatPaths([DirectoryEdit1.Directory, 'lang']), '*.ini', false);
     for infilename in files do
     begin
-      writeln(inFileName);
+      debugln(inFileName);
       outFileName:=ConcatPaths([ExtractFilePath(inFileName), 'export', ExtractFileName(inFileName)]);
       ForceDirectories(ExtractFilePath(outFileName));
-      Writeln(outFileName);
+      debugln(outFileName);
       DeleteFile(outFileName);
 
       try
@@ -77,7 +77,7 @@ begin
 
         for k in allkeys do
         begin
-          writeln(k);
+          debugln(k);
           outIni.WriteString(INI_SECTION, k, inIni.ReadString(INI_SECTION, k, ''));
         end;
         outini.UpdateFile;
@@ -157,21 +157,21 @@ begin
      FindAllFiles(tfxFiles, tfxdir, '*.ini', False);
      for tfxFileName in tfxFiles do
      begin
-       writeln('');
-       WriteLn(tfxFileName);
+       debugln('');
+       debugln(tfxFileName);
        s:=ExtractFileNameWithoutExt(extractfilename(tfxFilename))   ;
        p:=pos('_', s);
        langcode:=copy(s,p+1);
-       writeln(langcode);
+       debugln(langcode);
        myIniFileName:=ConcatPaths([DirectoryEdit1.Directory, 'lang', langCode+'.ini']);
-       writeln(myIniFileName);
+       debugln(myIniFileName);
 
        origLineEndings:=sLineBreak;
        if FileExists(myIniFileName) then
          origLineEndings:= DetectLineEndingsInFile(myIniFileName);
 
-       writeln('файл:', myIniFileName);
-       writeln('окончание строк:', DbgLineEndings(origLineEndings));
+       debugln('файл:', myIniFileName);
+       debugln('окончание строк:', DbgLineEndings(origLineEndings));
 
        tfxIni := TIniFile.Create(tfxFileName, [ifoStripComments]);
        myIni := TIniFile.Create(myIniFileName);
@@ -183,12 +183,12 @@ begin
          //for i := 0 to strs.Count - 1 do
          begin
            if StartsStr('#', strid) then continue;// нах закомментированное...
-           //writeln('strid:',strid);
+           //debugln('strid:',strid);
            strval := tfxIni.ReadString(INI_SECTION, strid, '');
            if strval.IsEmpty then continue; // на всякий случай...
 
            strval := UnescapeHtml(strval); // &quot;  -->  "  (и не только)
-           //writeln(strid,' --> ',strval);
+           //debugln(strid,' --> ',strval);
 
 
 
