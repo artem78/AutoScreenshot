@@ -23,19 +23,19 @@
       </XPManifest>
       <Icon Value="0"/>
       <Resources Count="29">
-        <Resource_0 FileName="res\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
-        <Resource_1 FileName="res\camera_flash1.ico" Type="ICON" ResourceName="_CAMERA_FLASH_1"/>
-        <Resource_2 FileName="res\camera_flash2.ico" Type="ICON" ResourceName="_CAMERA_FLASH_2"/>
-        <Resource_3 FileName="res\camera_flash3.ico" Type="ICON" ResourceName="_CAMERA_FLASH_3"/>
-        <Resource_4 FileName="res\camera_flash4.ico" Type="ICON" ResourceName="_CAMERA_FLASH_4"/>
-        <Resource_5 FileName="res\camera_flash5.ico" Type="ICON" ResourceName="_CAMERA_FLASH_5"/>
-        <Resource_6 FileName="res\camera_flash6.ico" Type="ICON" ResourceName="_CAMERA_FLASH_6"/>
-        <Resource_7 FileName="res\camera_flash7.ico" Type="ICON" ResourceName="_CAMERA_FLASH_7"/>
-        <Resource_8 FileName="res\start.bmp" Type="BITMAP" ResourceName="_START_ICON"/>
-        <Resource_9 FileName="res\stop.bmp" Type="BITMAP" ResourceName="_STOP_ICON"/>
-        <Resource_10 FileName="res\logo.png" Type="RCDATA" ResourceName="_LOGO"/>
-        <Resource_11 FileName="res\logo_high_dpi.png" Type="RCDATA" ResourceName="_LOGO_HIGH_DPI"/>
-        <Resource_12 FileName="res\camera.ico" Type="ICON" ResourceName="_CAMERA"/>
+        <Resource_0 FileName="icons\camera_bw.ico" Type="ICON" ResourceName="_CAMERA_BW"/>
+        <Resource_1 FileName="icons\camera_flash1.ico" Type="ICON" ResourceName="_CAMERA_FLASH_1"/>
+        <Resource_2 FileName="icons\camera_flash2.ico" Type="ICON" ResourceName="_CAMERA_FLASH_2"/>
+        <Resource_3 FileName="icons\camera_flash3.ico" Type="ICON" ResourceName="_CAMERA_FLASH_3"/>
+        <Resource_4 FileName="icons\camera_flash4.ico" Type="ICON" ResourceName="_CAMERA_FLASH_4"/>
+        <Resource_5 FileName="icons\camera_flash5.ico" Type="ICON" ResourceName="_CAMERA_FLASH_5"/>
+        <Resource_6 FileName="icons\camera_flash6.ico" Type="ICON" ResourceName="_CAMERA_FLASH_6"/>
+        <Resource_7 FileName="icons\camera_flash7.ico" Type="ICON" ResourceName="_CAMERA_FLASH_7"/>
+        <Resource_8 FileName="icons\start.bmp" Type="BITMAP" ResourceName="_START_ICON"/>
+        <Resource_9 FileName="icons\stop.bmp" Type="BITMAP" ResourceName="_STOP_ICON"/>
+        <Resource_10 FileName="icons\logo.png" Type="RCDATA" ResourceName="_LOGO"/>
+        <Resource_11 FileName="icons\logo_high_dpi.png" Type="RCDATA" ResourceName="_LOGO_HIGH_DPI"/>
+        <Resource_12 FileName="icons\camera.ico" Type="ICON" ResourceName="_CAMERA"/>
         <Resource_13 FileName="libs/country-flags/country-flags/de_16.png" Type="RCDATA" ResourceName="FLAG_DE"/>
         <Resource_14 FileName="libs/country-flags/country-flags/gb_16.png" Type="RCDATA" ResourceName="FLAG_EN"/>
         <Resource_15 FileName="libs/country-flags/country-flags/es_16.png" Type="RCDATA" ResourceName="FLAG_ES"/>
@@ -46,11 +46,11 @@
         <Resource_20 FileName="libs/country-flags/country-flags/ua_16.png" Type="RCDATA" ResourceName="FLAG_UK"/>
         <Resource_21 FileName="libs/country-flags/country-flags/cn_16.png" Type="RCDATA" ResourceName="FLAG_ZH"/>
         <Resource_22 FileName="libs/country-flags/country-flags/it_16.png" Type="RCDATA" ResourceName="FLAG_IT"/>
-        <Resource_23 FileName="res/external_link.bmp" Type="BITMAP" ResourceName="_EXTERNAL_LINK_ICON"/>
-        <Resource_24 FileName="res\camera_user_idle.ico" Type="ICON" ResourceName="_CAMERA_USER_IDLE"/>
+        <Resource_23 FileName="icons/external_link.bmp" Type="BITMAP" ResourceName="_EXTERNAL_LINK_ICON"/>
+        <Resource_24 FileName="icons\camera_user_idle.ico" Type="ICON" ResourceName="_CAMERA_USER_IDLE"/>
         <Resource_25 FileName="libs/country-flags/country-flags/il_16.png" Type="RCDATA" ResourceName="FLAG_HE"/>
-        <Resource_26 FileName="res/donbut1.png" Type="RCDATA" ResourceName="DONBUT1"/>
-        <Resource_27 FileName="res/donbut2.png" Type="RCDATA" ResourceName="DONBUT2"/>
+        <Resource_26 FileName="icons/donbut1.png" Type="RCDATA" ResourceName="DONBUT1"/>
+        <Resource_27 FileName="icons/donbut2.png" Type="RCDATA" ResourceName="DONBUT2"/>
         <Resource_28 FileName="libs/country-flags/country-flags/mx_16.png" Type="RCDATA" ResourceName="FLAG_ES-419"/>
       </Resources>
     </General>
@@ -152,9 +152,9 @@ override_dh_auto_install:
 	install -d -m 755 &quot;$(ROOT)/usr/share/applications&quot;
 	sed -e &apos;/^\s*#/d; /^\s*$$/d&apos; &quot;autoscreenshot.desktop&quot; > &quot;autoscreenshot_tmp.desktop&quot;
 	install -m 644 &quot;autoscreenshot_tmp.desktop&quot; &quot;$(ROOT)/usr/share/applications/autoscreenshot.desktop&quot;
-	for size in $$(ls -1 res | egrep -o main_icon_[0-9]+px.png | egrep -o [0-9]+); do \
+	for size in $$(ls -1 icons | egrep -o main_icon_[0-9]+px.png | egrep -o [0-9]+); do \
 		install -d -m 755 &quot;$(ROOT)/usr/share/icons/hicolor/$${size}x$${size}/apps&quot;; \
-		install -m 644 -T &quot;res/main_icon_$${size}px.png&quot; &quot;$(ROOT)/usr/share/icons/hicolor/$${size}x$${size}/apps/autoscreenshot.png&quot;; \
+		install -m 644 -T &quot;icons/main_icon_$${size}px.png&quot; &quot;$(ROOT)/usr/share/icons/hicolor/$${size}x$${size}/apps/autoscreenshot.png&quot;; \
 	done
 	install -d -m 755 &quot;$(ROOT)/usr/share/autoscreenshot/sounds&quot;
 	cp sounds/*.wav &quot;$(ROOT)/usr/share/autoscreenshot/sounds/&quot;
@@ -171,7 +171,7 @@ override_dh_auto_install:
 ?CP? *.lfm ?TEMPFOLDER?/
 ?CP? *.ico ?TEMPFOLDER?/
 
-?CP? -r res/ ?TEMPFOLDER?/
+?CP? -r icons/ ?TEMPFOLDER?/
 ?CP? *.inc ?TEMPFOLDER?/
 ?CP? -r libs/ ?TEMPFOLDER?/
 ?CP? -r lang/ ?TEMPFOLDER?/
