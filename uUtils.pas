@@ -14,6 +14,10 @@ uses
   {$EndIf}
   uLocalization;
 
+const
+   TMPL_VARS_CHAR = '%';  { символ, используемый перед именами переменных
+                            в шаблоне имени файла }
+
 
 { Formats given string Str. If DateTime not provided, use result of Now().
 
@@ -90,6 +94,8 @@ function AddCustomParamsToUrl(const AUrl: String): string;
 
 function OSInfo: string;
 procedure OpenLocationInFileMan(AFileName: string);
+function MassReplace(const AStr: string; APairsArr: array of string;
+    const APrefix: string = ''): string;
 
 implementation
 
@@ -120,15 +126,15 @@ function FormatDateTime2(const Str: String; const DateTime: TDateTime): String;
     Result := Dec2Numb(N, Len, 10);
   end;
 
-const
-  TmplVarsChar = '%';
 begin
-  Result := StringReplace(Str,    TmplVarsChar + 'D', DecToNum(DayOf(DateTime), 2),    [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'M', DecToNum(MonthOf(DateTime), 2),  [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'Y', DecToNum(YearOf(DateTime), 4),   [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'H', DecToNum(HourOf(DateTime), 2),   [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'N', DecToNum(MinuteOf(DateTime), 2), [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'S', DecToNum(SecondOf(DateTime), 2), [rfReplaceAll]);
+  Result := MassReplace(Str,
+               ['D',  DecToNum(DayOf(DateTime),    2),
+                'M',  DecToNum(MonthOf(DateTime),  2),
+                'Y',  DecToNum(YearOf(DateTime),   4),
+                'H',  DecToNum(HourOf(DateTime),   2),
+                'N',  DecToNum(MinuteOf(DateTime), 2),
+                'S',  DecToNum(SecondOf(DateTime), 2)
+               ], TMPL_VARS_CHAR);
 end;
 
 function FormatDateTime2(const Str: String): String;
@@ -138,10 +144,12 @@ end;
 
 function DecodeControlCharacters(const Str: WideString): WideString;
 begin
-  Result := StringReplace(Str,    '\r', #13, [rfReplaceAll]);
-  Result := StringReplace(Result, '\n', #10, [rfReplaceAll]);
-  Result := StringReplace(Result, '\t', #9,  [rfReplaceAll]);
-  Result := StringReplace(Result, '\\', '\', [rfReplaceAll]);
+  Result := MassReplace(Str,
+                ['\r', #13,
+                 '\n', #10,
+                 '\t', #9,
+                 '\\', '\'
+                ]);
 end;
 
 //function GetProgramVersionStr({HideRealeaseAndBuildIfZero} ShortFormat: Boolean): String;
@@ -710,6 +718,41 @@ end;
 function FileModifiedTime(const ASearchRec: TSearchRec): TDateTime; inline;
 begin
   Result := ASearchRec.TimeStamp;
+end;
+
+// Более удобная обёртка под StringsReplace() с немного расширенными возможностями
+function MassReplace(const AStr: string; APairsArr: array of string;
+    const APrefix: string = ''): string;
+var
+  NewStrings, OldStrings: TStringList;
+  i: integer;
+begin
+  if odd(Length(APairsArr)) then
+    raise Exception.Create('Number of array items must be even!');
+
+  Result := '';
+
+  NewStrings := TStringList.Create;
+  OldStrings := TStringList.Create;
+  try
+    for i := 0 to Length(APairsArr) - 1 do
+    begin
+      if not odd(i) then
+        OldStrings.Append(APrefix + APairsArr[i])
+      else
+        NewStrings.Append(APairsArr[i]);
+    end;
+
+    //DebugLn('old: ', string.join('|', OldStrings.ToStringArray));
+    //DebugLn('new: ', string.join('|', newStrings.ToStringArray));
+
+    Result := StringsReplace(AStr, OldStrings.ToStringArray,
+                    NewStrings.ToStringArray, [rfReplaceAll]);
+
+  finally
+    OldStrings.free;
+    NewStrings.free;
+  end;
 end;
 
 //initialization

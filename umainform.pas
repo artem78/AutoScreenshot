@@ -2137,18 +2137,16 @@ begin
 end;
 
 function TMainForm.FormatPath(Str: string): string;
-const
-  TmplVarsChar = '%';
 var
   CounterStr: String[MaxCounterDigits];
 begin
-  Result := Str;
-
   CounterStr := Dec2Numb(Counter, CounterDigits, 10); // Add leading zeros to Counter value
 
-  Result := StringReplace(Result, TmplVarsChar + 'COMP', GetLocalComputerName, [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'USER', GetCurrentUserName,   [rfReplaceAll]);
-  Result := StringReplace(Result, TmplVarsChar + 'NUM',  CounterStr,           [rfReplaceAll]);
+  Result := MassReplace(Str,
+               ['COMP', GetLocalComputerName(),
+                'USER', GetCurrentUserName(),
+                'NUM',  CounterStr
+               ], TMPL_VARS_CHAR);
 
   // Date/time
   Result := FormatDateTime2(Result);
