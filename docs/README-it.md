@@ -111,7 +111,6 @@ Sei libero di usare, modificare o distribuire questo software sotto licenza [GNU
 Artem78 (email: [megabyte1024@ya.ru](mailto:megabyte1024@ya.ru?subject=AutoScreenshot))
 
 ## Dona
-- PayPal: megabyte1024@yandex.com
 - ETH Ethereum / Tether USDT: 0xB14C877b2eAF7E3b4b49df25039122C0545edA74
 - Webmoney WMZ: [Z598881055273](https://pay.web.money/d/kgfx)
 - Sberbank card: 5469 4009 8490 5476

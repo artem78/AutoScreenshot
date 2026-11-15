@@ -126,7 +126,6 @@ Artem78 (email: [megabyte1024@ya.ru](mailto:megabyte1024@ya.ru?subject=AutoScree
 ## Donate
 Auto Screenshot may be used free of charge by everyone. However, you can help this project to be better with donations. This way you will thank the author for time and resources spent over the years for developing and troubleshooting issues. No minimum donation limit. Several payment methods accepted:
 
-- PayPal: https://paypal.me/artem78d
 - ETH Ethereum / Tether USDT: 0xB14C877b2eAF7E3b4b49df25039122C0545edA74
 - Webmoney WMZ: [Z598881055273](https://pay.web.money/d/kgfx)
 - Sberbank card (СберБанк): 5469 4009 8490 5476
