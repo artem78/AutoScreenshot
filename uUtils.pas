@@ -1,6 +1,7 @@
 unit uUtils;
 
 {$MODE objfpc}
+{$H+}
 
 { Various general usefull functions }
 
