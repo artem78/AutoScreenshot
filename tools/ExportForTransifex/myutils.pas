@@ -14,7 +14,7 @@ function DbgLineEndings(const s: string): string;
 
 implementation
 
-uses LazUtils,streamex,regexpr, Math;
+uses LazUtils,streamex,regexpr, Math,LazLoggerBase;
 
 procedure ChangeLineEndingsInFile(const AFileName:string; const ANewLineEnding: string);
 var
@@ -101,7 +101,7 @@ var tmp:string;
 begin
   tmp:=StringReplace(s, #13, '<CR>', [rfReplaceAll]);
   tmp:=StringReplace(tmp, #10, '<LF>', [rfReplaceAll]);
-  writeln(tmp);
+  debugln(tmp);
 end;
 
 end.
