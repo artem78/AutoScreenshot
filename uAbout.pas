@@ -66,7 +66,7 @@ uses uLocalization, uUtils, LazVersion, DateUtils, StrUtils;
 {$R *.lfm}
 
 const
-  ProjectURLTitle = 'https://artem78.github.io/AutoScreenshot/';
+  HomePageMainUrl = 'https://artem78.github.io/AutoScreenshot/';
   AuthorMail = 'megabyte1024@ya.ru';
   ProjectGithubUrl = 'https://github.com/artem78/AutoScreenshot';
   LicenseFileName = 'LICENSE.' + {'rtf'} 'txt';
@@ -87,7 +87,11 @@ const
 var
   Png: TPortableNetworkGraphic;
   ResourceName: String;
+  HomePageUrl: string = HomePageMainUrl;
 begin
+  if Localizer.LanguageInfo.Code = 'ru' then
+    HomePageUrl+='ru/';
+
   Caption := Localizer.I18N('About');
 
   //Logo.Picture.Icon.Handle := LoadImage(HInstance, 'MAINICON', IMAGE_ICON,
@@ -139,7 +143,7 @@ begin
   end;
 
   LinkTitleLabel.Caption := Localizer.I18N('HomePage') + ':';
-  LinkValueLabel.Caption := ProjectURLTitle;
+  LinkValueLabel.Caption := HomePageUrl;
 
   BuildDateTitleLabel.Caption := Localizer.I18N('BuildDate') + ':';
   BuildDateValueLabel.Caption := FormatDateTime('dddddd', GetBuildDateTime);
@@ -208,7 +212,7 @@ end;
 
 procedure TAboutForm.LinkValueLabelClick(Sender: TObject);
 begin
-  OpenURL(AddCustomParamsToUrl(ProjectURLTitle));
+  OpenURL(AddCustomParamsToUrl((Sender as TLabel).Caption));
 end;
 
 procedure TAboutForm.LinkValueLabelMouseEnter(Sender: TObject);

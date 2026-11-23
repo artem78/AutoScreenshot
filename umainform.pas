@@ -897,8 +897,12 @@ begin
 end;
 
 procedure TMainForm.HomePageMenuItemClick(Sender: TObject);
+var
+  url:string = 'https://artem78.github.io/AutoScreenshot/';
 begin
-  OpenURL(AddCustomParamsToUrl('https://artem78.github.io/AutoScreenshot/'));
+  if Localizer.LanguageInfo.Code = 'ru' then
+    url+='ru/';
+  OpenURL(AddCustomParamsToUrl(url));
 end;
 
 procedure TMainForm.IncludeCursorCheckBoxChange(Sender: TObject);
